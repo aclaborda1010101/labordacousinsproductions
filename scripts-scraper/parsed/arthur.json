@@ -1,0 +1,22 @@
+{
+  "slug": "arthur",
+  "title": "Arthur",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 24078,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                     ARTHUR </b> Written by Peter Baynham <b>                                                             10/16/09 </b><b>          EXT. MANHATTAN - NIGHT </b> A HOMELESS MAN, who from his tatty suit may have been a top broker this time last year, is picking through a bin in Manhattan's deserted night-time financial district. The street starts to vibrate. A TERRIFYING GROWL approaches. A huge black shape smashes into view - THE DARK KNIGHT'S BATMOBILE! Our audi",
+      "dialogue_count": 0,
+      "word_count": 24078
+    }
+  ]
+}

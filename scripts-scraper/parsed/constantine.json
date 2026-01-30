@@ -1,0 +1,22 @@
+{
+  "slug": "constantine",
+  "title": "Constantine",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 27062,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>      CONSTANTINE </b> by Kevin Brodbin based on the characters appearing in magazines published by DC Comics, Inc. previous revisions by Mark Bomback current revisions by Frank Cappello <b>                             EARLY PRODUCTION DRAFT </b> November 14, 2002 <b> </b> <b>FADE IN: </b> <b>EXT. ISTANBUL - DUSK </b> Glimpses of an ancient city.   Almost motionless against the tide of time. Sea swelled along an endless wall. Billowing silk frozen against the sky. Birds lighting on Byzantine",
+      "dialogue_count": 0,
+      "word_count": 27062
+    }
+  ]
+}

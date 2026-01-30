@@ -1,0 +1,54 @@
+{
+  "slug": "batman",
+  "title": "Batman",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 15,
+  "characters": [
+    "DAD",
+    "NICK",
+    "BATMAN",
+    "KNOX",
+    "JACK",
+    "GRISSOM",
+    "VICKI",
+    "GORDON",
+    "DOCTOR",
+    "JOKER",
+    "ANCHORWOMAN",
+    "TONY",
+    "DAVE",
+    "BRUCE",
+    "DICK"
+  ],
+  "total_words": 33690,
+  "total_dialogue": 101,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "DAD",
+        "NICK",
+        "BATMAN",
+        "KNOX",
+        "JACK",
+        "GRISSOM",
+        "VICKI",
+        "GORDON",
+        "DOCTOR",
+        "JOKER",
+        "ANCHORWOMAN",
+        "TONY",
+        "DAVE",
+        "BRUCE",
+        "DICK"
+      ],
+      "action_text": "<html> <head> <title>\"Batman\", early draft, by Sam Hamm</title> </head> <body bgcolor=\"#FFFFFF\"> <pre> <u>BATMAN</u> Screenplay by Sam Hamm Based on the Character Created by Bob Kane <u>FIRST DRAFT</u> October 20, 1986 <b>     FADE IN: </b> <u>EXT. CITYSCAPE - NIGHT</u> The place is Gotham City. The time, 1987 -- once removed. The city of Tomorrow: stark angles, creeping shadows, dense, crowded, airless, a random tangle of steel and concrete, self-generating, almost subterranean in its aspect...",
+      "dialogue_count": 101,
+      "word_count": 33690
+    }
+  ]
+}

@@ -1,0 +1,5979 @@
+{
+  "slug": "ricky-stanicky-2024",
+  "title": "Ricky Stanicky",
+  "parsedWith": "v2",
+  "parsedAt": "2026-01-29T22:09:17.579Z",
+  "stats": {
+    "scenes": 97,
+    "dialogues": 926,
+    "characters": 46
+  },
+  "characters": [
+    {
+      "name": "TED",
+      "dialogueLines": 330,
+      "totalWords": 1800
+    },
+    {
+      "name": "ROD",
+      "dialogueLines": 222,
+      "totalWords": 1323
+    },
+    {
+      "name": "ERIN",
+      "dialogueLines": 87,
+      "totalWords": 458
+    },
+    {
+      "name": "WES",
+      "dialogueLines": 84,
+      "totalWords": 431
+    },
+    {
+      "name": "SUSAN",
+      "dialogueLines": 36,
+      "totalWords": 207
+    },
+    {
+      "name": "LAMBERT",
+      "dialogueLines": 36,
+      "totalWords": 228
+    },
+    {
+      "name": "NANA",
+      "dialogueLines": 21,
+      "totalWords": 96
+    },
+    {
+      "name": "MR. LAMBERT",
+      "dialogueLines": 20,
+      "totalWords": 130
+    },
+    {
+      "name": "MILT",
+      "dialogueLines": 14,
+      "totalWords": 81
+    },
+    {
+      "name": "SARAH",
+      "dialogueLines": 11,
+      "totalWords": 54
+    },
+    {
+      "name": "PRENTISS",
+      "dialogueLines": 7,
+      "totalWords": 35
+    },
+    {
+      "name": "TOYO",
+      "dialogueLines": 6,
+      "totalWords": 27
+    },
+    {
+      "name": "SAMANTHA BROWN",
+      "dialogueLines": 5,
+      "totalWords": 34
+    },
+    {
+      "name": "RICKY",
+      "dialogueLines": 4,
+      "totalWords": 32
+    },
+    {
+      "name": "DAVE",
+      "dialogueLines": 4,
+      "totalWords": 12
+    },
+    {
+      "name": "MAN",
+      "dialogueLines": 3,
+      "totalWords": 17
+    },
+    {
+      "name": "CHIEF",
+      "dialogueLines": 2,
+      "totalWords": 21
+    },
+    {
+      "name": "FADE OUT.",
+      "dialogueLines": 2,
+      "totalWords": 7
+    },
+    {
+      "name": "BARTENDER",
+      "dialogueLines": 2,
+      "totalWords": 2
+    },
+    {
+      "name": "TERI",
+      "dialogueLines": 2,
+      "totalWords": 9
+    },
+    {
+      "name": "WOMAN",
+      "dialogueLines": 2,
+      "totalWords": 8
+    },
+    {
+      "name": "TICKET TAKER",
+      "dialogueLines": 2,
+      "totalWords": 3
+    },
+    {
+      "name": "A BEAT.",
+      "dialogueLines": 1,
+      "totalWords": 3
+    },
+    {
+      "name": "PULL OUT ON THE NAME TAG.",
+      "dialogueLines": 1,
+      "totalWords": 10
+    },
+    {
+      "name": "CALL ME.",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "NOW BOARDING",
+      "dialogueLines": 1,
+      "totalWords": 9
+    },
+    {
+      "name": "DRUNK GIRL",
+      "dialogueLines": 1,
+      "totalWords": 6
+    },
+    {
+      "name": "CORPORATION",
+      "dialogueLines": 1,
+      "totalWords": 2
+    },
+    {
+      "name": "GUY",
+      "dialogueLines": 1,
+      "totalWords": 9
+    },
+    {
+      "name": "CLOSE ON A DRIVERS LICENSE",
+      "dialogueLines": 1,
+      "totalWords": 4
+    },
+    {
+      "name": "SOMETHING UPBEAT",
+      "dialogueLines": 1,
+      "totalWords": 7
+    },
+    {
+      "name": "CLAIRE",
+      "dialogueLines": 1,
+      "totalWords": 5
+    },
+    {
+      "name": "GARY",
+      "dialogueLines": 1,
+      "totalWords": 6
+    },
+    {
+      "name": "END INTERCUT",
+      "dialogueLines": 1,
+      "totalWords": 9
+    },
+    {
+      "name": "ERIN AND SUSAN",
+      "dialogueLines": 1,
+      "totalWords": 6
+    },
+    {
+      "name": "ACTRESS",
+      "dialogueLines": 1,
+      "totalWords": 6
+    },
+    {
+      "name": "RACK FOCUS",
+      "dialogueLines": 1,
+      "totalWords": 7
+    },
+    {
+      "name": "SMOKER",
+      "dialogueLines": 1,
+      "totalWords": 7
+    },
+    {
+      "name": "PARTY GUEST",
+      "dialogueLines": 1,
+      "totalWords": 6
+    },
+    {
+      "name": "TEN YEAR OLD",
+      "dialogueLines": 1,
+      "totalWords": 2
+    },
+    {
+      "name": "VALET",
+      "dialogueLines": 1,
+      "totalWords": 2
+    },
+    {
+      "name": "ONE BALL.",
+      "dialogueLines": 1,
+      "totalWords": 3
+    },
+    {
+      "name": "INVESTOR",
+      "dialogueLines": 1,
+      "totalWords": 12
+    },
+    {
+      "name": "WESPUB.",
+      "dialogueLines": 1,
+      "totalWords": 4
+    },
+    {
+      "name": "ASSISTANT",
+      "dialogueLines": 1,
+      "totalWords": 4
+    },
+    {
+      "name": "MARIA",
+      "dialogueLines": 1,
+      "totalWords": 5
+    }
+  ],
+  "scenes": [
+    {
+      "number": 1,
+      "heading": "EXT. WOODS - NIGHT",
+      "characters": [
+        "WES",
+        "TED"
+      ],
+      "dialogues": [
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "Not just a dog."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Shh!"
+        }
+      ],
+      "actionPreview": "Halloween night. Trick or treating is long over. The only kids still out are the trouble makers. Here are three of them, walking through the woods, still in costume. TED 10, is Maverick from Top Gun. JT, 10, is Freddie Kruger and WES, 10, is a dog. Ted and JT wear jackets over their costumes. Ted ca"
+    },
+    {
+      "number": 2,
+      "heading": "EXT. HOUSE - MOMENTS LATER",
+      "characters": [
+        "A BEAT.",
+        "WES",
+        "TED"
+      ],
+      "dialogues": [
+        {
+          "character": "A BEAT.",
+          "parenthetical": "",
+          "text": "No one answers."
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "That fire is kinda big."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Nah."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "(CONT’D)",
+          "text": "Okay, put it out."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "(CONT’D)",
+          "text": "Never mind."
+        }
+      ],
+      "actionPreview": "Lights in the windows and the SOUND of a television. Ted places the bag on the porch and lights it. JT presses the doorbell. They dash off into the bushes, barely able to contain themselves. Ted runs up and rings the bell again. Still no answer. The fire in the bag grows. Should we put it out? The g"
+    },
+    {
+      "number": 3,
+      "heading": "EXT. WOODS - CONTINUOUS",
+      "characters": [
+        "WES",
+        "TED",
+        "PULL OUT ON THE NAME TAG."
+      ],
+      "dialogues": [
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "We’re so dead. JT"
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "I’m too young to be a bitch."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Wait."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "It can’t have a name tag."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "(CONT’D)",
+          "text": "Now we need a pen. (realizing)"
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "It’s stuck. I can’t get it off."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Fine, you write."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "(CONT’D)",
+          "text": "We need a common name..."
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "Uh... Ricky."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "That’s good."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "(CONT’D)",
+          "text": "And a last name."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "(CONT’D)",
+          "text": "Stan -- JT (suddenly)"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Don’t write th--"
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "k-y."
+        },
+        {
+          "character": "PULL OUT ON THE NAME TAG.",
+          "parenthetical": "",
+          "text": "A fire CHIEF is lifting the jacket off the bushes."
+        }
+      ],
+      "actionPreview": "The boys look back at the fiery house, just a few yards away. Oh yeah. We’re going to jail and the older kids are going to make us their bitches. I got an idea. JT give me your jacket. JT Use your own shitty jacket. This is a North Face. Cost like 200 dollars. Ted shows him his name tag is sewn in. "
+    },
+    {
+      "number": 4,
+      "heading": "EXT. HOUSE - A FEW HOURS LATER",
+      "characters": [
+        "CHIEF"
+      ],
+      "dialogues": [
+        {
+          "character": "CHIEF",
+          "parenthetical": "",
+          "text": "Judging from the size of this jacket, we got a junior arsonist on our hands."
+        },
+        {
+          "character": "CHIEF",
+          "parenthetical": "",
+          "text": "Sounds like a punk to me."
+        }
+      ],
+      "actionPreview": "The house is burnt to the ground. Firemen douse some still smouldering sections. Locals in pajamas and kids still in costumes mill around, observing. The chief holds up the jacket to another fireman. Kid probably caught himself on fire during his prank, peeled it off and left it. And here’s the best"
+    },
+    {
+      "number": 5,
+      "heading": "EXT. ANOTHER STREET - LATER",
+      "characters": [
+        "WES",
+        "TED",
+        "FADE OUT."
+      ],
+      "dialogues": [
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "That was the greatest thing ever. JT"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Are you crazy?"
+        },
+        {
+          "character": "FADE OUT.",
+          "parenthetical": "",
+          "text": "\"Ricky Stanicky\""
+        }
+      ],
+      "actionPreview": "The boys walk alone. Yeah, we should use that excuse all the time. We could be like, “Ricky Stanicky stole my homework. Or Ricky Stanicky took the car out.” It’s way too dangerous. We’re never using that name again. Agreed? A beat. Wes and JT nod. WES/JT Agreed. 11.13.09 Bushell 4. FADE IN: “20 YEAR"
+    },
+    {
+      "number": 6,
+      "heading": "INT. APARTMENT - NIGHT",
+      "characters": [
+        "TED",
+        "ERIN",
+        "CALL ME.",
+        "SUSAN"
+      ],
+      "dialogues": [
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "I got the wine and the cheese."
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "My god. I want to fuck that tomato."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Whoa."
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "Ted, I really appreciate this."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "You’ve been planning this for weeks."
+        },
+        {
+          "character": "CALL ME.",
+          "parenthetical": "",
+          "text": "SENDER:"
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "It’s Ricky."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "I’ll call him later."
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "But Ted, he’s been so sick."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Don’t worry about Ricky."
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "But... the cancer."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "How much damage can cancer do in one night?"
+        },
+        {
+          "character": "SUSAN",
+          "parenthetical": "",
+          "text": "It wasn’t that bad. JT"
+        },
+        {
+          "character": "SUSAN",
+          "parenthetical": "",
+          "text": "Raper? JT"
+        },
+        {
+          "character": "SUSAN",
+          "parenthetical": "",
+          "text": "That’s a rapier, JT."
+        },
+        {
+          "character": "SUSAN",
+          "parenthetical": "",
+          "text": "You’re a moron."
+        },
+        {
+          "character": "SUSAN",
+          "parenthetical": "(CONT’D)",
+          "text": "What’s wrong?"
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "It’s Ricky."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "It’s cancer okay?"
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "So does cancer."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "I’ll call him but it’s going to be quick."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "(CONT’D)",
+          "text": "What’s up?..."
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "Oh my God."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "(to Erin)"
+        },
+        {
+          "character": "SUSAN",
+          "parenthetical": "",
+          "text": "Is it sheer desperation that made me marry you?"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "(then to phone)"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "(CONT’D)",
+          "text": "I’m holding up the bracelet."
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "You have to go up there tonight."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "It’s just a ball."
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "I’ll come with you."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Your boss is coming."
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "You can’t drive alone."
+        },
+        {
+          "character": "SUSAN",
+          "parenthetical": "",
+          "text": "Yeah, you don’t need to go."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "It’s fine."
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "Susan, you’ve got to let JT go."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "It was just a cat nap."
+        },
+        {
+          "character": "SUSAN",
+          "parenthetical": "",
+          "text": "Aaah."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Ricky is going to appreciate this so much."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "(CONT’D)",
+          "text": "Almost forgot."
+        }
+      ],
+      "actionPreview": "A well furnished apartment. On one wall is a glass case of Swarovsky collectible miniatures. ERIN, 28, sets the table for a dinner party. TED, now 29, enters carrying a few shopping bags. He drops his blackberry on the table. And I slipped the tomato guy an extra ten bucks so he’d give me the heirlo"
+    },
+    {
+      "number": 7,
+      "heading": "INT. APARTMENT CARPORT - CONTINUOUS",
+      "characters": [
+        "WES",
+        "TED"
+      ],
+      "dialogues": [
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "What took you so long?"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Didn’t I tell you no weed in my car?"
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "I blew the smoke out of the window."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "The window is closed."
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "God damn it, I’m high."
+        }
+      ],
+      "actionPreview": "Ted and JT open the Ted’s car door we hear COUGHING and a cloud of smoke wafts out. In the backseat is WES, now grown up (29). He’s chubby, rumpled and baked. He holds a fat joint in one hand and the cellphone that sent the “Ricky Stanicky” text messages in the other. Flight’s in a half hour. \"Ricky"
+    },
+    {
+      "number": 8,
+      "heading": "EXT. BURBANK AIRPORT - LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Ted, Wes and JT weave through the terminal and pull up to the valet parking area."
+    },
+    {
+      "number": 9,
+      "heading": "INT. BURBANK AIRPORT - MOMENTS LATER",
+      "characters": [
+        "NOW BOARDING"
+      ],
+      "dialogues": [
+        {
+          "character": "NOW BOARDING",
+          "parenthetical": "",
+          "text": "The flight attendant is about to close the gate."
+        }
+      ],
+      "actionPreview": "The guys race past the terminals until they reach a gate with a sign that says, “FLIGHT 131 to LAS VEGAS”. The guys race up with their boarding passes."
+    },
+    {
+      "number": 10,
+      "heading": "EXT. SKY - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "A plane banks over the Las Vegas Strip."
+    },
+    {
+      "number": 11,
+      "heading": "EXT. STRIP - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "A limo pulls up to the MGM grand. The guys climb out. They look psyched."
+    },
+    {
+      "number": 12,
+      "heading": "INT. MGM GRAND BOXING ARENA - CONTINUOUS",
+      "characters": [
+        "TED"
+      ],
+      "dialogues": [
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "To Ricky Stanicky, the best friend we never had."
+        }
+      ],
+      "actionPreview": "A LARGE MARQUEE READS: UFC CHAMPIONSHIP. The guys are ringside, watching the fight. They drink beers and cheer. A mouthpiece flies into Wes’ beer. He fishes it out and holds it up like he caught a foul ball. A fighter connects with a perfect round house kick knocking the other fighter out cold. Ted,"
+    },
+    {
+      "number": 13,
+      "heading": "INT. BAR - LATER",
+      "characters": [
+        "WES",
+        "TED",
+        "ROD",
+        "BARTENDER"
+      ],
+      "dialogues": [
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "I’m buying this round."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Rule number eight of Ricky"
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "That’s all about to change."
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "I know."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Inspired by cookie monster?"
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "Don’t you get it!?"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "(O.S.)",
+          "text": "I’d buy that book for my kid. ROD, 30, a very drunk man wearing a pirate costume and an eye patch sits at the bar in front of an empty glass."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "(CONT’D)",
+          "text": "Even if it turns out that he’s not mine."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Looks like you got the pirate parent audience."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "So let’s make a deal."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Maybe next time, Captain."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Wish I was the Captain."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Right."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "I get it."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "My two year old nephew can do Billy"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "The Bard."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "(CONT’D)",
+          "text": "Greg, turn down the music for a second, I’m going to perform."
+        },
+        {
+          "character": "BARTENDER",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Let him do it."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "(CONT’D)",
+          "text": "Pirate #3?"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "You going to do Shakespeare?"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Oh yeah."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Dude, the “Bard?”"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Oh yeah, right."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "This isn’t happening."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "(perfect English accent)"
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "Wow."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Now do it as Sling Blade."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "(Sling Blade voice)"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "(as Christopher Walken) her bestial livery is but sick and green and none but fools do wear it."
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "Optimus Prime."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "(as Optimus Prime) O, it is my love!"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Who the fuck is Harvey Keitel?"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "A pirate!"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "(as a pirate)"
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "Chewbacca!"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "(indecipherable Chewbacca speak)"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "That was the greatest thing I’ve ever seen."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Thank, you."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Buy that pirate whatever he wants."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Three Heinekens, a whiskey chaser and a rack of ribs."
+        },
+        {
+          "character": "BARTENDER",
+          "parenthetical": "",
+          "text": "Whatever."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Fool! Pirates don’t eat vegetables! (then)"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Uh thanks... Rod."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Oooh, bachelorette party."
+        }
+      ],
+      "actionPreview": "JT, Wes and Ted make their way to the bar. They are still pumped from the fight. Wes takes out his only credit card and is about to hand it to the bartender when Ted snatches it away. Stanicky, never leave a paper trail. Besides you don’t even have a job. Ted hands Wes back his credit card. But Wes "
+    },
+    {
+      "number": 14,
+      "heading": "EXT. BAR - LATER",
+      "characters": [
+        "WES",
+        "TED",
+        "ERIN",
+        "DRUNK GIRL",
+        "BOO WIP."
+      ],
+      "dialogues": [
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "Boo wip."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Ricky really appreciated it, Erin."
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "Good."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "I’m really glad it worked out."
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "Ted, it’s so amazing what you did for Ricky."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Pearl Jam?"
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "They were really expensive but I know they’re you’re favorite band."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Erin, that’s... uh... that’s... I... I love you."
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "I love you, too."
+        },
+        {
+          "character": "DRUNK GIRL",
+          "parenthetical": "",
+          "text": "(screams) I’ll fuck anybody in here."
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "What was that?"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "They were uh... rolling a girl up to the burn ward... I don’t think she’s going to make it... and she just wants one final chance at love."
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "That’s so sad."
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "Hey, that’s not --. JT elbows him."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "I think Ricky’s waking up."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "(CONT’D)",
+          "text": "Did you just hear that? Tickets to"
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "That was one time at U2."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "That’s the coolest thing anyone has ever done for me."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "No. JT"
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "Yes!! (sings) OH I’M STILL ALIVE /"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Not you either."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "You know how this works."
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "Oh and remember when we told Susan that --"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Can we focus, please? (writing)"
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "Don’t forget the Livestrong bracelet... You held it up. JT"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Okay."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "(CONT’D)",
+          "text": "Okay, this is officially the final entry in the long and infamous history of Ricky Stanicky."
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "I’m done."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Because I don’t want to lie to"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "But they were never as cool as"
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "I know I do."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "(to Wes)"
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "Okay."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Talking to her tonight, I realized that I don’t want to lie to her and I don’t have to."
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "You need to think this one through,"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "This time it’s over."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "(CONT’D)",
+          "text": "Gentlemen."
+        }
+      ],
+      "actionPreview": "It’s late. The place is nearly empty. Ted is on the phone with Erin. Wes sits behind him making the sound of a heart monitor. Boo wip. He’s resting now but he came through with flying colors. Well, we missed you but it was great. And my boss loved the tomato. \"Ricky Stanicky\" 11.13.09 Bushell 16. Yo"
+    },
+    {
+      "number": 15,
+      "heading": "EXT. LAMBERT AND LAMBERT - DAY",
+      "characters": [
+        "CORPORATION"
+      ],
+      "dialogues": [
+        {
+          "character": "CORPORATION",
+          "parenthetical": "",
+          "text": "\"Ricky Stanicky\""
+        }
+      ],
+      "actionPreview": "A SIGN READS: LAMBERT AND LAMBERT: A FINANCIAL SERVICES 11.13.09 Bushell 21."
+    },
+    {
+      "number": 16,
+      "heading": "INT. CONFERENCE ROOM - DAY",
+      "characters": [
+        "LAMBERT"
+      ],
+      "dialogues": [
+        {
+          "character": "LAMBERT",
+          "parenthetical": "",
+          "text": "This is the same pen that I gave"
+        },
+        {
+          "character": "LAMBERT",
+          "parenthetical": "(CONT’D)",
+          "text": "That’s all for now, people."
+        }
+      ],
+      "actionPreview": "A group of men and women sit around a massive conference room table in a glass walled room with a view of the city. HAROLD LAMBERT, 50’s, imposing is addressing the group. He holds up a Mont Blanc Pen. Jimmy Robbins when I made him head of sales. It’s a fine writing instrument. Perfectly weighted, g"
+    },
+    {
+      "number": 17,
+      "heading": "INT. LAMBERT’S OFFICE - DAY",
+      "characters": [
+        "LAMBERT",
+        "TED"
+      ],
+      "dialogues": [
+        {
+          "character": "LAMBERT",
+          "parenthetical": "",
+          "text": "Uncomfortable?"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "LAMBERT",
+          "parenthetical": "",
+          "text": "You’re sitting in the most uncomfortable chair I could find."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Really?"
+        },
+        {
+          "character": "LAMBERT",
+          "parenthetical": "",
+          "text": "Make people uncomfortable and they know you’re in control."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Great..."
+        },
+        {
+          "character": "LAMBERT",
+          "parenthetical": "",
+          "text": "What’s wrong?"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "The chair..."
+        },
+        {
+          "character": "LAMBERT",
+          "parenthetical": "",
+          "text": "She speaks very highly of you."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Thanks."
+        },
+        {
+          "character": "LAMBERT",
+          "parenthetical": "",
+          "text": "I’ve never met a man that’s good enough for her."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "I appreciate your honesty, chief."
+        },
+        {
+          "character": "LAMBERT",
+          "parenthetical": "",
+          "text": "No you don’t."
+        }
+      ],
+      "actionPreview": "Lambert sits in an incredible office overlooking Los Angeles. Ted tries to get comfortable in the chair across from him. There is a serious looking family picture of Lambert, his daughters, Erin and Sarah, and his wife, Clare. I’m good. \"Ricky Stanicky\" 11.13.09 Bushell 22. (MORE) I bought it becaus"
+    },
+    {
+      "number": 18,
+      "heading": "INT. TED’S HOUSE - DAY",
+      "characters": [
+        "LAMBERT",
+        "WES",
+        "TED",
+        "ERIN",
+        "SUSAN"
+      ],
+      "dialogues": [
+        {
+          "character": "LAMBERT",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "What did we do before Wii? JT"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "You guys have fun at the outlets?"
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "So fun."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Thanks."
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "And while we were out, Susan had the best idea."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Ricky?"
+        },
+        {
+          "character": "SUSAN",
+          "parenthetical": "",
+          "text": "You guys are always talking about him."
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "Nah."
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "And this is a big birthday."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "It’s not that big."
+        },
+        {
+          "character": "SUSAN",
+          "parenthetical": "",
+          "text": "He has to."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "We might have to wait months."
+        },
+        {
+          "character": "SUSAN",
+          "parenthetical": "",
+          "text": "That’s funny, because JT was out with him just the other night. JT"
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "So you’ll have him come right?"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Uh... well... I’ll do my best."
+        }
+      ],
+      "actionPreview": "JT and Wes are playing WII. Ted is a reading a magazine. \"Ricky Stanicky\" 11.13.09 Bushell 23. Honestly, I don’t remember. Erin and Susan enter. Ted gives Erin a kiss. I got you a shirt and some jeans. We want to invite Ricky to your 30th birthday party. How much a part of your lives he is. But we’v"
+    },
+    {
+      "number": 19,
+      "heading": "INT. RESTAURANT - LATER",
+      "characters": [
+        "TED",
+        "WES"
+      ],
+      "dialogues": [
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "What is wrong with you? JT"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "You’ve only been married five months! JT"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "You know the rules!"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "The rules were the only thing that kept something like this from happening."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "(CONT’D)",
+          "text": "Oh no."
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "Uh, here’s the thing... Nana has busted me with some stuff over the past few months. QUICK CUT TO:"
+        }
+      ],
+      "actionPreview": "Ted, Wes and JT are sitting in a booth. JT Susan caught me coming back from a strip club. So I told her that I was there with Ricky. We were trying to rescue some girl from a life of sin and bring her back to her family. You try getting married. It’s the same woman day after day. Month after month. "
+    },
+    {
+      "number": 20,
+      "heading": "INT. NANA’S LIVING ROOM - DAY",
+      "characters": [
+        "WES",
+        "NANA"
+      ],
+      "dialogues": [
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "That’s Ricky Stanicky’s bong. JUMP CUT TO:"
+        },
+        {
+          "character": "WES",
+          "parenthetical": "(CONT’D)",
+          "text": "That’s Ricky Stanicky’s sword. JUMP CUT TO:"
+        },
+        {
+          "character": "WES",
+          "parenthetical": "(CONT’D)",
+          "text": "That’s Ricky Stanicky’s pocket pussy."
+        },
+        {
+          "character": "NANA",
+          "parenthetical": "",
+          "text": "Watch your mouth!!"
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "Pocket vagina, I mean."
+        },
+        {
+          "character": "NANA",
+          "parenthetical": "",
+          "text": "Wesley!"
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "Vagina’s a medical term!"
+        },
+        {
+          "character": "WES",
+          "parenthetical": "(CONT’D)",
+          "text": "God damn it, Nana."
+        }
+      ],
+      "actionPreview": "Sitting in a wheel chair. Wes’s grandma, NANA holds up a bong. Her cane lies across her lap. Nana holds up a samurai sword. Nana holds a flesh colored, rubbery “Pocket Pussy.” \"Ricky Stanicky\" 11.13.09 Bushell 26. Nana hits Wes with her cane. She hits him again. She hits him again so hard she breaks"
+    },
+    {
+      "number": 21,
+      "heading": "INT. RESTAURANT - CONTINUOUS",
+      "characters": [
+        "WES",
+        "TED",
+        "ROD"
+      ],
+      "dialogues": [
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "If Nana finds out I’ve been lying to her she’ll kick me out of the house."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Just when I think I’m out, you pull me back in. (then)"
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "What about all those golf rounds with Ricky that you charged to the company?"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "I did that before we retired him."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "(a beat)"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "I don’t have much of a choice."
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "What about us?"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "But --"
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "Ted, please --"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Okay... let me think."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "“ENTERTAINER”"
+        }
+      ],
+      "actionPreview": "Wes is still talking. She kicked my cousin Oliver out last year because he gave away the ending of an episode of “Murder She Wrote.” JT Nana’ll find out if Susan and Erin do. Susan will call her just to spite us. Because you guys suck so hard, she’s going to find out that I’ve been lying to her and "
+    },
+    {
+      "number": 22,
+      "heading": "INT. GOLD COAST ROOM - LATER",
+      "characters": [
+        "ROD"
+      ],
+      "dialogues": [
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "This is Pirate number three."
+        }
+      ],
+      "actionPreview": "A cellphone RINGS somewhere in a trashed suite. A hand digs through an avalanche of beer bottles and drink cups and finds the phone, partially submerged in a warm cup of beer. The hand brings the dripping wet phone up to its ear. Widen to REVEAL Rod holding the phone. He’s face down and bare assed, "
+    },
+    {
+      "number": 23,
+      "heading": "INT. AIRPORT - LATER",
+      "characters": [
+        "TED",
+        "WES"
+      ],
+      "dialogues": [
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "You saw the performance he gave at the bar."
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "But he’s not like Ricky at all."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "All we need is a few good hours out of him."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "(CONT’D)",
+          "text": "See, it’s going to be great."
+        }
+      ],
+      "actionPreview": "The guys stand at the gate watching the people mover. JT It’ll never work. He’s a mess. He’s a total fraud. We sober him up, we dress him up. We teach him everything he needs to know. He comes to the party. Tells a couple of stories. Then we pay him a thousand bucks, put him on a plane and send him "
+    },
+    {
+      "number": 24,
+      "heading": "INT. NANA’S LIVING ROOM - DAY",
+      "characters": [
+        "TED",
+        "ROD",
+        "TERI",
+        "WES",
+        "BEGIN MONTAGE"
+      ],
+      "dialogues": [
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "... Remember the deal."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Can I get the other five hundred in gold doubloons?"
+        },
+        {
+          "character": "TERI",
+          "parenthetical": "",
+          "text": "Wes, I got two days off."
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "Thanks for the imagery."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "What’s the big deal?"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Rod, we got a lot of prep to do for this birthday party."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Yeah."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "(CONT’D)",
+          "text": "Do you mind if I record this."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Whatever works."
+        }
+      ],
+      "actionPreview": "Ted, Wes and JT bring Rod inside. As they do Ted hands Rod five hundred dollars. Five hundred dollars up front. And five hundred when you complete your services. Teri crosses on his way out. If Nana needs to use the bed pan, make sure you wipe her better. She’s starting to look like a baboon during "
+    },
+    {
+      "number": 25,
+      "heading": "INT. HAIR SALON - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Rod is getting a short hair cut and a shave as Ted looks on. He gives the woman cutting Ricky’s hair instructions. JT sits off to the side in salon chairs pretending to read Cosmo while checking out women getting hair cuts. Wes is actually reading Vogue intrigued by an article titled, “10 WAYS TO HO"
+    },
+    {
+      "number": 26,
+      "heading": "INT. NANA’S BASEMENT - DAY",
+      "characters": [
+        "TED"
+      ],
+      "dialogues": [
+        {
+          "character": "TED",
+          "parenthetical": "(V.O.)",
+          "text": "Despite his illness, Ricky is in incredible physical shape."
+        }
+      ],
+      "actionPreview": "Ted, JT and Wes struggle down the stairs with a brand new exercise treadmill in a box. He has been training with the AIDS project in San Francisco to do the run for a cure."
+    },
+    {
+      "number": 27,
+      "heading": "INT. NANA’S BASEMENT - LATER",
+      "characters": [
+        "ROD",
+        "TED",
+        "WES"
+      ],
+      "dialogues": [
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Dude, I need a break."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "You’ve run for one minute and twelve seconds."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Okay, I’ll push through."
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "You’re really this out of shape?"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "I run better if I’m drunk."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "No. No."
+        }
+      ],
+      "actionPreview": "Rod jogs on the assembled treadmill. The guys surround him. Rod takes two more steps, then pushes the stop button. The tread mill stops. He bends over and pukes. JT (dismayed) We were going to return that thing after we were done with it. \"Ricky Stanicky\" 11.13.09 Bushell 31. No. Ricky is a teetotal"
+    },
+    {
+      "number": 28,
+      "heading": "INT. NANA’S HOUSE - DAY",
+      "characters": [
+        "TED",
+        "ROD",
+        "WES"
+      ],
+      "dialogues": [
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Ricky doesn’t smoke."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Nothing."
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "I think that’s above the recommended dosage."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Hey, whatever it takes."
+        }
+      ],
+      "actionPreview": "Rod is sweating like a pig, drinking a sports drink and smoking a cigarette. Ted takes the smoke out of Ricky’s hand. Wes comes over with a box of nicotine patches and puts one on Rod’s arm. A beat. Rod sits for a second. Hit me again. Wes puts another patch on Rod’s arm."
+    },
+    {
+      "number": 29,
+      "heading": "INT. BARNEY’S - DAY",
+      "characters": [
+        "TED",
+        "ROD",
+        "WES"
+      ],
+      "dialogues": [
+        {
+          "character": "TED",
+          "parenthetical": "(V.O.)",
+          "text": "Ricky is a snappy dresser."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "He’s got to look the part."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "These jeans are so tight, my junk is migrating back into my trunk."
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "Skinny jeans always crush my balls."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Ball."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Really?"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Testicular cancer. JT"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Okay, if there’s some girl I need to get on, I’ll just suck it back in. JT"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "The human body is capable of incredible things."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "That won’t be necessary."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "Vegan."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Not on the Armani shirts."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "(CONT’D)",
+          "text": "Wrap that up and add it to our bill."
+        }
+      ],
+      "actionPreview": "Rod walks out of the dressing room wearing some skinny jeans and a shirt. JT This place is not cheap. Rod comes over in the jeans. \"Ricky Stanicky\" 11.13.09 Bushell 32. Ricky only has one ball. Why? They just removed it. What?! Ricky took an abstinence pledge. He’s saving himself for marriage. No bo"
+    },
+    {
+      "number": 30,
+      "heading": "INT. NANA’S HOUSE - LATER",
+      "characters": [
+        "ROD"
+      ],
+      "dialogues": [
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Hit me again!"
+        }
+      ],
+      "actionPreview": "Now Rod has two nicotine patches on each shoulder. They look at him. Is it working?"
+    },
+    {
+      "number": 31,
+      "heading": "INT. NANA’S BASEMENT - DAY",
+      "characters": [
+        "TED",
+        "ROD"
+      ],
+      "dialogues": [
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Looking good."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Yeah, I got this."
+        }
+      ],
+      "actionPreview": "Rod is running while Ted watches. JT and Wes sit in torn up recliners playing Wii. This is really a lot -- Rod falls over, and the tread mill throws him into the wall so hard it leaves a Rod shaped dent in the dry wall. Ted shakes his head."
+    },
+    {
+      "number": 32,
+      "heading": "INT. NANA’S HOUSE - LATER",
+      "characters": [
+        "WES",
+        "ROD"
+      ],
+      "dialogues": [
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "Where am I supposed to put another one?"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Ooh, that’s the spot."
+        }
+      ],
+      "actionPreview": "Both of Rod’s arms are covered in nic patches again. Rod drop his pants. Wes sticks one on his ass. A beat."
+    },
+    {
+      "number": 33,
+      "heading": "INT. NANA’S BASEMENT - DAY",
+      "characters": [
+        "TED"
+      ],
+      "dialogues": [
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Wes, I think you can get some plaster and fix your wall."
+        }
+      ],
+      "actionPreview": "Rod is running now. Focused. Locked on. Ted pushes the speed up button. Rod speeds up. No problem. Ted nods. \"Ricky Stanicky\" 11.13.09 Bushell 34."
+    },
+    {
+      "number": 34,
+      "heading": "INT. BAR - NIGHT",
+      "characters": [
+        "MAN",
+        "ERIN",
+        "TED",
+        "GUY"
+      ],
+      "dialogues": [
+        {
+          "character": "MAN",
+          "parenthetical": "",
+          "text": "Is this seat taken?"
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "Uh... yeah."
+        },
+        {
+          "character": "MAN",
+          "parenthetical": "",
+          "text": "That is a lucky guy."
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "Thanks."
+        },
+        {
+          "character": "MAN",
+          "parenthetical": "",
+          "text": "Just in case, let me give you this."
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "No thanks."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Was that guy just trying to pick you up?"
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "Yeah."
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "(CONT’D)",
+          "text": "I have to use the ladies."
+        },
+        {
+          "character": "GUY",
+          "parenthetical": "",
+          "text": "How the hell did you end up with that?"
+        }
+      ],
+      "actionPreview": "Erin sits alone checking her watch. A MAN, 30’s, comes up next to her. My boyfriend’s coming. You are incredible. He quickly writes his number on the cocktail napkin and slides it to her. She hands it back to him. Ted watches this from the doorway. The guy turns and exits passing Ted. Ted sits down "
+    },
+    {
+      "number": 35,
+      "heading": "EXT. GOLF RANGE - NIGHT",
+      "characters": [
+        "TED",
+        "ROD"
+      ],
+      "dialogues": [
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Erin rented out this range for the party because golf is my favorite sport."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Aww, that’s sweet."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Yeah she’s awesome."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Wow."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Good."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "(CONT’D)",
+          "text": "You’ve never played before have you?"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "(impressed)"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "The only thing you need to hit is a 5 iron."
+        }
+      ],
+      "actionPreview": "Ted stands with Ricky, at the golf range. Rod takes out his iPhone and presses record. He places it on the divider between the booths in the driving range. She’s the best thing that ever happened to me. She’s smart, and funny and beautiful and so cool. It’s weird. I spent most of my life using Ricky"
+    },
+    {
+      "number": 36,
+      "heading": "EXT. GOLF RANGE",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Rod hits a dribbler. But manages to hold onto his club. Ted nods. He walks around and corrects Rod’s grip."
+    },
+    {
+      "number": 37,
+      "heading": "EXT. GOLF RANGE - LATER",
+      "characters": [
+        "ROD",
+        "TED"
+      ],
+      "dialogues": [
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "You are like the Milt Conrad Jr. of golf."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Milt Conrad Jr.?"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "My director."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Uh... thanks. (then)"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "You should do it."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Erin would never be with a guy who was a golf bum."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "You never know."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Who’s Emma Kariopa?"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Her tits were in a scene on “Entourage.”"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Sometimes you got to follow your dream."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Isn’t Leissl a girl?"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "A 15 year old girl."
+        }
+      ],
+      "actionPreview": "Ted watches as Rod hits a passable shot. Nothing great but contact. He’s a genius. If I could, I’d just play golf. No high pressure sales job. No crazy ass boss. My favorite time is when I’m swinging a club. \"Ricky Stanicky\" 11.13.09 Bushell 37. I’m just a homeless actor and I’ve dated some pretty i"
+    },
+    {
+      "number": 38,
+      "heading": "INT. NANA’S HOUSE - DAY",
+      "characters": [
+        "CLOSE ON A DRIVERS LICENSE",
+        "TED",
+        "WES",
+        "ROD"
+      ],
+      "dialogues": [
+        {
+          "character": "CLOSE ON A DRIVERS LICENSE",
+          "parenthetical": "",
+          "text": "A picture of Rod."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "(O.S.)",
+          "text": "This is good, Wes. WIDEN TO REVEAL Ted, Wes and looking at the photo."
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "Thanks."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "A license!"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Let’s go through this once more."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "(CONT’D)",
+          "text": "Okay, you currently work for..."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "IRG, a small investment firm that handles money for mainly non profit organizations and charities."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "And two January’s ago where were you?"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "I was in New Orleans helping with the Katrina clean up."
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "Good."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Why Katrina?"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Super Bowl was in New Orleans that year."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Right."
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "Your favorite ice cream is?"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Whole Foods free range, sustainably grown Rocky Road. JT"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Ricky would never use a pocket pussy."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "It depends on who you’re talking to."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "I get it."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "(continuing, to Rod)"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Then a pocket pussy is the tiny kitten that I rescued from a roof of a house in New Orleans and carried home in my pocket."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Excellent, Ricky."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "(CONT’D)",
+          "text": "You’re Ricky!"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Right."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Spend the afternoon studying this."
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "Don’t worry."
+        }
+      ],
+      "actionPreview": "It reads “RICHARD J. STANICKY”. That graphic design degree is finally paying off. Rod enters wearing skinny jeans and a stylish shirt. His hair is short and neat, he’s clean shaven. He even looks healthier. Wes hands Rod the fake license. I haven’t had one of these since the nineties. \"Ricky Stanick"
+    },
+    {
+      "number": 39,
+      "heading": "INT. WES’ ROOM - LATER",
+      "characters": [
+        "WES",
+        "ROD",
+        "RICKY",
+        "NANA"
+      ],
+      "dialogues": [
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "(reading from the book)"
+        },
+        {
+          "character": "WES",
+          "parenthetical": "(CONT’D)",
+          "text": "Some like to watch sports."
+        },
+        {
+          "character": "WES",
+          "parenthetical": "(CONT’D)",
+          "text": "My daddy likes to build bongs."
+        },
+        {
+          "character": "WES",
+          "parenthetical": "(CONT’D)",
+          "text": "The letter B is for bong."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Bong."
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "(reading again)"
+        },
+        {
+          "character": "WES",
+          "parenthetical": "(CONT’D)",
+          "text": "He said, “I’m so high I can see"
+        },
+        {
+          "character": "RICKY",
+          "parenthetical": "",
+          "text": "(moved) I love stories about Dads."
+        },
+        {
+          "character": "NANA",
+          "parenthetical": "(O.S.)",
+          "text": "Wesley."
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "I can’t believe this."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "It’s possible."
+        },
+        {
+          "character": "NANA",
+          "parenthetical": "(O.S.)",
+          "text": "Wesley!"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Keep the creative juices flowing."
+        }
+      ],
+      "actionPreview": "The bible rests on Rod’s lap. Wes is showing Rod his book on the computer. He clicks on a page All daddy’s have hobbies. Some like to go bowling A picture of a daddy bowling. A picture of a daddy watching a game on tv. A picture of a daddy holding up a bong. Can you say bong? Wes continues reading. "
+    },
+    {
+      "number": 40,
+      "heading": "INT. NANA’S ROOM - DAY",
+      "characters": [
+        "NANA",
+        "ROD",
+        "WES"
+      ],
+      "dialogues": [
+        {
+          "character": "NANA",
+          "parenthetical": "",
+          "text": "Who are you?"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "I’m Ricky Stanicky."
+        },
+        {
+          "character": "NANA",
+          "parenthetical": "",
+          "text": "I was starting to think that Wesley had just made you up."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "He would never do that. Although he has a heck of an imagination."
+        },
+        {
+          "character": "NANA",
+          "parenthetical": "",
+          "text": "He always told me you were a pathological liar."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "You’ll see. (then)"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "(CONT’D)",
+          "text": "Is that Oxycontin?"
+        },
+        {
+          "character": "NANA",
+          "parenthetical": "",
+          "text": "For my hip. (then conspiratorially)"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "I love bubbles. WES’ ROOM - LATER"
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "Shit."
+        },
+        {
+          "character": "WES",
+          "parenthetical": "(CONT’D)",
+          "text": "Rod?"
+        }
+      ],
+      "actionPreview": "Nana is in her hospital bed. Rod enters. Some day he’s going to be a famous writer. It’s nice to know that occasionally he tells the truth. Now we got a tush to wipe. \"Ricky Stanicky\" 11.13.09 Bushell 42. (MORE) And let me say for older woman, that thing is holding up nicely. Nana smiles. Rod looks "
+    },
+    {
+      "number": 41,
+      "heading": "INT. GRANDMA’S HOUSE - LATER",
+      "characters": [
+        "WE ARE FKED"
+      ],
+      "dialogues": [],
+      "actionPreview": "Wes walks into Nana’s room. Rod and Nana are dancing VERY slowly to a Lawrence Welk song. They are both very high. Wes walks over to his phone. He quickly texts a message to Ted. Close on the text. WES: ROD ATE NANA’S PILLS."
+    },
+    {
+      "number": 42,
+      "heading": "INT. RESTAURANT - LATER",
+      "characters": [
+        "ROD"
+      ],
+      "dialogues": [
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        }
+      ],
+      "actionPreview": "Ted, Erin, JT and Susan sit around a table. Ted is looking down at his phone. He reads the text and chokes on his food. JT You okay, dude? Ted slides the phone over to JT who looks at the text message and also starts choking. \"Ricky Stanicky\" 11.13.09 Bushell 43."
+    },
+    {
+      "number": 43,
+      "heading": "EXT. GOLF RANGE - NIGHT",
+      "characters": [
+        "TED",
+        "ERIN",
+        "SUSAN",
+        "ROD"
+      ],
+      "dialogues": [
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "(looking around for Ricky)"
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "I knew you would."
+        },
+        {
+          "character": "SUSAN",
+          "parenthetical": "",
+          "text": "Yeah."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Ted!!"
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "I thought he didn’t drink."
+        },
+        {
+          "character": "SUSAN",
+          "parenthetical": "",
+          "text": "Seriously, what the hell is going on? JT looks away."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Yeah, uh --"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Check out this fiver iron."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Erin, there’s something I have to tell you. JT begins shaking his head “no,” pleading."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "(CONT’D)",
+          "text": "The thing is Ricky is --"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Before I hit this, I want to tell you all a story about Ted."
+        }
+      ],
+      "actionPreview": "Erin, Ted, Susan and JT walk up to the golf range. It is decorated with streamers. Some of his friends are hitting balls and having drinks. This is great. I love how you decorated. Freaking great. Where’s Ricky? ANGLE ON Wes in a stall, his arm around Rod to support him. Rod waves. Rod nearly falls "
+    },
+    {
+      "number": 44,
+      "heading": "EXT. HOUSE - DAY",
+      "characters": [
+        "ROD"
+      ],
+      "dialogues": [
+        {
+          "character": "ROD",
+          "parenthetical": "(V.O.)",
+          "text": "On top of one house an old lady was stranded."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "(V.O.) (CONT’D)",
+          "text": "I called base camp to see if we could get another boat for the animals."
+        }
+      ],
+      "actionPreview": "Rod sits in a boat packed with rescued people wrapped in blankets. A local man drives. They coast up to a submerged house. ON the roof is an old woman (AUNT ESTHER) with a menagerie of animals. Dogs, birds, a three legged kitten. She didn’t want to leave without her pets. They were her family. But t"
+    },
+    {
+      "number": 45,
+      "heading": "EXT. RED CROSS BASE CAMP - DAY",
+      "characters": [
+        "ROD",
+        "END INTERCUT"
+      ],
+      "dialogues": [
+        {
+          "character": "ROD",
+          "parenthetical": "(V.O.)",
+          "text": "But all the boats had to be used to rescue people."
+        }
+      ],
+      "actionPreview": "\"Ricky Stanicky\" 11.13.09 Bushell 45. INTERCUT RED CROSS BASE CAMP - DAY / HOUSE - CONTINUOUS JT, Wes, and Ted ladle hot soup out to cold, wet rescuees. Ted watches a Red cross OFFICIAL on the phone with Rod. The official explains why they can’t save the pets. Ted stares at the official thinking."
+    },
+    {
+      "number": 46,
+      "heading": "EXT. HOUSE - CONTINUOUS",
+      "characters": [
+        "ROD"
+      ],
+      "dialogues": [
+        {
+          "character": "ROD",
+          "parenthetical": "(V.O.)",
+          "text": "Then something amazing happened."
+        }
+      ],
+      "actionPreview": "The woman looks mournfully at her pets and they drift off."
+    },
+    {
+      "number": 47,
+      "heading": "EXT. RED CROSS BASE CAMP - LATER",
+      "characters": [
+        "ROD"
+      ],
+      "dialogues": [
+        {
+          "character": "ROD",
+          "parenthetical": "(V.O.)",
+          "text": "Ted found the worst boat in New"
+        }
+      ],
+      "actionPreview": "Wes, and JT serve the rescued people hot cups of coffee. Aunt Esther sobs on Rod’s shoulder. Then Ted appears rowing a tiny leaky canoe packed with the animals. Dogs take up the floor space. A parrot rests on one shoulder, a rabbit on another, and in his lap is a three legged kitten. Orleans and bro"
+    },
+    {
+      "number": 48,
+      "heading": "EXT. GOLF RANGE - CONTINUOUS",
+      "characters": [
+        "ROD",
+        "ERIN",
+        "TED",
+        "SUSAN",
+        "SOMETHING UPBEAT",
+        "LAMBERT"
+      ],
+      "dialogues": [
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "That’s Ted."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "(CONT’D)",
+          "text": "(to himself; facing away from the group)"
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "What a great story."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "(shocked)"
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "What’d you want to tell me?"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Uh..."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Erin."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Why would I?"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "This guy loves you."
+        },
+        {
+          "character": "SUSAN",
+          "parenthetical": "",
+          "text": "Let me do it."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Wait."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "(CONT’D)",
+          "text": "So good to see you, bro."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "(whimper) ANGLE ON Rod and Susan."
+        },
+        {
+          "character": "SUSAN",
+          "parenthetical": "",
+          "text": "Seriously, what kind of name is"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "(deftly)"
+        },
+        {
+          "character": "SUSAN",
+          "parenthetical": "",
+          "text": "(intrigued)"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "My great great Uncle."
+        },
+        {
+          "character": "SUSAN",
+          "parenthetical": "",
+          "text": "You know I work at the concert hall?"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "You know my favorite book is “The"
+        },
+        {
+          "character": "SUSAN",
+          "parenthetical": "",
+          "text": "You’re hilarious. MUSIC CUE:"
+        },
+        {
+          "character": "SOMETHING UPBEAT",
+          "parenthetical": "",
+          "text": "SINGLE BEATS OF RICKY WORKING THE PARTY"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "My idols are Jesus Christ, George"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "(CONT’D)",
+          "text": "When I pulled that three legged cat off of her roof and gave it back to"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "(CONT’D)",
+          "text": "Few people know it but Stravinsky wasn’t just a musician."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "(CONT’D)",
+          "text": "Buy low and sell high."
+        },
+        {
+          "character": "LAMBERT",
+          "parenthetical": "",
+          "text": "That is a good motto."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "It nearly helped the Duke Brothers corner the frozen concentrated orange juice market."
+        },
+        {
+          "character": "LAMBERT",
+          "parenthetical": "",
+          "text": "“Trading Places!”"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Thanks."
+        }
+      ],
+      "actionPreview": "People are moved. Some dab their eyes. Always doing stuff for other people. Tonight, we’re doing something for you. Happy birthday, buddy. Rod swings and crushes it, his follow through turns him away from the group for a moment. \"Ricky Stanicky\" 11.13.09 Bushell 46. And scene. Yeah. just that uh... "
+    },
+    {
+      "number": 49,
+      "heading": "EXT. GOLF RANGE PARKING LOT - LATER",
+      "characters": [
+        "ERIN",
+        "CLAIRE",
+        "MR. LAMBERT",
+        "SARAH",
+        "TED"
+      ],
+      "dialogues": [
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "Thanks for coming."
+        },
+        {
+          "character": "CLAIRE",
+          "parenthetical": "",
+          "text": "It was a great party."
+        },
+        {
+          "character": "MR. LAMBERT",
+          "parenthetical": "",
+          "text": "Ted, that Ricky is very impressive."
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "He’s hot, too."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "I’m glad you all like him."
+        },
+        {
+          "character": "MR. LAMBERT",
+          "parenthetical": "",
+          "text": "By the way, I want to see you in my office first thing on Monday."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "I think I’m about to get a promotion."
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "I think you’re also about to get a blow job."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Best birthday ever."
+        }
+      ],
+      "actionPreview": "People are leaving. Everyone is in good spirits. Mr. Lambert and Clare and Erin’s sister, SARAH, 20’s, a wild girl, stop on the way out. Most of your friends are complete idiots, but Ricky, he’s like a breath of fresh air. There’s something big I need to discuss with you. The Lamberts leave. Erin sq"
+    },
+    {
+      "number": 50,
+      "heading": "INT. LAX - MORNING",
+      "characters": [
+        "ROD",
+        "TED",
+        "LAMBERT",
+        "RICKY",
+        "PRENTISS"
+      ],
+      "dialogues": [
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Pleasure doing business with you all."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "We’ll keep it in mind. LAMBERT’S OFFICE - RECEPTION AREA - LATER"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Hilary Clinton never struck me as a cigar smoker."
+        },
+        {
+          "character": "LAMBERT",
+          "parenthetical": "",
+          "text": "Oh yeah."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "A few."
+        },
+        {
+          "character": "LAMBERT",
+          "parenthetical": "",
+          "text": "Close to four times over the past year."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Was it that many?"
+        },
+        {
+          "character": "LAMBERT",
+          "parenthetical": "",
+          "text": "One round at PGA West came out to four hundred and eighty dollars in greens fees alone."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Yeah but there’s a lot of potential there."
+        },
+        {
+          "character": "LAMBERT",
+          "parenthetical": "",
+          "text": "I agree and Ricky is quite a guy."
+        },
+        {
+          "character": "LAMBERT",
+          "parenthetical": "(CONT’D)",
+          "text": "\"Ricky Stanicky\""
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "I’m sorry?"
+        },
+        {
+          "character": "LAMBERT",
+          "parenthetical": "",
+          "text": "Our new head of sales is going to be Ricky Stanicky."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Rod-rrruh rruh Ricky?"
+        },
+        {
+          "character": "LAMBERT",
+          "parenthetical": "",
+          "text": "That’s the exciting news I told you about."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Oh...I am... I"
+        },
+        {
+          "character": "LAMBERT",
+          "parenthetical": "",
+          "text": "I know, you wanted to take over the department."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "CEO?"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Ted."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Working with my best friend in the world."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "What are you doing?"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "I know this seems a little crazy."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "A little?"
+        },
+        {
+          "character": "RICKY",
+          "parenthetical": "",
+          "text": "Look at it from my perspective."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "150,000!!!! That’s sixty grand more than I make."
+        },
+        {
+          "character": "RICKY",
+          "parenthetical": "",
+          "text": "I know."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "How?"
+        },
+        {
+          "character": "RICKY",
+          "parenthetical": "",
+          "text": "It said in the bible that Ricky once worked as a hostage negotiator so I played hard ball."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "A corporate car?!"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "(CONT’D)",
+          "text": "(on a dime, gritting his teeth)"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "(CONT’D)",
+          "text": "...except it was supposed to be my fucking car."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "We’re going to be working together."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Matching cars?"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Look, the money and the car are great. But really it’s about the role."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "This is not a show."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Ricky is Rod’s best friend."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "What script?"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "The bible!"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "You can’t do this."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "I was meaning to ask you that."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "People will find out the truth."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "The truth?"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Mr. Prentiss."
+        },
+        {
+          "character": "PRENTISS",
+          "parenthetical": "",
+          "text": "Ted."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Mr. P."
+        },
+        {
+          "character": "PRENTISS",
+          "parenthetical": "",
+          "text": "Hey, I’ve got a golf game with Mr."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "I’d love to join your three way."
+        },
+        {
+          "character": "PRENTISS",
+          "parenthetical": "",
+          "text": "We could always use a caddy."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Toyo Yamashido?"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "And now you get to drive him around in a golf cart!"
+        }
+      ],
+      "actionPreview": "Ted, Wes and JT shake Rod’s hand. Ted gives Rod five more hundreds. Anytime you need me back, I’d be happy to come. \"Ricky Stanicky\" 11.13.09 Bushell 50. Ted sits in the uncomfortable chair. Lambert seems to be in good spirits. He is straightening a framed picture of he and Hilary Clinton smoking fa"
+    },
+    {
+      "number": 51,
+      "heading": "INT. CONFERENCE ROOM - DAY",
+      "characters": [
+        "MR. LAMBERT",
+        "TED",
+        "ROD",
+        "GARY"
+      ],
+      "dialogues": [
+        {
+          "character": "MR. LAMBERT",
+          "parenthetical": "",
+          "text": "Ted, why don’t you run us through the sales strategy for the second quarter of this year?"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "I was thinking that Ricky might want to lead the meeting."
+        },
+        {
+          "character": "MR. LAMBERT",
+          "parenthetical": "",
+          "text": "Already?"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "But he’s got great ideas."
+        },
+        {
+          "character": "MR. LAMBERT",
+          "parenthetical": "",
+          "text": "Okay."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Thanks for the vote of confidence"
+        },
+        {
+          "character": "MR. LAMBERT",
+          "parenthetical": "",
+          "text": "Seems smart."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "(to Mr. Lambert) I like to delegate."
+        },
+        {
+          "character": "MR. LAMBERT",
+          "parenthetical": "",
+          "text": "Ted."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Ricky’s going to run the department."
+        },
+        {
+          "character": "MR. LAMBERT",
+          "parenthetical": "",
+          "text": "Love that."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "But --"
+        },
+        {
+          "character": "MR. LAMBERT",
+          "parenthetical": "",
+          "text": "Ricky."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Well, we sell financial services correct?"
+        },
+        {
+          "character": "MR. LAMBERT",
+          "parenthetical": "",
+          "text": "Right."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "My background is in the area of non profit humanitarian work."
+        },
+        {
+          "character": "MR. LAMBERT",
+          "parenthetical": "",
+          "text": "What are you saying?"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "I mean, why can’t we make profit off of non profit?"
+        },
+        {
+          "character": "MR. LAMBERT",
+          "parenthetical": "",
+          "text": "I’m not sure if I understand that."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "I know I don’t."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Non profit charitable stuff."
+        },
+        {
+          "character": "GARY",
+          "parenthetical": "",
+          "text": "Wait, I think I get it."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Bingo."
+        },
+        {
+          "character": "MR. LAMBERT",
+          "parenthetical": "",
+          "text": "Feel good investing. What a catch phrase!"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "It’s catchy, but is there anything there that will actually make us money."
+        },
+        {
+          "character": "MR. LAMBERT",
+          "parenthetical": "",
+          "text": "With a catch phrase like that how can’t we make money? Feel good investing."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Snap crackle, sir."
+        },
+        {
+          "character": "MR. LAMBERT",
+          "parenthetical": "",
+          "text": "People have lost faith in the financial sector."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "This is wildly so."
+        },
+        {
+          "character": "MR. LAMBERT",
+          "parenthetical": "",
+          "text": "Next month is our sales conference at the Bellagio in Las Vegas."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "As long as I’ve got Ted on my team."
+        },
+        {
+          "character": "MR. LAMBERT",
+          "parenthetical": "",
+          "text": "You got whoever you want."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "(to himself)"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "That was so great."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "I was supposed to be giving that presentation."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Feel good investing!"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Feel good investing?"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Why not?"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Because the whole point of non profit is not to make money!"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Details!"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Jesus, that’s a quote from “Saint"
+        }
+      ],
+      "actionPreview": "Mr. Lambert and a couple of corporate heavies sit at one side of the table. Ted, Ricky, JT and five other sales associates are on the other side of the table. He just started. \"Ricky Stanicky\" 11.13.09 Bushell 55. Tons of them. That’s why we brought him in. Ricky, what do you have? Ted, but I think "
+    },
+    {
+      "number": 52,
+      "heading": "INT. TED’S OFFICE - MOMENTS LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Ted sits with his head in his hands."
+    },
+    {
+      "number": 53,
+      "heading": "INT. TED’S CAR / INT. TED’S LIVING ROOM - LATER",
+      "characters": [
+        "TED",
+        "ERIN",
+        "END INTERCUT",
+        "ROD",
+        "SARAH"
+      ],
+      "dialogues": [
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Erin... uh...so, weird story."
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "I know."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Ricky’s at our house?"
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "He stopped by for book group."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "But --"
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "Come home. We’ll talk about it then."
+        },
+        {
+          "character": "END INTERCUT",
+          "parenthetical": "",
+          "text": "Erin hangs up and returns to her book group."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "I feel like this book is really about the domination of women by a male paternalistic society."
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "I never thought of “Shopaholic Ties the Knot” as a feminist text."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Oh it is."
+        }
+      ],
+      "actionPreview": "Ted is driving home on the phone. Erin is on the phone in the house. I didn’t get the promotion. Ricky did.. He’s here. He told me everything. Don’t worry, my dad still loves you. I invited him at your party. \"Ricky Stanicky\" 11.13.09 Bushell 59. A group of women including Susan, Erin and Sarah loun"
+    },
+    {
+      "number": 54,
+      "heading": "EXT. TED’S HOUSE - CONTINUOUS",
+      "characters": [
+        "TED"
+      ],
+      "dialogues": [
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "A fucking BMW!"
+        }
+      ],
+      "actionPreview": "Ted pulls up in his car behind a gleaming new BMW. A vanity license plate reads: “HDOFSLES” He climbs out and heads to the front door with a head of steam."
+    },
+    {
+      "number": 55,
+      "heading": "INT. TED’S HOUSE - CONTINUOUS",
+      "characters": [
+        "TED",
+        "ROD",
+        "ERIN",
+        "SARAH",
+        "SUSAN"
+      ],
+      "dialogues": [
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Ricky, can I talk to you for a second?"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Sure."
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "We’re all going to the new Charlize"
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "It was Ricky’s idea."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "It’s about a woman with a life threatening heart murmur."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Heart Murmur?"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "(reading)"
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "The last time you were going to come with me to something romantic you had to go visit Ricky."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "(miserable)"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "We should get Wes and JT to go, too."
+        },
+        {
+          "character": "SUSAN",
+          "parenthetical": "",
+          "text": "JT would hate that movie. (then, excited) I’ll call him."
+        }
+      ],
+      "actionPreview": "Ted walks inside. Everyone says hi to Ted. But I don’t want us to be late. Theron Richard Gere movie, “Heart Murmur.” \"Ricky Stanicky\" 11.13.09 Bushell 60. And how she uses her few remaining beats to find love. Rod grabs the Calendar section from the table and opens up to a full page ad. Heart Murmu"
+    },
+    {
+      "number": 56,
+      "heading": "INT. MOVIE THEATER - LATER",
+      "characters": [
+        "TED",
+        "WES"
+      ],
+      "dialogues": [
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Next time maybe you assholes should listen to me and stop using the excuse."
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "We did kind of mess up. JT"
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "But now I’m into the movie."
+        }
+      ],
+      "actionPreview": "The theater is filled with women. The only guys there are Wes, JT, Ted and Ricky. Ricky sits on one side of Erin while Ted sits on the other. JT There goes our excuse to get out of chick flicks. \"Ricky Stanicky\" 11.13.09 Bushell 61. JT You’re the one that came up with Ricky in the first place. Stop "
+    },
+    {
+      "number": 57,
+      "heading": "INT. MOVIE THEATER - LATER",
+      "characters": [
+        "TED",
+        "ROD",
+        "HEART MURMUR.",
+        "ERIN AND SUSAN",
+        "ACTRESS"
+      ],
+      "dialogues": [
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Seriously, she’s going to get together with the guy at the end."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "It’s the most deadly heart murmur ever diagnosed."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "There’s no such thing as a DEADLY"
+        },
+        {
+          "character": "ERIN AND SUSAN",
+          "parenthetical": "",
+          "text": "Shh!!! ANGLE ON the movie screen"
+        },
+        {
+          "character": "ACTRESS",
+          "parenthetical": "",
+          "text": "I’m not in love with you."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "I called that one!"
+        }
+      ],
+      "actionPreview": "And then she’s going to die. Of a heart murmur. Who dies of a heart murmur? I’m in love with Bernard. ANGLE ON Rod and Erin. Rod pumps his fist defiantly. Ted looks over at JT. He makes a gun out of his finger and pretends to shoot himself. Wes is happily eating popcorn. \"Ricky Stanicky\" 11.13.09 Bu"
+    },
+    {
+      "number": 58,
+      "heading": "INT. MOVIE THEATER - LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Ted has dozed off. The music swells. Erin is dabbing her eyes with a tissue. Rod puts his arm soothingly around her. It’s platonic but if it was your girlfriend, would you care? Ted wakes up and sees this. He looks genuinely worried."
+    },
+    {
+      "number": 59,
+      "heading": "INT. RESTAURANT - LATER",
+      "characters": [
+        "TED",
+        "WES"
+      ],
+      "dialogues": [
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Did you see that?"
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "This blows. JT"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "You’re not supposed to use the excuse to see strippers."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "That’s a lie. JT"
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "How are we going to get rid of him?"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Wait a minute."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Yeah."
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "Yeah."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Let’s put him through re tox."
+        }
+      ],
+      "actionPreview": "Ted, sits with Wes and JT. He’s moving in on Erin. I can’t believe this. Seriously. How the heck am I going to see strippers with Ricky here? That’s why we’re in this mess in the first place. JT Stripper addiction is a real illness. It’s in medical books. The longer he stays the greater the chance h"
+    },
+    {
+      "number": 60,
+      "heading": "EXT. TED’S BACK YARD - LATER",
+      "characters": [
+        "ROD",
+        "SUSAN",
+        "RACK FOCUS",
+        "TED",
+        "WES",
+        "SMOKER",
+        "ERIN"
+      ],
+      "dialogues": [
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Wow."
+        },
+        {
+          "character": "SUSAN",
+          "parenthetical": "",
+          "text": "I thought you’re a vegan."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "I am."
+        },
+        {
+          "character": "RACK FOCUS",
+          "parenthetical": "",
+          "text": "TO ROD’s FOREHEAD beading the same way."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Can I get a diet coke or something?"
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "I forgot the soda."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Boy, it’s a hot one."
+        },
+        {
+          "character": "SMOKER",
+          "parenthetical": "",
+          "text": "You mind if we smoke back here?"
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "Do you have to?"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Do we have a choice?"
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "I’m going inside to see if we have any non alcoholic drinks."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "I’ll come with you."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Ricky, help me here for a second. I need an extra set of hands with these ribs."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "(CONT’D)",
+          "text": "Mop while I taste this sauce."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "(CONT’D)",
+          "text": "Damn that’s good. The secret is slow cooked bacon."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "(CONT’D)",
+          "text": "I think the ribs are ready."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "(CONT’D)",
+          "text": "(to Ricky)"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "I’m Ricky."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Suit yourself."
+        }
+      ],
+      "actionPreview": "MUSIC CUE: BILLY JOEL’S PRESSURE Ted carries a load of red meat out toward a grill. He starts tossing steaks, burgers and sausages on the grill. Next to it is a closed “meat smoker.” Ted, JT, Susan, Sarah all hanging out in the backyard. Rod enters. They exchange greetings. Ted uses his spatula to p"
+    },
+    {
+      "number": 61,
+      "heading": "INT. TED’S HOUSE - MOMENTS LATER",
+      "characters": [
+        "TED",
+        "SARAH"
+      ],
+      "dialogues": [
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "So, Sar."
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "Really?"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "And you know what they say about guys with one testicle? (Lowering his voice)"
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "Really?"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "They compensate in various ways for their deficiency."
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "I never heard of that."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "It’s in medical books."
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "But doesn’t Ricky have an abstinence pledge?"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "That only covers intercourse."
+        }
+      ],
+      "actionPreview": "Sarah is in the kitchen getting a beer. Ted walks up to her. I think Ricky digs you. \"Ricky Stanicky\" 11.13.09 Bushell 66. He is cute. Supposed to be amazing lovers. Work harder to satisfy a woman. You just need to be creative. Ted exits. Sarah is momentarily lost in thought."
+    },
+    {
+      "number": 62,
+      "heading": "EXT. TED’S HOUSE - CONTINUOUS",
+      "characters": [
+        "PARTY GUEST",
+        "ROD"
+      ],
+      "dialogues": [
+        {
+          "character": "PARTY GUEST",
+          "parenthetical": "",
+          "text": "Ricky, can I get a burger?"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Aah!!!"
+        }
+      ],
+      "actionPreview": "Rod sneakily dips his finger in the sauce and is about to lick it when... Caught by surprised, Rod knocks over the bowl and presses his hand onto the hot the grill. He screams. He looks around. People are staring him. Rod runs inside. \"Ricky Stanicky\" 11.13.09 Bushell 67."
+    },
+    {
+      "number": 63,
+      "heading": "INT. BATHROOM - CONTINUOUS",
+      "characters": [
+        "TED",
+        "ROD",
+        "SARAH",
+        "ERIN"
+      ],
+      "dialogues": [
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Something for the pain?"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "This isn’t fair."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "No. I’m going to make Ricky lose everything."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "No, I’m going to help you."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "By taking my job and fucking my girlfriend?"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "I didn’t fuck her."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "You’re not my best friend."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "That’s mean."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Ricky’s in there."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Be out in a second."
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "So, is it true what they say about guys with one ball?"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Excuse me?"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "(CONT’D)",
+          "text": "I can’t."
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "I understand."
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "Ricky!"
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "Are you all right?"
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "(CONT’D)",
+          "text": "Were you guys taking pills and having sex?"
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "Technically, mouth fucking is not sex."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "(earnest)"
+        }
+      ],
+      "actionPreview": "Rod is running his hand under cold water. Ted walks up behind him. Ted opens the cabinet and pulls out a bottle of painkillers. Rod pushes them away. You’re going to make me lose everything! But you’re not Ricky. You’re Rod. Go home, Rod. You’re ruining my life. I promise. I’ll make your life better"
+    },
+    {
+      "number": 64,
+      "heading": "EXT. TED’S PATIO - DAY",
+      "characters": [
+        "TED"
+      ],
+      "dialogues": [
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "I should probably check on Sarah and Rod."
+        }
+      ],
+      "actionPreview": "Ted, JT and Wes stand by the BBQ. Ted heads in."
+    },
+    {
+      "number": 65,
+      "heading": "INT. TED’S HOUSE - LATER",
+      "characters": [
+        "ERIN",
+        "TED",
+        "ROD"
+      ],
+      "dialogues": [
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "Ted, I can’t believe you."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "You knew Ricky had a substance abuse problem but you still invited smokers and served alcohol at the party."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Substance abuse problem?"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "You don’t need to cover for me anymore."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Group sex?"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "My name’s Ricky Stanicky and I’m an alcoholic and a sex addict."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "(CONT’D)",
+          "text": "I’m not mad at you, man. I’m the one with the lack of willpower."
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "Please."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "No, seriously --"
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "You owe him an apology."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "But --"
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "Ted!"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "I’m sorry, Ricky."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "It’s okay, Ted."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "(CONT’D)",
+          "text": "(sing songy, in Ted’s ear)"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        }
+      ],
+      "actionPreview": "Ted walks into find Erin gently bandaging Rod’s head. She sees him. He was the one who checked me into Promises. \"Ricky Stanicky\" 11.13.09 Bushell 70. (MORE) Ted said enough of the substance abuse and the group sex. And a shopaholic. Ted is staggered. You saved me in the first place. I’m just sorry "
+    },
+    {
+      "number": 66,
+      "heading": "INT. TED’S HOUSE - CONTINUOUS",
+      "characters": [
+        "ROD",
+        "ERIN",
+        "SUSAN"
+      ],
+      "dialogues": [
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "I should go."
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "Of course."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "After today, I’d prefer if you went."
+        },
+        {
+          "character": "SUSAN",
+          "parenthetical": "",
+          "text": "Ricky, can you give me a ride?"
+        },
+        {
+          "character": "SUSAN",
+          "parenthetical": "",
+          "text": "That’s okay."
+        }
+      ],
+      "actionPreview": "Ted, Erin and Rod walk back into the room where the wreckage from the crystal animals remains. Susan, JT and Wes are picking up the shards. Erin will you come to a meeting with me tomorrow? As my sponsor. But shouldn’t Ted do that? Rod looks at Ted pointedly, then takes out his keys. I have to take "
+    },
+    {
+      "number": 67,
+      "heading": "INT. SUSAN’S VOLVO - LATER",
+      "characters": [
+        "SUSAN",
+        "ROD"
+      ],
+      "dialogues": [
+        {
+          "character": "SUSAN",
+          "parenthetical": "",
+          "text": "I know what’s going on."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Excuse me?"
+        },
+        {
+          "character": "SUSAN",
+          "parenthetical": "",
+          "text": "Don’t act dumb."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "How do you know he’s going to strip clubs?"
+        },
+        {
+          "character": "SUSAN",
+          "parenthetical": "",
+          "text": "I found charges on his credit statement to Lacecapades and some place called Jumbo’s Clown Room."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "I covered for him."
+        },
+        {
+          "character": "SUSAN",
+          "parenthetical": "",
+          "text": "I’m not mad at you."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Susan, what guy goes to a strip club and uses a credit card?"
+        },
+        {
+          "character": "SUSAN",
+          "parenthetical": "",
+          "text": "My brain dead husband?"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "A guy that wants to get caught."
+        },
+        {
+          "character": "SUSAN",
+          "parenthetical": "",
+          "text": "That’s none of your business."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "You’re right."
+        },
+        {
+          "character": "SUSAN",
+          "parenthetical": "",
+          "text": "We don’t have sex as much since we got married."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "The passion is gone."
+        },
+        {
+          "character": "SUSAN",
+          "parenthetical": "",
+          "text": "That’s no excuse for what he did."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "No, but perhaps you need to spice things up a little."
+        },
+        {
+          "character": "SUSAN",
+          "parenthetical": "",
+          "text": "You think that’s the problem?"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "If you love someone you have to try new things."
+        },
+        {
+          "character": "SUSAN",
+          "parenthetical": "",
+          "text": "There’s a “Bed Bath and Beyond” in"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "They just opened one in Nairobi."
+        }
+      ],
+      "actionPreview": "Susan drives. Rod sits in the passenger seat. I know about the lies. Rod blanches. Rod is speechless for once. JT has been going to strip clubs. \"Ricky Stanicky\" 11.13.09 Bushell 72. (MORE) And then he says he’s with you rescuing some hapless girl. And you cover for him. Rod is relieved. Tonight, wh"
+    },
+    {
+      "number": 68,
+      "heading": "INT. BED BATH AND BEYOND - AFTERNOON",
+      "characters": [
+        "SUSAN",
+        "TEN YEAR OLD"
+      ],
+      "dialogues": [
+        {
+          "character": "SUSAN",
+          "parenthetical": "",
+          "text": "(o.s.)"
+        },
+        {
+          "character": "SUSAN",
+          "parenthetical": "",
+          "text": "Get in here."
+        },
+        {
+          "character": "TEN YEAR OLD",
+          "parenthetical": "",
+          "text": "(to friend)"
+        }
+      ],
+      "actionPreview": "Susan wears a long trench coat. JT walks pushes a shopping cart down the aisle. \"Ricky Stanicky\" 11.13.09 Bushell 74. JT Do we really need another soap dispenser? Let’s go eat. Susan is gone. JT (CONT’D) Suz? Where’d you go? Over here. BATHROOM DISPLAY - CONTINUOUS Susan is on her back in a claw foo"
+    },
+    {
+      "number": 69,
+      "heading": "INT. TED’S HOUSE - THE SAME TIME",
+      "characters": [
+        "TED",
+        "ERIN"
+      ],
+      "dialogues": [
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Er --"
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "I don’t want to talk to you."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "We don’t have to talk."
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "Ecch."
+        }
+      ],
+      "actionPreview": "Ted an Erin sit in bed reading. I can get the tomato. \"Ricky Stanicky\" 11.13.09 Bushell 75. Erin rolls away from Ted and turns out the light."
+    },
+    {
+      "number": 70,
+      "heading": "INT. RICKY’S OFFICE - DAY",
+      "characters": [
+        "TED",
+        "ROD"
+      ],
+      "dialogues": [
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Look, Rod --"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Ricky."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Ricky."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Right."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Grab your stuff, we got a meeting."
+        }
+      ],
+      "actionPreview": "Rod sits looking out at the Hollywood sign. Ted enters. Er. I’m sorry about what happened at the BBQ. I feel like, why shouldn’t we get along? Work together. I mean (sing songy) Best friends. (then) Right?"
+    },
+    {
+      "number": 71,
+      "heading": "EXT. LAKEVIEW GOLF COURSE - DAY",
+      "characters": [
+        "ROD",
+        "TED",
+        "PRENTISS",
+        "TOYO",
+        "LAMBERT"
+      ],
+      "dialogues": [
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Why are we here?"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Toyo Yamashidi."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "But I can’t play -- PRENTISS and Mr. Lambert walk up with TOYO Yamashidi."
+        },
+        {
+          "character": "PRENTISS",
+          "parenthetical": "",
+          "text": "Ricky!"
+        },
+        {
+          "character": "TOYO",
+          "parenthetical": "",
+          "text": "I hear great things about you."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Domo Arrigato."
+        },
+        {
+          "character": "LAMBERT",
+          "parenthetical": "",
+          "text": "Ted was telling us about the flop shot you hit with the 60 degree."
+        },
+        {
+          "character": "TOYO",
+          "parenthetical": "",
+          "text": "I can’t wait to see that."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Oh don’t worry, you will."
+        },
+        {
+          "character": "PRENTISS",
+          "parenthetical": "",
+          "text": "Okay, tee time in twenty."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "I can’t play golf."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "If you really are Ricky Stanicky, you should have no problem."
+        }
+      ],
+      "actionPreview": "Ted pulls up to Lakeview golf course. Remember? Prentiss invited you to play golf with him. Ted. This is Toyo Yamashidi. He’s interested in offering our investment products to the Japanese market. Toyo shakes hands with them. \"Ricky Stanicky\" 11.13.09 Bushell 76. He says you can make it stop dead on"
+    },
+    {
+      "number": 72,
+      "heading": "EXT. FIRST TEE - DAY",
+      "characters": [
+        "LAMBERT",
+        "TED",
+        "PRENTISS",
+        "ROD"
+      ],
+      "dialogues": [
+        {
+          "character": "LAMBERT",
+          "parenthetical": "",
+          "text": "You got all of that."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Yeah."
+        },
+        {
+          "character": "PRENTISS",
+          "parenthetical": "",
+          "text": "Ricky, you’re up."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Damn!"
+        },
+        {
+          "character": "LAMBERT",
+          "parenthetical": "",
+          "text": "But our tee time... there’s a group behind us--"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "I’ll get him back."
+        }
+      ],
+      "actionPreview": "Prentiss hits a perfect shot. That’ll play. Rod walks up to the tee. He tees the ball up. He stands over the ball for a long beat. Forgot something in my car. Rod drops his club an goes running off. \"Ricky Stanicky\" 11.13.09 Bushell 77. Rod is gone. Ted follows Rod."
+    },
+    {
+      "number": 73,
+      "heading": "EXT. PARKING LOT - DAY",
+      "characters": [
+        "TED",
+        "ROD",
+        "VALET"
+      ],
+      "dialogues": [
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "So it’s over."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Aaaaaah!!!"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Holy crap."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Okay, I’m good."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "(CONT’D)",
+          "text": "Role of a life time, Ted."
+        },
+        {
+          "character": "VALET",
+          "parenthetical": "",
+          "text": "(in Spanish)"
+        }
+      ],
+      "actionPreview": "Rod walks up to the valet and gives him his ticket. Ted follows him. The valet runs over and gets Rod’s car. You’re finally walking away? The valet pulls up, gets out and opens the door for Rod. Rod puts his hand in the open doorway and slams the door on it. My hand! Ted and the valet are stunned. R"
+    },
+    {
+      "number": 74,
+      "heading": "EXT. GOLF COURSE - FIRST HOLE",
+      "characters": [
+        "PRENTISS",
+        "LAMBERT",
+        "ROD",
+        "TED",
+        "TOYO"
+      ],
+      "dialogues": [
+        {
+          "character": "PRENTISS",
+          "parenthetical": "",
+          "text": "I can’t believe that valet slammed your hand in the door."
+        },
+        {
+          "character": "LAMBERT",
+          "parenthetical": "",
+          "text": "You should have him fired."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Come on, he’s got a family."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Yeah, right."
+        },
+        {
+          "character": "TOYO",
+          "parenthetical": "",
+          "text": "As a boy, I worked as a valet in"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Look at him!"
+        },
+        {
+          "character": "TOYO",
+          "parenthetical": "",
+          "text": "Lambert."
+        },
+        {
+          "character": "LAMBERT",
+          "parenthetical": "",
+          "text": "We can do that for sure, Toyo."
+        },
+        {
+          "character": "LAMBERT",
+          "parenthetical": "(CONT’D)",
+          "text": "Okay, Ted."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "(shocked)"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Maybe we should fire Ted instead."
+        }
+      ],
+      "actionPreview": "Rod’s hand is bandaged. Rod is in a cart with Toyo. Toyo is with Prentiss. Ted holds onto the back with the bags. He’s at a complete loss. Besides maybe some day he could be one of our biggest investors. Japan. Parking cars for rich people. And look at me now. Everybody’s got a secret. Right, Ted? T"
+    },
+    {
+      "number": 75,
+      "heading": "INT. TED’S OFFICE - DAY",
+      "characters": [
+        "TED",
+        "WES",
+        "ERIN",
+        "ROD",
+        "MR. LAMBERT",
+        "ONE BALL.",
+        "LAMBERT"
+      ],
+      "dialogues": [
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "He also slammed his own hand in the door of his car so he wouldn’t get discovered."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "His name is Rod."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "You’re selling me out because you had sex in a home furnishing store? JT"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Wow."
+        },
+        {
+          "character": "WES",
+          "parenthetical": "(O.S.)",
+          "text": "Ricky Stanicky’s office."
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "Sure thing, JT. JT hangs up."
+        },
+        {
+          "character": "WES",
+          "parenthetical": "(CONT’D)",
+          "text": "I’m rocking the business casual."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Ricky hired you as his assistant?"
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "He thought I was getting creatively stifled living with Nana."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "But I thought we were trying to get rid of him."
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "How could I?"
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "Seriously,"
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "My dad said you brought in a three million dollar deal yesterday."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "It was nothing."
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "This business means everything to him."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "I’m just glad I can help."
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "You are such a good guy."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "What the hell is going on?"
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "I came to have lunch with both of my guys."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Both of your guys?"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "I set it up."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "I don’t want to go lunch."
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "If you’re too busy, Ricky and I will go together."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Okay, this has to end."
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "Huh?"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "I used a made up friend to get out of some things like your dinner party and I was afraid if you found out, you’d never forgive me."
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "That’s the craziest thing I ever heard."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Totally nuts!"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Why would I make that up?"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "You’re clearly jealous of our relationship."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "I’m telling you the truth."
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "And you never got caught?"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "We were careful."
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "Convenient."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Yeah, I’d say."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Shut up, Rod."
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "His name is Ricky."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "But I have the bible."
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "The bible?"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "It’s a meticulous account of all the lies I’ve ever told."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "(not sold at all)"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Well, Rod has it."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "I always keep it right here, next to my heart."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "You know the bible I’m talking about it."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "The audio one that Samuel L."
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "Ted, calm down."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "You know I don’t fight."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "That’s not you."
+        },
+        {
+          "character": "MR. LAMBERT",
+          "parenthetical": "",
+          "text": "What is going on here?"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "He’s not Ricky Stanicky."
+        },
+        {
+          "character": "MR. LAMBERT",
+          "parenthetical": "",
+          "text": "Of course he is."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "I’ll prove it."
+        },
+        {
+          "character": "ONE BALL.",
+          "parenthetical": "",
+          "text": "Erin stares at"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "(CONT’D)",
+          "text": "He... he was supposed to... have two... (weak) balls."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "I was sick."
+        },
+        {
+          "character": "MR. LAMBERT",
+          "parenthetical": "",
+          "text": "Ted, what is wrong with you? I like making people uncomfortable but this is a little beyond."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "You had a ball removed to make this seem real?"
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "Ted!"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "(in near tears, to Ted)"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Guys, please. JT"
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "(guilty as hell)"
+        },
+        {
+          "character": "LAMBERT",
+          "parenthetical": "",
+          "text": "Get him out of here."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Erin, you’ve got to believe me."
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "Just go."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "But --"
+        }
+      ],
+      "actionPreview": "Ted is in his office with JT. JT Rod brought in three million in business from Toyo? He’s psycho. JT Why are you so hostile to him? Ricky’s good people. And you said if he stuck around, he was going to get you in trouble with Susan. JT Yeah, but then he got Susan to fuck me in “Bed Bath and Beyond.”"
+    },
+    {
+      "number": 76,
+      "heading": "EXT. PARKING GARAGE - DAY",
+      "characters": [
+        "TED"
+      ],
+      "dialogues": [
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "I have to find that bible."
+        }
+      ],
+      "actionPreview": "Ted gets in his car. Ted pulls away skidding around a parking attendant."
+    },
+    {
+      "number": 77,
+      "heading": "EXT. ROAD - DAY",
+      "characters": [
+        "TED"
+      ],
+      "dialogues": [
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Where is it?"
+        }
+      ],
+      "actionPreview": "Ted races down the road. Where is it? (then) Nana’s house!"
+    },
+    {
+      "number": 78,
+      "heading": "EXT. NANA’S HOUSE - DAY",
+      "characters": [
+        "TERI",
+        "TED"
+      ],
+      "dialogues": [
+        {
+          "character": "TERI",
+          "parenthetical": "",
+          "text": "You all right?"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Teri... um... I’m going to need to stay here for a little bit."
+        }
+      ],
+      "actionPreview": "Ted parks in front of Nana’s house, racing towards it. As he reaches the door. His blackberry bings. He looks down at it. MESSAGE FROM RICKY STANICKY “IS THIS THE BIBLE YOU’RE LOOKING FOR?” \"Ricky Stanicky\" 11.13.09 Bushell 86. A video clip opens. It’s the bible in a trash can in flames. Ted is shoc"
+    },
+    {
+      "number": 79,
+      "heading": "INT. NANA’S HOUSE - DAY",
+      "characters": [
+        "WES",
+        "TED",
+        "NANA"
+      ],
+      "dialogues": [
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "Hey, uh... I like your sweat pants."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "These are my suicide pants."
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "Once I get back from the sales conference we’ll fix everything."
+        },
+        {
+          "character": "WES",
+          "parenthetical": "(CONT’D)",
+          "text": "Come on."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "I appreciate you letting me stay here, but, it’s hard for me to be friends with someone who sold me out for a fake guy who removed his own ball."
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "I’m pretty sure he was just sucking it in."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Wes, listen to yourself."
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "Ted, I have some really excellent weed in the house."
+        },
+        {
+          "character": "NANA",
+          "parenthetical": "",
+          "text": "Wes, wipe me."
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "Shoot, Teri’s not back ‘til tomorrow morning."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "But --"
+        }
+      ],
+      "actionPreview": "Ted sits on the couch in his sweat pants drinking a beer. Wes walks up pulling a roller suitcase. Ricky will make it better. Ted doesn’t even answer. Don’t be mad at me. Smoke it. I have porn. Watch it. I have a pocket pussy. Fuck it. The place is yours. Try to make the best of it. \"Ricky Stanicky\" "
+    },
+    {
+      "number": 80,
+      "heading": "INT. NANA’S BEDROOM - DAY",
+      "characters": [
+        "NANA",
+        "TED"
+      ],
+      "dialogues": [
+        {
+          "character": "NANA",
+          "parenthetical": "",
+          "text": "Ted."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Terrible. She was the best thing that ever happened to me."
+        },
+        {
+          "character": "NANA",
+          "parenthetical": "",
+          "text": "She was very sweet."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "(disgusted)"
+        },
+        {
+          "character": "NANA",
+          "parenthetical": "",
+          "text": "Maybe I can help you out."
+        },
+        {
+          "character": "NANA",
+          "parenthetical": "(CONT’D)",
+          "text": "Give me a good cleaning back there and I’ll let you join the fun."
+        },
+        {
+          "character": "NANA",
+          "parenthetical": "(CONT’D)",
+          "text": "Dig deep like you’re looking for buried treasure."
+        }
+      ],
+      "actionPreview": "Ted walks into Nana’s room. Sorry to hear about Erin. How are you? I know that Wesley was quite fond of her too. Had a picture of her in his room right above his box of tissues. Really? (then) Well, she’s gone. I blew it. See Ted, I’m 87 years old. Can’t walk too well. Can’t hear too well. Can’t eve"
+    },
+    {
+      "number": 81,
+      "heading": "INT. HOTEL LOBBY - DAY",
+      "characters": [
+        "SUSAN",
+        "ERIN",
+        "ROD",
+        "WES"
+      ],
+      "dialogues": [
+        {
+          "character": "SUSAN",
+          "parenthetical": "",
+          "text": "It’s good that you came here, Erin."
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "Yeah."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "But there’s hope."
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "You should’ve seen him when I left."
+        }
+      ],
+      "actionPreview": "JT, Susan, Wes, Erin and Rod walk through the hotel. Rod is talking to Susan and Erin. Wes and JT walk behind. Get your mind off of Ted. I never expected him to flip out like that. The other day, he seemed so... lost. Rod puts his arm around her. I was once lost. too. Yay though I walk in the valley"
+    },
+    {
+      "number": 82,
+      "heading": "INT. NANA’S ROOM - LATER",
+      "characters": [
+        "TED",
+        "NANA",
+        "SAMANTHA BROWN"
+      ],
+      "dialogues": [
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "I feel like I’m floating inside a cloud that’s floating inside another cloud hovering above a rainbow that’s being projected from the horn of a unicorn..."
+        },
+        {
+          "character": "NANA",
+          "parenthetical": "",
+          "text": "On the Lawrence Welk show!"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Best actor I’ve ever seen."
+        },
+        {
+          "character": "NANA",
+          "parenthetical": "",
+          "text": "Yeah."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "A pirate?"
+        },
+        {
+          "character": "NANA",
+          "parenthetical": "",
+          "text": "On the tv."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Do you remember what it was called?"
+        },
+        {
+          "character": "NANA",
+          "parenthetical": "",
+          "text": "Nope."
+        },
+        {
+          "character": "NANA",
+          "parenthetical": "(CONT’D)",
+          "text": "I did record it on the DVR."
+        },
+        {
+          "character": "SAMANTHA BROWN",
+          "parenthetical": "",
+          "text": "Looks like I dropped a few too many nickels in the slots."
+        }
+      ],
+      "actionPreview": "Ted lies next to Nana on the bed with perma grin on his face. The TV is on. \"Ricky Stanicky\" 11.13.09 Bushell 89. That’s exactly what Ricky said. (then) He has his vices. But he’s a terrific dancer. And an even better actor. I saw him on this show. He was a pirate. Like Bob Hope. Where’d you see the"
+    },
+    {
+      "number": 83,
+      "heading": "EXT. TREASURE ISLAND CASINO - CONTINUOUS",
+      "characters": [
+        "ROD",
+        "SAMANTHA BROWN"
+      ],
+      "dialogues": [
+        {
+          "character": "ROD",
+          "parenthetical": "(AS DRUNK PIRATE)",
+          "text": "Shiver me timbers."
+        },
+        {
+          "character": "SAMANTHA BROWN",
+          "parenthetical": "",
+          "text": "What a hoot!"
+        }
+      ],
+      "actionPreview": "A group of Pirates are taking part in the famous treasure island show. A pirate draws his sword and charges another very drunken pirate who holds a bottle of rum. Although in a hat and eye patch this guy is Rod. He drunkenly fights with the sober pirate. It’s an excellent Jackie Chan style drunken f"
+    },
+    {
+      "number": 84,
+      "heading": "INT. TREASURE ISLAND - CONTINUOUS",
+      "characters": [
+        "NANA",
+        "TED",
+        "SAMANTHA BROWN"
+      ],
+      "dialogues": [
+        {
+          "character": "NANA",
+          "parenthetical": "",
+          "text": "Wasn’t he terrific?"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "You can barely tell it’s him."
+        },
+        {
+          "character": "SAMANTHA BROWN",
+          "parenthetical": "(O.S.)",
+          "text": "Tonight I’m having dinner at “Reef”"
+        }
+      ],
+      "actionPreview": "Samantha Brown, now dressed for a night out, strolls through the casino. ANGLE ON Ted and Nana He’s like Errol Flynn. But drunker. I need more. Samantha’s commentary continues. Treasure Island’s four star steak house with the director of the World Famous Treasure Island Pirate Show, Milt Conrad, Jr."
+    },
+    {
+      "number": 85,
+      "heading": "INT. STEAK HOUSE - DAY",
+      "characters": [
+        "SAMANTHA BROWN",
+        "MILT",
+        "TED",
+        "NANA"
+      ],
+      "dialogues": [
+        {
+          "character": "SAMANTHA BROWN",
+          "parenthetical": "",
+          "text": "Milt, I can’t believe a Las Vegas"
+        },
+        {
+          "character": "MILT",
+          "parenthetical": "",
+          "text": "Me neither."
+        },
+        {
+          "character": "SAMANTHA BROWN",
+          "parenthetical": "",
+          "text": "You’re a hoot! ANGLE ON Ted"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Milt Conrad Jr!"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "(CONT’D)",
+          "text": "Giddyup mother fucker. FROM NANA’S POV we see Ted who thinks he’s astride the back of a unicorn."
+        },
+        {
+          "character": "NANA",
+          "parenthetical": "",
+          "text": "I’ll call you a cab."
+        }
+      ],
+      "actionPreview": "Samantha sits across from MILT CONRAD JR now, long haired, odd, and flamboyant. Legend like yourself agreed to have dinner with me. I won three Tonies in the eighties. But hey, you guys are paying. Samantha Brown LAUGHS way to long again. He can prove Rod’s a fake. I gotta go. See you Nana. Let’s go"
+    },
+    {
+      "number": 86,
+      "heading": "EXT. LAX - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "A cab pull up to the terminal at LAX. Ted hops out."
+    },
+    {
+      "number": 87,
+      "heading": "EXT. LAS VEGAS STRIP - LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Ted steps out of a cab in front of the Treasure Island Hotel. He runs past carrying a suitcase. \"Ricky Stanicky\" 11.13.09 Bushell 92."
+    },
+    {
+      "number": 88,
+      "heading": "EXT. TREASURE ISLAND - LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Ted runs past the empty pirate ship and to the Treasure Island."
+    },
+    {
+      "number": 89,
+      "heading": "INT. TREASURE ISLAND - DAY",
+      "characters": [
+        "TED",
+        "WOMAN"
+      ],
+      "dialogues": [
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "I’m here to see Milt Conrad."
+        },
+        {
+          "character": "WOMAN",
+          "parenthetical": "",
+          "text": "Who should I say is calling?"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Pirate number 3."
+        }
+      ],
+      "actionPreview": "Ted is talking to a WOMAN in guest services. She picks up the phone to call Milt’s office."
+    },
+    {
+      "number": 90,
+      "heading": "INT. MILT CONRAD’S OFFICE - MOMENTS LATER",
+      "characters": [
+        "MILT",
+        "TED"
+      ],
+      "dialogues": [
+        {
+          "character": "MILT",
+          "parenthetical": "",
+          "text": "Rod is the most committed actor I’ve ever seen."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Oh you have no idea."
+        },
+        {
+          "character": "MILT",
+          "parenthetical": "",
+          "text": "I do."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Well, he had a testicle removed to play Ricky Stanicky."
+        },
+        {
+          "character": "MILT",
+          "parenthetical": "",
+          "text": "Wow. That’s a whole new level."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "How do I get rid of him?"
+        },
+        {
+          "character": "MILT",
+          "parenthetical": "",
+          "text": "No easy task."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Might be easier to just get his real identity and expose him."
+        },
+        {
+          "character": "MILT",
+          "parenthetical": "",
+          "text": "He signed his working papers as Rod"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "No one will believe me unless I have some real info on the guy."
+        },
+        {
+          "character": "MILT",
+          "parenthetical": "",
+          "text": "I’d like to help you."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "What about you and the guys that worked with him?"
+        },
+        {
+          "character": "MILT",
+          "parenthetical": "",
+          "text": "When do you need us?"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "In about fifteen minutes."
+        },
+        {
+          "character": "MILT",
+          "parenthetical": "",
+          "text": "We have a show in a half hour."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Please."
+        },
+        {
+          "character": "MILT",
+          "parenthetical": "",
+          "text": "Why would you want to do that?"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Because I love her."
+        },
+        {
+          "character": "MILT",
+          "parenthetical": "",
+          "text": "This is one I’ve never heard."
+        }
+      ],
+      "actionPreview": "The walls are covered with Las Vegas and Broadway posters. Milt Conrad sits on a couch. He became an alcoholic to make his performance as Pirate #3 more compelling. Then he tried to fight a real duel with the guy that played his mortal enemy Mr. Wainscott. Luckily he was so drunk he shot and stabbed"
+    },
+    {
+      "number": 91,
+      "heading": "INT. HOTEL CONFERENCE ROOM - DAY",
+      "characters": [
+        "LAMBERT",
+        "ROD",
+        "INVESTOR",
+        "WES",
+        "ERIN",
+        "TED",
+        "MILT",
+        "TOYO",
+        "WESPUB."
+      ],
+      "dialogues": [
+        {
+          "character": "LAMBERT",
+          "parenthetical": "",
+          "text": "Now, it’s my pleasure to introduce the newest and certainly one of the most integral members of our team,"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Thank you."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "(CONT’D)",
+          "text": "Why can’t we make money and do good for people at the same time?"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "(CONT’D)",
+          "text": "Our investors buy bonds where all of the money will be used to buy housing for people who lost their homes in natural disasters."
+        },
+        {
+          "character": "INVESTOR",
+          "parenthetical": "",
+          "text": "But how will you pay back your investors for the free houses?"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "We don’t. ANGLE ON Wes"
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "(to himself)"
+        },
+        {
+          "character": "LAMBERT",
+          "parenthetical": "",
+          "text": "Is he joking?"
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "Maybe there’s an explanation."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "It’s charity."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Correct!"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "(CONT’D)",
+          "text": "Our next thing is going to make us big money."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "(CONT’D)",
+          "text": "Pot themed children’s books."
+        },
+        {
+          "character": "LAMBERT",
+          "parenthetical": "",
+          "text": "Oh my god. ANGLE ON Ted and the Pirates."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "I might not even need you guys."
+        },
+        {
+          "character": "MILT",
+          "parenthetical": "",
+          "text": "This happens when he goes off book. I let him re write his own scene once."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "We believe legalizing marijuana is not just a good thing for people who are sick like I was."
+        },
+        {
+          "character": "TOYO",
+          "parenthetical": "",
+          "text": "Lambert."
+        },
+        {
+          "character": "LAMBERT",
+          "parenthetical": "",
+          "text": "Er... I... INVESTOR #2"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "I believe I answered your question the first time."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "We’ll corner the legal pot market."
+        },
+        {
+          "character": "WESPUB.",
+          "parenthetical": "",
+          "text": "Wes looks on proudly."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "(CONT’D)",
+          "text": "Best part."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Where I went to business school we say eye-po. ANGLE ON Erin, looking at her father."
+        },
+        {
+          "character": "LAMBERT",
+          "parenthetical": "",
+          "text": "(low voiced, in shock)"
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "Daddy, I’m sorry."
+        },
+        {
+          "character": "MILT",
+          "parenthetical": "",
+          "text": "(checks his watch)"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Uh... I was thinking, maybe something a little more dramatic."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Look, I know what I’m doing here."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "(CONT’D)",
+          "text": "We haven’t even gotten to the coolest pie chart."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Avast ye, Ricky Stanicky."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "(CONT’D)",
+          "text": "This impostor has hijacked Lambert and Lambert and is steering our ship into dangerous financial waters."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "(low voiced)"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "(low voiced)"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "(low voiced)"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "(low voiced)"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "How’d ye find me out?"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Who offers a pot friendly children’s book as an investment product!?"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "It’ll work, I tell ye."
+        },
+        {
+          "character": "TOYO",
+          "parenthetical": "",
+          "text": "It is a joke."
+        },
+        {
+          "character": "LAMBERT",
+          "parenthetical": "",
+          "text": "(still unsure)"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "You’ll never take me alive."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "This is the problem with the financial markets."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Avast ye scalliwags."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "But at Lambert and Lambert our idea of feel good investing isn’t some silly gimmick."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "(CONT’D)",
+          "text": "At Lambert and Lambert we got your back."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "(CONT’D)",
+          "text": "And to give you some more of those details, here’s our CEO Jack"
+        },
+        {
+          "character": "LAMBERT",
+          "parenthetical": "",
+          "text": "Well that gets the point across doesn’t it!"
+        },
+        {
+          "character": "LAMBERT",
+          "parenthetical": "(CONT’D)",
+          "text": "But seriously."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "There is nothing better than live theater."
+        }
+      ],
+      "actionPreview": "Lambert is at a podium speaking to a group of heavy hitters. Ricky Stanicky. Rod walks up on stage. Applause dies down and he takes out some note cards. Wes stands over by a laptop working a power point presentation. Today I want to talk to you about Feel Good Investing. As you know I’m a man who sp"
+    },
+    {
+      "number": 92,
+      "heading": "INT. OFFSTAGE - LATER",
+      "characters": [
+        "TED",
+        "LAMBERT",
+        "ERIN",
+        "ROD",
+        "MILT",
+        "WES",
+        "SUSAN",
+        "FADE OUT."
+      ],
+      "dialogues": [
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "LAMBERT",
+          "parenthetical": "",
+          "text": "That was superb."
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "That was amazing."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "It’s all happening again."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Rod, it’s over."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "It was pretty compelling."
+        },
+        {
+          "character": "MILT",
+          "parenthetical": "",
+          "text": "Totally climactic."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "I did that for you."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Is that what you really want? JT"
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "Yeah, just do it."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Please."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "(Rod nods)"
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "It’s true what you were saying at the office."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "My real name is Rod Brickhouse. I’m trained in classical theater, staged fighting, accents and mime."
+        },
+        {
+          "character": "WES",
+          "parenthetical": "",
+          "text": "That’s so fucking cool."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "I had it removed."
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "How could you do this to me?"
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Erin, a guy like me will do a lot for a 164,000 dollars a year and the role of a life time."
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "I’m talking to Ted."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "I used the Ricky excuse with you before I realized how great you were."
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "I’d like to believe you Ted."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "I know."
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "Thanks for saving my dad’s company."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "(teary eyed) I thought you had her."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "(CONT’D)",
+          "text": "Ted, I’m sorry it went down this way."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "I don’t know what to say that."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "Don’t say anything."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "(CONT’D)",
+          "text": "(sing songy)"
+        },
+        {
+          "character": "SUSAN",
+          "parenthetical": "",
+          "text": "And I was going to let you fuck me in the ass at Linens and Things!"
+        },
+        {
+          "character": "FADE OUT.",
+          "parenthetical": "",
+          "text": "FADE IN: “SIX MONTHS LATER”"
+        }
+      ],
+      "actionPreview": "The investors are congratulating Rod and Ted and the pirates. Lambert walks up. \"Ricky Stanicky\" 11.13.09 Bushell 101. Ted, call me on Monday and we’ll talk about bringing you back to work with a big salary bump. (to the crowd) Let’s head over to the hotel for a light supper. The investors spend a m"
+    },
+    {
+      "number": 93,
+      "heading": "EXT. BALLET - NIGHT",
+      "characters": [
+        "TICKET TAKER",
+        "TED"
+      ],
+      "dialogues": [
+        {
+          "character": "TICKET TAKER",
+          "parenthetical": "",
+          "text": "Hey, man."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Did Erin ever pick up the ticket I left for her?"
+        },
+        {
+          "character": "TICKET TAKER",
+          "parenthetical": "",
+          "text": "Nope."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Leave it."
+        }
+      ],
+      "actionPreview": "Ted walks up to the ticket window. The ticket taker checks through a pile of stuff. Same as last time. You want to take the extra? Maybe she’ll come late. Ted walks inside."
+    },
+    {
+      "number": 94,
+      "heading": "INT. BALLET - NIGHT",
+      "characters": [
+        "WOMAN"
+      ],
+      "dialogues": [
+        {
+          "character": "WOMAN",
+          "parenthetical": "",
+          "text": "Excuse me."
+        }
+      ],
+      "actionPreview": "Ted sits in his seat watching. The seat next to him is empty. Erin walks up. Ted does a double take. But it’s not her, just a woman who looks like Erin. She walks past. He sighs and watches."
+    },
+    {
+      "number": 95,
+      "heading": "INT. OFFICE - DAY",
+      "characters": [
+        "ASSISTANT",
+        "ERIN",
+        "ROD"
+      ],
+      "dialogues": [
+        {
+          "character": "ASSISTANT",
+          "parenthetical": "",
+          "text": "You got another tomato."
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "Thanks."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "(V.O.)",
+          "text": "My dearest Erin, I can’t help but thinking I played a small part in what happened between you and Ted. I just want you to know, that every lie Ted told, he told for you. I’ve been around the block a few times and there are a few things I’ve learned in this life. One,"
+        }
+      ],
+      "actionPreview": "Erin sits at a desk dressed for work. Her assistant enters with her mail. She hands her an heirloom tomato. A note is taped to it. It says, “THERE’S AN EXTRA TICKET FOR THE BALLET AT THE BOX OFFICE AGAIN TONIGHT... IF YOU WANT. TED.” The assistant exits. Erin looks at the note, shakes her head and t"
+    },
+    {
+      "number": 96,
+      "heading": "EXT. GOLF RANGE - DAY",
+      "characters": [
+        "TED",
+        "DAVE",
+        "ERIN",
+        "FADE OUT.",
+        "OVER CREDITS"
+      ],
+      "dialogues": [
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Better."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "(CONT’D)",
+          "text": "There you go."
+        },
+        {
+          "character": "DAVE",
+          "parenthetical": "",
+          "text": "Where you going?"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Really?"
+        },
+        {
+          "character": "DAVE",
+          "parenthetical": "",
+          "text": "Uh..."
+        },
+        {
+          "character": "DAVE",
+          "parenthetical": "(CONT’D)",
+          "text": "Name’s uh... Ricky Sta-nicky?"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Oh Jesus."
+        },
+        {
+          "character": "DAVE",
+          "parenthetical": "",
+          "text": "What’s the big deal?"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "She?"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "(CONT’D)",
+          "text": "Uh... hey."
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "You made it up."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "It was kind of a group effort. (a beat)"
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "Who said I’m back?"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Oh okay."
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "My Dad would love to have you back at work."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "That’s not me."
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "That’s pretty dumb."
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "(CONT’D)",
+          "text": "Look, I got your messages."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Was it the tomato?"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "(V.O.) (CONT’D)",
+          "text": "(pre recorded)"
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "You might have told a lot of lies, but that... that feels true."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "It is true."
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "Still?"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Always."
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "Good answer."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "What’s wrong?"
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "(annoyed) I gotta go to San Diego for my college roommate’s annoying baby shower."
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "Go."
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "I should tell her I’m running late. (a beat, to phone)"
+        },
+        {
+          "character": "TED",
+          "parenthetical": "",
+          "text": "(smiles)"
+        },
+        {
+          "character": "ERIN",
+          "parenthetical": "",
+          "text": "But that’s the last time we ever use it."
+        }
+      ],
+      "actionPreview": "Ted stands in the pro’s box at the end of the range with a cigarette tucked behind his ear. NICK, 12, also with a cigarette tucked behind his ear, hits balls. Nick’s MOM, stands off to the side. Now I want you to relax your hands more. Just let the club do the work. Ted uses his club to roll another"
+    },
+    {
+      "number": 97,
+      "heading": "INT. CAESAR’S HOFFBRAU HOUSE - DAY",
+      "characters": [
+        "MARIA",
+        "ROD"
+      ],
+      "dialogues": [
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Now that there’s just us."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "",
+          "text": "I’m Liesl."
+        },
+        {
+          "character": "ROD",
+          "parenthetical": "(CONT’D)",
+          "text": "I AM 16 / GOING ON 17..."
+        }
+      ],
+      "actionPreview": "Ted, Erin, Wes and JT sit in the theater. “THE SOUND OF MUSIC” is being performed by a troop of actors. MARIA, is on stage. Would you please tell me all your names again and how old you are. ANGLE ON THE VON TRAP Kids. There’s BRIGITTA, MARTA, KURT, GRETL and Rod dressed as LIESL. I’m 16 years old a"
+    }
+  ]
+}

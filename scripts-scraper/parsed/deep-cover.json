@@ -1,0 +1,22 @@
+{
+  "slug": "deep-cover",
+  "title": "Deep Cover",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 22739,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                        DEEP COVER </b> Written by Michael Tolkin and Henry Bean Story by Michael Tolkin <b>                                      SHOOTING DRAFT </b> <b> </b> <b>               EXT. CLEVELAND STREET - NIGHT (1970) </b> Rain. Christmas lights. A rusted out '56 Lincoln rattles down the bleak boulevard. In it: JOE STEVENS, an angry, black man in his late 20's, beside him his 10-year-old son, JOE <b>               JR. </b> Joe Jr. stares out the window at passing:",
+      "dialogue_count": 0,
+      "word_count": 22739
+    }
+  ]
+}

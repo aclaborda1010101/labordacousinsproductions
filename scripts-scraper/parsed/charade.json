@@ -1,0 +1,22 @@
+{
+  "slug": "charade",
+  "title": "Charade",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 34382,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                         CHARADE </b> Written by Peter Stone Based on a story by Peter Stone and Marc Behm October 1st, 1962 <b> </b> <b>               FADE IN (BEFORE TITLES) </b> <b>               EXT. FRENCH COUNTRYSIDE -- DUSK </b> Silence -- complete silence for the urbanite, though the oncoming darkness is punctuated by the sounds of farm country -- a few birds, a distant rumble of thunder from some heavy clouds on the horizon, a dog's barking. CAMERA PANS the green, squ",
+      "dialogue_count": 0,
+      "word_count": 34382
+    }
+  ]
+}

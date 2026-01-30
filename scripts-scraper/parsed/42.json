@@ -1,0 +1,22 @@
+{
+  "slug": "42",
+  "title": "42",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 30801,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                      42 </b> Written by Brian Helgeland White - March 14, 2012 Blue Revised - April 7, 2012 Pink Revised - April 19, 2012 Yellow Revised - April 24, 2012 Green Revised - April 27, 2012 Goldenrod Revised - May 9, 2012 Buff Revised - May 29, 2012 Salmon Revised - June 4, 2012 Cherry Revised - June 11, 2012 Tan Revised - June 25, 2012 Double White Revised - June 28, 2012 Double Blue Revised - July 9, 2012 <b>           PINK REV 4-19-12 1. </b> <b>          A1 WHI",
+      "dialogue_count": 0,
+      "word_count": 30801
+    }
+  ]
+}

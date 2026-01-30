@@ -1,0 +1,22 @@
+{
+  "slug": "ad-astra",
+  "title": "Ad Astra",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 25219,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                     AD ASTRA </b> Written by James Gray & Ethan Gross <b>                                                     8/11/16 </b> <b>SUPERIMPOSE THE LEGEND: ONE HUNDRED YEARS FROM NOW. </b> <b>BLACK. </b> We TILT DOWN to REVEAL: <b>THE EARTH, AS VIEWED FROM ABOVE. </b> We HEAR MUSIC: a CHEERFUL PIECE, incongruous with the awesome image of our planet. <b>                                                  CUT TO: </b> A NEWS REPORT on PBS. The introductory music accompanies the logo fo",
+      "dialogue_count": 0,
+      "word_count": 25219
+    }
+  ]
+}

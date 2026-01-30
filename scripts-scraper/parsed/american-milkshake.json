@@ -1,0 +1,26 @@
+{
+  "slug": "american-milkshake",
+  "title": "American Milkshake",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 1,
+  "characters": [
+    "PRINCIPAL GANUS"
+  ],
+  "total_words": 19639,
+  "total_dialogue": 1,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "PRINCIPAL GANUS"
+      ],
+      "action_text": "<b>                             AMERICAN MILKSHAKE </b> Written by David Andalman Co-writer, Mariko Munro <b>                                                             9/28/2011 </b> <b>          INT. OLD FASHIONED STAGE </b> Circa 1900. A white man in a top hat introduces the final act of a black face performance. <b>                              TOP HAT MAN </b>                    In the spirit of true minstrelsy, you have again shown that laughter is the wine of life. Some 50 performers sta",
+      "dialogue_count": 1,
+      "word_count": 19639
+    }
+  ]
+}

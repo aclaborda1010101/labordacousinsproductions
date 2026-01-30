@@ -1,0 +1,34 @@
+{
+  "slug": "8mm",
+  "title": "8MM",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 2,
+  "characters_count": 1,
+  "characters": [
+    "WELLES"
+  ],
+  "total_words": 33679,
+  "total_dialogue": 7,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "WELLES"
+      ],
+      "action_text": "<html> <head> <title>\"8MM\", by Andrew Kevin Walker</title> </head> <body bgcolor=\"#FFFFFF\"> <pre> eight millimeter written by Andrew Kevin Walker <b>                                                      5/06/97 </b>                                                      first <b>     INT.  MIAMI AIRPORT, TERMINAL -- DAY </b> Amongst the weary tourist families and solitary businessmen sits TOM WELLES, middle-aged, hair neat, suit crisp and gray.  He's eating crackers from a cellophane package, sipp",
+      "dialogue_count": 7,
+      "word_count": 10635
+    },
+    {
+      "scene_number": 2,
+      "slugline": "EXT.  FREEWAY -- <u>HELICOPTER SHOT</u> -- NIGHT -- CONTINUOUS",
+      "characters": [],
+      "action_text": "FOLLOW Welles' car speeding along... <b>MARY'S VOICE</b> (V.O., cont) \"Dear diary.  It's happening all the time now.  There s nothing I can do. I'm all alone.  Everything is bad. I used to have lots of dreams and I'd remember them when I woke up, but that doesn't happen anymore.\" PULL BACK: still FOLLOWING WELLES' CAR, over the FREEWAY... <b>MARY'S VOICE</b> (V.O., cont) \"Dear diary.  If I can get to California, I'll be okay.  I've got money saved.  I can work as a waitress till I get something",
+      "dialogue_count": 0,
+      "word_count": 23044
+    }
+  ]
+}

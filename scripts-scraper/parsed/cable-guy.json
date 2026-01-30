@@ -1,0 +1,22 @@
+{
+  "slug": "cable-guy",
+  "title": "Cable Guy",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 24270,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "The Cable Guy by Judd Apatow Based on a Screenplay by Lou Holtz Jr. Shooting Script October 31, 1995 (White) Revised Pages November 13, 1995 (Blue) Revised Pages November 14, 1995 (Pink) <b>1\tFULL FRAME - WHITE NOISE </b> Credits begin. The entire frame is filled with white noise within which one can make out thefaint image of a television program. Every few moments the channel changes, revealing a new ghostly image. The camera pulls back very slowly. We reveal that this image is coming from a t",
+      "dialogue_count": 0,
+      "word_count": 24270
+    }
+  ]
+}

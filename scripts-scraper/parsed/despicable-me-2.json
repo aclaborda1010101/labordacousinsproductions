@@ -1,0 +1,22 @@
+{
+  "slug": "despicable-me-2",
+  "title": "Despicable Me 2",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 22175,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                         DESPICABLE ME 2 </b> Written by Cinco Paul & Ken Daurio <b>   EXT: ARCTIC CIRCLE - DAY </b> Snow and ice as far as the eye can see. What looks like a windowless MILITARY BASE surrounded by barbed wire fences sits in the middle of the wasteland. <b>   TITLE CARD: TOP SECRET RESEARCH LABORATORY.   ARCTIC CIRCLE. </b> At the GUARD GATE, two RUSSIAN GUARDS play poker using an overturned barrel as a table. Russian Guard 1 shows a five of diamonds... and four Aces. The othe",
+      "dialogue_count": 0,
+      "word_count": 22175
+    }
+  ]
+}

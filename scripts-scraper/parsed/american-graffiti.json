@@ -1,0 +1,22 @@
+{
+  "slug": "american-graffiti",
+  "title": "American Graffiti",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 28904,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "\"AMERICAN GRAFFITI\" Screenplay by George Lucas Gloria Katz & Willard Huyck <b> </b> <b>               RADIO </b> On a dark screen an immense amber light appears and an electric humming begins. The eerie light glows brighter and illuminates a single huge number--11. We hear static and a large vertical band of red floats mysteriously across the screen. Pulling back slowly, we watch the glowing band traverse back and forth over the amber light and past more numbers appearing-- 70... 90... 110... 13",
+      "dialogue_count": 0,
+      "word_count": 28904
+    }
+  ]
+}

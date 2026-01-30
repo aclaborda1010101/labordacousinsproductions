@@ -1,0 +1,26 @@
+{
+  "slug": "awakenings",
+  "title": "Awakenings",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 1,
+  "characters": [
+    "AWAKENINGS"
+  ],
+  "total_words": 35050,
+  "total_dialogue": 1,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "AWAKENINGS"
+      ],
+      "action_text": "AWAKENINGS Scree nplay by Steven 2ai11Ian Based on t he Book by Olive r Sac ks <b>                        OCTOBER 2, 1989 </b><b>                                         (BLUE) </b><b>                        REV .10/1 3/89 </b><b>                        REV.1 0/16/ 89   (PINK) </b><b>                        REV.1 0/25/ 89   (YELLOW) </b><b>                        REV.1 1/6/8 9    (GREEN) </b><b>                        REV.1 1/10/ 89   (GOLDENROD </b><b>                        REV .11/1 4/89   (S",
+      "dialogue_count": 1,
+      "word_count": 35050
+    }
+  ]
+}

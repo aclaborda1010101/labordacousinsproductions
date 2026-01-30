@@ -1,0 +1,4986 @@
+{
+  "slug": "the-wild-robot-2024",
+  "title": "The Wild Robot",
+  "parsedWith": "v2",
+  "parsedAt": "2026-01-29T22:09:24.424Z",
+  "stats": {
+    "scenes": 104,
+    "dialogues": 724,
+    "characters": 54
+  },
+  "characters": [
+    {
+      "name": "ROZ",
+      "dialogueLines": 173,
+      "totalWords": 749
+    },
+    {
+      "name": "FINK",
+      "dialogueLines": 170,
+      "totalWords": 762
+    },
+    {
+      "name": "BRIGHTBILL",
+      "dialogueLines": 101,
+      "totalWords": 438
+    },
+    {
+      "name": "LONGNECK",
+      "dialogueLines": 36,
+      "totalWords": 161
+    },
+    {
+      "name": "PINKTAIL",
+      "dialogueLines": 31,
+      "totalWords": 161
+    },
+    {
+      "name": "VONTRA",
+      "dialogueLines": 23,
+      "totalWords": 123
+    },
+    {
+      "name": "PADDLER",
+      "dialogueLines": 20,
+      "totalWords": 112
+    },
+    {
+      "name": "GOSLING",
+      "dialogueLines": 20,
+      "totalWords": 50
+    },
+    {
+      "name": "THORN",
+      "dialogueLines": 16,
+      "totalWords": 59
+    },
+    {
+      "name": "BABY OPOSSUMS",
+      "dialogueLines": 11,
+      "totalWords": 24
+    },
+    {
+      "name": "RUMMAGE",
+      "dialogueLines": 10,
+      "totalWords": 47
+    },
+    {
+      "name": "THUNDERBOLT",
+      "dialogueLines": 10,
+      "totalWords": 34
+    },
+    {
+      "name": "BABY BRIGHTBILL",
+      "dialogueLines": 8,
+      "totalWords": 27
+    },
+    {
+      "name": "SNOWDOWN",
+      "dialogueLines": 8,
+      "totalWords": 43
+    },
+    {
+      "name": "NARRATOR",
+      "dialogueLines": 7,
+      "totalWords": 23
+    },
+    {
+      "name": "RACCOONS",
+      "dialogueLines": 6,
+      "totalWords": 10
+    },
+    {
+      "name": "FEATHER",
+      "dialogueLines": 6,
+      "totalWords": 30
+    },
+    {
+      "name": "PECK",
+      "dialogueLines": 6,
+      "totalWords": 34
+    },
+    {
+      "name": "HONKINGTON",
+      "dialogueLines": 6,
+      "totalWords": 30
+    },
+    {
+      "name": "ANIMALS",
+      "dialogueLines": 5,
+      "totalWords": 19
+    },
+    {
+      "name": "BROADFOOT",
+      "dialogueLines": 5,
+      "totalWords": 7
+    },
+    {
+      "name": "AUTOMATED ALARM",
+      "dialogueLines": 5,
+      "totalWords": 20
+    },
+    {
+      "name": "RACCOON",
+      "dialogueLines": 3,
+      "totalWords": 5
+    },
+    {
+      "name": "BABY BUNNY",
+      "dialogueLines": 2,
+      "totalWords": 9
+    },
+    {
+      "name": "ANIMAL CROWD",
+      "dialogueLines": 2,
+      "totalWords": 4
+    },
+    {
+      "name": "BABY OPOSSUM",
+      "dialogueLines": 2,
+      "totalWords": 5
+    },
+    {
+      "name": "SQUIRREL",
+      "dialogueLines": 2,
+      "totalWords": 5
+    },
+    {
+      "name": "ROZZUM UNIT",
+      "dialogueLines": 2,
+      "totalWords": 7
+    },
+    {
+      "name": "ROZZUM UNITS",
+      "dialogueLines": 2,
+      "totalWords": 4
+    },
+    {
+      "name": "BABY OTTER",
+      "dialogueLines": 2,
+      "totalWords": 2
+    },
+    {
+      "name": "LOOMS.",
+      "dialogueLines": 1,
+      "totalWords": 2
+    },
+    {
+      "name": "TRANSLATION COMPLETE",
+      "dialogueLines": 1,
+      "totalWords": 2
+    },
+    {
+      "name": "AAAAAAAAAAUGHHHHHHHHH",
+      "dialogueLines": 1,
+      "totalWords": 3
+    },
+    {
+      "name": "TRANSMITTER.",
+      "dialogueLines": 1,
+      "totalWords": 8
+    },
+    {
+      "name": "OVER A BLACK SCREEN",
+      "dialogueLines": 1,
+      "totalWords": 3
+    },
+    {
+      "name": "EEEEEEEEEEEEEEEEEK",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "O O",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "AAAAAAAAAAAUGHHHHHH",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "GEESE",
+      "dialogueLines": 1,
+      "totalWords": 3
+    },
+    {
+      "name": "OPENS WIDE.",
+      "dialogueLines": 1,
+      "totalWords": 9
+    },
+    {
+      "name": "SHOW ME YOUR TEETH",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "END MONTAGE",
+      "dialogueLines": 1,
+      "totalWords": 4
+    },
+    {
+      "name": "ON THE RECO",
+      "dialogueLines": 1,
+      "totalWords": 8
+    },
+    {
+      "name": "A SHOT RINGS OUT",
+      "dialogueLines": 1,
+      "totalWords": 2
+    },
+    {
+      "name": "AAAAAAUGH",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "SKUNK",
+      "dialogueLines": 1,
+      "totalWords": 8
+    },
+    {
+      "name": "BADGER",
+      "dialogueLines": 1,
+      "totalWords": 4
+    },
+    {
+      "name": "QUIET",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "FADE OUT.",
+      "dialogueLines": 1,
+      "totalWords": 5
+    },
+    {
+      "name": "ON VONTRA",
+      "dialogueLines": 1,
+      "totalWords": 9
+    }
+  ],
+  "scenes": [
+    {
+      "number": 1,
+      "heading": "EXT. DESERTED BEACH - DAWN",
+      "characters": [
+        "LOOMS."
+      ],
+      "dialogues": [
+        {
+          "character": "LOOMS.",
+          "parenthetical": "",
+          "text": "ROZZUM 7134"
+        }
+      ],
+      "actionPreview": "Blinding daylight, silent save for ocean ripples lapping at a soft stone beach. The sky and shoreline are distorted as if viewed through a wide lens. SLOW PULL-OUT reveals a rugged coast reflected on the rounded lens of a robot, ROZZUM 7134. WIDEN to reveal the Rozzum peers from a rupture in a mostl"
+    },
+    {
+      "number": 2,
+      "heading": "EXT. CLIFFTOP - MOMENTS LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The crab clambers into view, followed by Rozzum 7134. ROZZUM VISION: “CUSTOMER LOCATED?” ROZZUM 7134 Do you need-- The crab is SNATCHED away by a passing gull. ROZZUM 7134 (CONT’D) ...assistance? Rozzum 7134 FOCUSES on a wall of thick vegetation before it: deploys sound gathering arrays. Rozzum 7134"
+    },
+    {
+      "number": 3,
+      "heading": "EXT. ISLAND FOREST - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "ON A RAVEN landing in the branches of a tree. He PAUSES, an unfamiliar sound approaching; MUSIC. LOOKING DOWN he sees Rozzum 7134 making her way through the trees. Her upper body ROTATING cheerily. ROZZUM 7134 Rozzum Seven One Three Four is available for task assignment. A LYNX PEERS at the passing "
+    },
+    {
+      "number": 4,
+      "heading": "EXT. FOREST - LATER",
+      "characters": [
+        "TRANSLATION COMPLETE"
+      ],
+      "dialogues": [
+        {
+          "character": "TRANSLATION COMPLETE",
+          "parenthetical": "",
+          "text": "WEASEL 2"
+        }
+      ],
+      "actionPreview": "CLOSE ON 7134’S HEAD - she is sitting very still. ROZZUM 7134 Activating learning mode. PULL BACK, revealing we are in TIME LAPSE. Nights and days pass, with a multitude of animals stopping by. Rain falls, leaves litter her. Rozzum 7134 never moves. A WEEK passes, leaves gathering on her exterior. A"
+    },
+    {
+      "number": 5,
+      "heading": "EXT. CLEARING - LATER.",
+      "characters": [
+        "PADDLER",
+        "ANIMALS",
+        "BABY BUNNY",
+        "BROADFOOT",
+        "ANIMAL CROWD",
+        "AAAAAAAAAAUGHHHHHHHHH"
+      ],
+      "dialogues": [
+        {
+          "character": "PADDLER",
+          "parenthetical": "",
+          "text": "Look! That’s the thing that destroyed my"
+        },
+        {
+          "character": "ANIMALS",
+          "parenthetical": "",
+          "text": "The monster! Yikes! I think it’s gonna"
+        },
+        {
+          "character": "BABY BUNNY",
+          "parenthetical": "",
+          "text": "Are you here to kill us?"
+        },
+        {
+          "character": "BABY BUNNY",
+          "parenthetical": "",
+          "text": "(to the crowd)"
+        },
+        {
+          "character": "BROADFOOT",
+          "parenthetical": "(O.S.)",
+          "text": "*SNORT*"
+        },
+        {
+          "character": "BROADFOOT",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ANIMAL CROWD",
+          "parenthetical": "",
+          "text": "Oh, thank goodness."
+        },
+        {
+          "character": "ANIMAL CROWD",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "AAAAAAAAAAUGHHHHHHHHH",
+          "parenthetical": "",
+          "text": ". The monster!"
+        }
+      ],
+      "actionPreview": "A multitude of animals graze, forage, flit here and there. They all STOP. Rozzum 7134 strides out into the open. dam. talk. ROZZUM 7134 Thank you for your patience while I deciphered your language. I am Rozzum seven one three four, ready to enhance your lives with integrated multi-phased task accomp"
+    },
+    {
+      "number": 6,
+      "heading": "EXT. MOUNTAIN PEAK - DUSK",
+      "characters": [
+        "TRANSMITTER."
+      ],
+      "dialogues": [
+        {
+          "character": "TRANSMITTER.",
+          "parenthetical": "",
+          "text": "A DOWNPOUR STRIKES. Rozzum 7134 POWERS UP the"
+        }
+      ],
+      "actionPreview": "Rozzum 7134 has a 360 degree view. ORBIT to describe an island: no other land or structures in sight. She’s TRAPPED on an ISLAND. ROZZUM 7134 ...anyone? No responses. ROZZUM 7134 (CONT’D) Delivery unsuccessful. Return to factory. Activating return transmitter. From Rozzum 7134’s head, a greenish rod"
+    },
+    {
+      "number": 7,
+      "heading": "EXT. FOREST - NIGHT",
+      "characters": [
+        "OVER A BLACK SCREEN",
+        "RACCOONS",
+        "RACCOON",
+        "THORN"
+      ],
+      "dialogues": [
+        {
+          "character": "OVER A BLACK SCREEN",
+          "parenthetical": "",
+          "text": "- “SYSTEM BOOTING."
+        },
+        {
+          "character": "RACCOONS",
+          "parenthetical": "",
+          "text": "Ooooooh ."
+        },
+        {
+          "character": "RACCOONS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "RACCOONS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "RACCOON",
+          "parenthetical": "",
+          "text": "Ha!"
+        },
+        {
+          "character": "RACCOONS",
+          "parenthetical": "",
+          "text": "Come back."
+        },
+        {
+          "character": "RACCOON",
+          "parenthetical": "",
+          "text": "Wait, stop! No!"
+        },
+        {
+          "character": "RACCOONS",
+          "parenthetical": "",
+          "text": "No no"
+        },
+        {
+          "character": "RACCOON",
+          "parenthetical": "",
+          "text": "Again!"
+        },
+        {
+          "character": "THORN",
+          "parenthetical": "",
+          "text": "(sfx)"
+        }
+      ],
+      "actionPreview": "ON ROZZUM 7134 lying motionless and dark. ROZZUM VISION: ACCESS PANEL BREACH. PANEL 10 OPEN. PANEL 28 OPEN. PANEL 11, 51, 32 OPEN.” Rozzum 7134 POWERS UP. Her eye covers CLICK open to reveal-- She is missing an eye and a hand. ON HER TORSO - a multitude of access panels flap open. PAN to find the gr"
+    },
+    {
+      "number": 8,
+      "heading": "EXT. HOLLOW - MOMENTS LATER",
+      "characters": [
+        "FINK"
+      ],
+      "dialogues": [
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Here you go. Take it."
+        }
+      ],
+      "actionPreview": "Rozzum 7134 sits, considering the egg and her transmitter. 7134 GLANCES away, looks back to find the egg is GONE. The dense foliage RUSTLES as something small makes their escape. ROZZUM VISION: Switching to INFRARED Rozzum 7134 locates the creature, gives CHASE. ROZZUM 7134 May I confirm that is you"
+    },
+    {
+      "number": 9,
+      "heading": "EXT. DEEP FOREST - LATER",
+      "characters": [
+        "GOSLING",
+        "BABY OPOSSUMS",
+        "EEEEEEEEEEEEEEEEEK",
+        "PINKTAIL",
+        "BABY OPOSSUM"
+      ],
+      "dialogues": [
+        {
+          "character": "GOSLING",
+          "parenthetical": "",
+          "text": "Peep?"
+        },
+        {
+          "character": "GOSLING",
+          "parenthetical": "",
+          "text": "Peep."
+        },
+        {
+          "character": "GOSLING",
+          "parenthetical": "",
+          "text": "*peep peep peep*"
+        },
+        {
+          "character": "BABY OPOSSUMS",
+          "parenthetical": "",
+          "text": "(blood-curdling)"
+        },
+        {
+          "character": "EEEEEEEEEEEEEEEEEK",
+          "parenthetical": "",
+          "text": "."
+        },
+        {
+          "character": "PINKTAIL",
+          "parenthetical": "",
+          "text": "Bartlett, stop jamming your tail in your"
+        },
+        {
+          "character": "PINKTAIL",
+          "parenthetical": "",
+          "text": "Are you sure? Who are all of you? Go"
+        },
+        {
+          "character": "GOSLING",
+          "parenthetical": "",
+          "text": "*Peep*"
+        },
+        {
+          "character": "PINKTAIL",
+          "parenthetical": "",
+          "text": "This is what I get for taking a walk."
+        },
+        {
+          "character": "PINKTAIL",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BABY OPOSSUMS",
+          "parenthetical": "",
+          "text": "Hey!"
+        },
+        {
+          "character": "PINKTAIL",
+          "parenthetical": "",
+          "text": "None of you are doing it right . We talked"
+        },
+        {
+          "character": "BABY OPOSSUMS",
+          "parenthetical": "",
+          "text": "(together)"
+        },
+        {
+          "character": "BABY OPOSSUM",
+          "parenthetical": "",
+          "text": "(a beat late)"
+        },
+        {
+          "character": "PINKTAIL",
+          "parenthetical": "",
+          "text": "Good question."
+        },
+        {
+          "character": "PINKTAIL",
+          "parenthetical": "",
+          "text": "(to the gosling)"
+        },
+        {
+          "character": "PINKTAIL",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "PINKTAIL",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "PINKTAIL",
+          "parenthetical": "",
+          "text": "Yeah, they do that. Goslings imprint on"
+        },
+        {
+          "character": "PINKTAIL",
+          "parenthetical": "",
+          "text": "As far as he’s concerned, you’re his"
+        },
+        {
+          "character": "BABY OPOSSUMS",
+          "parenthetical": "(O.S.)",
+          "text": "It’s gonna squish us!"
+        },
+        {
+          "character": "PINKTAIL",
+          "parenthetical": "",
+          "text": "No one does. We just make it up."
+        },
+        {
+          "character": "PINKTAIL",
+          "parenthetical": "",
+          "text": "Taking care of him is your task now."
+        },
+        {
+          "character": "PINKTAIL",
+          "parenthetical": "",
+          "text": "You’re lucky you just have one. As a"
+        },
+        {
+          "character": "BABY OPOSSUM",
+          "parenthetical": "(O.S.)",
+          "text": "AAAAAAAAAAAAAAAAAAAUGHHHHHH ."
+        },
+        {
+          "character": "PINKTAIL",
+          "parenthetical": "",
+          "text": "...Six babies, it’s a full time thing."
+        },
+        {
+          "character": "PINKTAIL",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "PINKTAIL",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "PINKTAIL",
+          "parenthetical": "",
+          "text": "They all need to eat. But yours needs to"
+        },
+        {
+          "character": "BABY OPOSSUMS",
+          "parenthetical": "",
+          "text": "A aaaaaaughhhhh ."
+        },
+        {
+          "character": "PINKTAIL",
+          "parenthetical": "",
+          "text": "Yeah. That."
+        },
+        {
+          "character": "PINKTAIL",
+          "parenthetical": "",
+          "text": "Patience is the key."
+        },
+        {
+          "character": "PINKTAIL",
+          "parenthetical": "(O.S.)",
+          "text": "(flat)"
+        },
+        {
+          "character": "BABY OPOSSUMS",
+          "parenthetical": "",
+          "text": "Goodbye."
+        }
+      ],
+      "actionPreview": "ON ROZZUM 7134, a RATTLING from her interior. She removes the egg. Examines it. ‘CRACK’ - the egg has a HAIRLINE RUPTURE. Rozzum 7134 gently PINCHES the shell to close it up. More cracks form. Rozzum 7134 FRANTICALLY tries to hold it all together. For a moment, it works. The egg EXPLODES. A tiny gos"
+    },
+    {
+      "number": 10,
+      "heading": "EXT. MEADOW - MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Rozzum 7134 PROJECTS images of people EATING, diagram of a person SWIMMING and a Jet aircraft FLYING. ROZZUM 7134 Eat. Swim. Fly by fall. 17. 18. Her gaze DRIFTS from the image to focus on the gosling on her shoulder. FINK’S POV - watching Rozzum 7134 and the gosling. CUT TO:"
+    },
+    {
+      "number": 11,
+      "heading": "EXT. GLEN - LATER",
+      "characters": [
+        "FINK"
+      ],
+      "dialogues": [
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Huh."
+        }
+      ],
+      "actionPreview": "Rozzum 7134 holds a pinecone in one hand, the gosling in the other. ROZZUM 7134 Eat. She tries to plug the pinecone into the gosling’s mouth. It is FAR too big."
+    },
+    {
+      "number": 12,
+      "heading": "EXT. PONDSIDE - LATER",
+      "characters": [
+        "PADDLER"
+      ],
+      "dialogues": [
+        {
+          "character": "PADDLER",
+          "parenthetical": "",
+          "text": "I say, keep your trash out of my pond."
+        }
+      ],
+      "actionPreview": "ON THE GOSLING still staring lovingly at Rozzum 7134, as she PUSHES him out into the pond afloat a pinecone. ROZZUM 7134 Swim. The gosling TODDLES back to Rozzum 7134, FALLING from the pinecone and INSTANTLY SINKING. Paddler SURFACES, the gosling on his tail. That’s littering. Not to mention murder."
+    },
+    {
+      "number": 13,
+      "heading": "EXT. FIELD - LATER",
+      "characters": [
+        "FINK",
+        "GOSLING"
+      ],
+      "dialogues": [
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Allow me to introduce myself. Fink."
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "It’s okay, I won’t eat him."
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Do you believe everything you hear?"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Noted."
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "I’m a fox. I do foxy things. It’s in my"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Why’d you help me?"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "I have some essential needs ."
+        },
+        {
+          "character": "GOSLING",
+          "parenthetical": "",
+          "text": "*Whimpering hungry noises*"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "I thought you’d never ask. Let’s start"
+        }
+      ],
+      "actionPreview": "The gosling stands in the center of 7134’s hand. Rozzum 7134 retracts her palm. As it gazes lovingly at her, she ACTIVATES it. ROZZUM 7134 Fly. 18. 19. In a blink it is three hundred feet in the air. A passing falcon SNATCHES it. ON THE SMILING GOSLING in 7134’s palm. She is FLUMMOXED how to proceed"
+    },
+    {
+      "number": 14,
+      "heading": "EXT. FOREST - LATER.",
+      "characters": [
+        "ON SCALLOPS VACUUMED UP",
+        "FINK",
+        "ON A SWARM OF BEES"
+      ],
+      "dialogues": [
+        {
+          "character": "FINK",
+          "parenthetical": "(O.S.)",
+          "text": "Yeah, yeah, yeah, right there."
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Wait, wait, lemme check."
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "You’re doing great."
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "(eyeing the honey)"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "The fresh scallops are arranged around Brightbill. They collectively SNAP SHUT on him. Rozzum 7134 VACUUMS them off the gosling. ROZZUM 7134 I do not think these are suitable. Roz gives the shellfish to Fink, who swallows them greedily. Ooh. Mmm. Seems good to me. Say...can You make yourself look li"
+    },
+    {
+      "number": 15,
+      "heading": "EXT. BEACH - EVENING",
+      "characters": [
+        "FINK",
+        "GOSLING"
+      ],
+      "dialogues": [
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Are you kidding? Everything is working"
+        },
+        {
+          "character": "GOSLING",
+          "parenthetical": "",
+          "text": "(whimpering from hunger)"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "(seeing starving gosling)"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Now, we’re gonna have to do all this over"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "What’s that?"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "(still eating)"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Ugh, do I have to do everything? When we"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Look. You need to learn how things work"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "For future reference, you probably"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Swimming’s easy. I can teach him the way"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Not if you keep doing that ."
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "He’s what they call a ‘runt’."
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Fact is, even if his whole family hadn’t"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "(snatching)"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "Rozzum 7134 uses a laser to STEAM clams. Fink fishes out a clam, gobbling the steaming contents. He’s bloated, grotesque, stuffed to bursting. ROZZUM 7134 This is not working. 21. 22. great . Oh, yeah that. Here. Still laying on his back, Fink lazily SCRATCHES AWAY a surface of pebbles, exposing a s"
+    },
+    {
+      "number": 16,
+      "heading": "EXT. BASE OF REDWOOD - MOMENTS LATER",
+      "characters": [
+        "SQUIRREL",
+        "FINK",
+        "PADDLER"
+      ],
+      "dialogues": [
+        {
+          "character": "SQUIRREL",
+          "parenthetical": "",
+          "text": "This guy’s nuts."
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Paddler? Local laughing stock. Spends"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "(calling to Paddler)"
+        },
+        {
+          "character": "PADDLER",
+          "parenthetical": "",
+          "text": "Felling this is not the point. The"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "And that’s what happens to your brain"
+        },
+        {
+          "character": "PADDLER",
+          "parenthetical": "",
+          "text": "Yeah? Well, you’ll eat those words,"
+        }
+      ],
+      "actionPreview": "Rozzum 7134, Fink and the Gosling pass nearby, a load of wood in Rozzum 7134’s arms. They walk past a BEAVER chewing a MASSIVE REDWOOD. BABY OPOSSUM 2 That thing’s gonna fall on you . BABY OPOSSUM 7 And squish you to jelly . ROZZUM 7134 Who is that? every day trying to cut down the biggest tree on t"
+    },
+    {
+      "number": 17,
+      "heading": "EXT. PADDLER’S LODGE - LATER",
+      "characters": [
+        "FINK"
+      ],
+      "dialogues": [
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "He doesn’t need to know."
+        }
+      ],
+      "actionPreview": "Roz scoops up Paddler’s lodge. ROZZUM 7134 Are you sure Paddler will not mind us borrowing his home?"
+    },
+    {
+      "number": 18,
+      "heading": "EXT. LODGE HOLLOW - LATER",
+      "characters": [
+        "FINK",
+        "GOSLING",
+        "ROZ"
+      ],
+      "dialogues": [
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Seriously? He needs room for me and my"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "GOSLING",
+          "parenthetical": "(O.S.)",
+          "text": "Roz feffin-nun free sore."
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "But you can call me Roz."
+        },
+        {
+          "character": "GOSLING",
+          "parenthetical": "",
+          "text": "Roz. Roz Roz"
+        }
+      ],
+      "actionPreview": "Rozzum 7134 PROJECTS a compact dome over the gosling. stuff. 7134 ENLARGES the dome substantially. Better. Now, you can make one this big, right? ROZZUM 7134 No task is impossible for Rozzum Seven One Three Four. Roz ."
+    },
+    {
+      "number": 19,
+      "heading": "EXT. LODGE HOLLOW - LATE AFTERNOON",
+      "characters": [
+        "GOSLING",
+        "FINK",
+        "ROZ"
+      ],
+      "dialogues": [
+        {
+          "character": "GOSLING",
+          "parenthetical": "",
+          "text": "Roz! Roz! Roz!"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Where are you from that things don’t eat"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "I do not know my origin point."
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Well who made you?"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Someone made me?"
+        },
+        {
+          "character": "GOSLING",
+          "parenthetical": "",
+          "text": "Someone made me?"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Hahahahah ."
+        },
+        {
+          "character": "GOSLING",
+          "parenthetical": "",
+          "text": "Hahahahah ."
+        },
+        {
+          "character": "GOSLING",
+          "parenthetical": "",
+          "text": "Missortune ."
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Yeah. Here. Try it."
+        },
+        {
+          "character": "GOSLING",
+          "parenthetical": "",
+          "text": "Yeah!"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Not"
+        },
+        {
+          "character": "GOSLING",
+          "parenthetical": "",
+          "text": "Not funny. Hahahahah ."
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Ugh. Squirrels."
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Your inefficient participation will slow"
+        },
+        {
+          "character": "GOSLING",
+          "parenthetical": "",
+          "text": "Slow the process. I’ll just be over here."
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Just this once."
+        },
+        {
+          "character": "GOSLING",
+          "parenthetical": "",
+          "text": "Perfect."
+        },
+        {
+          "character": "GOSLING",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "A little rustic."
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "I think I know what is missing."
+        }
+      ],
+      "actionPreview": "Roz PILES ROCKS. The gosling HOPS from rock to rock, making a game of it. each other? 26. 27. A group of squirrels LAUGH at Roz’ progress. Fink BEANS them with a mouse. ROZZUM 7134 Humor is based on misfortune? Fink PULLS back a curtain of grass, lining up a rabbit. A high-velocity pinecone TAKES OU"
+    },
+    {
+      "number": 20,
+      "heading": "EXT. SHORELINE - AFTERNOON",
+      "characters": [
+        "FINK",
+        "ROZ",
+        "GOSLING"
+      ],
+      "dialogues": [
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "So what you gonna name him?"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "I assign to you Gosling zero-zero-zero-"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Ok. That sucked."
+        },
+        {
+          "character": "GOSLING",
+          "parenthetical": "",
+          "text": "That sucked."
+        }
+      ],
+      "actionPreview": "Roz, Fink, and the gosling search for wood on the beach. one. Roz glows proudly. BOOM. Thunder rumbles over the beach. 28. 29."
+    },
+    {
+      "number": 21,
+      "heading": "EXT. FOREST - LATER",
+      "characters": [
+        "FINK",
+        "ROZ",
+        "O O",
+        "GOSLING"
+      ],
+      "dialogues": [
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "You gotta learn to just make stuff up."
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Searching. “A W O"
+        },
+        {
+          "character": "O O",
+          "parenthetical": "",
+          "text": "O...”"
+        },
+        {
+          "character": "GOSLING",
+          "parenthetical": "",
+          "text": "Aaaa woo ooo"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Anything yet?"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Just have a little fun for once?"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "‘Gosling zero-one-eight-six.’ There. You"
+        }
+      ],
+      "actionPreview": "Roz, Fink, and the gosling huddle under a tree to escape the storm. Come on, find that ‘AWOOOO’ inside you. Roz OPENS a panel, PEERS inside. ooo ooo-- Fink NOTES the strangeness. see what I did? His numbering is out of sequence. ‘Waaaaaaaaah.’ Fink glares. Beans a laughing squirrel. SQ1300 - THE BED"
+    },
+    {
+      "number": 22,
+      "heading": "INT. LODGE - EVENING",
+      "characters": [
+        "FINK",
+        "ROZ",
+        "GOSLING",
+        "BABY BRIGHTBILL",
+        "PADDLER"
+      ],
+      "dialogues": [
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "His name can’t have numbers. It’s like"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "My name has numbers."
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "It’s gotta be personal."
+        },
+        {
+          "character": "GOSLING",
+          "parenthetical": "",
+          "text": "Personal."
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Processing. Personal. Bright. Bill."
+        },
+        {
+          "character": "BABY BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Brightbill. Processing... Beep beep"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Oh yeah, that’s perfect. Oh, that’s nice."
+        },
+        {
+          "character": "PADDLER",
+          "parenthetical": "(O.S.)",
+          "text": "Comfortable, are we?"
+        },
+        {
+          "character": "PADDLER",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Oh perfect. Now no one’s gonna get any"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "How do we reset Brightbill?"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "When I was little, my mom would rock me"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "That will damage him."
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Hey, I turned out just fine."
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "How will fictional narrative help"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Kids need to feel safe and loved and all"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "A story can do that?"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Storytelling is lying adjacent, and I lie"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BABY BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Brightbill?"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "--and he was all alone."
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Because the rest of his family was"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Not yet ."
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "(CONT ’ D)"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "...Which is impossible since sound does"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "(shooting Roz a look)"
+        },
+        {
+          "character": "BABY BRIGHTBILL",
+          "parenthetical": "",
+          "text": "How did my momma come to me from so far"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Who cares?"
+        },
+        {
+          "character": "BABY BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Huh?"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "I mean, she’s trying to see you--"
+        },
+        {
+          "character": "BABY BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Me?"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "--and falls off that star and lands on"
+        },
+        {
+          "character": "BABY BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Oh no!"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "So it’s a little weird what she knows and"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Crushing obligation."
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Very lucky"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "(CONT ’ D)"
+        },
+        {
+          "character": "BABY BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Mama!"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "And, I, will not leave until I have"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Which is robot for, ‘she loves you very"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "The story worked."
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "(gagging)"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "How do you tell a story about something"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "You’ll need to be more specific."
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Love."
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Yeah, well. When you grow up without"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "To conserve battery power, I must shut"
+        },
+        {
+          "character": "BABY BRIGHTBILL",
+          "parenthetical": "",
+          "text": "I miss her when she sleeps, too."
+        }
+      ],
+      "actionPreview": "Roz BURNS images onto a piece of wood. someone didn’t even like him. Roz places it on the mantel. She stands back, revealing a series of silhouettes: an egg, Baby Brightbill, and Fink . 29. 30. Roz examines her gosling. Light glints off his beak. Brightbill. Is that satisfactory? Brightbill PEEPS in"
+    },
+    {
+      "number": 23,
+      "heading": "INT. LODGE - MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "PAN across the mantle, where a series of ever-larger Brightbill silhouettes have joined the original. DISSOLVE TO:"
+    },
+    {
+      "number": 24,
+      "heading": "EXT. FOREST EMBANKMENT - DAY",
+      "characters": [
+        "BRIGHTBILL",
+        "SQUIRREL",
+        "AAAAAAAAAAAUGHHHHHH",
+        "ROZ",
+        "FINK",
+        "PINKTAIL",
+        "BABY OPOSSUMS",
+        "PADDLER"
+      ],
+      "dialogues": [
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Scanning. Possible animal friend sighted."
+        },
+        {
+          "character": "SQUIRREL",
+          "parenthetical": "",
+          "text": "* chik?*"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "(servo sounds)"
+        },
+        {
+          "character": "AAAAAAAAAAAUGHHHHHH",
+          "parenthetical": "",
+          "text": "!"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "I expected to have at least one"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Scream and run?"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Yes!"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "I have experienced the same phenomenon."
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Beats me. Nothing weird about you two."
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Thank you."
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Show me, deer !"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Bear . Porcupine . Squirrel ."
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Now skunk ."
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "I do not want to do skunk."
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Skuuuuuunk. Skunkie, skunkie, skunkie !"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "*sigh*"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "BOO!"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "(coughing)"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "I overheat my Fallium transducer coils,"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Does overheating the transducers have any"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Not if I pre-cool the load sensors."
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Exemplary day for swimming"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "(greeting)"
+        },
+        {
+          "character": "PINKTAIL",
+          "parenthetical": "",
+          "text": "They were bored and wanted to see stuff"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Primary motor appendages in"
+        },
+        {
+          "character": "BABY OPOSSUMS",
+          "parenthetical": "",
+          "text": "Come on guys, it’s happening! Hurry,"
+        },
+        {
+          "character": "BABY OPOSSUMS",
+          "parenthetical": "",
+          "text": "Yeah! Yay!"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Uh, you know, suddenly I’m thinking I"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Nope."
+        },
+        {
+          "character": "BABY OPOSSUMS",
+          "parenthetical": "",
+          "text": "Yeah!"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "(gargling water)"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Well done Brightbill! Swimming"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "No, that’s swimming."
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Yeah, thanks you guys!"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Perhaps you could limit your range to"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Roz. He needs to become independent if"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "I prefer he be independent, closer to"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "He won’t die. Well, probably won’t die."
+        },
+        {
+          "character": "PADDLER",
+          "parenthetical": "",
+          "text": "Are you dying? Do everyone a favor and"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "(half-drowning)"
+        },
+        {
+          "character": "PADDLER",
+          "parenthetical": "",
+          "text": "I think I need to find an island that’s"
+        }
+      ],
+      "actionPreview": "Warm summer breezes comb the trees and grass. SERVO SOUNDS precede the PARTING of the grass revealing... BRIGHTBILL, walking/moving robotically. He TURNS to a passing squirrel, snaking his neck in a mildly upsetting way. Activating interspecies outreach protocol. * rrt, brrt viip rrrrt* Hello, Bonjo"
+    },
+    {
+      "number": 25,
+      "heading": "EXT. FAR SIDE OF THE LAKE - CONTINUOUS",
+      "characters": [
+        "BRIGHTBILL",
+        "SNOWDOWN",
+        "FEATHER",
+        "PECK",
+        "HONKINGTON",
+        "ROZ",
+        "GEESE",
+        "FINK",
+        "OPENS WIDE."
+      ],
+      "dialogues": [
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Woah. They’re me. I’m, them."
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "SNOWDOWN",
+          "parenthetical": "",
+          "text": "(noting his size,"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Why does everyone ask that? Vrrr ka-"
+        },
+        {
+          "character": "SNOWDOWN",
+          "parenthetical": "",
+          "text": "That’s, not how you do it."
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "It is . I studied the diagram. I can teach"
+        },
+        {
+          "character": "SNOWDOWN",
+          "parenthetical": "",
+          "text": "Wait, you, you’re it. You’re that goose"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Monster? Wait. Goose... ‘thing?’"
+        },
+        {
+          "character": "SNOWDOWN",
+          "parenthetical": "",
+          "text": "You’re a big subject of curiosity around"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "My learning curves are within expected"
+        },
+        {
+          "character": "SNOWDOWN",
+          "parenthetical": "",
+          "text": "Kind of normal. Why are you over here?"
+        },
+        {
+          "character": "FEATHER",
+          "parenthetical": "",
+          "text": "Look what we have here."
+        },
+        {
+          "character": "PECK",
+          "parenthetical": "",
+          "text": "No, way. It lives ."
+        },
+        {
+          "character": "HONKINGTON",
+          "parenthetical": "",
+          "text": "And almost floats ."
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Greetings, I see you, too have feathers"
+        },
+        {
+          "character": "HONKINGTON",
+          "parenthetical": "",
+          "text": "We have nothing in common with you."
+        },
+        {
+          "character": "PECK",
+          "parenthetical": "",
+          "text": "The freak show is on the other side of"
+        },
+        {
+          "character": "FEATHER",
+          "parenthetical": "",
+          "text": "You call that a wing?"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Ow . That creates a pain response."
+        },
+        {
+          "character": "PECK",
+          "parenthetical": "",
+          "text": "Try swimming with your feet."
+        },
+        {
+          "character": "HONKINGTON",
+          "parenthetical": "",
+          "text": "You don’t belong here."
+        },
+        {
+          "character": "FEATHER",
+          "parenthetical": "",
+          "text": "C’mon. Fly away."
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Roz!"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Brightbill."
+        },
+        {
+          "character": "GEESE",
+          "parenthetical": "",
+          "text": "The monster ."
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Brightbill."
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "It’s Rockmouth. Get him out of there ."
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Roz--"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Brightbill? Focus on me. Now swim, as"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "He’s gonna eat me!"
+        },
+        {
+          "character": "OPENS WIDE.",
+          "parenthetical": "",
+          "text": "Roz’s metal hand YANKS Rockmouth below the surface. Roz"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "HONKINGTON",
+          "parenthetical": "",
+          "text": "Because you"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "He just wanted to make contact with his"
+        },
+        {
+          "character": "PECK",
+          "parenthetical": "",
+          "text": "He is not our kind."
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "He is a 98 percent match to your--"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "No, I’m not. Let’s just go, mom."
+        },
+        {
+          "character": "FEATHER",
+          "parenthetical": "",
+          "text": "Wait. You think that thing is your"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Yes. No. I don’t know."
+        },
+        {
+          "character": "PECK",
+          "parenthetical": "",
+          "text": "That thing killed"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Thanks for talking so much. Now I know"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Stop it, Fink. Please. Let’s go."
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "I hope this interaction--"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Mom. Stop ."
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "I just intended to--"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "."
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "I’ll see you all for dinner . This is not"
+        }
+      ],
+      "actionPreview": "Brightbill sees other geese for the first time. Hundreds glide back and forth on the lake. Brightbill makes his way toward the other geese. Unable to see where he’s going, Brightbill BUMPS into another goose, SNOWDOWN. Hello, Bonjour, Konnichiwa, Hujambo! I am Gosling-- instability) Um, are you, dyi"
+    },
+    {
+      "number": 26,
+      "heading": "INT. LODGE - DUSK",
+      "characters": [
+        "BRIGHTBILL",
+        "ROZ",
+        "FINK"
+      ],
+      "dialogues": [
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "How did I become...this? The truth."
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "There was an accident."
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Did you do it?"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": ".....yes."
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "It wasn’t her fault, kid."
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Why didn’t you tell me?"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "I, did not think the information would"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "That’s not your decision to make. I can’t"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "You...did?"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "It was so obvious. I feel so stupid."
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "I miscalculated. I should have considered"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "You think? So was it just guilt? Is that"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "I--I needed a task--"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Well I’m glad I could give you one."
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "The events that led to this"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Tell that to my sisters, my"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "(CONT ’ D)"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "You swam satisfactorily today and"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "I still"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "I understand."
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "You don’t understand anything. You don’t"
+        }
+      ],
+      "actionPreview": "The cozy dome is heavy with tension. Roz fiddles with her scavenged foot, unable to reattach it. 43. (MORE) 44. Roz hesitates, looks to Fink, who shakes his head slowly. assist you. believe how long I bought this. I really thought you were my family. your emotional wavelengths. why you did this? sit"
+    },
+    {
+      "number": 27,
+      "heading": "EXT. BEACH - LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Roz releases Brightbill’s nest into the ocean. She notices a familiar box on the beach, now covered in seaweed. Roz examines what remains of her shipping case. Her hand wipes away some algae. A scratched-up UNIVERSAL DYNAMICS logo shines back. She fishes a Rozzum manual from the crate. A glint from "
+    },
+    {
+      "number": 28,
+      "heading": "EXT. TIDE POOLS - NOON",
+      "characters": [
+        "BRIGHTBILL"
+      ],
+      "dialogues": [
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "(CONT ’ D)"
+        }
+      ],
+      "actionPreview": "Roz fishes a robot hand from the anemones. Compares it to her own - a match. Roz finds a Rozzum torso. She anxiously OPENS the main panel. Water POURS out: the fusion heart is dead. Following a trail of parts, she is drawn into a wide cavern. A flat pooled floor reflects sunlight, turning the high a"
+    },
+    {
+      "number": 29,
+      "heading": "EXT. CLOUDSCAPE - DAY",
+      "characters": [
+        "NARRATOR",
+        "ROZZUM UNIT"
+      ],
+      "dialogues": [
+        {
+          "character": "NARRATOR",
+          "parenthetical": "(VONTRA)",
+          "text": "At Universal Dynamics, design is our"
+        },
+        {
+          "character": "NARRATOR",
+          "parenthetical": "(VONTRA)",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ROZZUM UNIT",
+          "parenthetical": "",
+          "text": "Here you go."
+        },
+        {
+          "character": "NARRATOR",
+          "parenthetical": "(VONTRA)",
+          "text": "It has. Introducing the Rozzum line of"
+        },
+        {
+          "character": "NARRATOR",
+          "parenthetical": "(VONTRA)",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "NARRATOR",
+          "parenthetical": "(VONTRA)",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "NARRATOR",
+          "parenthetical": "(VONTRA)",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "The UNIVERSAL DYNAMICS logo splashes across the rock wall. A futuristic lighter-than-air ship glides over camera. Diving below pink clouds, a glittering domed city is revealed below. passion. Our communities circle the globe, welcoming all people who dream of a pre-planned life where every need has "
+    },
+    {
+      "number": 30,
+      "heading": "INT. AMPHITHEATER - LATER",
+      "characters": [
+        "ROZZUM UNIT",
+        "ROZ",
+        "RUMMAGE",
+        "A BEAT"
+      ],
+      "dialogues": [
+        {
+          "character": "ROZZUM UNIT",
+          "parenthetical": "",
+          "text": "Hello. Bonjour. Hujambo-- ZZZZT--"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Your name cannot have numbers. I will"
+        },
+        {
+          "character": "RUMMAGE",
+          "parenthetical": "",
+          "text": "Rummage is ready to receive its first"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Your first task is to assist me in my"
+        },
+        {
+          "character": "RUMMAGE",
+          "parenthetical": "",
+          "text": "(optimistic musical fanfare)"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Suppose, a task cannot be completed?"
+        },
+        {
+          "character": "RUMMAGE",
+          "parenthetical": "",
+          "text": "Rozzum sequential management ensures task"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Rephrase. I have a task that has become"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "RUMMAGE",
+          "parenthetical": "",
+          "text": "Can you explain again what we are doing?"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "I don’t know . I’m just making stuff up. I"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "RUMMAGE",
+          "parenthetical": "",
+          "text": "What task could possibly overwhelm the"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "I have a kid."
+        },
+        {
+          "character": "RUMMAGE",
+          "parenthetical": "",
+          "text": "... Okay."
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "I feel fine."
+        },
+        {
+          "character": "RUMMAGE",
+          "parenthetical": "",
+          "text": "You should not, feel, anything at all."
+        },
+        {
+          "character": "RUMMAGE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "I have been overwriting my code for"
+        },
+        {
+          "character": "RUMMAGE",
+          "parenthetical": "",
+          "text": "This is serious. You are defective. You"
+        },
+        {
+          "character": "RUMMAGE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "The video is on repeat, playing silently on the cave walls. PAN ACROSS THREE PARTIAL HEADS, A PILE OF FEET AND HANDS. CRANE-UP TO FIND A PARTIALLY RECONSTRUCTED ROZZUM seated across from Roz. It has a head, body, one arm and one leg. Roz fiddles with its processor tray, trading different cores. She "
+    },
+    {
+      "number": 31,
+      "heading": "EXT. MOUNTAIN TOP - LATE AFTERNOON",
+      "characters": [
+        "FINK",
+        "ROZ"
+      ],
+      "dialogues": [
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "You need to let me know before you"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "We ruined everything."
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Well, you did."
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "You are not a goose expert, are you."
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "I know how they taste. That’s about it."
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "A working transmitter. It will call the"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "So you’re getting out of here?"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "I found out where I am supposed to be. I"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Don’t take this the wrong way, but I’m"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "I think they need me. And they will fix"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Oh no..."
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Are those--?"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "He’s outta time. Well come on, we need to"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "I don’t think he will ever let us help"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Don’t worry, we’re his only friends. He"
+        }
+      ],
+      "actionPreview": "Roz sits quietly, watching the clouds. 49. 50. Fink saunters up. disappear like this. Three things tried to eat me on the way here. He reaches the top. Roz? Roz sets the transmitter on the grass between them. Is that..? ones that made me. Roz plugs the transmitter in. Fink SITS next to Roz. will fit"
+    },
+    {
+      "number": 32,
+      "heading": "EXT. GARDEN - LATER",
+      "characters": [
+        "BRIGHTBILL",
+        "ROZ",
+        "FINK"
+      ],
+      "dialogues": [
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "No ."
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "The mutation that made you small should"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Do either of you know more about flying"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Look, Roz, whatever task you think you’re"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Wow. And after all we’ve done for him."
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "You really think we can do this?"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "A Rozzum always completes its task."
+        }
+      ],
+      "actionPreview": "not have an effect on your ability to navigate the air. than you did swimming? doing, you’re done. You can just leave. 51. 52. Are you gonna let him do that? Roz LENGTHENS her legs and steps clean OVER Brightbill, dropping down in front of him. Your life is not negotiable. Brightbill looks skeptical"
+    },
+    {
+      "number": 33,
+      "heading": "EXT. MEADOW - MORNING",
+      "characters": [
+        "ROZ",
+        "BRIGHTBILL"
+      ],
+      "dialogues": [
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "You just need more speed."
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "I guess I have to be."
+        }
+      ],
+      "actionPreview": "ON ROZ PROJECTING schematics of wings on a rock wall, the wing beats animated in a cycle - a model for Brightbill to follow. Trying to mimic the animated sequence, Brightbill races across the forest floor, jumps... faceplants. Roz reaches out. Brightbill backs away then reluctantly allows Roz to pic"
+    },
+    {
+      "number": 34,
+      "heading": "EXT. MEADOW - MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "ON ROZ running through across the meadow, Brightbill on her shoulder. With the increased speed Brightbill feels lift. But Roz TRIPS on the uneven ground."
+    },
+    {
+      "number": 35,
+      "heading": "EXT. MEADOW - NIGHT",
+      "characters": [
+        "ROZ",
+        "PADDLER",
+        "BRIGHTBILL",
+        "FINK"
+      ],
+      "dialogues": [
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "I don’t know what to say."
+        },
+        {
+          "character": "PADDLER",
+          "parenthetical": "",
+          "text": "Good."
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "(beak clenched on the line)"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Roz ."
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "I’m fine. Go again."
+        }
+      ],
+      "actionPreview": "By the light of Roz’ headlights, she moves rocks. DISSOLVE TO: A runway of rocks has been laid, 150 yards long. Straight and flat as can be. Now Roz can run faster. Admiring her work, she TURNS, surprised to see Paddler, standing next to a log he’s carefully shaped. Roz DRILLS a guide hold for a bea"
+    },
+    {
+      "number": 36,
+      "heading": "INT. LODGE - NIGHT",
+      "characters": [
+        "BRIGHTBILL",
+        "FINK",
+        "ROZ"
+      ],
+      "dialogues": [
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "It’s no use, they’re too small."
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "(sotto)"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Then we’ll find someone who can."
+        }
+      ],
+      "actionPreview": "Brightbill looks at the projected shadow of his wing. Adjusts his distance from the fire to make it look bigger. You can’t be up there with him."
+    },
+    {
+      "number": 37,
+      "heading": "EXT. CLIFFSIDE NOOK - LATER",
+      "characters": [
+        "FINK",
+        "ROZ"
+      ],
+      "dialogues": [
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "You home?"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "We have a proposition."
+        }
+      ],
+      "actionPreview": "Roz’ head RISES into view - Fink sitting atop it. REVERSE on a pair of eyes, bright in the shadows."
+    },
+    {
+      "number": 38,
+      "heading": "EXT. RUNWAY - LATER",
+      "characters": [
+        "BRIGHTBILL",
+        "ROZ",
+        "THUNDERBOLT",
+        "SHOW ME YOUR TEETH",
+        "FINK"
+      ],
+      "dialogues": [
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "A flight instructor?"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Meet Thunderbolt."
+        },
+        {
+          "character": "THUNDERBOLT",
+          "parenthetical": "",
+          "text": "So, you think small wings to be a"
+        },
+        {
+          "character": "THUNDERBOLT",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Those are, different things."
+        },
+        {
+          "character": "SHOW ME YOUR TEETH",
+          "parenthetical": "",
+          "text": "."
+        },
+        {
+          "character": "THUNDERBOLT",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Remember. There’s nothing he can do that"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Hm? Maybe."
+        }
+      ],
+      "actionPreview": "Brightbill sits on Roz’ shoulder. What loser did you dig up-- Roz EXTENDS her opposite arm. A small bird BLURS past, TURNS, and lands. A FALCON. 54. 55. disappointment? Thunderbolt deploys a wing like a switchblade. Small wings are teeth. The claws of the sky. Thunderbolt touches Brightbill with a p"
+    },
+    {
+      "number": 39,
+      "heading": "EXT. FIELD - LATER",
+      "characters": [
+        "THUNDERBOLT"
+      ],
+      "dialogues": [
+        {
+          "character": "THUNDERBOLT",
+          "parenthetical": "",
+          "text": "Follow me. Your shape takes more work to"
+        }
+      ],
+      "actionPreview": "WIDER: Thunderbolt takes Brightbill through large turns. Then tighter. fly straight, but easier to turn. And dive. Roz watches, then plants a STAKE with a hoop of bark. DRIFT to reveal a trail of similar stakes. 55. 56."
+    },
+    {
+      "number": 40,
+      "heading": "EXT. COASTLINE - MORNING",
+      "characters": [
+        "THUNDERBOLT",
+        "BRIGHTBILL"
+      ],
+      "dialogues": [
+        {
+          "character": "THUNDERBOLT",
+          "parenthetical": "",
+          "text": "You ready?"
+        },
+        {
+          "character": "THUNDERBOLT",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Woo hoo !"
+        },
+        {
+          "character": "THUNDERBOLT",
+          "parenthetical": "",
+          "text": "Exactly. Again."
+        }
+      ],
+      "actionPreview": "DOWN-SHOT on the coast from a mile up. The falcon BLASTS past camera, DIVING with his wings tucked close. A split- second later Brightbill also shoots past camera. They hold the dive, then OPEN their wings and PULL UP, leveling off just above the ground. Not bad for a goose. Thunderbolt leads Bright"
+    },
+    {
+      "number": 41,
+      "heading": "EXT. BEACH - DUSK",
+      "characters": [
+        "LONGNECK",
+        "ROZ"
+      ],
+      "dialogues": [
+        {
+          "character": "LONGNECK",
+          "parenthetical": "",
+          "text": "You should be commended."
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Thank you...?"
+        },
+        {
+          "character": "LONGNECK",
+          "parenthetical": "",
+          "text": "Longneck. One of the leaders of the"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "You are the only goose that has ever"
+        },
+        {
+          "character": "LONGNECK",
+          "parenthetical": "",
+          "text": "We geese are a cranky lot, suspicious of"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Really?"
+        },
+        {
+          "character": "LONGNECK",
+          "parenthetical": "",
+          "text": "No. We’re also boring. All we do is"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "When do you leave?"
+        },
+        {
+          "character": "LONGNECK",
+          "parenthetical": "",
+          "text": "A week."
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Can, Brightbill...?"
+        },
+        {
+          "character": "LONGNECK",
+          "parenthetical": "",
+          "text": "Endurance. Keep him in the air. All day."
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "I understand."
+        },
+        {
+          "character": "LONGNECK",
+          "parenthetical": "",
+          "text": "Brightbill was never supposed to get this"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "His heart is 48 millimeters."
+        },
+        {
+          "character": "LONGNECK",
+          "parenthetical": "",
+          "text": "From what I’ve seen, Brightbill’s heart"
+        },
+        {
+          "character": "LONGNECK",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "Roz watches Brightbill with Thunderbolt. Roz turns. Longneck the goose stands behind her. coming migration. I have been watching you both for some time. bothered to be civil with us. 56. 57. pretty much everything. But at least we’re good conversationalists. gossip. I dare say Brightbill is the most"
+    },
+    {
+      "number": 42,
+      "heading": "EXT. CLIFFSIDE MEADOW - DUSK",
+      "characters": [
+        "ROZ",
+        "FINK",
+        "PINKTAIL",
+        "LONGNECK",
+        "END MONTAGE"
+      ],
+      "dialogues": [
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Don’t give up!"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Come on, kid!"
+        },
+        {
+          "character": "PINKTAIL",
+          "parenthetical": "",
+          "text": "Get your butt back up in the air where it"
+        },
+        {
+          "character": "PINKTAIL",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LONGNECK",
+          "parenthetical": "",
+          "text": "Atta boy."
+        },
+        {
+          "character": "END MONTAGE",
+          "parenthetical": "",
+          "text": "SQ2300 - THE MIGRATION"
+        }
+      ],
+      "actionPreview": "Roz and Fink watch Brightbill soaring. The pain in Brightbill’s wings is evident. He struggles, dipping and climbing, staying in the air and off the ground through sheer force of will. Pinktail arrives. The sun is inches from setting. Brightbill falters, sinking toward Roz and Fink. He dangerously c"
+    },
+    {
+      "number": 43,
+      "heading": "EXT. THE GREAT MEADOW - PRE-DAWN",
+      "characters": [
+        "SNOWDOWN",
+        "HONKINGTON",
+        "FINK",
+        "ROZ",
+        "LONGNECK",
+        "BRIGHTBILL"
+      ],
+      "dialogues": [
+        {
+          "character": "SNOWDOWN",
+          "parenthetical": "",
+          "text": "What’s he doing here?"
+        },
+        {
+          "character": "HONKINGTON",
+          "parenthetical": "",
+          "text": "Does he think he’s coming with us?"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Things still weird, with you two?"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Still weird."
+        },
+        {
+          "character": "LONGNECK",
+          "parenthetical": "",
+          "text": "(addressing the crowd)"
+        },
+        {
+          "character": "LONGNECK",
+          "parenthetical": "(O.S.)",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Wait. You know my name?"
+        },
+        {
+          "character": "LONGNECK",
+          "parenthetical": "",
+          "text": "Roz and I go way back."
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Thank you!"
+        },
+        {
+          "character": "LONGNECK",
+          "parenthetical": "",
+          "text": "I would be delighted if you would join my"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "I promise I’ll keep up."
+        },
+        {
+          "character": "LONGNECK",
+          "parenthetical": "",
+          "text": "(focusing on Brightbill)"
+        },
+        {
+          "character": "LONGNECK",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Yeah, I understand."
+        },
+        {
+          "character": "LONGNECK",
+          "parenthetical": "",
+          "text": "No, you don’t. You see any other geese"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "I-- I never thought of it that way."
+        },
+        {
+          "character": "LONGNECK",
+          "parenthetical": "",
+          "text": "Funny, how life works."
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Thank you for looking after my--"
+        },
+        {
+          "character": "LONGNECK",
+          "parenthetical": "",
+          "text": "Good-bye Roz. I am honored to have met"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "A bit worse for wear, I’m afraid."
+        },
+        {
+          "character": "LONGNECK",
+          "parenthetical": "",
+          "text": "I’d say you shine like new."
+        },
+        {
+          "character": "LONGNECK",
+          "parenthetical": "(O.S.)",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Well. Guess it’s time."
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Will you be here when I get back?"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Roz, I-- I, uh--"
+        },
+        {
+          "character": "LONGNECK",
+          "parenthetical": "(O.S.)",
+          "text": "Brightbill ."
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "I-- I could use a boost."
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Hey, little guy. Fly like you. Not like"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "I will. Bye Fink. Thank you."
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Ready?"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "I guess I have to be."
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Roz?"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "I--"
+        },
+        {
+          "character": "LONGNECK",
+          "parenthetical": "",
+          "text": "Brightbill. Follow me."
+        }
+      ],
+      "actionPreview": "Hundreds of geese are gathered, milling and honking. Roz, Brightbill, and Fink wade into the crowd. The geese give them a wide berth. Attention everyone. The time has come again. This flight is thousands of unforgiving miles. It has shaped us, and tested us over millennia. Now, join your families. A"
+    },
+    {
+      "number": 44,
+      "heading": "EXT. CLIFFSIDE - MOMENTS LATER",
+      "characters": [
+        "FINK",
+        "ROZ",
+        "A BEAT."
+      ],
+      "dialogues": [
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Must be a relief."
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Yes. Brightbill is where he belongs. And"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Yeah. And you can go to that place you’ve"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Yes! So, all good."
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "All good."
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Amazing, even."
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Amazing. Amazing..."
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Not that it matters, but who says you"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "I am not sure. Them, I guess."
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Your, programming."
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Fink?"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Unless you want to stay. Cause we could"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "How do you know if you love, something?"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "(hopeful)"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "What if it is too late?"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "(crushed)"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Fink?"
+        }
+      ],
+      "actionPreview": "Fink finds Roz sitting at the edge of the cliff. He approaches. now you can return to your solitary life of struggling to survive on an island where everything wants to kill and eat you. never been and don’t know what’s gonna happen to you. A BEAT. A cold breeze BLOWS a loose panel open on Roz. need"
+    },
+    {
+      "number": 45,
+      "heading": "INT. LODGE - LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Roz carves one more silhouette on the growth chart: a flying goose."
+    },
+    {
+      "number": 46,
+      "heading": "EXT. FIELD - LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Roz makes her way across the mountain."
+    },
+    {
+      "number": 47,
+      "heading": "EXT. BURROW - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Fink clears the opening, crawls inside."
+    },
+    {
+      "number": 48,
+      "heading": "INT. DEEP BURROW - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Fink settles into his bed of moss and leaves. 64. 65."
+    },
+    {
+      "number": 49,
+      "heading": "EXT. FOREST - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Roz drifts past Chitchat and other animals making final preparations for their winter slumber. Thorn is too busy closing his cave to bother chasing Roz."
+    },
+    {
+      "number": 50,
+      "heading": "EXT. MOUNTAIN PEAK - DUSK",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Roz reaches the island summit. As the cold wind strengthens, Roz deploys her transmitter."
+    },
+    {
+      "number": 51,
+      "heading": "EXT. MOUNTAIN PEAK - CONTINUOUS",
+      "characters": [
+        "ROZ"
+      ],
+      "dialogues": [
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Rozzum seven one three four. Task"
+        }
+      ],
+      "actionPreview": "complete. Activating return transmitter in three, two, one. PULL BACK into the thickening storm. A GREEN LIGHT BLINKS SQ2375 - THE JOURNEY"
+    },
+    {
+      "number": 52,
+      "heading": "INT. UNIVERSAL DYNAMICS CONTROL CENTER - CONTINUOUS",
+      "characters": [
+        "AUTOMATED ALARM"
+      ],
+      "dialogues": [
+        {
+          "character": "AUTOMATED ALARM",
+          "parenthetical": "",
+          "text": "Distress signal received. Mapping"
+        }
+      ],
+      "actionPreview": "Banks of glowing screens draw the attention of humans and robots alike, as they orchestrate the high-tech dance of the modern city we saw in the cave projection. A foreground screen flashes a message. location. MATCH-CUT TO:"
+    },
+    {
+      "number": 53,
+      "heading": "EXT. SAN FRANCISCO BAY - DAY",
+      "characters": [
+        "LONGNECK",
+        "BRIGHTBILL"
+      ],
+      "dialogues": [
+        {
+          "character": "LONGNECK",
+          "parenthetical": "",
+          "text": "Something on your mind?"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "I forgot to say something before I left."
+        },
+        {
+          "character": "LONGNECK",
+          "parenthetical": "",
+          "text": "Maybe they heard it anyway. Sometimes"
+        }
+      ],
+      "actionPreview": "The geese arc over the water, a patchy cloud layer below them. Longneck notices Brightbill gazing off to the side. 65. 66. hearts have their own conversations."
+    },
+    {
+      "number": 54,
+      "heading": "EXT. BLIZZARD - EVENING",
+      "characters": [
+        "LONGNECK",
+        "BRIGHTBILL"
+      ],
+      "dialogues": [
+        {
+          "character": "LONGNECK",
+          "parenthetical": "",
+          "text": "We must descend, find shelter while this"
+        },
+        {
+          "character": "LONGNECK",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LONGNECK",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LONGNECK",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Migrations sure are tiring, huh? Yeah."
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "The geese struggle to maintain their formation in the midst of a gale. He calls to his wing. blows over. Stay close. Gliding downwards, a warm glow appears before the flock. There. Follow me. Longneck CLOSES on a massive dome. Its transparent surface displays a warm oasis within. Come on. Longneck a"
+    },
+    {
+      "number": 55,
+      "heading": "INT. DOME CONTROL ROOM - CONTINUOUS",
+      "characters": [
+        "AUTOMATED ALARM",
+        "ROZZUM UNITS",
+        "LONGNECK",
+        "BRIGHTBILL",
+        "ON THE RECO",
+        "A SHOT RINGS OUT"
+      ],
+      "dialogues": [
+        {
+          "character": "AUTOMATED ALARM",
+          "parenthetical": "",
+          "text": "Animal infestation. Animal infestation."
+        },
+        {
+          "character": "ROZZUM UNITS",
+          "parenthetical": "",
+          "text": "Task acquired!"
+        },
+        {
+          "character": "LONGNECK",
+          "parenthetical": "",
+          "text": "Please, everyone, find your"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Wait! Rozzums can’t hurt you! Their"
+        },
+        {
+          "character": "LONGNECK",
+          "parenthetical": "",
+          "text": "You’re not afraid of them. You grew"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Whoa, whoa, whoa, I don’t understand."
+        },
+        {
+          "character": "LONGNECK",
+          "parenthetical": "",
+          "text": "They’re panicked. You’re not. Right now"
+        },
+        {
+          "character": "ROZZUM UNITS",
+          "parenthetical": "",
+          "text": "Task acquired!"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Maybe we should just think about this!"
+        },
+        {
+          "character": "AUTOMATED ALARM",
+          "parenthetical": "",
+          "text": "Navigation compromised."
+        },
+        {
+          "character": "LONGNECK",
+          "parenthetical": "",
+          "text": "I’m going to get them to follow"
+        },
+        {
+          "character": "LONGNECK",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Yeah, why not. Okay. There’s nothing I"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LONGNECK",
+          "parenthetical": "",
+          "text": "Hah. Glad I lived long enough to"
+        },
+        {
+          "character": "LONGNECK",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Keep up."
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ON THE RECO",
+          "parenthetical": "",
+          "text": "- taking aim at the twisting flock. Longneck"
+        },
+        {
+          "character": "A SHOT RINGS OUT",
+          "parenthetical": "",
+          "text": "SMASH TO:"
+        }
+      ],
+      "actionPreview": "On screen, BRIGHTBILL earnestly SQUAWKS at the ROZZUM. A HUMAN notices. Activates an emergency response protocol. ON BRIGHTBILL realizing something is amiss. He takes a step back - too late. The Rozzum’s eyes blink RED. Across the fields, more Rozzums move in, eyes glowing red. IN THE FIELDS - Rozzu"
+    },
+    {
+      "number": 56,
+      "heading": "INT. LODGE - NIGHT",
+      "characters": [
+        "ROZ",
+        "FINK",
+        "AAAAAAUGH"
+      ],
+      "dialogues": [
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Brightbill?"
+        },
+        {
+          "character": "AAAAAAUGH",
+          "parenthetical": "",
+          "text": "!"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Fink?"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Roz? Roz! What are you doing here?"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "I, may have turned off the transmitter."
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "(warming himself)"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "It is good to see a friend."
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "It is bad out there. Worst storm I’ve"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Are others in danger?"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "(thinking/excuse noises)"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "ROZ SITS UP as though awaking a nightmare. All is silent, dark. Fink’s startled face comes into focus. 69. 70. Even though Brightbill does not want me here, I needed to know if he made it. Roz LIGHTS a fire in the hearth. Fink is glad to see Roz. Breaking the rules? I thought you had to do what they"
+    },
+    {
+      "number": 57,
+      "heading": "EXT. DEEP WOODS - LATER",
+      "characters": [
+        "FINK",
+        "ROZ"
+      ],
+      "dialogues": [
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "(yelling over the storm)"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Why are you interested in eliminating"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "No one likes me."
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Nor me. But right now we are their only"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Okay."
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "Roz and Fink make their way through the deep snow and powerful winds. Roz follows Fink, who is SNIFFING the ground. Are you sure about this? We could have the whole island to ourselves come spring. everyone else from this island? chance. Funny, how life works. Fink SNIFFS. DIVES into the snow face-f"
+    },
+    {
+      "number": 58,
+      "heading": "INT. ROZ’S LODGE - LATER",
+      "characters": [
+        "ROZ"
+      ],
+      "dialogues": [
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Can you find more?"
+        }
+      ],
+      "actionPreview": "Roz sets GRUMBLE by the fire. He shakes off the ice and starts to defrost."
+    },
+    {
+      "number": 59,
+      "heading": "EXT. RIVERBANK - LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Roz saws a circle through the ice. She pulls the block up and attached to it is ROCKMOUTH. Roz uses a torch to defrost him. Rockmouth escapes back into the water."
+    },
+    {
+      "number": 60,
+      "heading": "EXT. HOLLOW - LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Roz reaches into a log for a shivering WOLVERINE. 71. 72."
+    },
+    {
+      "number": 61,
+      "heading": "INT. LOG - LATER",
+      "characters": [
+        "PINKTAIL"
+      ],
+      "dialogues": [
+        {
+          "character": "PINKTAIL",
+          "parenthetical": "",
+          "text": "We’re gonna be ok."
+        }
+      ],
+      "actionPreview": "Roz peers inside to see Pinktail shivering with her babies. BABY OPOSSUM 10 Mom?"
+    },
+    {
+      "number": 62,
+      "heading": "EXT. FOREST - LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Roz cuts down a tree to rescue a frozen Chitchat."
+    },
+    {
+      "number": 63,
+      "heading": "EXT. SNOWBANK - LATER",
+      "characters": [
+        "SKUNK",
+        "FINK",
+        "ROZ"
+      ],
+      "dialogues": [
+        {
+          "character": "SKUNK",
+          "parenthetical": "(O.S.)",
+          "text": "Wh- What are y- you doing here, jerk?"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Bummer. This one’s dead."
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "That is not funny."
+        }
+      ],
+      "actionPreview": "Fink uncovers a frozen animal. He tries to rebury it, but Roz pulls it free."
+    },
+    {
+      "number": 64,
+      "heading": "INT. ROZ’S LODGE - LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The group of animals by the fire increases in number."
+    },
+    {
+      "number": 65,
+      "heading": "EXT. CLIFFSIDE - LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Roz’s hand grabs hold of a rock as she propels herself down a cliff. She lands in front of an opening where THUNDERBOLT huddles."
+    },
+    {
+      "number": 66,
+      "heading": "EXT. PADDLER’S TREE - CONTINUOUS",
+      "characters": [
+        "FINK",
+        "PADDLER"
+      ],
+      "dialogues": [
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Paddler!"
+        },
+        {
+          "character": "PADDLER",
+          "parenthetical": "",
+          "text": "(freezing)"
+        }
+      ],
+      "actionPreview": "Roz grabs PADDLER, frozen mid-bite. 72. 73. I’m fine."
+    },
+    {
+      "number": 67,
+      "heading": "EXT. DEEP WOODS - LATER",
+      "characters": [
+        "ROZ"
+      ],
+      "dialogues": [
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Don’t give up."
+        }
+      ],
+      "actionPreview": "ON ROZ AND FINK peering into a den. Fink shakes his head sadly as Roz reverently covers the hole back up."
+    },
+    {
+      "number": 68,
+      "heading": "EXT. PACIFIC OCEAN - LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "A RAFT OF OTTERS clings to a kelp bed, rising and falling, lost in fog. Roz’s powerful light beams cut through the fog like dual lighthouses. The otters PADDLE towards them."
+    },
+    {
+      "number": 69,
+      "heading": "INT. ROZ’S LODGE - NIGHT",
+      "characters": [
+        "FINK",
+        "ROZ"
+      ],
+      "dialogues": [
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "You don’t look so good."
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Is everyone accounted for?"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Mmmmmmmaybe one more..."
+        }
+      ],
+      "actionPreview": "The lodge is stuffed to capacity with animals sheltering from the killing cold. Roz guides more animals inside. Roz turns back towards the storm."
+    },
+    {
+      "number": 70,
+      "heading": "INT. CAVE - LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Roz PUSHES a rock to the side and peers in. SQ2500 - THE TRUCE"
+    },
+    {
+      "number": 71,
+      "heading": "EXT. ROZ’S LODGE - DUSK",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Roz is approaching, DRAGGING something large. A DIN can be heard from a distance. 73. 74."
+    },
+    {
+      "number": 72,
+      "heading": "INT. ROZ’S LODGE - CONTINUOUS",
+      "characters": [
+        "FINK",
+        "PINKTAIL",
+        "BADGER",
+        "ROZ",
+        "QUIET",
+        "BABY OTTER",
+        "A BEAT",
+        "THORN",
+        "PADDLER"
+      ],
+      "dialogues": [
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Whoa, whoa, whoa! What are you doing?"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "PINKTAIL",
+          "parenthetical": "",
+          "text": "Anyone seen my lost fuzzballs? Smelly,"
+        },
+        {
+          "character": "BADGER",
+          "parenthetical": "(O.S.)",
+          "text": "What’s he doing here?!"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Oh great, this’ll help."
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "(O.S.)",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Fink, what is happening?"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "You put a bunch of predators and their"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "(weakly)"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Help them."
+        },
+        {
+          "character": "QUIET",
+          "parenthetical": "",
+          "text": "!!!!"
+        },
+        {
+          "character": "BABY OTTER",
+          "parenthetical": "",
+          "text": "Shh..."
+        },
+        {
+          "character": "BABY OTTER",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Most of you hate me, and I hate most of"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "But here we are. And here’s the deal."
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "I know you all have instincts that keep"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "THORN",
+          "parenthetical": "(O.S.)",
+          "text": "She’s right."
+        },
+        {
+          "character": "THORN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "PADDLER",
+          "parenthetical": "",
+          "text": "Nope."
+        },
+        {
+          "character": "PINKTAIL",
+          "parenthetical": "",
+          "text": "Roz? What’s going on?"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "I completed my task..."
+        },
+        {
+          "character": "PINKTAIL",
+          "parenthetical": "",
+          "text": "You sure about that?"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "I will...consider...this."
+        }
+      ],
+      "actionPreview": "Mayhem - a bar fight with animals. FAST CUTS of animals arguing, screaming, fighting. A deer looks over to see a WOLVERINE with its mouth attached to its backside. The deer BUCKS off the wolverine, sending it FLYING into the air. CUT WIDE: The scurrying mice cause all the animals big and small to st"
+    },
+    {
+      "number": 73,
+      "heading": "EXT. ROZ’S LODGE - CONTINUOUS",
+      "characters": [
+        "FADE OUT."
+      ],
+      "dialogues": [
+        {
+          "character": "FADE OUT.",
+          "parenthetical": "",
+          "text": "SQ2600 - THE FLOCK RETURNS"
+        }
+      ],
+      "actionPreview": "From the warm, crowded room below, we pull up towards the ceiling revealing the unforgiving blizzard outside. 77. 78."
+    },
+    {
+      "number": 74,
+      "heading": "INT. LODGE - MORNING - APRIL",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "FADE IN: CLOSE ON THE LODGE CEILING A woodpecker, TRUNKTAP, peeks in. We follow a sunbeam to Roz. The lodge is empty save for the sleeping robot. The sound of honking geese filters in, TRIGGERS something in Roz. She BOOTS UP."
+    },
+    {
+      "number": 75,
+      "heading": "EXT. GREAT MEADOW - MOMENTS LATER",
+      "characters": [
+        "ROZ",
+        "FEATHER",
+        "SNOWDOWN",
+        "BRIGHTBILL",
+        "HONKINGTON",
+        "PECK",
+        "FINK"
+      ],
+      "dialogues": [
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "He’ll be here. I know he will."
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "FEATHER",
+          "parenthetical": "",
+          "text": "Look what we have here."
+        },
+        {
+          "character": "SNOWDOWN",
+          "parenthetical": "",
+          "text": "Brightbill!"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "We made it."
+        },
+        {
+          "character": "HONKINGTON",
+          "parenthetical": "",
+          "text": "Brightbill, Brightbill, I believed in you"
+        },
+        {
+          "character": "FEATHER",
+          "parenthetical": "",
+          "text": "Let’s hear it for Brightbill!"
+        },
+        {
+          "character": "SNOWDOWN",
+          "parenthetical": "(O.S.)",
+          "text": "You did it. I knew you could."
+        },
+        {
+          "character": "PECK",
+          "parenthetical": "",
+          "text": "We owe you, Brightbill. To our flight"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Okay, okay. Whoa! Okay!"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "He found where he belongs."
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Hey, kid ."
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Fink!"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Welcome back!"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "No, no, it’s okay, he’s with me. I did"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "And, where’s Longneck?"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Roz? Wait, she’s here?"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "She stayed, for you. I thought I saw her"
+        }
+      ],
+      "actionPreview": "Roz dashes through the trees, glancing skyward. PUSH with Roz as the trees open to the great meadow. She WADES into masses of landing geese. More arrive every second. Roz PAUSES at the tree line. She scans the field, already packed with returning geese. More land by the second, sometimes colliding w"
+    },
+    {
+      "number": 76,
+      "heading": "INT. LODGE - MOMENTS LATER",
+      "characters": [
+        "BRIGHTBILL"
+      ],
+      "dialogues": [
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Roz, Roz, I need to talk to you. Roz?"
+        }
+      ],
+      "actionPreview": "Brightbill FLIES IN. Finds it EMPTY. SQ2800 - THE SHIP ARRIVES"
+    },
+    {
+      "number": 77,
+      "heading": "EXT. RUNWAY - EVENING.",
+      "characters": [
+        "VONTRA",
+        "ROZ",
+        "FINK",
+        "ON VONTRA",
+        "THORN",
+        "BRIGHTBILL",
+        "THUNDERBOLT",
+        "ANIMALS",
+        "RACCOONS"
+      ],
+      "dialogues": [
+        {
+          "character": "VONTRA",
+          "parenthetical": "",
+          "text": "Rozzum Seven-One-Three-Four, I presume."
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "And you must be Universal Dynamics."
+        },
+        {
+          "character": "VONTRA",
+          "parenthetical": "",
+          "text": "Yes. I am VONTRA. Virtual Observational"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "You seem, happy."
+        },
+        {
+          "character": "VONTRA",
+          "parenthetical": "",
+          "text": "The good people at Universal Dynamics"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "That is a big ship just for me."
+        },
+        {
+          "character": "VONTRA",
+          "parenthetical": "",
+          "text": "You are a big deal. You are one of six"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "So that is how I got here."
+        },
+        {
+          "character": "VONTRA",
+          "parenthetical": "",
+          "text": "You were not easy to find. Moments after"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "I was simply completing a task."
+        },
+        {
+          "character": "VONTRA",
+          "parenthetical": "",
+          "text": "As am I . Tell me, how did"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "It is, complicated."
+        },
+        {
+          "character": "VONTRA",
+          "parenthetical": "",
+          "text": "And we cannot wait to hear all about it."
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "My name is Roz."
+        },
+        {
+          "character": "VONTRA",
+          "parenthetical": "",
+          "text": "Is something keeping you, ‘Roz?’"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Roz! What are you doing? Quit messing"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Fink?"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "It’s Brightbill. He needs to talk to you ."
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "I, think I’ve forgotten something."
+        },
+        {
+          "character": "VONTRA",
+          "parenthetical": "",
+          "text": "Roz? It is imperative you return to this"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Yes, ah, I left my transverse, adapter"
+        },
+        {
+          "character": "VONTRA",
+          "parenthetical": "",
+          "text": "Voice stress analyzer indicates you are--"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "....lying your butt off back there."
+        },
+        {
+          "character": "ON VONTRA",
+          "parenthetical": "",
+          "text": "Six MASSIVE MILITARY-GRADE ROBOTS - RECOS - Deploy from"
+        },
+        {
+          "character": "VONTRA",
+          "parenthetical": "",
+          "text": "Your target is Rozzum unit Seven One"
+        },
+        {
+          "character": "VONTRA",
+          "parenthetical": "",
+          "text": "Launch flares."
+        },
+        {
+          "character": "THORN",
+          "parenthetical": "",
+          "text": "You coming?"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Brightbill."
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Roz . I have so much to tell--"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Are those your parents?"
+        },
+        {
+          "character": "THORN",
+          "parenthetical": "",
+          "text": "I know predators, and those, are"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "What are they saying?"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "They want me to come with them."
+        },
+        {
+          "character": "THUNDERBOLT",
+          "parenthetical": "",
+          "text": "Tell them you’re already home."
+        },
+        {
+          "character": "ANIMALS",
+          "parenthetical": "",
+          "text": "Yeah. She’s already home. You’re already"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "I’m already home, thank you."
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "And I, am a wild robot."
+        },
+        {
+          "character": "ANIMALS",
+          "parenthetical": "",
+          "text": "HoooWOOOOOOOOOOOOOOOOOOO ."
+        },
+        {
+          "character": "RACCOONS",
+          "parenthetical": "",
+          "text": "(swarming recos)"
+        }
+      ],
+      "actionPreview": "Roz walks down the center line of her old runway, lost in thought. She TOUCHES the old obstacles she built to help Brightbill fly. Roz’ EMERGENCY TRANSMITTER DEPLOYS by itself. Startled, Roz SHUTS IT OFF again. Roz is SPLASHED WITH LIGHT. A huge silver ship glides to a stop a few yards from Roz, its"
+    },
+    {
+      "number": 78,
+      "heading": "INT. RECOVERY SHIP - CONTINUOUS",
+      "characters": [
+        "VONTRA"
+      ],
+      "dialogues": [
+        {
+          "character": "VONTRA",
+          "parenthetical": "",
+          "text": "Status?"
+        }
+      ],
+      "actionPreview": "ON A SCREEN with the Reco falling apart. RECO 5 It is not cooperating. R5 is gone. He is nothing but parts now."
+    },
+    {
+      "number": 79,
+      "heading": "EXT. FIELD - CONTINUOUS",
+      "characters": [
+        "THORN",
+        "BABY OPOSSUMS",
+        "FINK"
+      ],
+      "dialogues": [
+        {
+          "character": "THORN",
+          "parenthetical": "",
+          "text": "Roz . Behind you ."
+        },
+        {
+          "character": "BABY OPOSSUMS",
+          "parenthetical": "",
+          "text": "It’s all you."
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Oops."
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "You scare me."
+        }
+      ],
+      "actionPreview": "Roz DODGES a passing deer - is GRABBED by R6. Its grip is unshakable. RECO 6 Rozzum unit captured. ON TWO BABY OPOSSUMS perched on Roz’ shoulder. BABY OPOSSUM 8 Okay. 85. 86. BABY OPOSSUM 4 Make it look good. Roz suddenly GOES LIMP. Reco 6 SHAKES her. BLAM. A blaster shot PUNCHES A HOLE in R6. It LO"
+    },
+    {
+      "number": 80,
+      "heading": "EXT. MEADOW - CONTINUOUS",
+      "characters": [
+        "SPREAD."
+      ],
+      "dialogues": [],
+      "actionPreview": "The animals CELEBRATE. Brightbill flies to Roz. The downed RECOS EXPLODE in quick succession. Animals SCATTER. FLAMING debris TOUCH OFF dried grasses. Flames"
+    },
+    {
+      "number": 81,
+      "heading": "INT. SHIP - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "One of Vontra’s tentacles destructs each Reco."
+    },
+    {
+      "number": 82,
+      "heading": "EXT. MEADOW - CONTINUOUS",
+      "characters": [
+        "BRIGHTBILL",
+        "VONTRA",
+        "THUNDERBOLT",
+        "THORN"
+      ],
+      "dialogues": [
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "(coughing)"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "VONTRA",
+          "parenthetical": "",
+          "text": "Gotcha ."
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Come on!"
+        },
+        {
+          "character": "THUNDERBOLT",
+          "parenthetical": "",
+          "text": "On your left!"
+        },
+        {
+          "character": "THORN",
+          "parenthetical": "",
+          "text": "Guys?"
+        }
+      ],
+      "actionPreview": "ON BRIGHTBILL staggering through the smoke. Roz? 86. 87. A BLAST OF wind CLEARS the smoke. Brightbill LOOKS UP to see the silver ship overhead. Rising in a column of light is Roz, limp as a rag doll. Roz! NO ! Roz DISAPPEARS inside the hatch. Vontra floats by the tractor beam switch. The ship TURNS."
+    },
+    {
+      "number": 83,
+      "heading": "INT. CONTROL BAY - CONTINUOUS",
+      "characters": [
+        "ROZ",
+        "VONTRA"
+      ],
+      "dialogues": [
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "What is happening?"
+        },
+        {
+          "character": "VONTRA",
+          "parenthetical": "",
+          "text": "You will be reconditioned and returned to"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Why?"
+        },
+        {
+          "character": "VONTRA",
+          "parenthetical": "",
+          "text": "You’ve changed. The data you’ve amassed"
+        }
+      ],
+      "actionPreview": "Roz, groggy, is secured in a repair stand. Vontra is plugging a cable into her head. Roz takes in her surroundings. She notes the heap of salvaged Rozzums, including Rummage. rotation. But first, we need everything inside that head of yours. 87. 88. while on this island is priceless to Universal Dyn"
+    },
+    {
+      "number": 84,
+      "heading": "EXT. SHIP - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The flock tracks the ship."
+    },
+    {
+      "number": 85,
+      "heading": "INT. MAINTENANCE BAY - CONTINUOUS",
+      "characters": [
+        "ROZ",
+        "VONTRA"
+      ],
+      "dialogues": [
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Please, I want to keep my memories."
+        },
+        {
+          "character": "VONTRA",
+          "parenthetical": "",
+          "text": "Your memories are what we came for."
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Can I keep, just one?"
+        },
+        {
+          "character": "VONTRA",
+          "parenthetical": "",
+          "text": "No."
+        }
+      ],
+      "actionPreview": "Vontra THROWS a switch. Roz’ lights PULSE. The ship LURCHES, YAWS. ALARMS sound."
+    },
+    {
+      "number": 86,
+      "heading": "EXT. SHIP - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Brightbill and Thunderbolt DIVE on the ship. The flock SWEEPS the bridge in a close pass. The ship REACTS."
+    },
+    {
+      "number": 87,
+      "heading": "INT. SHIP’S BRIDGE - MOMENTS LATER",
+      "characters": [
+        "AUTOMATED ALARM"
+      ],
+      "dialogues": [
+        {
+          "character": "AUTOMATED ALARM",
+          "parenthetical": "",
+          "text": "Alert. Alert. Multiple objects in flight"
+        }
+      ],
+      "actionPreview": "ON A BULKHEAD DOOR SLIDING OPEN Vontra RUSHES to the controls. Outside the windscreen a hurricane of birds blanket the view. path. Evasive action. Geese STRIKE the windscreen, CRACKING it. 88. 89."
+    },
+    {
+      "number": 88,
+      "heading": "EXT. SHIP’S BELLY - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "A LASER CANNON SWIVELS, FIRING at the swarm of birds around it."
+    },
+    {
+      "number": 89,
+      "heading": "INT. MAINTENANCE BAY - CONTINUOUS",
+      "characters": [
+        "ROZ"
+      ],
+      "dialogues": [
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "(stuttering)"
+        }
+      ],
+      "actionPreview": "Roz’ panels open and close on their own. Please, I want to keep my memories-- Hello-- I am a-- Bonjour-- Just ask- - Brightbill-- Hola-- Roz--"
+    },
+    {
+      "number": 90,
+      "heading": "EXT. SHIP - CONTINUOUS",
+      "characters": [
+        "BRIGHTBILL",
+        "ROZ"
+      ],
+      "dialogues": [
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "*Augh*"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "I love you, too."
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Roz? Roz !"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Let’s go home."
+        }
+      ],
+      "actionPreview": "Brightbill BREAKS formation, CLIMBS like a rocket, FOLDS his wings, DIVES. Taking aim at the windscreen, he PUNCHES through. Lands in a heap of shattered plexi . Brightbill FLOPS to the floor: he won’t be flying again anytime soon. He limps forward. Vontra pays him no mind, to her, a random goose ju"
+    },
+    {
+      "number": 91,
+      "heading": "INT. SHIP'S BRIDGE - CONTINUOUS",
+      "characters": [
+        "AUTOMATED ALARM",
+        "VONTRA"
+      ],
+      "dialogues": [
+        {
+          "character": "AUTOMATED ALARM",
+          "parenthetical": "",
+          "text": "Alert. Rozzum unit escaping."
+        },
+        {
+          "character": "VONTRA",
+          "parenthetical": "",
+          "text": "Impossible."
+        }
+      ],
+      "actionPreview": "Vontra is frantically punching panels. An alarm calls her attention. Vontra calls up a screen. Sure enough Roz is hurrying down a hall. Vontra PUNCHES a panel."
+    },
+    {
+      "number": 92,
+      "heading": "EXT. FOREST - CONTINUOUS",
+      "characters": [
+        "FINK",
+        "THORN",
+        "PADDLER",
+        "ANIMALS"
+      ],
+      "dialogues": [
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Where are we going?"
+        },
+        {
+          "character": "THORN",
+          "parenthetical": "",
+          "text": "Only one animal is big enough to stop"
+        },
+        {
+          "character": "THORN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "(urgent, pressed for time)"
+        },
+        {
+          "character": "PADDLER",
+          "parenthetical": "",
+          "text": "Male bovine excrement. You’re in trouble"
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Yes. Yes we do."
+        },
+        {
+          "character": "PADDLER",
+          "parenthetical": "",
+          "text": "Everyone that made fun of me and mocked"
+        },
+        {
+          "character": "ANIMALS",
+          "parenthetical": "",
+          "text": "(collective murmured apologies)"
+        },
+        {
+          "character": "PADDLER",
+          "parenthetical": "",
+          "text": "Now you."
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "I already did."
+        },
+        {
+          "character": "PADDLER",
+          "parenthetical": "",
+          "text": "Now say I’m cool. And don’t lie."
+        },
+        {
+          "character": "ANIMALS",
+          "parenthetical": "",
+          "text": "Fink!"
+        }
+      ],
+      "actionPreview": "The fire has SPREAD. Towering pines are fully involved, creating a titanic curtain of flame. this. ON PADDLER working away. SENSING something, he STOPS. TURNS. To his shock, every animal on the island seems to be looking back at him, urgency in their eyes. 90. 91. *clears throat* Paddler? You got a "
+    },
+    {
+      "number": 93,
+      "heading": "EXT. SHIP - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The gun continues to FIRE on the flock. Thunderbolt swoops in, redirects the gun UPWARD. The next blast RIPS A HOLE THROUGH THE SHIP."
+    },
+    {
+      "number": 94,
+      "heading": "INT. CORRIDOR - CONTINUOUS",
+      "characters": [
+        "BRIGHTBILL",
+        "ROZ",
+        "VONTRA",
+        "PADDLER",
+        "THORN"
+      ],
+      "dialogues": [
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Roz!"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Stay quiet."
+        },
+        {
+          "character": "VONTRA",
+          "parenthetical": "",
+          "text": "Universal Dynamics cannot afford their"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Brightbill has nothing to do with this."
+        },
+        {
+          "character": "VONTRA",
+          "parenthetical": "",
+          "text": "Oh I’m bringing you both back for study."
+        },
+        {
+          "character": "VONTRA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "What’s it saying?"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Nothing important."
+        },
+        {
+          "character": "VONTRA",
+          "parenthetical": "",
+          "text": "We will just keep coming--"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "What now?"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "You don’t need to."
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Whoa, don’t you need that?"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "I have everything I need."
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "PADDLER",
+          "parenthetical": "",
+          "text": "You call yourselves animals? Let’s go ."
+        },
+        {
+          "character": "THORN",
+          "parenthetical": "",
+          "text": "For the island . For Roz ."
+        }
+      ],
+      "actionPreview": "Roz outruns explosions as the ship’s systems meltdown. Roz arrives at the tractor beam chamber. A SHOT from off- screen HITS Roz in the knee. She GOES DOWN. Vontra is there, hovering above the sealed escape hatch. 91. 92. Rozzums going off script. Modifying their code. Forming connections with thing"
+    },
+    {
+      "number": 95,
+      "heading": "EXT. LAKE SHORE - SOON AFTER",
+      "characters": [
+        "ROZ",
+        "BROADFOOT",
+        "PINKTAIL",
+        "BRIGHTBILL",
+        "PADDLER",
+        "THUNDERBOLT",
+        "THORN",
+        "FINK",
+        "BABY SKUNK"
+      ],
+      "dialogues": [
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "On a scale of one to ten, how would you"
+        },
+        {
+          "character": "BROADFOOT",
+          "parenthetical": "",
+          "text": "Yeah!"
+        },
+        {
+          "character": "PINKTAIL",
+          "parenthetical": "",
+          "text": "Yay! Look at us! We did it, we did"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Do not scare me like that again."
+        },
+        {
+          "character": "BROADFOOT",
+          "parenthetical": "",
+          "text": "Hooray!"
+        },
+        {
+          "character": "PADDLER",
+          "parenthetical": "",
+          "text": "Due to my skills, and my tree."
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Good job, you guys! We did it!"
+        },
+        {
+          "character": "THUNDERBOLT",
+          "parenthetical": "",
+          "text": "Well done everyone."
+        },
+        {
+          "character": "THORN",
+          "parenthetical": "",
+          "text": "You weren’t so bad yourself."
+        },
+        {
+          "character": "BROADFOOT",
+          "parenthetical": "",
+          "text": "I helped, right?"
+        },
+        {
+          "character": "PADDLER",
+          "parenthetical": "",
+          "text": "That’ll teach whatever those things"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "They will just keep coming until they"
+        },
+        {
+          "character": "THORN",
+          "parenthetical": "",
+          "text": "And we’ll be ready."
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "We can fight them off as many times as we"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "You don’t need to."
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "What are you saying, you’re leaving?"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Yes. To protect all of you, there are"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "No, they’ll take your memories. They’ll"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Remember when you talked to me, on the"
+        },
+        {
+          "character": "BABY SKUNK",
+          "parenthetical": "",
+          "text": "But, we fought so hard for you to stay."
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "You did. And you gained far more than"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "(CONT ’ D)"
+        },
+        {
+          "character": "BRIGHTBILL",
+          "parenthetical": "",
+          "text": "Don’t do this."
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "But you’re my friend, and I never had"
+        },
+        {
+          "character": "THORN",
+          "parenthetical": "",
+          "text": "You can tell me."
+        },
+        {
+          "character": "PINKTAIL",
+          "parenthetical": "",
+          "text": "And me."
+        },
+        {
+          "character": "PADDLER",
+          "parenthetical": "",
+          "text": "And you can talk to me as well. If you"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "This is my migration. And when it is"
+        }
+      ],
+      "actionPreview": "Broadfoot, Paddler, and Fink race to the shore. Rockmouth surfaces next to Roz’ orb form. Roz drags herself to the shore. Opens her chest panels, pulls Brightbill out - safe. rate my performance? The animals CHEER, BELLOW, HOWL. They CROWD around Roz. it! I told you we’d do it. Yay, yay! 94. (MORE) "
+    },
+    {
+      "number": 96,
+      "heading": "EXT. LODGE - LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Brightbill places the final stick in the rebuilt lodge."
+    },
+    {
+      "number": 97,
+      "heading": "INT. LODGE - LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Roz mounts a picture of herself surrounded by her animal friends on the new mantle."
+    },
+    {
+      "number": 98,
+      "heading": "EXT. RUNWAY - PRE-DAWN",
+      "characters": [
+        "ROZ"
+      ],
+      "dialogues": [
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "(CONT ’ D)"
+        }
+      ],
+      "actionPreview": "Roz stands, alone, her TRANSMITTER blinking away. A ship, identical to the first, is closing in. 96. 97. The ship CLOSES IN, JETWASH KICKS UP DUST, SWIRLING in the ship’s lights. WHITE-OUT. DISSOLVE TO:"
+    },
+    {
+      "number": 99,
+      "heading": "EXT. ISLAND - EARLY MORNING",
+      "characters": [
+        "THORN"
+      ],
+      "dialogues": [
+        {
+          "character": "THORN",
+          "parenthetical": "",
+          "text": "You know, I’ll be chasing you again"
+        }
+      ],
+      "actionPreview": "The silver ship RISES into the sky. Just as Brightbill rose into the light as he departed the morning of migration, so now the ship rises into a blush of light flagging the start of a new day. Fink SITS at the cliff top, watching the ship depart. Thorn joins him. tomorrow. Nah, just kidding. Fink ju"
+    },
+    {
+      "number": 100,
+      "heading": "EXT. GREAT MEADOW - WINTER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "ON FINK making his way through the deep snow, leaving tracks behind."
+    },
+    {
+      "number": 101,
+      "heading": "INT. LODGE - MOMENTS LATER",
+      "characters": [
+        "FINK",
+        "PADDLER",
+        "NARRATOR",
+        "BABY OPOSSUMS",
+        "PINKTAIL",
+        "THORN",
+        "BABY LYNX"
+      ],
+      "dialogues": [
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Whoa, whoa, whoa. Why are you bigger than"
+        },
+        {
+          "character": "PADDLER",
+          "parenthetical": "",
+          "text": "Artistic license. The scale is based on"
+        },
+        {
+          "character": "NARRATOR",
+          "parenthetical": "(VONTRA)",
+          "text": "Could this world get any better?"
+        },
+        {
+          "character": "BABY OPOSSUMS",
+          "parenthetical": "",
+          "text": "*GROAN*"
+        },
+        {
+          "character": "PINKTAIL",
+          "parenthetical": "",
+          "text": "Yeah, yeah. You watch that too much."
+        },
+        {
+          "character": "THORN",
+          "parenthetical": "",
+          "text": "Settle down."
+        },
+        {
+          "character": "FINK",
+          "parenthetical": "",
+          "text": "Once, there was an island with all sorts"
+        },
+        {
+          "character": "BABY LYNX",
+          "parenthetical": "",
+          "text": "Where is she now?"
+        }
+      ],
+      "actionPreview": "Fink comes inside. SHAKES snow off. PAN to reveal it is filled with animals, sleeping in great peaceful heaps, lit by a fire. Paddler is putting the finishing touches on a set of detailed carvings. There is a little Fink, Pinktail, Paddler, Thorn, and of course, Roz and Brightbill. everyone else? 97"
+    },
+    {
+      "number": 102,
+      "heading": "EXT. UNIVERSAL DYNAMICS CITY - MORNING",
+      "characters": [
+        "FINK",
+        "BABY ANIMALS",
+        "THORN"
+      ],
+      "dialogues": [
+        {
+          "character": "FINK",
+          "parenthetical": "(V.O.)",
+          "text": "Well, they needed her back where she came"
+        },
+        {
+          "character": "BABY ANIMALS",
+          "parenthetical": "",
+          "text": "Yeah, will we? Will we see her? Will she"
+        },
+        {
+          "character": "THORN",
+          "parenthetical": "",
+          "text": "Yeah, will she?"
+        }
+      ],
+      "actionPreview": "We soar above a great dome. The warm yellow interior just visible in the midst of a blizzard. from. She has some very important work to finish there. 98. 99. BABY OPOSSUM 7 Will we ever see her again? ever come home?"
+    },
+    {
+      "number": 103,
+      "heading": "INT. DOMED CITY - CONTINUOUS",
+      "characters": [
+        "FINK",
+        "ROZ",
+        "FADE TO BLACK."
+      ],
+      "dialogues": [
+        {
+          "character": "FINK",
+          "parenthetical": "(V.O.)",
+          "text": "Well, if I know Roz, she’s making a plan"
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "Hello. I am Rozzum seven-one-three-four."
+        },
+        {
+          "character": "ROZ",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "FADE TO BLACK.",
+          "parenthetical": "",
+          "text": "SQ4000 - CREDITS BUTTON"
+        }
+      ],
+      "actionPreview": "PAN across an orange orchard. Warm and inviting. As we push through the perfectly rounded trees we see Rozzum robots tending the plants. to come back. And a Rozzum always completes its task. PUSH to find one that is especially well tended: the Rozzum fussing over it is shiny and new. A human worker "
+    },
+    {
+      "number": 104,
+      "heading": "EXT. SUNNY HILLTOP - MORNING",
+      "characters": [
+        "FINK"
+      ],
+      "dialogues": [
+        {
+          "character": "FINK",
+          "parenthetical": "(O.S.)",
+          "text": "Ugh, squirrels."
+        }
+      ],
+      "actionPreview": "A pair of beaver paws gently tamp down soil around a delicate sapling. WIDEN to show Paddler and Fink. They nod and walk away. A squirrel approaches the small tree. LAUGHS. A pinecone KNOCKS it backwards. 99. 100. 100."
+    }
+  ]
+}

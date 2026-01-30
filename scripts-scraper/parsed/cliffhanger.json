@@ -1,0 +1,22 @@
+{
+  "slug": "cliffhanger",
+  "title": "Cliffhanger",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 34881,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                           CLIFFHANGER </b> Written by Michael France <b>        EXT. MOUNTAIN RANGE - HELICOPTER SHOT - DAY </b> An unparalleled set of sheer mountains -- part of the Colorado Rockies. The peaks rise a challenging half mile and more out of the valley -- wind-whipped snow mists over the mountains like a low fog. The tranquility is broken as a helicopter BLASTS into view, fighting the wind as it heads for the center of it all. Our CREDITS fly us past and through this magnificen",
+      "dialogue_count": 0,
+      "word_count": 34881
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "slug": "predator",
+  "title": "Predator",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 1,
+  "characters": [
+    "SCHAEFER"
+  ],
+  "total_words": 26512,
+  "total_dialogue": 1,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "SCHAEFER"
+      ],
+      "action_text": "<html> <head> <script> <b><!-- </b>if (window!= top) top.location.href=location.href <b>// --> </b></script> <title>HUNTER</title> </head> <pre> <b>                                 \"HUNTER\" </b> Written by Jim Thomas and John Thomas With Revision #1 (Pink) April 17, 1986 With Revision #2 (Blue) April 28, 1986 With Revision #3 (Yellow) May 6, 1986 With Revision #4 (Green) May 20, 1986 With Revision #5 (Goldenrod) January 27, 1987 April 7, 1986 With Revision #6 (Goldenrod) January 30, 1987 <b> </b",
+      "dialogue_count": 1,
+      "word_count": 26512
+    }
+  ]
+}

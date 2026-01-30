@@ -1,0 +1,26 @@
+{
+  "slug": "body-heat",
+  "title": "Body Heat",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 1,
+  "characters": [
+    "BODY HEAT"
+  ],
+  "total_words": 31943,
+  "total_dialogue": 1,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "BODY HEAT"
+      ],
+      "action_text": "BODY HEAT An Original Screenplay by Lawrence Kasdan <b>            FOR EDUCATIONAL PURPOSES ONLY </b> <b>THIRD DRAFT </b>October 6, 1980 Converted to PDF by SCREENTALK www.screentalk.org <b> </b>    Converted to PDF by www.screentalk.org               1. <b>FADE IN: </b> <b>EXT. NIGHT SKY </b> Flames in the night sky. Distant SIRENS. PULLING BACK, we see that the burning building is mostly hidden by dense, black shapes that define the oceanside skyline of Miranda Beach, Florida. We're watching f",
+      "dialogue_count": 1,
+      "word_count": 31943
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "slug": "absolute-power",
+  "title": "Absolute Power",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 1,
+  "characters": [
+    "ABSOLUTE POWER"
+  ],
+  "total_words": 28217,
+  "total_dialogue": 1,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "ABSOLUTE POWER"
+      ],
+      "action_text": "ABSOLUTE POWER Written by <b>    WILLIAM GOLDMAN </b> Based on the book by <b>     DAVID BALDACCI </b> May 1996 Draft <b>  FOR EDUCATIONAL </b><b>   PURPOSES ONLY </b><b> </b><b>    FADE IN: </b> <b>1   INT. WASHINGTON MUSEUM - DAY                                   1 </b> The saddest eyes you ever saw. We are looking at an El Greco drawing.       It is a study for one of his paintings. <b>    PULL BACK TO REVEAL -- </b> A bunch of art students are doing sketches of the eyes, the elongated finger",
+      "dialogue_count": 1,
+      "word_count": 28217
+    }
+  ]
+}

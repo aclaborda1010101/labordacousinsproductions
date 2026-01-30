@@ -1,0 +1,22 @@
+{
+  "slug": "city-of-joy",
+  "title": "City of Joy",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 32131,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "City of Joy Written by <b>GERALD BRACH & ROLAND JOFFE </b> October 1990 Early Draft <b>   FOR EDUCATIONAL </b><b>    PURPOSES ONLY </b><b> </b><b>                       CITY OF JOY </b> <b>FADE IN: </b> <b>TITLE SEQUENCE. </b><b>EXT. BIHAR - DAY (DAWN, SUMMER, MID-1980) </b>Heat that has mass. That rises off the parched earth in shimmering waves. After a moment, we see what appear to be figures coming out of the haze, one by one. A family with their few belongings: HASARI PAL, 33, his wife, ALOK",
+      "dialogue_count": 0,
+      "word_count": 32131
+    }
+  ]
+}

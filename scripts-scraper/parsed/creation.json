@@ -1,0 +1,34 @@
+{
+  "slug": "creation",
+  "title": "Creation",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 5,
+  "characters": [
+    "HUXLEY",
+    "ANNIE",
+    "DARWIN",
+    "HOOKER",
+    "CHARLES"
+  ],
+  "total_words": 20924,
+  "total_dialogue": 5,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "HUXLEY",
+        "ANNIE",
+        "DARWIN",
+        "HOOKER",
+        "CHARLES"
+      ],
+      "action_text": "<b>                             CREATION </b> Written by John Collee Note: Our story alternates between Past and Present \"Present\" means the fall of 1858 when Darwin was 49. The children are: Etty (15) George (14) Betty (11) Franky (10) Lenny (8) and Horace (6). \"Past\" means the summer of 1850, when Darwin was 41. The children are: Willy (11), Annie (9) Etty (6) George (5), Betty (3) Franky (2y) and baby Lenny. <b>                                                             1 </b> <b>1   INT. DA",
+      "dialogue_count": 5,
+      "word_count": 20924
+    }
+  ]
+}

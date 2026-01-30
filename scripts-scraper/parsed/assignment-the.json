@@ -1,0 +1,22 @@
+{
+  "slug": "assignment-the",
+  "title": "Assignment, The",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 35331,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                      THE ASSIGNMENT </b> <b> </b> Written by Dan Gordon & Sabi H. Shabtai <b>                                         7/2/1996 </b> <b>                                      SHOOTING DRAFT </b> <b> </b> <b>               ESTABLISHING SHOT - EXTREME CLOSE - UP - COBBLESTONES - PARIS - </b><b>               EARLY MORNING </b> <b>               TITLE SEQUENCE BEGINS </b> We OPEN with the screen filled with a dark gray, cut down the middle by a black crevice. We sh",
+      "dialogue_count": 0,
+      "word_count": 35331
+    }
+  ]
+}

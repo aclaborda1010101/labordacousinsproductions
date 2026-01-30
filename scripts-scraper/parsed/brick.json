@@ -1,0 +1,28 @@
+{
+  "slug": "brick",
+  "title": "Brick",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 2,
+  "characters": [
+    "DODE",
+    "BRENDAN"
+  ],
+  "total_words": 25772,
+  "total_dialogue": 3,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "DODE",
+        "BRENDAN"
+      ],
+      "action_text": "<b>                                        BRICK </b> Written by <b> </b>                                     Rian Johnson <b>                                                                                                 1 </b><b> </b><b> </b><b> </b><b>              SUPER MAIN TITLES </b><b> </b>              Over a grimy concrete wall creeping by. We emerge from... <b> </b><b>              EXT. RUNOFF TUNNEL - EARLY MORNING </b><b> </b>              A gaping hole in the concrete side of a fr",
+      "dialogue_count": 3,
+      "word_count": 25772
+    }
+  ]
+}

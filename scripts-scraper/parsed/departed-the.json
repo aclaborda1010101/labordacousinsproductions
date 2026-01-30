@@ -1,0 +1,22 @@
+{
+  "slug": "departed-the",
+  "title": "Departed, The",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 34942,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                             THE DEPARTED </b> <b> </b>                              Written by <b> </b>                           William Monahan <b> </b><b> </b><b> </b>           Based on Infernal Affairs <b> </b><b> </b><b>          SCRIPT AS SHOT COMPILED SEPTEMBER 2006 </b><b> </b><b>          FADE UP ON </b><b> </b><b>          THE SOUTH BOSTON HOUSING PROJECTS. A MAZE OF BUILDINGS </b><b>          AGAINST THE HARBOR. </b><b> </b><b>                                 COSTELLO (V.O.) </b>",
+      "dialogue_count": 0,
+      "word_count": 34942
+    }
+  ]
+}

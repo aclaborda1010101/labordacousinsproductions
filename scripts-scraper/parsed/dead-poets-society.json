@@ -1,0 +1,22 @@
+{
+  "slug": "dead-poets-society",
+  "title": "Dead Poets Society",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 22446,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<html> <head> <title>Dead Poets Society: Final Script</title> </head> <body> <pre> <b>INT. WELTON ACADEMY HALLWAY - DAY </b> A young boy, dressed in a school uniform and cap, fidgets as his mother adjusts his tie. <b>\t\t\t\tMOTHER </b>\t\tNow remember, keep your shoulders back. A student opens up a case and removes a set of bagpipes. The young boy and his brother line up for a photograph <b>\t\t\t\tPHOTOGRAPHER </b>\t\tOkay, put your arm around your brother. That's it. And breathe in. The young boy blinks",
+      "dialogue_count": 0,
+      "word_count": 22446
+    }
+  ]
+}

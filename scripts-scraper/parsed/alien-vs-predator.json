@@ -1,0 +1,54 @@
+{
+  "slug": "alien-vs-predator",
+  "title": "Alien vs. Predator",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 15,
+  "characters": [
+    "CASSIE",
+    "URIOSTE",
+    "YORK",
+    "ACKLAND",
+    "BEAUVAIS",
+    "MINH",
+    "HIROKO",
+    "PREDATOR",
+    "DILLER",
+    "KAMEN",
+    "DE VRIES",
+    "GUTTIEREZ",
+    "PARSONS",
+    "COMPUTER VOICE",
+    "VOICE"
+  ],
+  "total_words": 28631,
+  "total_dialogue": 49,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "CASSIE",
+        "URIOSTE",
+        "YORK",
+        "ACKLAND",
+        "BEAUVAIS",
+        "MINH",
+        "HIROKO",
+        "PREDATOR",
+        "DILLER",
+        "KAMEN",
+        "DE VRIES",
+        "GUTTIEREZ",
+        "PARSONS",
+        "COMPUTER VOICE",
+        "VOICE"
+      ],
+      "action_text": "Aliens vs. Predator Dark Horse Prod. Presents <b>ALIENS </b> Vs. <b>PREDATOR </b> Screenplay by Peter Briggs <b>EXT.  DEEP SPACE </b> We OPEN on TOTAL BLACKNESS, a sea of stars spread across the infinite depths of space.  As the TITLES ROLL, we notice that three of these specks seem to be moving; one of them picking up acceleration and racing toward us.  Our perspective changes, and we catch a quick glimpse as it HURTLES past, and into the gravitational pull of a large brownish planet.  Kicking",
+      "dialogue_count": 49,
+      "word_count": 28631
+    }
+  ]
+}

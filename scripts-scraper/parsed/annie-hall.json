@@ -1,0 +1,22 @@
+{
+  "slug": "annie-hall",
+  "title": "Annie Hall",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 29931,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<html> <head> <script> <b><!-- </b>if (window!= top) top.location.href=location.href <b>// --> </b></script> <title>ANNIE HALL</title> </head> <pre> <b>\t\t\t\t\tANNIE HALL </b> written by Woody Allen Marshall Brickman (Sound and Woody Allen monologue begin) <b>FADE IN: </b> White credits dissolve in and out on black screen.  No sound. FADE OUT: credits <b>FADE IN: </b> Abrupt medium close-up of Alvy Singer doing a comedy monologue.  He wearing a crumbled sports jacket and tieless shirt; the backgrou",
+      "dialogue_count": 0,
+      "word_count": 29931
+    }
+  ]
+}

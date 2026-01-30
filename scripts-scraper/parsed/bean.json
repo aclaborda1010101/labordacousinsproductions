@@ -1,0 +1,26 @@
+{
+  "slug": "bean",
+  "title": "Bean",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 1,
+  "characters": [
+    "DR. BEAN"
+  ],
+  "total_words": 31558,
+  "total_dialogue": 1,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "DR. BEAN"
+      ],
+      "action_text": "DR. BEAN By Richard Curtis And Robin Driscoll <b> </b><b>INT.   NATIONAL GALLERY.    BOARDROOM - DAY </b> A very grand room, with lots of wood and some very famous portraits round the walls. A group of grave gentlemen and gentlewomen. They are the trustees of the National Gallery. LORD WALTON, a very grand man, sits at the table head. To his right sits his assistant, GARETH. All are deep in thought. LORD WALTON fidgets with a pencil on the table. He raises his head as though about to speak. Ever",
+      "dialogue_count": 1,
+      "word_count": 31558
+    }
+  ]
+}

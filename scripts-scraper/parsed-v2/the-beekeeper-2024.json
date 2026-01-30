@@ -1,0 +1,5192 @@
+{
+  "slug": "the-beekeeper-2024",
+  "title": "The Beekeeper",
+  "parsedWith": "v2",
+  "parsedAt": "2026-01-29T22:09:19.325Z",
+  "stats": {
+    "scenes": 108,
+    "dialogues": 757,
+    "characters": 57
+  },
+  "characters": [
+    {
+      "name": "VERONA",
+      "dialogueLines": 126,
+      "totalWords": 563
+    },
+    {
+      "name": "CLAY",
+      "dialogueLines": 103,
+      "totalWords": 475
+    },
+    {
+      "name": "PHONE",
+      "dialogueLines": 84,
+      "totalWords": 418
+    },
+    {
+      "name": "WESTWYLD",
+      "dialogueLines": 65,
+      "totalWords": 417
+    },
+    {
+      "name": "DEREK EVERMORE",
+      "dialogueLines": 48,
+      "totalWords": 199
+    },
+    {
+      "name": "WILEY",
+      "dialogueLines": 46,
+      "totalWords": 235
+    },
+    {
+      "name": "ELOISE",
+      "dialogueLines": 28,
+      "totalWords": 147
+    },
+    {
+      "name": "PRESIDENT DANSWORTH",
+      "dialogueLines": 22,
+      "totalWords": 130
+    },
+    {
+      "name": "HALPERN",
+      "dialogueLines": 21,
+      "totalWords": 107
+    },
+    {
+      "name": "BARRETT",
+      "dialogueLines": 17,
+      "totalWords": 78
+    },
+    {
+      "name": "DEPUTY DIRECTOR PRIGG",
+      "dialogueLines": 15,
+      "totalWords": 75
+    },
+    {
+      "name": "EVERMORE",
+      "dialogueLines": 14,
+      "totalWords": 40
+    },
+    {
+      "name": "PETTIS",
+      "dialogueLines": 14,
+      "totalWords": 66
+    },
+    {
+      "name": "VOICE",
+      "dialogueLines": 12,
+      "totalWords": 27
+    },
+    {
+      "name": "POLICE DETECTIVE",
+      "dialogueLines": 12,
+      "totalWords": 93
+    },
+    {
+      "name": "KELLY KRANE",
+      "dialogueLines": 12,
+      "totalWords": 49
+    },
+    {
+      "name": "DRIVER",
+      "dialogueLines": 10,
+      "totalWords": 38
+    },
+    {
+      "name": "WYLIE",
+      "dialogueLines": 9,
+      "totalWords": 33
+    },
+    {
+      "name": "EDELWEISS",
+      "dialogueLines": 9,
+      "totalWords": 45
+    },
+    {
+      "name": "VERONA LINCOLN",
+      "dialogueLines": 8,
+      "totalWords": 37
+    },
+    {
+      "name": "GARRETT",
+      "dialogueLines": 7,
+      "totalWords": 26
+    },
+    {
+      "name": "ANISETTE LANDRESS",
+      "dialogueLines": 7,
+      "totalWords": 24
+    },
+    {
+      "name": "CROENENBERG",
+      "dialogueLines": 7,
+      "totalWords": 57
+    },
+    {
+      "name": "PETTY",
+      "dialogueLines": 6,
+      "totalWords": 48
+    },
+    {
+      "name": "ELDER MAN",
+      "dialogueLines": 5,
+      "totalWords": 47
+    },
+    {
+      "name": "BLACK WOMAN",
+      "dialogueLines": 4,
+      "totalWords": 21
+    },
+    {
+      "name": "AGENT PIKE",
+      "dialogueLines": 4,
+      "totalWords": 9
+    },
+    {
+      "name": "MAN WITH CHECKBOARD",
+      "dialogueLines": 4,
+      "totalWords": 19
+    },
+    {
+      "name": "MAN",
+      "dialogueLines": 3,
+      "totalWords": 5
+    },
+    {
+      "name": "SECRET SERVICE SECOND",
+      "dialogueLines": 3,
+      "totalWords": 8
+    },
+    {
+      "name": "FORENSIC INVESTIGATOR",
+      "dialogueLines": 2,
+      "totalWords": 27
+    },
+    {
+      "name": "DATA GROUP REP",
+      "dialogueLines": 2,
+      "totalWords": 20
+    },
+    {
+      "name": "GARNETT",
+      "dialogueLines": 2,
+      "totalWords": 10
+    },
+    {
+      "name": "PRIGG",
+      "dialogueLines": 2,
+      "totalWords": 2
+    },
+    {
+      "name": "MERCENARY",
+      "dialogueLines": 2,
+      "totalWords": 10
+    },
+    {
+      "name": "BEEPING.",
+      "dialogueLines": 1,
+      "totalWords": 2
+    },
+    {
+      "name": "A FOOT",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "CALL CENTER EMPLOYEES",
+      "dialogueLines": 1,
+      "totalWords": 12
+    },
+    {
+      "name": "MEETS",
+      "dialogueLines": 1,
+      "totalWords": 4
+    },
+    {
+      "name": "ELDERLY MAN",
+      "dialogueLines": 1,
+      "totalWords": 3
+    },
+    {
+      "name": "SOMEHOW ...",
+      "dialogueLines": 1,
+      "totalWords": 9
+    },
+    {
+      "name": "YANKING",
+      "dialogueLines": 1,
+      "totalWords": 28
+    },
+    {
+      "name": "TACKLE SHOP.",
+      "dialogueLines": 1,
+      "totalWords": 5
+    },
+    {
+      "name": "AND WEAPONRY.",
+      "dialogueLines": 1,
+      "totalWords": 2
+    },
+    {
+      "name": "NEEDLES.",
+      "dialogueLines": 1,
+      "totalWords": 14
+    },
+    {
+      "name": "BAG.",
+      "dialogueLines": 1,
+      "totalWords": 18
+    },
+    {
+      "name": "FEDERAL AGENT",
+      "dialogueLines": 1,
+      "totalWords": 2
+    },
+    {
+      "name": "MAN WITH TIE",
+      "dialogueLines": 1,
+      "totalWords": 21
+    },
+    {
+      "name": "ASSOCIATE",
+      "dialogueLines": 1,
+      "totalWords": 5
+    },
+    {
+      "name": "POLICE OFFICER",
+      "dialogueLines": 1,
+      "totalWords": 6
+    }
+  ],
+  "scenes": [
+    {
+      "number": 1,
+      "heading": "INT. GARAGE - DAY",
+      "characters": [
+        "CLAY",
+        "ELOISE"
+      ],
+      "dialogues": [
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "The freon will freeze the nest for a few moments - but then ..."
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "(CONT'D)",
+          "text": "(a small smile)"
+        },
+        {
+          "character": "ELOISE",
+          "parenthetical": "",
+          "text": "What will you do with them?"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "Unfortunately - destroy them."
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "ELOISE",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "(a smile)"
+        }
+      ],
+      "actionPreview": "In the corner of the garage, ADAM CLAY, protected in a white BEE-KEEPER’S SUIT, first sprays a HORNET’S NEST with FREON, briefly freezing it ... With the end of a rake, he dislodges the nest dropping into a paper bag, which he closes tightly around the tube of a FLOURESCENT LIGHT BULB, whose top rem"
+    },
+    {
+      "number": 2,
+      "heading": "EXT. BACK HOUSE - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Stripping off his bee keeper’s suit as he goes, Clay walks with the brown paper bag, that is literally rattling with angry awakened hornets, back towards the small home he rents on the property."
+    },
+    {
+      "number": 3,
+      "heading": "INT. SHED - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Entering, he hangs up his bee suit, and setting the raging paper bag onto the work-bench, he squeezes it, just below where it is tied off - shattering that portion of the fluorescent bulb that is inside the bag. Taking a CATTLE PROD down from a HIGHLY ORGANIZED PEG-BOARD of tools, he touches its two"
+    },
+    {
+      "number": 4,
+      "heading": "EXT. SHED - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Exiting, Clay tosses the paper bag into the garbage as he makes his way back thru the field of flowers behind his little rental home and to ... The small collection of BEE-HIVES he keeps there - swarms of bees busily rising and returning, hard at work, doing those things that busy bees do. Going fro"
+    },
+    {
+      "number": 5,
+      "heading": "INT. ELOISE LINCOLN’S HOUSE - DAY",
+      "characters": [
+        "PHONE",
+        "ELOISE",
+        "CLAY",
+        "BEEPING."
+      ],
+      "dialogues": [
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "Data Group."
+        },
+        {
+          "character": "ELOISE",
+          "parenthetical": "",
+          "text": "Well, I just got this message saying that there was something wrong with my computer?"
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "Yes, Ma’am."
+        },
+        {
+          "character": "ELOISE",
+          "parenthetical": "",
+          "text": "I - nothing - I was ... about to"
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "I see, Ma’am."
+        },
+        {
+          "character": "ELOISE",
+          "parenthetical": "",
+          "text": "Oh."
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "Data Group."
+        },
+        {
+          "character": "ELOISE",
+          "parenthetical": "",
+          "text": "‘Uninstall’ ... ?"
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "If you cannot do it, you can take it to an IT person or computer shop in your town or neighborhood."
+        },
+        {
+          "character": "ELOISE",
+          "parenthetical": "",
+          "text": ".... oh ..."
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "Or we can do it now at the same time that I send you your $100."
+        },
+        {
+          "character": "ELOISE",
+          "parenthetical": "",
+          "text": "Well ... yes."
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "Not a problem."
+        },
+        {
+          "character": "ELOISE",
+          "parenthetical": "",
+          "text": "Ah ... let me see ... (typing) ... yes ... yes ..."
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "Great."
+        },
+        {
+          "character": "ELOISE",
+          "parenthetical": "",
+          "text": "Okay, I think ... okay, yes."
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "Very good."
+        },
+        {
+          "character": "ELOISE",
+          "parenthetical": "",
+          "text": "Um ... okay ... I think ..."
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "Yes, I can see your computer now."
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "distantly visible out at the bee hives."
+        },
+        {
+          "character": "ELOISE",
+          "parenthetical": "",
+          "text": "(phone)"
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "Yes, Ms. Lincoln."
+        },
+        {
+          "character": "ELOISE",
+          "parenthetical": "",
+          "text": "Paypal?"
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "That is not a problem."
+        },
+        {
+          "character": "ELOISE",
+          "parenthetical": "",
+          "text": "Well, I don’t myself. My daughter will sometimes do it for me on the computer when she’s here."
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "Not a problem, Ms. Lincoln."
+        },
+        {
+          "character": "ELOISE",
+          "parenthetical": "",
+          "text": "Well I ... I’m not sure I remember my password."
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "Not a problem."
+        },
+        {
+          "character": "ELOISE",
+          "parenthetical": "",
+          "text": "I ... I’m sorry but I - I really really don’t remember ..."
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "Ms. Lincoln."
+        },
+        {
+          "character": "ELOISE",
+          "parenthetical": "",
+          "text": "I don’t have Amazon."
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "No Ms. Lincoln, don’t call anyone."
+        },
+        {
+          "character": "ELOISE",
+          "parenthetical": "",
+          "text": "But, these things make me very nervous and ... (rising)"
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "Ms. Lincoln - where are you going?"
+        },
+        {
+          "character": "ELOISE",
+          "parenthetical": "",
+          "text": "(blinks)"
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "Ms. Lincoln, please sit back down."
+        },
+        {
+          "character": "ELOISE",
+          "parenthetical": "",
+          "text": "No, of course n..."
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "And lose all of your files?"
+        },
+        {
+          "character": "ELOISE",
+          "parenthetical": "",
+          "text": "No I..."
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "Then I need you to sit back down, right now, and work with me in order to get your computer fixed and you paid your $100."
+        },
+        {
+          "character": "ELOISE",
+          "parenthetical": "",
+          "text": "Well ... I ..."
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "I’ll help you look."
+        },
+        {
+          "character": "ELOISE",
+          "parenthetical": "",
+          "text": "(a clap)"
+        },
+        {
+          "character": "ELOISE",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "It’s all right."
+        },
+        {
+          "character": "ELOISE",
+          "parenthetical": "",
+          "text": "Uh."
+        },
+        {
+          "character": "ELOISE",
+          "parenthetical": "(CONT'D)",
+          "text": "Are you still there? 8."
+        },
+        {
+          "character": "BEEPING.",
+          "parenthetical": "",
+          "text": "She frowns."
+        },
+        {
+          "character": "ELOISE",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "ELOISE",
+          "parenthetical": "(CONT'D)",
+          "text": "... oh ..."
+        }
+      ],
+      "actionPreview": "Puttering a cup of tea from the stove to the kitchen table, Eloise opens her laptop and starts her Skype app. She takes a sip of tea and is about to start a call to her daughter when an ANGRY RED BOX materializes onto her screen. She pauses. Cleaning her glasses, she leans in and, lips moving, caref"
+    },
+    {
+      "number": 6,
+      "heading": "INT. FIELD - LATE DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "CLAY cranks the handle on the EXTRACTOR, spinning the hive frames inside, extracting the honey. Placing a bucket with a sieve beneath the extractor, he opens the valve. He can’t help but smile as pure, golden honey - with small bits of beeswax in it, comes pouring out - catching and re- amplifying t"
+    },
+    {
+      "number": 7,
+      "heading": "EXT. ELOISE LINCOLN'S HOUSE - LATE DAY",
+      "characters": [
+        "CLAY"
+      ],
+      "dialogues": [
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "(calls)"
+        }
+      ],
+      "actionPreview": "Holding a QUART JAR of honey, CLAY stands on the doorstep of Eloise’s house out in front of his. He knocks again. Waits. Ms. Lincoln? He turns, looks into the driveway. Her 1977 Lincoln station wagon is sitting there. He turns back. Studies the house. Listening ... Tries the doorknob. It is unlocked"
+    },
+    {
+      "number": 8,
+      "heading": "INT. ELOISE LINCOLN'S HOUSE - DUSK",
+      "characters": [
+        "CLAY"
+      ],
+      "dialogues": [
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "Ms. Lincoln?"
+        }
+      ],
+      "actionPreview": "He steps into the kitchen. Silent in the fading light. Except for the distant BEEPING that is coming out of the PHONE that lies on the kitchen table beside the computer. He registers first the phone, number on the screen along with the message, ‘ Call Failed. Reconnect?’ still on it. 9. 10. He looks"
+    },
+    {
+      "number": 9,
+      "heading": "INT. ELOISE LINCOLN'S HOUSE - DUSK",
+      "characters": [
+        "VOICE",
+        "A FOOT",
+        "BLACK WOMAN"
+      ],
+      "dialogues": [
+        {
+          "character": "VOICE",
+          "parenthetical": "",
+          "text": "Don’t move!"
+        },
+        {
+          "character": "A FOOT",
+          "parenthetical": "",
+          "text": "kicks"
+        },
+        {
+          "character": "BLACK WOMAN",
+          "parenthetical": "",
+          "text": "Who the fuck are you!?"
+        },
+        {
+          "character": "BLACK WOMAN",
+          "parenthetical": "",
+          "text": "(CONT'D) I said what the fuck’re you doing in my mother’s house you asshole!?"
+        },
+        {
+          "character": "BLACK WOMAN",
+          "parenthetical": "(O.S.) (CONT'D)",
+          "text": "..."
+        },
+        {
+          "character": "BLACK WOMAN",
+          "parenthetical": "(O.S.) (CONT'D)",
+          "text": "Mom!"
+        }
+      ],
+      "actionPreview": "He stops in the doorway to the living room. The day’s fading light flows like a slow tide into thru all the room’s windows silhouetting ELOISE’S FIGURE dangling from the lamp-cord attached to the light-fixture in the center of the room, piano stool lying on its side beneath her. Don’t fucking move! "
+    },
+    {
+      "number": 10,
+      "heading": "EXT. ELOISE LINCOLN’S HOUSE - NIGHT",
+      "characters": [
+        "POLICE DETECTIVE",
+        "VERONA LINCOLN"
+      ],
+      "dialogues": [
+        {
+          "character": "POLICE DETECTIVE",
+          "parenthetical": "",
+          "text": "It’s preliminary - but I gotta be honest with you Agent - right now, no signs of struggle, it does - I’m sorry - look like suicide to me."
+        },
+        {
+          "character": "VERONA LINCOLN",
+          "parenthetical": "",
+          "text": "Then what the fuck was he doing in my mother’s house??"
+        },
+        {
+          "character": "POLICE DETECTIVE",
+          "parenthetical": "",
+          "text": "(looks over at Clay)"
+        },
+        {
+          "character": "VERONA LINCOLN",
+          "parenthetical": "",
+          "text": "No -"
+        },
+        {
+          "character": "POLICE DETECTIVE",
+          "parenthetical": "",
+          "text": "All right then."
+        }
+      ],
+      "actionPreview": "POLICE CARS - lights flashing - are everywhere. Clay sits on the house steps, handcuffed while ... VERONA LINCOLN stands talking to the police detectives. Well, I don’t know. I’m gonna ask him. we’re gonna ask him. He looks at her. Sighs."
+    },
+    {
+      "number": 11,
+      "heading": "EXT. STEPS - ELOISE LINCOLN'S HOUSE - NIGHT",
+      "characters": [
+        "POLICE DETECTIVE",
+        "CLAY",
+        "VERONA LINCOLN"
+      ],
+      "dialogues": [
+        {
+          "character": "POLICE DETECTIVE",
+          "parenthetical": "",
+          "text": "Mr ... (consults notes) ‘Clay’, do I have that right?"
+        },
+        {
+          "character": "POLICE DETECTIVE",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "POLICE DETECTIVE",
+          "parenthetical": "(CONT'D)",
+          "text": "Do you?"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "Don’t have much to say."
+        },
+        {
+          "character": "VERONA LINCOLN",
+          "parenthetical": "",
+          "text": "How about what the fuck you were doing in my mother’s house??"
+        },
+        {
+          "character": "VERONA LINCOLN",
+          "parenthetical": "",
+          "text": "(CONT'D) I want to know."
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "I was bringing her a jar of honey."
+        },
+        {
+          "character": "VERONA LINCOLN",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "(quietly) I keep bees."
+        },
+        {
+          "character": "VERONA LINCOLN",
+          "parenthetical": "",
+          "text": "You what?"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "I keep bees."
+        },
+        {
+          "character": "VERONA LINCOLN",
+          "parenthetical": "",
+          "text": "Okay ... okay."
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "I’m rent the small structure behind this one from her. (looks up)"
+        },
+        {
+          "character": "VERONA LINCOLN",
+          "parenthetical": "",
+          "text": "Okay."
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "Mrs. Lincoln and I were friends."
+        },
+        {
+          "character": "POLICE DETECTIVE",
+          "parenthetical": "",
+          "text": "‘Noted’?"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "I told you."
+        },
+        {
+          "character": "POLICE DETECTIVE",
+          "parenthetical": "",
+          "text": "(closing his notebook)"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "Let’s go."
+        }
+      ],
+      "actionPreview": "Verona and the two Police Detectives approach Clay seated on the steps. Clay just looks at him. You’ve been advised of your rights, right? Silently, Clay shrugs. Wanna talk to us? 11. 12. The Police Detective shoots her a look. What was he doing there?? What? You were bringing her a jar of honey?? W"
+    },
+    {
+      "number": 12,
+      "heading": "EXT. BACK RENTAL HOUSE - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The door opens, Verona enters. Stops. The lights are low and the place is sparely furnished. But there are TELEVISION SCREENS everywhere. Each one tuned to a different local and national NEWS CHANNEL."
+    },
+    {
+      "number": 13,
+      "heading": "INT. SHED - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "She enters. Surveys the VARIOUS WORK BENCHES, spread with tools, diopters, swing-arm magnifiers. 13. 14."
+    },
+    {
+      "number": 14,
+      "heading": "EXT. FIELD - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "She stops at the edge of the field. Reaching under her jacket, she pulls out her mag-light. As she does, we get the first glimpse of her FBI BADGE hanging by a chain from her neck. She shines her light across the BEE HIVES - that stand, along with the flowers, bright spots under her light in the nig"
+    },
+    {
+      "number": 15,
+      "heading": "INT. ELOISE LINCOLN'S HOUSE - NIGHT",
+      "characters": [
+        "FORENSIC INVESTIGATOR",
+        "VERONA"
+      ],
+      "dialogues": [
+        {
+          "character": "FORENSIC INVESTIGATOR",
+          "parenthetical": "",
+          "text": "Agent. Good developments. We managed to pull prints off both the lamp cord and the light fixture it was tied to ..."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "So - then we’ve got him ..."
+        },
+        {
+          "character": "FORENSIC INVESTIGATOR",
+          "parenthetical": "",
+          "text": "After we match the prints."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "Okay."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "(CONT'D) ... oh ... my god ..."
+        }
+      ],
+      "actionPreview": "FORENSIC investigators are combing through the house when Verona enters. Spotting her, the lead Forensic Investigator heads her way. Verona looks at him. In theory, yes. She nods. Thank you. He nods, returning to his work. Her eyes sweep through the kitchen. Settle on the QUART JAR OF HONEY sitting "
+    },
+    {
+      "number": 16,
+      "heading": "EXT. STEPS - ELOISE LINCOLN'S HOUSE - NIGHT",
+      "characters": [
+        "POLICE DETECTIVE",
+        "VERONA"
+      ],
+      "dialogues": [
+        {
+          "character": "POLICE DETECTIVE",
+          "parenthetical": "",
+          "text": "Agent Lincoln - I’m sorry - but the prints - cord, light-fixture; everything - all came back positive for your mother. (nods)"
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "I know."
+        },
+        {
+          "character": "POLICE DETECTIVE",
+          "parenthetical": "",
+          "text": "(surprised)"
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "(a beat/a nod)"
+        },
+        {
+          "character": "POLICE DETECTIVE",
+          "parenthetical": "",
+          "text": "Well ..."
+        },
+        {
+          "character": "POLICE DETECTIVE",
+          "parenthetical": "(CONT'D)",
+          "text": "There’ll still be an inquest, obviously, but ... call me if you have any questions?"
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "Yeah."
+        }
+      ],
+      "actionPreview": "Late now. Verona sits on the steps when a car pulls up. CLAY emerging out of the passenger, the Police Detective out from behind the wheel. As Clay, no longer handcuffed, heads wordlessly off towards the back house, the Police Detective comes to Verona. It seems - sadly - it was suicide. Verona look"
+    },
+    {
+      "number": 17,
+      "heading": "INT. BACK HOUSE - DAWN",
+      "characters": [
+        "VERONA",
+        "CLAY"
+      ],
+      "dialogues": [
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "Mr. Clay?"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "(continues pouring)"
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "Could I - interest you in anything stronger?"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "No."
+        }
+      ],
+      "actionPreview": "Clay is pouring himself a glass of milk in the small kitchen when Verona sticks her head in through the door. I’m - sorry about my aggressive attitude last night ... He pauses his pouring of the milk an instant. Then ... It’s understandable. She considers him. The milk. He looks at her now. Consider"
+    },
+    {
+      "number": 18,
+      "heading": "INT. KITCHEN - ELOISE LINCOLN’S HOUSE - DAWN",
+      "characters": [
+        "VERONA",
+        "CLAY"
+      ],
+      "dialogues": [
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "Look."
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "(a beat/a sigh)"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "Yeah I - guess I never thought about it that way."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "(CONT'D)",
+          "text": "I’m a federal agent, you know?"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "(face registering nothing)"
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "Cyber-crimes. (shakes head/then) I think my mom got scammed today."
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "(CONT'D)",
+          "text": "Sorry."
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "Taking advantage of, hurting an elderly person is as bad as hurting a child."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "Get some rest okay?"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "I will. Thank you."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "But you’ve been up all night."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "I have an appointment."
+        }
+      ],
+      "actionPreview": "She settles in across from him with a cup of coffee. His milk sits in front of him. I appreciate you taking an interest and keeping an eye on my mom. I do. Being old can be lonely in this country. (a shrug) Turn a certain age, you cease to exist. (shakes head) I don’t know if you’ve traveled but - E"
+    },
+    {
+      "number": 19,
+      "heading": "EXT. PARKING LOT - DATA GROUP - MEMPHIS - MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "It’s on the early side in this business park, parking lot entirely full, when CLAY pulls up in his pick-up truck, bed scattered with bee-keeping implements, and getting out, he pulls two GASOLINE CANS out of the truck-bed and heads for the front doors of the glass and steel building."
+    },
+    {
+      "number": 20,
+      "heading": "EXT. ENTRANCE - DATA GROUP - MORNING",
+      "characters": [
+        "CLAY"
+      ],
+      "dialogues": [
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "Is this Data Group? OFF-DUTY COP 1"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "If this is Data Group - the call center - I’m going inside."
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "What are you?"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "One two three."
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "I’ll ask you one more time."
+        }
+      ],
+      "actionPreview": "The TWO OFF-DUTY but uniformed POLICE OFFICERS standing at the doors look with alarm when they see a man walking towards them with TWO RED GAS-CANS. OFF-DUTY COP 1 Whoa whoa! Where the hell do you think you’re going?? Clay stops in front of them. What? Who the fuck are you? Where do you think you’re"
+    },
+    {
+      "number": 21,
+      "heading": "INT. RECEPTION - DATA GROUP - MORNING",
+      "characters": [
+        "CLAY"
+      ],
+      "dialogues": [
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "What floor is Data Group on?"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        }
+      ],
+      "actionPreview": "Clay stops at the astonished and frozen Receptionist. Terrified, the Receptionist can only hold up 3 trembling fingers. Tell any other companies in the building to evacuate now. There’s going to be a fire."
+    },
+    {
+      "number": 22,
+      "heading": "INT. CALL CENTER - MORNING",
+      "characters": [
+        "CLAY",
+        "DATA GROUP REP",
+        "CALL CENTER EMPLOYEES",
+        "VOICE",
+        "GARNETT",
+        "MEETS"
+      ],
+      "dialogues": [
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "(call pitch rep)"
+        },
+        {
+          "character": "DATA GROUP REP",
+          "parenthetical": "",
+          "text": "What ... what are you"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "I said hang up the phone."
+        },
+        {
+          "character": "DATA GROUP REP",
+          "parenthetical": "",
+          "text": "(then/into phone) I’m ... sorry Mrs. Perkins - I’ll have to call you back ..."
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "(everyone else)"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "CALL CENTER EMPLOYEES",
+          "parenthetical": "",
+          "text": "... we will never steal from the weak and vulnerable again ..."
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "Good."
+        },
+        {
+          "character": "VOICE",
+          "parenthetical": "",
+          "text": "What! The Fuck!"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "I’m a Bee-Keeper."
+        },
+        {
+          "character": "GARNETT",
+          "parenthetical": "(THE VOICE)",
+          "text": "The fuck you will!"
+        },
+        {
+          "character": "MEETS",
+          "parenthetical": "",
+          "text": "them in the aisle,"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "Now - I don’t care whether your friends here live or die."
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        }
+      ],
+      "actionPreview": "The elevator doors open and eyes rise from call stations as CLAY steps in, two gas-cans in hand. Phones frozen at ears, everyone watches as he enters. Setting one of the cans on top of a desk in front of a call-station he ... Hang up the phone. ...starts splashing GASOLINE across the floor with the "
+    },
+    {
+      "number": 23,
+      "heading": "INT. KITCHEN - DAY",
+      "characters": [
+        "ELDERLY MAN"
+      ],
+      "dialogues": [
+        {
+          "character": "ELDERLY MAN",
+          "parenthetical": "",
+          "text": "(at his computer)"
+        }
+      ],
+      "actionPreview": "An ELDERLY MAN, talking to his son on Skype pauses as his screen fills with a box that says, ‘ WARNING, YOUR COMPUTER HAS BEEN COMPROMISED! He tries to close it, but can’t. Jack, Son - if you can hear me - I’ll call you back. Picking up his house phone, he squints - and dials the number there. SIGNA"
+    },
+    {
+      "number": 24,
+      "heading": "EXT. DATA GROUP PARKING LOT - MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Clay is driving away as the building behind him EXPLODES."
+    },
+    {
+      "number": 25,
+      "heading": "INT. EVERMORE ENTERPRISES - DAY",
+      "characters": [
+        "DEREK EVERMORE",
+        "PHONE",
+        "ELDER MAN",
+        "ELDER",
+        "MAN"
+      ],
+      "dialogues": [
+        {
+          "character": "DEREK EVERMORE",
+          "parenthetical": "",
+          "text": "Yes, what is it?"
+        },
+        {
+          "character": "DEREK EVERMORE",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "DEREK EVERMORE",
+          "parenthetical": "(CONT'D)",
+          "text": "I see."
+        },
+        {
+          "character": "DEREK EVERMORE",
+          "parenthetical": "(CONT'D)",
+          "text": "This is Derek Evermore. 24."
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "Uh, Mr. Evermore, Sir - very sorry to bother you Sir but - up, I’m"
+        },
+        {
+          "character": "DEREK EVERMORE",
+          "parenthetical": "",
+          "text": "Yeah, Memphis, I got that."
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "Well, it - um - seems we had a disgruntled customer?"
+        },
+        {
+          "character": "DEREK EVERMORE",
+          "parenthetical": "",
+          "text": "So?"
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "I’m using the app."
+        },
+        {
+          "character": "DEREK EVERMORE",
+          "parenthetical": "",
+          "text": "Okay, so why are you bothering me?"
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "Yes Sir, I appreciate that - but in this case, I don’t think a legal department will help here."
+        },
+        {
+          "character": "DEREK EVERMORE",
+          "parenthetical": "",
+          "text": "(blinks/then)"
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "Um."
+        },
+        {
+          "character": "DEREK EVERMORE",
+          "parenthetical": "",
+          "text": "I beg your pardon?"
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "Yeah."
+        },
+        {
+          "character": "DEREK EVERMORE",
+          "parenthetical": "",
+          "text": "And - what?"
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "Well, he burnt the place to the ground."
+        },
+        {
+          "character": "DEREK EVERMORE",
+          "parenthetical": "",
+          "text": "I’m sorry, he what?"
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "Yeah."
+        },
+        {
+          "character": "DEREK EVERMORE",
+          "parenthetical": "",
+          "text": "Do we know who this - disgruntled customer - is?"
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "Uh."
+        },
+        {
+          "character": "DEREK EVERMORE",
+          "parenthetical": "",
+          "text": "I didn’t ask if he gave a name!"
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "(cowed)"
+        },
+        {
+          "character": "ELDER MAN",
+          "parenthetical": "",
+          "text": "What did you say your name was again?"
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "Uh."
+        },
+        {
+          "character": "ELDER MAN",
+          "parenthetical": "",
+          "text": "Well listen to me Eric Garrett."
+        },
+        {
+          "character": "MAN",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "Uh."
+        },
+        {
+          "character": "ELDER MAN",
+          "parenthetical": "",
+          "text": "Then I suggest, using language that this person understands, help him to comprehend that these sorts of business practices won’t be tolerated by either Data Group or the larger Evermore Enterprises"
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "Uh."
+        },
+        {
+          "character": "ELDER MAN",
+          "parenthetical": "",
+          "text": "Good."
+        },
+        {
+          "character": "ELDER MAN",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        }
+      ],
+      "actionPreview": "A YOUNG MAN - handsome, perfectly and tastefully groomed in a very nice suit sits doing paperwork at a large desk in a large office with a fantastic view of downtown Atlanta. Off to one side, an OLDER MAN, also well-groomed, sits in a wing-back chair, reviewing some papers when the phone rings. Anno"
+    },
+    {
+      "number": 26,
+      "heading": "INT. VERONA LINCOLN’S APARTMENT - MORNING",
+      "characters": [
+        "VERONA",
+        "PHONE",
+        "ELDER",
+        "MAN"
+      ],
+      "dialogues": [
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "Yes?"
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "(a beat/then)"
+        },
+        {
+          "character": "MAN",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "Yeah."
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "(a beat/then)"
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "(remembering)"
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "Ver - it’s okay."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "(a beat/then)"
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "Remember Data Group?"
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "Yeah."
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "Well - you better get there."
+        }
+      ],
+      "actionPreview": "There are no fewer than three bottles of Jack Daniels at various levels of emptiness in various spots around the room while, VERONA, mascara running down her face from crying, lies tangled in her sheets passed out when her phone rings. It takes several rings before she even hears it. Waking in a sud"
+    },
+    {
+      "number": 27,
+      "heading": "EXT. PARKING LOT - DATA GROUP - MEMPHIS - DAY",
+      "characters": [
+        "WILEY",
+        "VERONA"
+      ],
+      "dialogues": [
+        {
+          "character": "WILEY",
+          "parenthetical": "",
+          "text": "They’re the only witnesses."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "Did they say what he was pissed about?"
+        },
+        {
+          "character": "WILEY",
+          "parenthetical": "",
+          "text": "(sighs)"
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "Fucking scumbags. (building)"
+        },
+        {
+          "character": "WILEY",
+          "parenthetical": "",
+          "text": "That it does."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "Plus - whoever did this?"
+        },
+        {
+          "character": "WILEY",
+          "parenthetical": "",
+          "text": "I heard that."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "(sighs)"
+        },
+        {
+          "character": "WILEY",
+          "parenthetical": "",
+          "text": "(a slight smile)"
+        }
+      ],
+      "actionPreview": "Verona stands with MATT WILEY, her partner from the local FBI Memphis Field Office. FIRE TRUCKS are spraying down the smoking remains of the once-beautiful steel and glass building. Wiley refers to a group of FRIGHTENED-LOOKING PHONE-MARKETERS the police have gathered in one part of the parking lot."
+    },
+    {
+      "number": 28,
+      "heading": "EXT. ELOISE LINCOLN'S HOUSE - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The house is quiet as a ‘71 MACH 1 MUSTANG rolls up on the country road that fronts it, big cam in the engine guttering."
+    },
+    {
+      "number": 29,
+      "heading": "INT. 71 MACH 1 MUSTANG - DAY",
+      "characters": [
+        "GARNETT",
+        "DRIVER",
+        "GARRETT",
+        "MAN"
+      ],
+      "dialogues": [
+        {
+          "character": "GARNETT",
+          "parenthetical": "",
+          "text": "Last closed deal of the day?"
+        },
+        {
+          "character": "DRIVER",
+          "parenthetical": "",
+          "text": "Yeah."
+        },
+        {
+          "character": "GARRETT",
+          "parenthetical": "",
+          "text": "How much we take her for?"
+        },
+        {
+          "character": "DRIVER",
+          "parenthetical": "",
+          "text": "207. African American and a widow."
+        },
+        {
+          "character": "GARRETT",
+          "parenthetical": "",
+          "text": "Well it definitely wasn’t any 83 year-old bitch who torched us."
+        },
+        {
+          "character": "MAN",
+          "parenthetical": "",
+          "text": "Wait, what’s that?"
+        },
+        {
+          "character": "GARRETT",
+          "parenthetical": "",
+          "text": "Whaddaya know."
+        }
+      ],
+      "actionPreview": "GARRETT looks out with FOUR OTHER MEN. Not the ones from the call-center. It looks like he up-graded - significantly . They eye the house. The Driver consults his phone. 29. 30. Eloise Lincoln, 83. Garrett eyes the house. Garrett studies the house another beat. Next. He nods at a FIGURE in a head-to"
+    },
+    {
+      "number": 30,
+      "heading": "EXT. BACK HOUSE - DAY",
+      "characters": [
+        "GARRETT"
+      ],
+      "dialogues": [
+        {
+          "character": "GARRETT",
+          "parenthetical": "",
+          "text": "Yeah."
+        }
+      ],
+      "actionPreview": "With Garrett, the FOUR MEN, armed with PISTOLS and SHOTGUNS advance on the small back house. One of them nods towards the back. MAN 1 What’re those? MAN 2 Bee hives. Asshole said something about bees. Guess he’s a bee-lover. Let’s announce our presence to Bee-Boy. The others exchange a smirk. Step i"
+    },
+    {
+      "number": 31,
+      "heading": "INT. KITCHEN - BACK HOUSE - DAY",
+      "characters": [
+        "GARRETT",
+        "SOMEHOW ..."
+      ],
+      "dialogues": [
+        {
+          "character": "GARRETT",
+          "parenthetical": "",
+          "text": "(stepping in)"
+        },
+        {
+          "character": "SOMEHOW ...",
+          "parenthetical": "",
+          "text": "Clay is suddenly coming at them from the side,"
+        }
+      ],
+      "actionPreview": "CLAY is packing his kitchen goods into boxes when the explosions reach his ears. His eyes dart up. The door behind him bursts open. Hiya Bee-Boy. KABOOM!KABOOM! Clay dives over the counter as Two Gunmen with SHOTGUNS step in beside Garret and OPEN FIRE - blowing huge chunks out of the cabinetry as ."
+    },
+    {
+      "number": 32,
+      "heading": "EXT. PARKING LOT - DATA GROUP - DAY",
+      "characters": [
+        "VERONA",
+        "VOICE",
+        "WILEY"
+      ],
+      "dialogues": [
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "Uh-huh."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "And then they just send your company big chunks of money?"
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "I’m sure you would and you will. (a smile)"
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "Cock-fuck."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "VOICE",
+          "parenthetical": "",
+          "text": "Uh, Verona?"
+        },
+        {
+          "character": "WILEY",
+          "parenthetical": "",
+          "text": "When you’re done violating this gentleman’s civil rights - can I speak to you for a moment?"
+        }
+      ],
+      "actionPreview": "VERONA is questioning one of the group of Tele-Scammers. And so, I’m confused. People - generally elderly - call you because a warning with your phone number appears on their screen - and you have no idea how it got there? TELE-SCAMMER No. Look - I mean - I ... look I just work phones, okay? Let’s b"
+    },
+    {
+      "number": 33,
+      "heading": "EXT. PARKING LOT - DATA GROUP - DAY",
+      "characters": [
+        "WILEY",
+        "VERONA"
+      ],
+      "dialogues": [
+        {
+          "character": "WILEY",
+          "parenthetical": "",
+          "text": "How’s your day?"
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "Apart from my mother’s suicide last night?"
+        },
+        {
+          "character": "WILEY",
+          "parenthetical": "",
+          "text": "Sorry."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "I know, I know - I’m an asshole."
+        },
+        {
+          "character": "WILEY",
+          "parenthetical": "",
+          "text": "So you like fires?"
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "Today I do."
+        },
+        {
+          "character": "WILEY",
+          "parenthetical": "",
+          "text": "Well then today’s your lucky day. (nods)"
+        }
+      ],
+      "actionPreview": "A few yards away, Wiley turns to face Verona. I meant... Well it started out pretty shitty but ... (burned building) Hey. It’s looking up. Cause apparently your mom’s house is on fire too. (shrugs) And some other shit."
+    },
+    {
+      "number": 34,
+      "heading": "EXT. ELOISE LINCOLN'S HOUSE - TUPELO, MS -DAY",
+      "characters": [
+        "VERONA",
+        "WILEY"
+      ],
+      "dialogues": [
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "Is any of them the bee-guy?"
+        },
+        {
+          "character": "WILEY",
+          "parenthetical": "",
+          "text": "Doesn’t look that way."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "More and more all the time. (Wiley)"
+        },
+        {
+          "character": "WILEY",
+          "parenthetical": "",
+          "text": "Yeah."
+        },
+        {
+          "character": "WILEY",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "The Bee-Keeper?"
+        }
+      ],
+      "actionPreview": "Verona and Wiley stand in the street - watching as fire trucks douse the BACK HOUSE that is in FLAMES ... 33. 34. And PARAMEDICS wheel BODIES out under white sheets. Do we know? In fact, it looks like its everyone but the bee- guy. How you liking his style now? Verona looks at the body under a sheet"
+    },
+    {
+      "number": 35,
+      "heading": "INT. ‘71 MACH 1 MUSTANG - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "BLEEDING all over himself, RIGHT HAND, fingers amputated, GARRETT drives with his left hand while holding his RIGHT with its chopped fingers scrunched into his shirt against his belly, whinging and panting as he pulls over and... Fumbling out his phone he tries to dial, but without fingers, just end"
+    },
+    {
+      "number": 36,
+      "heading": "INT. OFFICE - EVERMORE ENTERPRISES - DAY",
+      "characters": [
+        "DEREK EVERMORE",
+        "PHONE",
+        "WESTWYLD",
+        "EVERMORE"
+      ],
+      "dialogues": [
+        {
+          "character": "DEREK EVERMORE",
+          "parenthetical": "",
+          "text": "Yes? (then)"
+        },
+        {
+          "character": "DEREK EVERMORE",
+          "parenthetical": "",
+          "text": "(CONT'D) I’m here. What do you have to say to me?"
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "(a beat/then)"
+        },
+        {
+          "character": "DEREK EVERMORE",
+          "parenthetical": "",
+          "text": "Wait. Are you doing coke?"
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "What??"
+        },
+        {
+          "character": "DEREK EVERMORE",
+          "parenthetical": "",
+          "text": "You’re sniffing."
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "Uh."
+        },
+        {
+          "character": "DEREK EVERMORE",
+          "parenthetical": "",
+          "text": "Then what"
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "I’m - bleeding - Mr. Evermore."
+        },
+        {
+          "character": "DEREK EVERMORE",
+          "parenthetical": "",
+          "text": "Bleeding like - what?"
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "Um."
+        },
+        {
+          "character": "DEREK EVERMORE",
+          "parenthetical": "",
+          "text": "I’m - what?"
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "My fingers."
+        },
+        {
+          "character": "DEREK EVERMORE",
+          "parenthetical": "",
+          "text": "Who - is ... he?"
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "Do you have a tv?"
+        },
+        {
+          "character": "DEREK EVERMORE",
+          "parenthetical": "",
+          "text": "You mean like a flat-screen?"
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "Yeah."
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "Hold on."
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "EVERMORE",
+          "parenthetical": "",
+          "text": "(squints) I dunno."
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "Uh."
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "Said something about what?"
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "About what what?"
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "About fucking bees you fucking moron!"
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "(a shocked pause/then)"
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "What"
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "I dunno."
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "So - you’re saying - to me - to us - that this man - whose home you rolled into - who cut your fingers off..."
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "(interjects)"
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "(closes his eyes/then)"
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "Yeah."
+        }
+      ],
+      "actionPreview": "The phone rings on Derek’s desk and he snatches it up. Put him through. Hitting speaker, he drops the phone back onto the receiver. WESTWYLD - the SOPHISTICATED ELDER MAN - glances briefly up from the documents he’s reviewing. Uh. Mr. Evermore... You’re sniveling. Like you’ve got a nose full of snot"
+    },
+    {
+      "number": 37,
+      "heading": "INT. ‘71 MACH 1 MUSTANG - DAY",
+      "characters": [
+        "GARRETT",
+        "YANKING"
+      ],
+      "dialogues": [
+        {
+          "character": "GARRETT",
+          "parenthetical": "",
+          "text": "( shrieks! )"
+        },
+        {
+          "character": "GARRETT",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "YANKING",
+          "parenthetical": "",
+          "text": "Garrett ripping out of the driver’s side window and vanishing sucking away over the railing of the bridge after the truck and smashing down into the river below."
+        }
+      ],
+      "actionPreview": "In the Mach 1, Garrett suddenly goes flying as CLAY smashes the window in with his fist and reaching in... 37. 38. Hey! Bro! No! ... shoves a COME-ALONG STRAP down around his torso and, yanking it’s ratchet-cam tight, turns and walks back to his TRUCK - which Garrett had not noticed during the phone"
+    },
+    {
+      "number": 38,
+      "heading": "INT. OFFICE - EVERMORE ENTERPRISES - DAY",
+      "characters": [
+        "CLAY",
+        "EVERMORE"
+      ],
+      "dialogues": [
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "Who is this?"
+        },
+        {
+          "character": "EVERMORE",
+          "parenthetical": "",
+          "text": "(leaning angrily)"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "That stole from people."
+        },
+        {
+          "character": "EVERMORE",
+          "parenthetical": "",
+          "text": "Fuck. You. Who are you?"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "What’s your name?"
+        },
+        {
+          "character": "EVERMORE",
+          "parenthetical": "",
+          "text": "Oh, and you have a hearing problem?"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "You sound young. You probably don’t have Estate Planning, am I right?"
+        },
+        {
+          "character": "EVERMORE",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "Estate planning."
+        },
+        {
+          "character": "EVERMORE",
+          "parenthetical": "",
+          "text": "I’m 28 fucking years old!"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "You’re about to find out."
+        }
+      ],
+      "actionPreview": "EVERMORE and WESTWYLD sit/stand - frozen - not sure what they just heard. INTERCUT: Clay fishes up Garrett’s bloody PHONE off the floor. Evermore and Westwyld look at one another. Fuck you. You burned down a multi- million dollar facility of mine you fucking cunt! 38. 39. And now I’m going to burn y"
+    },
+    {
+      "number": 39,
+      "heading": "INT. OFFICE - EVERMORE ENTERPRISES - DAY",
+      "characters": [
+        "EVERMORE",
+        "WESTWYLD"
+      ],
+      "dialogues": [
+        {
+          "character": "EVERMORE",
+          "parenthetical": "",
+          "text": "The fuck’s"
+        },
+        {
+          "character": "EVERMORE",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "EVERMORE",
+          "parenthetical": "(CONT'D)",
+          "text": "What?"
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "(finally)"
+        },
+        {
+          "character": "EVERMORE",
+          "parenthetical": "",
+          "text": "(blinks back)"
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "He’s a Bee-Keeper."
+        },
+        {
+          "character": "EVERMORE",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "EVERMORE",
+          "parenthetical": "",
+          "text": "You’re right."
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "(another breath)"
+        }
+      ],
+      "actionPreview": "Evermore stares at the phone. that supposed to mean Shit-face?? What the fuck’s that supposed to mean?!? 39. 40. Realizing he’s been hung up on, he grabs the phone and begins... What the fuck’s that supposed to mean you shit-prick!!! ... smashing it on the desk. Until Westwyld, lays a hand over his."
+    },
+    {
+      "number": 40,
+      "heading": "INT. CORRIDOR - EVERMORE ENTERPRISES - DAY",
+      "characters": [
+        "EVERMORE"
+      ],
+      "dialogues": [
+        {
+          "character": "EVERMORE",
+          "parenthetical": "",
+          "text": "What?"
+        }
+      ],
+      "actionPreview": "Westwyld is moving fast down the corridor with Evermore hot on his heels. What? Wait? Bees? Bee- Keeper?? What the fuck are you talking about?? Turning on his heel, Westwyld heads directly into ..."
+    },
+    {
+      "number": 41,
+      "heading": "INT. WESTWYLD’S OFFICE - DAY",
+      "characters": [
+        "WESTWYLD",
+        "PHONE",
+        "TACKLE SHOP.",
+        "EVERMORE"
+      ],
+      "dialogues": [
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "(Evermore)"
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "(CONT'D)",
+          "text": "Brenda - get me the Secretary. (a beat/then)"
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "(CONT'D)",
+          "text": "Mr. Secretary."
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "(O.S.) (CONT'D)",
+          "text": "Yes Sir, well - how should I put this - well, one of my charges has - oh jesus - this is awkward - well, somehow he both located and came at cross-purposes with a - ahm ..."
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "(O.S.)"
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "(a beat/then)"
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "(a beat)"
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "As in a ‘Bee Keeper’ bee keeper?"
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "Are you saying ... that he’s - angered the hive?"
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "That’s what I’m saying."
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "(a long beat/then)"
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "No shit. WE SEE: CLAY placing items at the register in a BAIT AND"
+        },
+        {
+          "character": "TACKLE SHOP.",
+          "parenthetical": "",
+          "text": "Paying for HIGH-TEST FISHING LINE."
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "Well then Clarence - this ‘charge’ of yours and you - I assume you’re working on funeral arrangements?"
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "That is not a fucking productive statement Wallace!"
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "(O.S.)"
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "(a beat of silence)"
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "(acid)"
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "Yeah - but Clarence. This sounds like just a one-in-a-million lightning strike of bad luck. What can I do?"
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "(a quiet sigh)"
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "(a hesitation/then)"
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "Like I - slash-’we’ - couldn’t donate 5 million fucking dollars to your campaign?"
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "(another beat/then)"
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "I did."
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "Well then - I can tell you - in that case - ‘he’s’ not the active"
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "Well then give me the last Bee"
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "(yet another beat)"
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "For me and those I have a fiduciary responsibility to, yes!"
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "Well then - what I can do in that case, within the boundaries of my duty as a public servant ..."
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "That would be most appreciated"
+        },
+        {
+          "character": "EVERMORE",
+          "parenthetical": "",
+          "text": "What the fuck is going on?? 44."
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "Oh, shut up you fucking idiot."
+        }
+      ],
+      "actionPreview": "... his office where he immediately and commandingly takes a seat behind his desk. Shut the door. Evermore blinks at him. Shut the fucking door you over- privileged idiot! Somewhat cowed, Evermore obeys. Westwyld closes his eyes a moment. Then, composed, he picks up the phone. Yes. That Secretary. H"
+    },
+    {
+      "number": 42,
+      "heading": "INT. TRUCK STOP FOOD MART - NIGHT",
+      "characters": [
+        "ANISETTE LANDRESS",
+        "CLAY"
+      ],
+      "dialogues": [
+        {
+          "character": "ANISETTE LANDRESS",
+          "parenthetical": "",
+          "text": "Honey!"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "(standing) I’m assuming you’re my replacement?"
+        },
+        {
+          "character": "ANISETTE LANDRESS",
+          "parenthetical": "",
+          "text": "You’d assume correctly."
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "Well, you know - us bees - we don’t think too much - we just do what we were made to do. (nods)"
+        },
+        {
+          "character": "ANISETTE LANDRESS",
+          "parenthetical": "",
+          "text": "Well apparently it’s not working."
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "And I reactivated."
+        },
+        {
+          "character": "ANISETTE LANDRESS",
+          "parenthetical": "",
+          "text": "You were retired."
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "Very cute."
+        },
+        {
+          "character": "ANISETTE LANDRESS",
+          "parenthetical": "",
+          "text": "I intend to."
+        },
+        {
+          "character": "ANISETTE LANDRESS",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "Golly."
+        },
+        {
+          "character": "ANISETTE LANDRESS",
+          "parenthetical": "",
+          "text": "Well - aren’t you just the bees knees?"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "Hey."
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "(CONT'D)",
+          "text": "Careful Hon."
+        }
+      ],
+      "actionPreview": "Clay heads out of the Bait-And-Tackle with his purchases into the adjoining truck Food-Mart. He pauses - then returns to an aisle - peruses the HONEY they have for sale there. Picks up a bottle, examines its contents closely. Holds it up to the light. Abruptly, A WOMAN ... A BEAUTIFUL YOUNG WOMAN, i"
+    },
+    {
+      "number": 43,
+      "heading": "INT. OFFICE - SAVANAH FBI FIELD OFFICE - DAY",
+      "characters": [
+        "VERONA",
+        "WILEY"
+      ],
+      "dialogues": [
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "Okay."
+        },
+        {
+          "character": "WILEY",
+          "parenthetical": "",
+          "text": "Who?"
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "The Bee Keeper."
+        },
+        {
+          "character": "WILEY",
+          "parenthetical": "",
+          "text": "Sure he does."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "(blinks)"
+        },
+        {
+          "character": "WILEY",
+          "parenthetical": "",
+          "text": "Remember how I said - if you liked fires today was your lucky day?"
+        }
+      ],
+      "actionPreview": "AGENT VERONA LINCOLN sits in her office snapping her attention back and forth between written records and her computer when WILEY enters. She looks up eagerly. This dude? Adam Clay? He doesn’t freaking exist. The Bee Keeper? 47. 48. I ran his prints thru the Federal database and every state DMV data"
+    },
+    {
+      "number": 44,
+      "heading": "EXT. TRUCK STOP - MISSISSIPPI-TENNESSEE BORDER - DAY",
+      "characters": [
+        "WILEY",
+        "VERONA"
+      ],
+      "dialogues": [
+        {
+          "character": "WILEY",
+          "parenthetical": "",
+          "text": "Ready for the kicker?"
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "No, I don’t think I am Wiley."
+        },
+        {
+          "character": "WILEY",
+          "parenthetical": "",
+          "text": "It’s apparently arson - in other words, set by man - and the accelerant apparently used? (a nod)"
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "There’s just no way."
+        },
+        {
+          "character": "WILEY",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "WILEY",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "WILEY",
+          "parenthetical": "(CONT'D)",
+          "text": "Thoughts?"
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "Uh."
+        },
+        {
+          "character": "WILEY",
+          "parenthetical": "",
+          "text": "Name pulled off the registration from the car she drove here ... (he nods to it) ‘Anisette Landress’."
+        }
+      ],
+      "actionPreview": "Both Verona and Wiley stand stone-faced outside the burned- out remnants of the truck-stop, fire-trucks and police still present everywhere. Honey. She looks at him. He raises and shows her his phone. Way. This place’s closed- circuit was stored in the cloud rather than on-site so it didn’t go up in"
+    },
+    {
+      "number": 45,
+      "heading": "EXT. PARKING LOT - DAY",
+      "characters": [
+        "VERONA",
+        "WILEY"
+      ],
+      "dialogues": [
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "That’s a chain-gun."
+        },
+        {
+          "character": "WILEY",
+          "parenthetical": "",
+          "text": "I know."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "It shoots 6000 rounds a minute."
+        },
+        {
+          "character": "WILEY",
+          "parenthetical": "",
+          "text": "I know."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "That’s 60 rounds a second."
+        },
+        {
+          "character": "WILEY",
+          "parenthetical": "",
+          "text": "I know."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "You know a lot. 49."
+        },
+        {
+          "character": "WILEY",
+          "parenthetical": "",
+          "text": "I know."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "So then do you also know who"
+        },
+        {
+          "character": "WILEY",
+          "parenthetical": "",
+          "text": "Yes, I do."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "Who?"
+        },
+        {
+          "character": "WILEY",
+          "parenthetical": "",
+          "text": "Someone who also doesn’t exist in any DMV or Federal database."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "There’s another way it seems like"
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "WILEY",
+          "parenthetical": "",
+          "text": "Okay."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "You know what’s that way?"
+        },
+        {
+          "character": "WILEY",
+          "parenthetical": "",
+          "text": "The small town your mother and Adam"
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "You know what’s that way?"
+        },
+        {
+          "character": "WILEY",
+          "parenthetical": "",
+          "text": "Atlanta, Georgia? 50."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "Right."
+        },
+        {
+          "character": "WILEY",
+          "parenthetical": "",
+          "text": "Oh."
+        }
+      ],
+      "actionPreview": "Stopping at the back of the car, they open the trunk. Inside, it is WALL-TO-WALL guns, neatly arranged in custom slings. Verona blinks. A Vulcan cannon. I have a degree in math. 50. Anisette Landress is? Someone who’s also a ghost. Like our good friend Adam Clay. She looks back at him. Then reaching"
+    },
+    {
+      "number": 46,
+      "heading": "INT. CAR - DAY",
+      "characters": [
+        "VERONA",
+        "WILEY",
+        "PHONE",
+        "WESTWYLD"
+      ],
+      "dialogues": [
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "(Wiley)"
+        },
+        {
+          "character": "WILEY",
+          "parenthetical": "",
+          "text": "I know they pollinate a lot of shit and we’d be fucked without them."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "Right."
+        },
+        {
+          "character": "WILEY",
+          "parenthetical": "",
+          "text": "Which sounds like it pretty much fucks the hive."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "It can."
+        },
+        {
+          "character": "WILEY",
+          "parenthetical": "",
+          "text": "Very interesting."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "I dunno."
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "Ah - I don’t think we use that term anymore."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "Why?"
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "You know I’m not."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "So I can call you that."
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "Uh, not really."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "See?"
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "For."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "John."
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "Uh."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "Women keep bees too."
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "Fascinating."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "No. I mean a"
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "That’s what I was talking about."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "(deadly serious)"
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "Oh."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "(a sigh)"
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "I understand the question now."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "Great."
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "I can’t tell you."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "John. We help each other. Remember?"
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "I do."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "(thinks/then)"
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "That, in itself, would be classified."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "So it’s ... so classified? That even the fact that it’s classified - is classified?"
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "That - also - is classified."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "So it’s a program?"
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "Classified."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "Of people ... ?"
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "Double-classified."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "Called Bee-Keepers ..."
+        },
+        {
+          "character": "PHONE",
+          "parenthetical": "",
+          "text": "Oh looky - someone bought me a birthday cake!"
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "But it’s not even your..."
+        },
+        {
+          "character": "WILEY",
+          "parenthetical": "",
+          "text": "I’m getting this weird feeling it might be classified?"
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "(PRE-LAP)",
+          "text": "A fucking Bee-Keeper - is a fucking code-name!"
+        }
+      ],
+      "actionPreview": "Wiley drives while, Verona sits in the passenger, the BOOK ON BEE-KEEPING on her lap while, on hold, her phone hangs at her ear. This is interesting stuff. Bees are interesting little fucks, did you know that? And there’s been massive die-off’s in the bee-hives in this country lately. No one knows w"
+    },
+    {
+      "number": 47,
+      "heading": "INT. EVERMORE ENTERPRISES - DAY",
+      "characters": [
+        "WESTWYLD"
+      ],
+      "dialogues": [
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "For a program that was developed back when I was running the Central"
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "Because that’s one thing Bee"
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "To kill the people who matter!"
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        }
+      ],
+      "actionPreview": "WESTWYLD faces a ROOM OF MEN, all who appear to be ex-Special Forces now working high-level security ops. On a massive screen, CCTV FOOTAGE from the Truck-Stop shootout is playing. Derek Evermore also sits - dejectedly - at the table. 54. 55. Intelligence Agency. You see, this fucked country we live"
+    },
+    {
+      "number": 48,
+      "heading": "INT. CAR - INTERSTATE - DAY",
+      "characters": [
+        "VERONA",
+        "WILEY"
+      ],
+      "dialogues": [
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "Here’s another interesting factoid."
+        },
+        {
+          "character": "WILEY",
+          "parenthetical": "",
+          "text": "Oh thank god."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "This book observes that the bee hive is this massive organization of individuals all working together towards a common goal, but when the lid comes off and this white-suited dude lifts out the frames of honey - or does whatever he does - they don’t even see him."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "(CONT'D)",
+          "text": "It’s almost like ... God ... or karma ... a force that guides all of our destinies that we don’t even realize is there - is doing it."
+        },
+        {
+          "character": "WILEY",
+          "parenthetical": "",
+          "text": "My recommendation?"
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "Noted."
+        },
+        {
+          "character": "WILEY",
+          "parenthetical": "",
+          "text": "You know this isn’t really our department, right? 57."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "Yeah it is."
+        },
+        {
+          "character": "WILEY",
+          "parenthetical": "",
+          "text": "You know what - I was wrong about theology."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "Too late now."
+        }
+      ],
+      "actionPreview": "WILEY drives as VERONA sits in the passenger, still reading from the Book on Bees as she waits on hold on her phone. I was getting sick of just enjoying my own peaceful thoughts. They don’t even register that he’s there. Only that - sometimes - something’s changed. She looks up at him. Quit the FBI "
+    },
+    {
+      "number": 49,
+      "heading": "EXT. FIELD - LATE DAY",
+      "characters": [
+        "AND WEAPONRY.",
+        "NEEDLES.",
+        "BAG."
+      ],
+      "dialogues": [
+        {
+          "character": "AND WEAPONRY.",
+          "parenthetical": "",
+          "text": "VERONA’S VOICE"
+        },
+        {
+          "character": "NEEDLES.",
+          "parenthetical": "",
+          "text": "Snapping it closed, he begins pulling WEAPONS down off the walls. VERONA’S VOICE (CONT'D)"
+        },
+        {
+          "character": "BAG.",
+          "parenthetical": "",
+          "text": "The bees buzz swarming around him, almost as if he is a kind of religious icon to them."
+        }
+      ],
+      "actionPreview": "The MACH 1 pulls to a halt in the grass of a field of flowers beautiful in the late rays of day, the silhouettes of hundreds of bees traveling from flower to flower as CLAY steps out. VERONA’S VOICE We’re not sure what his real name is but he signed a rental agreement with my mother a year ago under"
+    },
+    {
+      "number": 50,
+      "heading": "EXT. DATA GROUP CORPORATE HEADQUARTERS - ATLANTA - EVENING",
+      "characters": [
+        "FEDERAL AGENT"
+      ],
+      "dialogues": [
+        {
+          "character": "FEDERAL AGENT",
+          "parenthetical": "",
+          "text": "Federal Officers!"
+        }
+      ],
+      "actionPreview": "FIVE VANS come skidding up to the beautiful glass and steel entrance of this nationwide conglomerate, TWO DOZEN MEN jumping out - most of them in suits, the remaining half-dozen in TACTICAL GEAR. The GUNS of the men in suits come out immediately in the direction of the other men in tactical gear. Id"
+    },
+    {
+      "number": 51,
+      "heading": "INT. EXECUTIVE FLOOR - 10TH FLOOR - DATA GROUP - NIGHT",
+      "characters": [
+        "HALPERN",
+        "MAN WITH TIE",
+        "OPERATIVES.",
+        "PETTY"
+      ],
+      "dialogues": [
+        {
+          "character": "HALPERN",
+          "parenthetical": "",
+          "text": "(calling out)"
+        },
+        {
+          "character": "MAN WITH TIE",
+          "parenthetical": "",
+          "text": "122,000 for the day - but they’re open another two hours. HALPERN writes that number - 122 - next to ‘Houston’."
+        },
+        {
+          "character": "HALPERN",
+          "parenthetical": "",
+          "text": "Update me if more comes in from that location."
+        },
+        {
+          "character": "HALPERN",
+          "parenthetical": "",
+          "text": "(writes it on board)"
+        },
+        {
+          "character": "HALPERN",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "PETTY",
+          "parenthetical": "",
+          "text": "We’re your security."
+        },
+        {
+          "character": "HALPERN",
+          "parenthetical": "",
+          "text": "Oh."
+        },
+        {
+          "character": "PETTY",
+          "parenthetical": "",
+          "text": "Not tonite it’s not."
+        },
+        {
+          "character": "HALPERN",
+          "parenthetical": "",
+          "text": "Like fuck I am."
+        },
+        {
+          "character": "PETTY",
+          "parenthetical": "",
+          "text": "Yeah well, when I’m on the ground, I’m in charge - and you are leaving."
+        },
+        {
+          "character": "HALPERN",
+          "parenthetical": "",
+          "text": "(the room)"
+        },
+        {
+          "character": "PETTY",
+          "parenthetical": "",
+          "text": "Hey."
+        }
+      ],
+      "actionPreview": "A kind of Boiler Room, the floor bustling, people working phones everywhere as one man - clearly running the show stands at the top of the room with a MICROPHONE in hand at a large ERASE-BOARD, quickly writing NUMBERS next to CITIES on it. Houston! One of the Young Men in shirt and ties in the room "
+    },
+    {
+      "number": 52,
+      "heading": "INT. HALPERN’S OFFICE - NIGHT",
+      "characters": [
+        "PETTY",
+        "HALPERN"
+      ],
+      "dialogues": [
+        {
+          "character": "PETTY",
+          "parenthetical": "",
+          "text": "Listen idiot - did Parent Company give you any picture of what might be coming at you tonight?"
+        },
+        {
+          "character": "HALPERN",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "PETTY",
+          "parenthetical": "",
+          "text": "Not like this disgruntled customer you haven’t."
+        }
+      ],
+      "actionPreview": "Entering Halpern’s office at the top of the sales room, Petty turns to Halpern. They just said - disgruntled customer - something like that. No big deal. We’ve seen plenty. And guess what? If this ‘disgruntled customer’ manages to get through the Feds posted outside? Your entire evening, if not your"
+    },
+    {
+      "number": 53,
+      "heading": "EXT. ENTRANCE - DATA GROUP CORPORATE HEADQUARTERS - NIGHT",
+      "characters": [
+        "CROENENBERG",
+        "VOICE",
+        "CLAY"
+      ],
+      "dialogues": [
+        {
+          "character": "CROENENBERG",
+          "parenthetical": "(FED HEAD)",
+          "text": "What about the parking garage? FEDERAL AGENT 1"
+        },
+        {
+          "character": "CROENENBERG",
+          "parenthetical": "",
+          "text": "Delivery dock? FEDERAL AGENT 1"
+        },
+        {
+          "character": "CROENENBERG",
+          "parenthetical": "",
+          "text": "Okay - there’s gotta be other back entrances to this place - and trust me, he’s going to find and try to use them - so we gotta find them first."
+        },
+        {
+          "character": "VOICE",
+          "parenthetical": "",
+          "text": "There are no other entrances."
+        },
+        {
+          "character": "CROENENBERG",
+          "parenthetical": "",
+          "text": "(brisk/dismissive)"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "The other option, obviously, instead of going in, is to get them to come out."
+        },
+        {
+          "character": "CROENENBERG",
+          "parenthetical": "",
+          "text": "What’d you say?"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "(shrugs)"
+        },
+        {
+          "character": "CROENENBERG",
+          "parenthetical": "",
+          "text": "What’d you say your name was?"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "I didn’t."
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "CROENENBERG",
+          "parenthetical": "",
+          "text": "... why you"
+        }
+      ],
+      "actionPreview": "The HEAD of the 12-man Federal operation massed at the entrance, is going over building blue-prints on an Ipad. Closed and locked. Steel gate. Same. There’s no way he’s gonna to try to come in here straight through the teeth of the dragon. They turn to see CLAY standing there. They blink an instant."
+    },
+    {
+      "number": 54,
+      "heading": "INT. HALPERN'S OFFICE - NIGHT",
+      "characters": [
+        "HALPERN",
+        "PETTIS"
+      ],
+      "dialogues": [
+        {
+          "character": "HALPERN",
+          "parenthetical": "",
+          "text": "Yes Sir. That’s what I thought Sir."
+        },
+        {
+          "character": "HALPERN",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "PETTIS",
+          "parenthetical": "",
+          "text": "This is Pettis?"
+        }
+      ],
+      "actionPreview": "Halpern stands anxiously listening on his phone. He nods. With a smarmy smile he turns and hands the phone to PETTIS. It’s for you. Pettis eyes him. Takes the phone."
+    },
+    {
+      "number": 55,
+      "heading": "INT. EVERMORE ENTERPRISES - NIGHT",
+      "characters": [
+        "DEREK EVERMORE",
+        "PETTIS",
+        "ASSOCIATE"
+      ],
+      "dialogues": [
+        {
+          "character": "DEREK EVERMORE",
+          "parenthetical": "",
+          "text": "Uh, hi."
+        },
+        {
+          "character": "PETTIS",
+          "parenthetical": "",
+          "text": "Yeah, that’s correct."
+        },
+        {
+          "character": "DEREK EVERMORE",
+          "parenthetical": "",
+          "text": "Well - that’s a money-making enterprise - in fact,"
+        },
+        {
+          "character": "PETTIS",
+          "parenthetical": "",
+          "text": "Excuse me - did this character not already burn one of your centers to the ground today?"
+        },
+        {
+          "character": "DEREK EVERMORE",
+          "parenthetical": "",
+          "text": "Yeah, sure - but that was a regional center - in Tennessee - buncha fucking hicks - and they didn’t have you."
+        },
+        {
+          "character": "ASSOCIATE",
+          "parenthetical": "",
+          "text": "Uh - Mr. Halpern Sir?"
+        },
+        {
+          "character": "PETTIS",
+          "parenthetical": "",
+          "text": "(hanging up) I’ll call you back."
+        }
+      ],
+      "actionPreview": "Derek sits at his desk in an empty office, phone to his ear. So Bob Halpern tells me you want to evacuate the building, send everyone home? INTERCUT: the money- making enterprise in the Evermore constellation of industries. Keeps the lights on so to speak - and, if possible, I’d rather not turn thos"
+    },
+    {
+      "number": 56,
+      "heading": "INT. CALL CENTER CORPORATE FLOOR - DAY",
+      "characters": [
+        "CLAY",
+        "VOICE",
+        "HALPERN",
+        "PETTIS"
+      ],
+      "dialogues": [
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "Testing?"
+        },
+        {
+          "character": "VOICE",
+          "parenthetical": "",
+          "text": "Oh no!"
+        },
+        {
+          "character": "HALPERN",
+          "parenthetical": "",
+          "text": "Anyone who moves is fired instantly!"
+        },
+        {
+          "character": "HALPERN",
+          "parenthetical": "",
+          "text": "(CONT'D) (hisses at Pettis)"
+        },
+        {
+          "character": "PETTIS",
+          "parenthetical": "",
+          "text": "(calls out)"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "What - these assholes?"
+        },
+        {
+          "character": "PETTIS",
+          "parenthetical": "",
+          "text": "Okay, maybe not."
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "No shit."
+        },
+        {
+          "character": "HALPERN",
+          "parenthetical": "",
+          "text": "Wait wait wait! No no no!"
+        },
+        {
+          "character": "PETTIS",
+          "parenthetical": "",
+          "text": "Screw this ..."
+        },
+        {
+          "character": "PETTIS",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        }
+      ],
+      "actionPreview": "At the head of the room, CLAY glances at, studies for a moment, the Erase-Board of figures and cities. Takes up the MICROPHONE Halpern was using. Taps it. Testing ... ? (clears throat) (addressing room) One-time chance. Whoever doesn’t want to die this evening, can - in an orderly fashion - leave no"
+    },
+    {
+      "number": 57,
+      "heading": "INT. CORRIDOR - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Tactically, Pettis and his men move out of the room and into the hallway. The corridor is silent. Pettis signals and they split up in the hall like jets separating at an airshow. 67. 68."
+    },
+    {
+      "number": 58,
+      "heading": "EXT. DATA GROUP CORPORATE HEADQUARTERS - NIGHT",
+      "characters": [
+        "VERONA",
+        "POLICE OFFICER",
+        "POLICE PARAMEDIC",
+        "WYLIE"
+      ],
+      "dialogues": [
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "What’s the situation??"
+        },
+        {
+          "character": "POLICE OFFICER",
+          "parenthetical": "",
+          "text": "Bogie in the building. 9 down."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "Dead?"
+        },
+        {
+          "character": "POLICE PARAMEDIC",
+          "parenthetical": "",
+          "text": "(shakes head)"
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "WYLIE",
+          "parenthetical": "",
+          "text": "Verona!"
+        },
+        {
+          "character": "WYLIE",
+          "parenthetical": "",
+          "text": "(CONT'D) (then)"
+        }
+      ],
+      "actionPreview": "POLICE OFFICERS are massed, guns drawn, at the entrance, around the slumped bodies of the FEDERAL AGENTS when Verona and Wylie arrive, their own guns coming out. We’re waiting on SWAT. (then) Obviously. Verona looks to the bodies of the Federal Agents lying at their feet - then to the POLICE PARAMED"
+    },
+    {
+      "number": 59,
+      "heading": "INT. CORRIDOR - DATA GROUP CORPORATE HEADQUARTERS - NIGHT",
+      "characters": [
+        "CLAY",
+        "PETTIS"
+      ],
+      "dialogues": [
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "Hey."
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "PETTIS",
+          "parenthetical": "",
+          "text": "(grinning as he rises)"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "It’s gonna be like that."
+        },
+        {
+          "character": "PETTIS",
+          "parenthetical": "",
+          "text": "Sorry."
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "No moral component whatsoever?"
+        },
+        {
+          "character": "PETTIS",
+          "parenthetical": "",
+          "text": "Well, I didn’t say that exactly."
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "Everyone. (a shrug)"
+        },
+        {
+          "character": "PETTIS",
+          "parenthetical": "",
+          "text": "So you’re everybody’s bitch."
+        },
+        {
+          "character": "PETTIS",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "PETTIS",
+          "parenthetical": "(CONT'D)",
+          "text": "This knife will cut through your braided 550 pound test like butter."
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "Me?"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "(CONT'D)",
+          "text": "Think of what’s it’s going to do to you?"
+        }
+      ],
+      "actionPreview": "PETTIS moves, gun-sights of his MP-5 leading. He pauses just behind the corner to the adjoining corridor - muzzle of his gun just jutting around it before ... SOMETHING - brushes the muzzle of his gun. He frowns. Then... 68. 69. Steps around the corner. To find CLAY standing there. Pettis opens fire"
+    },
+    {
+      "number": 60,
+      "heading": "INT. FOYER - DATA GROUP CORPERATE OFFICES - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "VERONA and WILEY edge up, gun-to-cheek, to the elevators. Push the button. 70. 71."
+    },
+    {
+      "number": 61,
+      "heading": "INT. CORRIDOR - 10TH FLOOR - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "When the remaining four operatives of Pettis’s team edge into the corridor Clay just ducked into - they see - at the end, his feet just disappearing upward in the OPEN ELEVATOR there. SEC-OP1 Go! Rushing forward, they go skidding into ..."
+    },
+    {
+      "number": 62,
+      "heading": "INT. ELEVATOR - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The elevator where, raising their muzzles upwards, they UNLEASH - full-auto - into the ceiling, ripping it into a sieve of holes ..."
+    },
+    {
+      "number": 63,
+      "heading": "INT. FOYER - DATA GROUP CORPERATE OFFICES - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "At the sustained sound of GUNFIRE echoing down the elevator shaft - Verona and Wiley exchange a glance. What the fuck??"
+    },
+    {
+      "number": 64,
+      "heading": "INT. ELEVATOR - NIGHT",
+      "characters": [
+        "VOICE",
+        "RELOAD."
+      ],
+      "dialogues": [
+        {
+          "character": "VOICE",
+          "parenthetical": "",
+          "text": "You done?"
+        }
+      ],
+      "actionPreview": "The mass of FIRE vomiting out of the muzzles of the Security Operatives guns into the ceiling ceases - as they now stand, watching the perforated ceiling of the elevator above - for any tell-tale sign of remaining life. Until - a VOICE - comes drifting down to them thru the sieve of holes in the cei"
+    },
+    {
+      "number": 65,
+      "heading": "INT. ELEVATOR SHAFT - NIGHT",
+      "characters": [
+        "CLAY"
+      ],
+      "dialogues": [
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "Yeah ..."
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "(CONT'D) ... you’re done."
+        }
+      ],
+      "actionPreview": "Flattened close onto the shaft wall, CLAY - lances of light from the bullet holes beaming upward through the ventilated ceiling of the elevator below his feet - shrugs. 71. 72. With PETTIS’ KNIFE he reaches sideways and slices the elevator cable running up the wall from the COUNTER-WEIGHTS that hold"
+    },
+    {
+      "number": 66,
+      "heading": "INT. FOYER - DATA GROUP CORPERATE OFFICES - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Verona and Wiley are BLOWN BACK as the elevator strikes the bottom of the shaft, exploding literally like a bomb. Recovering their feet, they look - astonished - thru the torn steel of the doors into what’s left of the elevator. And what’s left of Pettis’s team."
+    },
+    {
+      "number": 67,
+      "heading": "INT. BATHROOM - SALES FLOOR - DATA GROUP CORPORATE - NIGHT",
+      "characters": [
+        "HALPERN",
+        "CLAY"
+      ],
+      "dialogues": [
+        {
+          "character": "HALPERN",
+          "parenthetical": "",
+          "text": "No no no no! ... squirming behind a toilet as CLAY comes marching in and drags him up by the collar of his $2000 suit."
+        },
+        {
+          "character": "HALPERN",
+          "parenthetical": "(CONT'D)",
+          "text": "No!"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "(pulling him up)"
+        },
+        {
+          "character": "HALPERN",
+          "parenthetical": "",
+          "text": "Ow! Oh my god!"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "Whatever I want. Do you have ... 72."
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "(CONT'D) ... a problem with that??"
+        },
+        {
+          "character": "HALPERN",
+          "parenthetical": "",
+          "text": "(a sniveling wreck now) ... no ... no ... hit my head into the wall again - I don’t care ..."
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "Great."
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "(CONT'D)",
+          "text": "Now."
+        },
+        {
+          "character": "HALPERN",
+          "parenthetical": "",
+          "text": "But I don’t..."
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "What is ‘who’ - doing with all this money?"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "(CONT'D)",
+          "text": "You know - one of the worst parasites to attack a bee-hive is the Varroa Mite."
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "(CONT'D)",
+          "text": "Formic acid."
+        },
+        {
+          "character": "HALPERN",
+          "parenthetical": "",
+          "text": "No! Please!"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "Tell"
+        },
+        {
+          "character": "HALPERN",
+          "parenthetical": "",
+          "text": "I can’t!"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "Yeah, but guess what - I’ll torture you."
+        },
+        {
+          "character": "HALPERN",
+          "parenthetical": "",
+          "text": "Okay!"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "No. You’ve stolen 100’s of millions from the people who built this country. You’re gonna"
+        }
+      ],
+      "actionPreview": "HALPREN ducks down, going ... Please! Don’t kill me! I’m innocent! I’m just a white-collar criminal! I’ve never physically hurt anyone in my life! And you want a cookie for that? Because you’ve never had the stones to look the man whose money you’re stealing in the eye? He slams the man’s head again"
+    },
+    {
+      "number": 68,
+      "heading": "INT. HALPERN’S OFFICE - NIGHT",
+      "characters": [
+        "VOICE",
+        "VERONA",
+        "CLAY"
+      ],
+      "dialogues": [
+        {
+          "character": "VOICE",
+          "parenthetical": "",
+          "text": "Clay!"
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "Let him go Clay."
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "Why?"
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "(hesitates/then) I know."
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "No, Ms. Lincoln."
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "No!"
+        }
+      ],
+      "actionPreview": "Clay shoves Halpern in ahead of him to his desk where, shakily, Halpern, blinking, desperate, keys his COMPUTER to life. Types briefly, a SCREEN scrolling down. Clay looks to see VERONA standing at the far end of the outer office. GUN leveled at him. Clay looks back at her. This man is directly resp"
+    },
+    {
+      "number": 69,
+      "heading": "INT. CORRIDOR - NIGHT",
+      "characters": [
+        "WILEY",
+        "CLAY",
+        "VERONA"
+      ],
+      "dialogues": [
+        {
+          "character": "WILEY",
+          "parenthetical": "",
+          "text": "Freeze!"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "Do you want to lose it?"
+        },
+        {
+          "character": "WILEY",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "Will you let me walk away?"
+        },
+        {
+          "character": "WILEY",
+          "parenthetical": "",
+          "text": "I don’t want to."
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "I know."
+        },
+        {
+          "character": "WILEY",
+          "parenthetical": "",
+          "text": "(squinting up) ... are you ... an angel?"
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "WILEY",
+          "parenthetical": "",
+          "text": "... ah ... shit ..."
+        }
+      ],
+      "actionPreview": "Directly into the corridor where ... Is drawn down on him. But Clay is way too fast for him, stripping the gun away in an instant and twisting Wiley’s arm behind him and slamming him against the wall, he racks the slide back on Wiley’s gun and jams Wiley’s pinky inside the receiver - like a cigar cu"
+    },
+    {
+      "number": 70,
+      "heading": "INT. HALPERN'S OFFICE - NIGHT",
+      "characters": [
+        "VERONA"
+      ],
+      "dialogues": [
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "... holy ..."
+        }
+      ],
+      "actionPreview": "Verona re-enters. POLICE OFFICERS are moving in, clearing the outer office. She pauses for an instant on Halpern’s crooked and unconscious body there ... Then the screen of his computer. Slowly, she holsters her weapon as she clocks what she is seeing there . shit ... WESTWYLD PRE-LAP ... why I tran"
+    },
+    {
+      "number": 71,
+      "heading": "INT. UPSCALE RESTAURANT - NIGHT",
+      "characters": [
+        "WESTWYLD"
+      ],
+      "dialogues": [
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "In the public sector, you have power but no money."
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "(CONT'D) ... I see ... I see ... (then/a grim sigh) I see."
+        }
+      ],
+      "actionPreview": "WESTWYLD sits at a large round table at the center of what appears to be a very expensive restaurant. Derek Evermore and their wives along with several others are there. In the private, the wealth you create makes you powerful - so, presto- chango - you have both. A polite tinkling of laughter from "
+    },
+    {
+      "number": 72,
+      "heading": "EXT. OUTSIDE THE RESTAURANT - NIGHT",
+      "characters": [
+        "WESTWYLD"
+      ],
+      "dialogues": [
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "Sally ..."
+        }
+      ],
+      "actionPreview": "A few steps away from the valet, expensive European sports cars lining the curb."
+    },
+    {
+      "number": 73,
+      "heading": "INT. WEST WING CORRIDOR - WHITE HOUSE - NIGHT",
+      "characters": [
+        "KELLY KRANE",
+        "WESTWYLD"
+      ],
+      "dialogues": [
+        {
+          "character": "KELLY KRANE",
+          "parenthetical": "",
+          "text": "Wallace ... INTERCUT:"
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "Have you been following the news?"
+        },
+        {
+          "character": "KELLY KRANE",
+          "parenthetical": "",
+          "text": "You mean this psychopath who’s been traveling across the country wreaking havoc?"
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "Not a psychopath Kelly; a Bee"
+        },
+        {
+          "character": "KELLY KRANE",
+          "parenthetical": "",
+          "text": "Bullshit."
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "Well apparently this one believes that by creating this chaos, he"
+        },
+        {
+          "character": "KELLY KRANE",
+          "parenthetical": "",
+          "text": "So what do you want from me?"
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "Because."
+        },
+        {
+          "character": "KELLY KRANE",
+          "parenthetical": "",
+          "text": "About a Bee Keeper??"
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "Not specifically - but about the fact that this is a national emergency and her heart and prayers go out to the victims and fervently hopes law enforcement will stop him swiftly, blah, blah, blah."
+        },
+        {
+          "character": "KELLY KRANE",
+          "parenthetical": "",
+          "text": "Tweet?"
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "To send the message to our intelligence community that this situation needs to be taken with the utmost seriousness and ‘all’ that goes along with that."
+        },
+        {
+          "character": "KELLY KRANE",
+          "parenthetical": "",
+          "text": "‘All’ like what Wallace?"
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "The other Bee Keepers need to be activated."
+        },
+        {
+          "character": "KELLY KRANE",
+          "parenthetical": "",
+          "text": "(blinks/then)"
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "This one’s retired - so 50 - minus the one he killed - plus her replacement - so, yeah, 50. (MORE)"
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "KELLY KRANE",
+          "parenthetical": "",
+          "text": "You’re fucking crazy, you know that"
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "And if you don’t, in the next 24 hours you could end up with a problem even bigger than all of them combined!"
+        },
+        {
+          "character": "KELLY KRANE",
+          "parenthetical": "",
+          "text": "(silent an instant/then)"
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "(sighs)"
+        },
+        {
+          "character": "KELLY KRANE",
+          "parenthetical": "",
+          "text": "(walks/then)"
+        }
+      ],
+      "actionPreview": "A WOMAN, poised, sleek, well-dressed, is moving quickly with her own phone at her ear down a WEST WING CORRIDOR. Who hasn’t? Keeper. She slows briefly. Then continues. Bee Keepers don’t cause chaos - they contain it. is containing it. You know - the whole break a few eggs to make an omelet thing? 77"
+    },
+    {
+      "number": 74,
+      "heading": "INT. OVAL OFFICE - NIGHT",
+      "characters": [
+        "UNITED STATES.",
+        "KELLY KRANE",
+        "WESTWYLD"
+      ],
+      "dialogues": [
+        {
+          "character": "KELLY KRANE",
+          "parenthetical": "",
+          "text": "Madame President - a moment ...?"
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        }
+      ],
+      "actionPreview": "The Oval Office, where she addresses the PRESIDENT OF THE 79. 80."
+    },
+    {
+      "number": 75,
+      "heading": "INT. UPSCALE RESTAURANT - NIGHT",
+      "characters": [
+        "DEREK EVERMORE",
+        "WESTWYLD"
+      ],
+      "dialogues": [
+        {
+          "character": "DEREK EVERMORE",
+          "parenthetical": "",
+          "text": "What??"
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "You kicked the hive."
+        }
+      ],
+      "actionPreview": "As Westwyld re-takes his seat, EVERMORE is looking at him. It is a moment before, with disgust, Westwyld turns his eyes on the younger man. And hisses ... And now we’re all going to reap the whirlwind that’s coming out of it."
+    },
+    {
+      "number": 76,
+      "heading": "INT. FBI JET - NIGHT",
+      "characters": [
+        "WYLIE",
+        "VERONA"
+      ],
+      "dialogues": [
+        {
+          "character": "WYLIE",
+          "parenthetical": "",
+          "text": "You really sure you wanna go through with this?"
+        },
+        {
+          "character": "WYLIE",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "I like the ends. But I’m definitely not so sure about his means Wylie. (shakes head)"
+        },
+        {
+          "character": "WYLIE",
+          "parenthetical": "",
+          "text": "Even if he’s right?"
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "(a hesitation/then/a nod)"
+        }
+      ],
+      "actionPreview": "Flying low, VERONA watches the lights dotting the Virginia countryside flowing past below. Beside her, big Wylie ... She looks. He’s got an ice-pack against his head. He shrugs. These people flat-out robbed your mother. And a lot of other people who didn’t deserve it. We’ve been trying to build a ca"
+    },
+    {
+      "number": 77,
+      "heading": "INT. CORRIDORS - QUANTICO - NIGHT",
+      "characters": [
+        "PRESIDENTIAL ADDRESS ...",
+        "PRESIDENT DANSWORTH"
+      ],
+      "dialogues": [
+        {
+          "character": "PRESIDENT DANSWORTH",
+          "parenthetical": "",
+          "text": "... appears to be what the FBI is terming ‘Lone Wolf’ attacks ..."
+        }
+      ],
+      "actionPreview": "Verona and Wylie, moving with purpose, make their way thru the hallways - every ceiling mounted screen broadcasting the Turning to enter thru the open door of ..."
+    },
+    {
+      "number": 78,
+      "heading": "INT. OFFICE OF THE DEPUTY DIRECTOR - NIGHT",
+      "characters": [
+        "PRESIDENT DANSWORTH",
+        "DEPUTY DIRECTOR PRIGG",
+        "VERONA",
+        "WILEY",
+        "WYLIE"
+      ],
+      "dialogues": [
+        {
+          "character": "PRESIDENT DANSWORTH",
+          "parenthetical": "",
+          "text": "..."
+        },
+        {
+          "character": "DEPUTY DIRECTOR PRIGG",
+          "parenthetical": "",
+          "text": "(looking up)"
+        },
+        {
+          "character": "DEPUTY DIRECTOR PRIGG",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "Well Sir, we’re nearly certain he traveled to the Data Group"
+        },
+        {
+          "character": "DEPUTY DIRECTOR PRIGG",
+          "parenthetical": "",
+          "text": "Which ‘money-trail’ is that? 81."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "Sir, Data Group - as you know, through potentially fraudulent means targeting the most vulnerable sectors of our society, generates 100’s of millions of dollars annually."
+        },
+        {
+          "character": "WILEY",
+          "parenthetical": "",
+          "text": "Which is why we’ve been trying to build a tax case ..."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "The question is - where is all of that money going?"
+        },
+        {
+          "character": "DEPUTY DIRECTOR PRIGG",
+          "parenthetical": "",
+          "text": "Licensed and operating out of"
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "Through a very sophisticated and complex series of shell companies, yes."
+        },
+        {
+          "character": "DEPUTY DIRECTOR PRIGG",
+          "parenthetical": "",
+          "text": "Then we need to scramble everything we’ve got in that direction."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "DEPUTY DIRECTOR PRIGG",
+          "parenthetical": "",
+          "text": "Why?"
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "Because Sir."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "DEPUTY DIRECTOR PRIGG",
+          "parenthetical": "",
+          "text": "Then what is?"
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "(another glance to Wylie)"
+        },
+        {
+          "character": "WYLIE",
+          "parenthetical": "",
+          "text": "We think he’s interested in the disease."
+        },
+        {
+          "character": "DEPUTY DIRECTOR PRIGG",
+          "parenthetical": "",
+          "text": "If Data Group is the carcinoma - and Derek Evermore sits atop"
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "Sir, there’s something in the community of honey bees called the ‘Queen Slayer’."
+        },
+        {
+          "character": "DEPUTY DIRECTOR PRIGG",
+          "parenthetical": "",
+          "text": "Okay. Bees?"
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "Mr. Deputy Director, Adam Clay keeps honey bees."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "DEPUTY DIRECTOR PRIGG",
+          "parenthetical": "",
+          "text": "(stares back)"
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "President Danworth."
+        }
+      ],
+      "actionPreview": "... into the office of the Deputy Director of the FBI, who, remote in hand, is watching the impromptu Presidential address. multiple locations across our Southern states... Love this chick. Look at her. She’s already on it. And financing her own campaign? Again? Definitely voting for her again. Flic"
+    },
+    {
+      "number": 79,
+      "heading": "INT. CORRIDORS - QUANTICO - NIGHT",
+      "characters": [
+        "VERONA",
+        "DEPUTY DIRECTOR PRIGG",
+        "DEPUTY",
+        "DIRECTOR",
+        "PRIGG",
+        "AGENT PIKE"
+      ],
+      "dialogues": [
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "Sir, we think Clay now believes that the monies funneled through"
+        },
+        {
+          "character": "DEPUTY DIRECTOR PRIGG",
+          "parenthetical": "",
+          "text": "So basically stealing from her constituents in order to get them to vote her into office? (shakes head)"
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "(hesitates)"
+        },
+        {
+          "character": "DEPUTY DIRECTOR PRIGG",
+          "parenthetical": "",
+          "text": "Regardless ... (Agent hurrying at them)"
+        },
+        {
+          "character": "PRIGG",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "AGENT PIKE",
+          "parenthetical": "",
+          "text": "Yes Sir but ..."
+        },
+        {
+          "character": "DEPUTY DIRECTOR PRIGG",
+          "parenthetical": "",
+          "text": "But what?"
+        },
+        {
+          "character": "AGENT PIKE",
+          "parenthetical": "",
+          "text": "(shakes head)"
+        },
+        {
+          "character": "DEPUTY DIRECTOR PRIGG",
+          "parenthetical": "",
+          "text": "(stopping)"
+        },
+        {
+          "character": "AGENT PIKE",
+          "parenthetical": "",
+          "text": "(a shrug)"
+        },
+        {
+          "character": "DEPUTY DIRECTOR PRIGG",
+          "parenthetical": "",
+          "text": "Can we stop her?"
+        },
+        {
+          "character": "AGENT PIKE",
+          "parenthetical": "",
+          "text": "Uh."
+        }
+      ],
+      "actionPreview": "Verona and Wylie hot on his heels, PRIGG is veritably charging down the hall. Data Group is at the basis of how President Danworth self-financed her successful independent run at the White House three years ago. Knowing what you know about this President, do you believe that? Sir I voted for her too"
+    },
+    {
+      "number": 80,
+      "heading": "EXT. EVERMORE COMPOUND - NIGHT",
+      "characters": [
+        "SERVICE.",
+        "DEPUTY",
+        "DIRECTOR",
+        "PRIGG"
+      ],
+      "dialogues": [
+        {
+          "character": "PRIGG",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        }
+      ],
+      "actionPreview": "A massive compound of houses collected into a walled compound that sits on a prime piece of Virginia Beach real estate. Essentially, Mar-a-Lago North . The exterior grounds are already crawling with SECRET 85. 86."
+    },
+    {
+      "number": 81,
+      "heading": "INT. DEREK EVERMORE’S HOME OFFICE - EVERMORE COMPOUND - NIGHT",
+      "characters": [
+        "WESTWYLD",
+        "DEREK EVERMORE"
+      ],
+      "dialogues": [
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "I don’t want them inside the house during the event."
+        },
+        {
+          "character": "DEREK EVERMORE",
+          "parenthetical": "",
+          "text": "But Wally..."
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "(turning on him)"
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        }
+      ],
+      "actionPreview": "WESTWYLD watches out the window as the Secret Service teams work the grounds with dogs, searching and securing the property. First of all, don’t call me that. Don’t you fucking call me that. You haven’t earned that right and you never will. Second, these people ... (the Secret Service) They’re the B"
+    },
+    {
+      "number": 82,
+      "heading": "EXT. REAR SECURITY CHECK-POINT - EVERMORE COMPOUND - MORNING",
+      "characters": [
+        "BARRETT",
+        "SECRET SERVICE SECOND",
+        "SECOND",
+        "WYLIE",
+        "FBI.",
+        "VERONA"
+      ],
+      "dialogues": [
+        {
+          "character": "BARRETT",
+          "parenthetical": "",
+          "text": "What’s that? 86."
+        },
+        {
+          "character": "SECRET SERVICE SECOND",
+          "parenthetical": "",
+          "text": "Storm drain Sir."
+        },
+        {
+          "character": "BARRETT",
+          "parenthetical": "",
+          "text": "(handing field glasses)"
+        },
+        {
+          "character": "SECOND",
+          "parenthetical": "",
+          "text": "Car Sir."
+        },
+        {
+          "character": "BARRETT",
+          "parenthetical": "",
+          "text": "Getaway vehicle?"
+        },
+        {
+          "character": "SECRET SERVICE SECOND",
+          "parenthetical": "",
+          "text": "Possible, Sir."
+        },
+        {
+          "character": "BARRETT",
+          "parenthetical": "",
+          "text": "(considers/then)"
+        },
+        {
+          "character": "SECRET SERVICE SECOND",
+          "parenthetical": "",
+          "text": "Copy that. (radio)"
+        },
+        {
+          "character": "BARRETT",
+          "parenthetical": "",
+          "text": "Sorry, this is a private gathering. I’m going to have to ask you to leave."
+        },
+        {
+          "character": "FBI.",
+          "parenthetical": "",
+          "text": "We’re hip."
+        },
+        {
+          "character": "BARRETT",
+          "parenthetical": "",
+          "text": "I don’t think so."
+        },
+        {
+          "character": "BARRETT",
+          "parenthetical": "",
+          "text": "(CONT'D) I’ll have to call this in."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "Please do."
+        },
+        {
+          "character": "BARRETT",
+          "parenthetical": "",
+          "text": "(eyes them a second/then)"
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "Like what?"
+        },
+        {
+          "character": "BARRETT",
+          "parenthetical": "",
+          "text": "Absolutely."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "Okay."
+        }
+      ],
+      "actionPreview": "The HEAD of the Secret Service Outer Security Detail stands in front of the barrier at the back gate of the Evermore compound - surveying the area with a keen eye. 87. He is speaking to his Second in Charge, and indicating a MANHOLE COVER in the center of the road some 20 yards from the barrier chec"
+    },
+    {
+      "number": 83,
+      "heading": "INT. DEREK EVERMORE’S HOME OFFICE - EVERMORE COMPOUND - DAY",
+      "characters": [
+        "DEREK EVERMORE",
+        "PRESIDENT DANSWORTH"
+      ],
+      "dialogues": [
+        {
+          "character": "DEREK EVERMORE",
+          "parenthetical": "",
+          "text": "Mom!"
+        },
+        {
+          "character": "DEREK EVERMORE",
+          "parenthetical": "",
+          "text": "(CONT'D) I didn’t expect you so soon."
+        },
+        {
+          "character": "PRESIDENT DANSWORTH",
+          "parenthetical": "",
+          "text": "(dismissively disengaging) I’m exactly on the time I said I’d be. And why’re you talking so fast?"
+        },
+        {
+          "character": "DEREK EVERMORE",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "PRESIDENT DANSWORTH",
+          "parenthetical": "",
+          "text": "Stop chewing your lips."
+        },
+        {
+          "character": "DEREK EVERMORE",
+          "parenthetical": "",
+          "text": "Oh ..."
+        },
+        {
+          "character": "DEREK EVERMORE",
+          "parenthetical": "(CONT'D)",
+          "text": "Sorry."
+        },
+        {
+          "character": "PRESIDENT DANSWORTH",
+          "parenthetical": "",
+          "text": "(a sigh)"
+        },
+        {
+          "character": "DEREK EVERMORE",
+          "parenthetical": "",
+          "text": "Yes Mother ... ?"
+        },
+        {
+          "character": "PRESIDENT DANSWORTH",
+          "parenthetical": "",
+          "text": "Come with me. 89."
+        },
+        {
+          "character": "PRESIDENT DANSWORTH",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "DEREK EVERMORE",
+          "parenthetical": "",
+          "text": "Uh."
+        },
+        {
+          "character": "PRESIDENT DANSWORTH",
+          "parenthetical": "",
+          "text": "And that wealthy and powerful animal lovers from all over the world will be here to attend and contribute to this worthy charity?"
+        },
+        {
+          "character": "DEREK EVERMORE",
+          "parenthetical": "",
+          "text": "Uh."
+        },
+        {
+          "character": "PRESIDENT DANSWORTH",
+          "parenthetical": "",
+          "text": "Then why - tell me -"
+        },
+        {
+          "character": "DEREK EVERMORE",
+          "parenthetical": "",
+          "text": "Well. At least it’s not a live cow"
+        },
+        {
+          "character": "PRESIDENT DANSWORTH",
+          "parenthetical": "",
+          "text": "You’re a fucking idiot."
+        },
+        {
+          "character": "DEREK EVERMORE",
+          "parenthetical": "",
+          "text": "Mom."
+        },
+        {
+          "character": "PRESIDENT DANSWORTH",
+          "parenthetical": "",
+          "text": "Oh my"
+        },
+        {
+          "character": "DEREK EVERMORE",
+          "parenthetical": "",
+          "text": "(peers at her)"
+        },
+        {
+          "character": "PRESIDENT DANSWORTH",
+          "parenthetical": "",
+          "text": "(dryly)"
+        }
+      ],
+      "actionPreview": "Derek is doing LINES OF COCAINE at a small coffee table when the DOOR is opened and HIS MOTHER, PRESIDENT DANWORTH enters. Quickly , he wipes it all away onto the floor, jumping up. Rubbing anxiously at his nose and upper lip, he rises and goes quickly to and embraces her. You look wonderful! Me? Am"
+    },
+    {
+      "number": 84,
+      "heading": "EXT. GROUNDS - EVERMORE COMPOUND - DAY",
+      "characters": [
+        "EDELWEISS",
+        "VERONA",
+        "WYLIE",
+        "SERVER BEHIND TABLE"
+      ],
+      "dialogues": [
+        {
+          "character": "EDELWEISS",
+          "parenthetical": "",
+          "text": "Got something to say, Champs?"
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "Interesting."
+        },
+        {
+          "character": "WYLIE",
+          "parenthetical": "",
+          "text": "Indeed."
+        },
+        {
+          "character": "SERVER BEHIND TABLE",
+          "parenthetical": "",
+          "text": "Would the lady like some cow?"
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "Uh."
+        },
+        {
+          "character": "WYLIE",
+          "parenthetical": "",
+          "text": "(grabbing a plate)"
+        }
+      ],
+      "actionPreview": "SEVERAL BLACK VANS pull up, expelling some VERY ROUGH looking customers - clearly ex Special Forces mercenaries from all over the world. Every one of them looks like he - or she - could win a bar-fight. With the whole bar. The first one, who we’ve already met - EDLEWEISS - gives the surprised SECRET"
+    },
+    {
+      "number": 85,
+      "heading": "EXT. BACK GATE - EVERMORE COMPOUND - DAY",
+      "characters": [
+        "DRIVER",
+        "BARRETT",
+        "SEARCH TEAM LEAD"
+      ],
+      "dialogues": [
+        {
+          "character": "DRIVER",
+          "parenthetical": "",
+          "text": "Delivering."
+        },
+        {
+          "character": "BARRETT",
+          "parenthetical": "",
+          "text": "Identification please."
+        },
+        {
+          "character": "SEARCH TEAM LEAD",
+          "parenthetical": "",
+          "text": "All clear."
+        },
+        {
+          "character": "BARRETT",
+          "parenthetical": "",
+          "text": "(driver)"
+        },
+        {
+          "character": "DRIVER",
+          "parenthetical": "",
+          "text": "(taking back ID)"
+        },
+        {
+          "character": "BARRETT",
+          "parenthetical": "",
+          "text": "(raising barrier)"
+        },
+        {
+          "character": "BARRETT",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "DRIVER",
+          "parenthetical": "",
+          "text": "Yeah, sorry."
+        },
+        {
+          "character": "BARRETT",
+          "parenthetical": "",
+          "text": "Look - just go to the fork and go right - not left - that’s the house - but right - that’s loading, okay?"
+        },
+        {
+          "character": "DRIVER",
+          "parenthetical": "",
+          "text": "Yeah, okay."
+        },
+        {
+          "character": "BARRETT",
+          "parenthetical": "",
+          "text": "Chop chop. I got people waiting."
+        },
+        {
+          "character": "DRIVER",
+          "parenthetical": "",
+          "text": "I’m going, I’m going."
+        }
+      ],
+      "actionPreview": "SPECIAL AGENT BARRETT stands overseeing the inspection of each of the NOW LONG LINE of vehicles waiting to get into the compound by a small army of Secret Service Security Agents. 91. 92. They carefully search the trunks, the interior of the car, while one agent, lying on a ‘creeper’ rolls under the"
+    },
+    {
+      "number": 86,
+      "heading": "EXT. LOADING - EVERMORE COMPOUND - DAY",
+      "characters": [
+        "MAN WITH CHECKBOARD",
+        "DRIVER"
+      ],
+      "dialogues": [
+        {
+          "character": "MAN WITH CHECKBOARD",
+          "parenthetical": "",
+          "text": "Ice sculptures?"
+        },
+        {
+          "character": "DRIVER",
+          "parenthetical": "",
+          "text": "Yeah. 93."
+        },
+        {
+          "character": "MAN WITH CHECKBOARD",
+          "parenthetical": "",
+          "text": "Donald Trump?"
+        },
+        {
+          "character": "DRIVER",
+          "parenthetical": "",
+          "text": "It’s all the living presidents."
+        },
+        {
+          "character": "MAN WITH CHECKBOARD",
+          "parenthetical": "",
+          "text": "But why’s he so much bigger than everyone else?"
+        },
+        {
+          "character": "DRIVER",
+          "parenthetical": "",
+          "text": "Look, I don’t make the decisions, I just drive them - capiche."
+        },
+        {
+          "character": "MAN WITH CHECKBOARD",
+          "parenthetical": "",
+          "text": "Yeah, sure, whatever. Make yourself comfortable."
+        }
+      ],
+      "actionPreview": "The truck pulls up at loading. It’s a madhouse here. A man with a checkboard approaches as the driver debarks. 94. The Man With the Checkboard peers into the stake-bed. Whaddaya want from me. We’ll take it from here. NEITHER OF THEM seeing CLAY as, having rolled out from the undercarriage of the Sta"
+    },
+    {
+      "number": 87,
+      "heading": "INT. HOUSE - EVERMORE COMPOUND - DAY",
+      "characters": [
+        "SECURITY MERCENARIES.",
+        "VOICE",
+        "CLAY",
+        "VERONA"
+      ],
+      "dialogues": [
+        {
+          "character": "VOICE",
+          "parenthetical": "",
+          "text": "Champagne Sir?"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "Milk if you have it."
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "Bogie is on the premises!!"
+        }
+      ],
+      "actionPreview": "The FUNDRAISER is in full-swing when CLAY enters. Plainly enormously wealthy people, laughing, chatting and drinking as they are patrolled by EDELWEISS’S alert and eagle-eyed He looks. A tuxedoed waiter with a tray. The Waiter gives him a ‘ does not compute’ look. Never mind. He continues on. Taking"
+    },
+    {
+      "number": 88,
+      "heading": "EXT. BACK GATE - EVERMORE COMPOUND - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "BARRETT touches his ear, hearing - looks with surprise up to the house."
+    },
+    {
+      "number": 89,
+      "heading": "EXT. LAWN - EVERMORE HOUSE - NIGHT",
+      "characters": [
+        "EDELWEISS"
+      ],
+      "dialogues": [
+        {
+          "character": "EDELWEISS",
+          "parenthetical": "",
+          "text": "He’s in the house!"
+        }
+      ],
+      "actionPreview": "On the lawn, EDELWEISS touches his own ear and, suddenly - to the shock of the wealthy guests around him, he draws his CUSTOMIZED GLOCK, hissing into his throat-mike ... Go! Go!"
+    },
+    {
+      "number": 90,
+      "heading": "INT. HOUSE - EVERMORE COMPOUND - DAY",
+      "characters": [
+        "PRESIDENT DANSWORTH"
+      ],
+      "dialogues": [
+        {
+          "character": "PRESIDENT DANSWORTH",
+          "parenthetical": "",
+          "text": "(young woman)"
+        }
+      ],
+      "actionPreview": "DEREK EVERMORE, still trying to toy with the young woman he has cornered, looks up as a HAND touches his shoulder. His MOTHER. Pardon me. (Derek) Speak to you a moment in private? 95. 96."
+    },
+    {
+      "number": 91,
+      "heading": "INT. HOUSE - EVERMORE COMPOUND - NIGHT",
+      "characters": [
+        "VERONA"
+      ],
+      "dialogues": [
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "There!"
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "(CONT'D) (radio)"
+        }
+      ],
+      "actionPreview": "VERONA and WYLIE are shoving through the crowd, searching every face trying to re-locate Clay ... Just ahead through the crowd, CLAY hears her and - turning - ducks out through the nearest patio door. He’s outside! He’s outside! She and Wylie go pushing through the crowd, rushing after."
+    },
+    {
+      "number": 92,
+      "heading": "INT. HOUSE - EVERMORE COMPOUND - NIGHT",
+      "characters": [
+        "EDELWEISS"
+      ],
+      "dialogues": [
+        {
+          "character": "EDELWEISS",
+          "parenthetical": "",
+          "text": "Outside!"
+        }
+      ],
+      "actionPreview": "Edelweiss hisses into his own mike. Outside!"
+    },
+    {
+      "number": 93,
+      "heading": "INT. DEREK EVERMORE'S HOME OFFICE - EVERMORE COMPOUND - DAY",
+      "characters": [
+        "DEREK EVERMORE",
+        "PRESIDENT DANSWORTH"
+      ],
+      "dialogues": [
+        {
+          "character": "DEREK EVERMORE",
+          "parenthetical": "",
+          "text": "What’s this?"
+        },
+        {
+          "character": "PRESIDENT DANSWORTH",
+          "parenthetical": "",
+          "text": "You remember Kelly right?"
+        }
+      ],
+      "actionPreview": "When Derek enters after his mother, he is surprised to see KELLY KRANE, the President’s Chief-of-Staff, there. Well this whole chain of events? It got her digging. And she has some interesting things to say now about where the money that financed my last campaign may really have come from ..."
+    },
+    {
+      "number": 94,
+      "heading": "EXT. HOUSE - CLAMORE COMPOUND - DAY",
+      "characters": [
+        "VERONA",
+        "EDELWEISS"
+      ],
+      "dialogues": [
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "(his gun out)"
+        },
+        {
+          "character": "EDELWEISS",
+          "parenthetical": "",
+          "text": "Maybe."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "Yeah, but can we please make"
+        }
+      ],
+      "actionPreview": "THE WELL-HEELED GUESTS are just becoming conscious that something is going on as EDELWEISS and his men go pushing furiously through them - GUNS COMING OUT. Abruptly, a HAND catches Edelweiss as he shoves his way thru the patrons of the fundraiser. Sharply, he swings - but it’s VERONA. 96. 97. Are yo"
+    },
+    {
+      "number": 95,
+      "heading": "EXT. FRONT DRIVE - DAY",
+      "characters": [
+        "VOICE",
+        "EDELWEISS",
+        "VERONA",
+        "MERCENARY",
+        "CLAY"
+      ],
+      "dialogues": [
+        {
+          "character": "VOICE",
+          "parenthetical": "",
+          "text": "Don’t move you fucking prick!"
+        },
+        {
+          "character": "VOICE",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "EDELWEISS",
+          "parenthetical": "",
+          "text": "Fingers! Laced behind your head!"
+        },
+        {
+          "character": "EDELWEISS",
+          "parenthetical": "(CONT'D)",
+          "text": "Bee Keeper my ass."
+        },
+        {
+          "character": "VOICE",
+          "parenthetical": "",
+          "text": "No!"
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "(Clay’s naked/bare torso)"
+        },
+        {
+          "character": "EDELWEISS",
+          "parenthetical": "",
+          "text": "Are you fucking kidding me??"
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "What the hell are you"
+        },
+        {
+          "character": "EDELWEISS",
+          "parenthetical": "",
+          "text": "To ‘bee’ - or not to ‘bee’, Clay - that’s the question ..."
+        },
+        {
+          "character": "MERCENARY",
+          "parenthetical": "",
+          "text": "I’m might be a bomb!"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "I think I’ll take - ‘ to bee ’."
+        }
+      ],
+      "actionPreview": "Clay emerges from the cloud of guests and heads walking quickly towards the exits when ... Clay slows. Then stops. That’s it. Now down. Clay turns his head. EDELWEISS - AND HIS MEN all coming running up, mini-machine-guns aimed at his head. And down on your knees! Now! A breath. Then, slowly, Clay R"
+    },
+    {
+      "number": 96,
+      "heading": "EXT. ROAD - DAY",
+      "characters": [
+        "TAKES OFF"
+      ],
+      "dialogues": [
+        {
+          "character": "TAKES OFF",
+          "parenthetical": "",
+          "text": "."
+        }
+      ],
+      "actionPreview": "ECU - on the REAR TIRE of the ‘71 MACH 1 - and the half- submerged-in-sand CINDER BLOCK that it rests on - straining against its own drive-train as ... Suddenly that cinderblock - and its sister beneath the other rear wheel - suddenly blow and WHEELS aruptly hitting earth, the car... 98. 99. Blastin"
+    },
+    {
+      "number": 97,
+      "heading": "EXT. BACK ENTRY GATE - EVERMORE COMPOUND - DAY",
+      "characters": [
+        "BARRETT"
+      ],
+      "dialogues": [
+        {
+          "character": "BARRETT",
+          "parenthetical": "",
+          "text": "(radio)"
+        }
+      ],
+      "actionPreview": "BARRETT spins as he - and the other special agents suddenly realize - that the MACH 1 is speeding directly at them ... Light it up! Light it up!"
+    },
+    {
+      "number": 98,
+      "heading": "EXT. COMPOUND WALLS - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "SECRET SERVICE SNIPERS open fire ..."
+    },
+    {
+      "number": 99,
+      "heading": "EXT. BACK ENTRANCE ROAD - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Heavy caliber bullets smacking and smashing and pounding the classic car as it accelerates - WINDSHIELD exploding ... Towards the back gate ..."
+    },
+    {
+      "number": 100,
+      "heading": "EXT. BACK GATE - EVERMORE COMPOUND - DAY",
+      "characters": [
+        "BARRETT"
+      ],
+      "dialogues": [
+        {
+          "character": "BARRETT",
+          "parenthetical": "",
+          "text": "diving"
+        }
+      ],
+      "actionPreview": "out of the way as the Mach 1 comes smashing thru the barrier, going barreling past and up the service entry road ..."
+    },
+    {
+      "number": 101,
+      "heading": "EXT. BACK LAWN - DAY",
+      "characters": [
+        "WYLIE",
+        "VERONA"
+      ],
+      "dialogues": [
+        {
+          "character": "WYLIE",
+          "parenthetical": "",
+          "text": "Well he’s certainly armed now."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "Shut up."
+        }
+      ],
+      "actionPreview": "To the astonishment of Edelweiss and Verona and Wylie and the others, the Mach 1 comes careening up the service road and, as they go falling away, comes crashing into the side of the house there where, trunk exploding open ... CLAY rises and calmly goes to it, reaches in - and pulls out THE BIGGEST "
+    },
+    {
+      "number": 102,
+      "heading": "INT. HOUSE - DAY",
+      "characters": [
+        "MERCENARY"
+      ],
+      "dialogues": [
+        {
+          "character": "MERCENARY",
+          "parenthetical": "",
+          "text": "Wait for it to clear!"
+        }
+      ],
+      "actionPreview": "Clay moves swiftly thru the house, surgically identifying between the matrix of screaming, running guests while blowing ELDEWEISS’S MERCENARIES as they come at him thru the crowd. He turns into a corridor - as whose end is massed A HALF DOZEN MERCENARIES - guns bristling and triggers squeezing. Clay"
+    },
+    {
+      "number": 103,
+      "heading": "INT. DEREK EVERMORE'S HOME OFFICE - EVERMORE COMPOUND",
+      "characters": [
+        "PRESIDENT DANSWORTH",
+        "DEREK EVERMORE"
+      ],
+      "dialogues": [
+        {
+          "character": "PRESIDENT DANSWORTH",
+          "parenthetical": "",
+          "text": "(Derek)"
+        },
+        {
+          "character": "DEREK EVERMORE",
+          "parenthetical": "",
+          "text": "Mom I was just trying to get you into office!"
+        },
+        {
+          "character": "PRESIDENT DANSWORTH",
+          "parenthetical": "",
+          "text": "I was gonna win anyway and we were"
+        },
+        {
+          "character": "DEREK EVERMORE",
+          "parenthetical": "",
+          "text": "Yeah!"
+        },
+        {
+          "character": "PRESIDENT DANSWORTH",
+          "parenthetical": "",
+          "text": "Tell the truth."
+        },
+        {
+          "character": "DEREK EVERMORE",
+          "parenthetical": "",
+          "text": "Truth?"
+        },
+        {
+          "character": "PRESIDENT DANSWORTH",
+          "parenthetical": "",
+          "text": "I wouldn’t expect it to be a concept you’d understand."
+        },
+        {
+          "character": "DEREK EVERMORE",
+          "parenthetical": "",
+          "text": "(quieter now/backing down) ... yeah... yeah... the truth..."
+        }
+      ],
+      "actionPreview": "DEREK, his MOTHER and KELLY listen to the screaming and carnage that is coming from the house. You did this, you realize that right? This is your doing. You kicked a hive that never should have been kicked. already rich! We have over 50 companies! This was greed! This was overkill! Not to mention ex"
+    },
+    {
+      "number": 104,
+      "heading": "INT. CORRIDOR - HOUSE - EVERMORE COMPOUND - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Clay steps into a corridor and EDELWEISS kicks him back into the collapsing wall and is on him , pummeling his liver and kidneys until Clay manages to grab his ears and ... Headbutts him stumbling back as Clay tackles him thru that wall and ..."
+    },
+    {
+      "number": 105,
+      "heading": "INT. LIVING ROOM - HOUSE - CLYMORE COMPOUND - DAY",
+      "characters": [
+        "EDELWEISS",
+        "CLAY"
+      ],
+      "dialogues": [
+        {
+          "character": "EDELWEISS",
+          "parenthetical": "",
+          "text": "You don’t have to do it clay."
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "If I don’t, you’ll just come after me till you kill me. (he nods)"
+        }
+      ],
+      "actionPreview": "... into the living room, smashing down onto a very expensive mirrored table that explodes into reflective shards - one of which Clay snatches up and slams down towards Edelweiss’s throat ... But Edelweiss catches it and they both hover there as Clay tries to lean the sharp shard of mirror into that"
+    },
+    {
+      "number": 106,
+      "heading": "INT. STAIRWAY TO DEREK EVERMORE’S OFFICE - NIGHT",
+      "characters": [
+        "WESTWYLD",
+        "CLAY"
+      ],
+      "dialogues": [
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "(calling out)"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "I might have."
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "Clay goddamit! What the hell do you care how President’s get elected??"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "I don’t."
+        },
+        {
+          "character": "WESTWYLD",
+          "parenthetical": "",
+          "text": "(frowns/then)"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "Right ..."
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "(CONT'D)",
+          "text": "There is an objective good in the universe."
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "(CONT'D)",
+          "text": "I believe that natural good is reflected in the natural order. 103."
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "(CONT'D)",
+          "text": "I don’t know why I do what I do."
+        }
+      ],
+      "actionPreview": "When Clay steps into the narrow staircase leading up to Derek Evermore’s office, WESTWYLD is standing at the top with an AK- 47 which he lets go - tearing up the hall. Clay falls back to cover. Touches the BULLET-HOLE in his shoulder. Winces. Why couldn’t you just let it go!? Go back to your little "
+    },
+    {
+      "number": 107,
+      "heading": "INT. DEREK EVERMORE'S HOME OFFICE - EVERMORE COMPOUND - DAY",
+      "characters": [
+        "DEREK EVERMORE",
+        "PRESIDENT DANSWORTH",
+        "VOICE",
+        "VERONA",
+        "CLAY"
+      ],
+      "dialogues": [
+        {
+          "character": "DEREK EVERMORE",
+          "parenthetical": "",
+          "text": "(his mother)"
+        },
+        {
+          "character": "PRESIDENT DANSWORTH",
+          "parenthetical": "",
+          "text": "It’s worth a shot."
+        },
+        {
+          "character": "DEREK EVERMORE",
+          "parenthetical": "",
+          "text": "Well then why!?"
+        },
+        {
+          "character": "PRESIDENT DANSWORTH",
+          "parenthetical": "",
+          "text": "Because it’s the goddam truth!"
+        },
+        {
+          "character": "DEREK EVERMORE",
+          "parenthetical": "",
+          "text": "Well guess what"
+        },
+        {
+          "character": "DEREK EVERMORE",
+          "parenthetical": "(CONT'D)",
+          "text": "It’s what comes out of your gun. 104."
+        },
+        {
+          "character": "DEREK EVERMORE",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "PRESIDENT DANSWORTH",
+          "parenthetical": "",
+          "text": "(with venom)"
+        },
+        {
+          "character": "VOICE",
+          "parenthetical": "",
+          "text": "Clay!"
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "Don’t."
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "What do you work for Ms. Lincoln?"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "(CONT'D)",
+          "text": "Because I know which one I work for."
+        },
+        {
+          "character": "PRESIDENT DANSWORTH",
+          "parenthetical": "",
+          "text": "He was a sleaze but .... (shakes head) I’m still a mother ..."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "I guess I got it wrong - it’s bees that become Queen Slayers ..."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        }
+      ],
+      "actionPreview": "The shot reverberates all-too loudly here in Derek’s office. From his desk, he looks to his mother. You think what? You’ll tell him the truth and he’ll kill me instead of you? But that’s not why I’ll tell him the truth. Mom . At the end of the day, truth isn’t what comes out of your mouth ... From t"
+    },
+    {
+      "number": 108,
+      "heading": "EXT. VERANDA",
+      "characters": [
+        "VEREONA",
+        "VERONA",
+        "END"
+      ],
+      "dialogues": [
+        {
+          "character": "VEREONA",
+          "parenthetical": "",
+          "text": "See you Adam Clay."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "I’m quite sure."
+        },
+        {
+          "character": "VERONA",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        }
+      ],
+      "actionPreview": "Beneath the sea-oat dotted dunes, the blue-grey Atlantic rolls away. She looks every direction but - nothing. Just the vast anonymity of the ocean. And a SINGLE LIMPING SET OF FOOT PRINTS that lead down into it ... But do not return. She notices a SINGLE HONEY BEE - sitting on the veranda rail, flut"
+    }
+  ]
+}

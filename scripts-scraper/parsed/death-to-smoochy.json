@@ -1,0 +1,26 @@
+{
+  "slug": "death-to-smoochy",
+  "title": "Death to Smoochy",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 1,
+  "characters": [
+    "DEATH TO SMOOCHY"
+  ],
+  "total_words": 26276,
+  "total_dialogue": 1,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "DEATH TO SMOOCHY"
+      ],
+      "action_text": "DEATH TO SMOOCHY by Adam Resnick December 2000 Early Draft <b>   FOR EDUCATIONAL </b><b>    PURPOSES ONLY </b><b> </b><b>BEGIN CREDITS </b> <b>EXT. KIDNET STUDIO -C - EVENING </b> A man in a puffy foam-rubber rhinoceros costume dancing under the bright friendly lights of a television studio. Another rhino and various foam-rubber animals dance behind him to the happy MUSIC. The rhino finishes his number and takes a bow. A bleacher full of kids bursts into wild applause. <b>INT. BACKSTAGE - MOMENT",
+      "dialogue_count": 1,
+      "word_count": 26276
+    }
+  ]
+}

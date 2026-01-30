@@ -1,0 +1,22 @@
+{
+  "slug": "beach-the",
+  "title": "Beach, The",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 19078,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\" \"http://www.w3.org/TR/REC-html40/loose.dtd\"> <b><HTML> </b><b><HEAD> </b><TITLE>The Beach</TITLE> <b></HEAD> </b> <BODY LINK=\"#0000ff\" VLINK=\"#800080\"> <FONT SIZE=2><P ALIGN=\"CENTER\">The Beach</P> <P ALIGN=\"CENTER\">Written by John Hodge</P> <P ALIGN=\"CENTER\">Based on the Novel by Alex Garland</P> <b><P>�</P> </b><b><P>�</P> </b><P ALIGN=\"CENTER\">� Figment Films ltd.\t\t\t\t15 June 1998</P> <b><P><DIR></P> </b><b><P></P> </b><b><P></P></DI",
+      "dialogue_count": 0,
+      "word_count": 19078
+    }
+  ]
+}

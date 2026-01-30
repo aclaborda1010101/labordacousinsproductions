@@ -1,0 +1,22 @@
+{
+  "slug": "drive-angry",
+  "title": "Drive Angry",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 20478,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                   DRIVE ANGRY </b> Written by Todd Farmer & Patrick Lussier March 28, 2009 <b>          EXT. LAUGHTER, COLORADO - DAY </b> Half a dozen abandoned shacks and a boarded up gas station make up the central hub of Laughter, Colorado. She'd be a ghost town ‘cept the ghosts considered her a shithole ages ago and baled. The buck ten for leaded sign gives us an idea how long ago this place went dry. Suddenly an old Chevy RIPS around the corner, wheels sending PLUMES of",
+      "dialogue_count": 0,
+      "word_count": 20478
+    }
+  ]
+}

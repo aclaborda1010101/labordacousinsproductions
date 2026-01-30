@@ -1,0 +1,38 @@
+{
+  "slug": "armageddon",
+  "title": "Armageddon",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 3,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 27297,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "Armageddon <b>FADE IN </b> Blackness. Then a hint of green becomes EARTH. It lies across an expanse of  space. Richly colored. Fertile. A GIGANTIC ASTEROID cuts into frame, Burning into EARTH'S ATMOSPHERE and  striking down in the currant area of Guzumel, Mexico. Voice An impact equivalent to ten thousand nuclear weapons detonating  simultaneously. A HUGE DINOSAUR FOOT steps down hard and is VAPORIZED with a deafening ROAR. Voice One hundred trillion tons of dirt and rock hurled into the atmosph",
+      "dialogue_count": 0,
+      "word_count": 463
+    },
+    {
+      "scene_number": 2,
+      "slugline": "INT. N.A.S.A - MISSION CONTROL MONITORS go dead.",
+      "characters": [],
+      "action_text": "N.A.S.A. Technician #1 All systems crashing! N.A.S.A. Technician #2 Massive failure. We lost them. Utter silence. Utter desolation. DOLLY IN ON GOLDEN'S FACE. Utter disbelief. <b>INT. WKU MOUNTIAN OBSERVATORY - NIGHT </b> THEO and PEARL (at telescope) , and JIMBO (at the console) , 20's, are  star-gazing. Astronomy books, Starbucks cups, etc., spread all over. Nine Inch  Nails plays on the radio. These three could land a date if only they would lose  the road flares (plaid shirts, glasses) that",
+      "dialogue_count": 0,
+      "word_count": 16968
+    },
+    {
+      "scene_number": 3,
+      "slugline": "INT. N.A.S.A. - MISSION CONTROL Golden and the other Technicians",
+      "characters": [],
+      "action_text": "wait  breathlessly for some response. Golden GRABS the mike. Golden Freedom. come in. (no response) Independence, come in . no response) Come in, Freedom. Nothing. Skip buries his face in his hands. Flip chews his pencil. Golden,  having lost one crew already, twists his wedding ring. Sharp <b>(V.O) </b> Houston, it's Freedom. We just landed on this son-of-a-bitch, over. Golden and the Technicians breath a sigh of relief. Watts <b>(V.O) </b> What's the status of Independence? <b>INT. SHUTTLE FRE",
+      "dialogue_count": 0,
+      "word_count": 9866
+    }
+  ]
+}

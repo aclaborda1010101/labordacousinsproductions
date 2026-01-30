@@ -1,0 +1,22 @@
+{
+  "slug": "anonymous",
+  "title": "Anonymous",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 29946,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                  ANONYMOUS </b> Written by John Orloff <b>1   BLACK SCREEN                                                   1 </b> TITLES BEGIN over the SOUNDS of city traffic. <b>                                                    FADE UP: </b> <b>2   EXT. THEATER DISTRICT OF BROADWAY - DUSK                       2 </b> The sidewalks are filled with theater-goers heading for their shows. Cabs line the streets. <b>    SIDE ALLEY </b> A cab quickly turns into the alley, comin",
+      "dialogue_count": 0,
+      "word_count": 29946
+    }
+  ]
+}

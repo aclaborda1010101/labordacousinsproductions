@@ -1,0 +1,22 @@
+{
+  "slug": "confessions-of-a-dangerous-mind",
+  "title": "Confessions of a Dangerous Mind",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 26733,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "CONFESSIONS OF A DANGEROUS MIND a screenplay by Charlie Kaufman based on <b>       CONFESSIONS OF A DANGEROUS MIND </b> an unauthorized biography by Chuck Barris third draft (revised) May 5, 1998 <b> </b><b>MUSIC IN:   OMINOUS ORCHESTRAL </b> <b>TEXT, WHITE ON BLACK: </b> This film is a reenactment of actual events. It is based on Mr. Barris's private journals, public records, and hundreds of hours of taped interviews. <b>FADE IN: </b> <b>EXT. NYC STREET - NIGHT </b> <b>SUBTITLE: NEW YORK CITY,",
+      "dialogue_count": 0,
+      "word_count": 26733
+    }
+  ]
+}

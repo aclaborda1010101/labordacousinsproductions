@@ -1,0 +1,3524 @@
+{
+  "slug": "sing-sing-2023",
+  "title": "Sing Sing",
+  "parsedWith": "v2",
+  "parsedAt": "2026-01-29T22:09:18.885Z",
+  "stats": {
+    "scenes": 93,
+    "dialogues": 485,
+    "characters": 31
+  },
+  "characters": [
+    {
+      "name": "DIVINE G",
+      "dialogueLines": 185,
+      "totalWords": 1577
+    },
+    {
+      "name": "DIVINE EYE",
+      "dialogueLines": 130,
+      "totalWords": 1233
+    },
+    {
+      "name": "BRENT",
+      "dialogueLines": 61,
+      "totalWords": 698
+    },
+    {
+      "name": "MIKE MIKE",
+      "dialogueLines": 24,
+      "totalWords": 190
+    },
+    {
+      "name": "LEAD COMMISSIONER FERGUSON",
+      "dialogueLines": 14,
+      "totalWords": 367
+    },
+    {
+      "name": "CLAY",
+      "dialogueLines": 13,
+      "totalWords": 68
+    },
+    {
+      "name": "DAP",
+      "dialogueLines": 9,
+      "totalWords": 84
+    },
+    {
+      "name": "DINO",
+      "dialogueLines": 7,
+      "totalWords": 129
+    },
+    {
+      "name": "BOOK FAN",
+      "dialogueLines": 6,
+      "totalWords": 43
+    },
+    {
+      "name": "BIG E",
+      "dialogueLines": 5,
+      "totalWords": 67
+    },
+    {
+      "name": "CHARLIE",
+      "dialogueLines": 5,
+      "totalWords": 47
+    },
+    {
+      "name": "CO",
+      "dialogueLines": 3,
+      "totalWords": 22
+    },
+    {
+      "name": "MAN ON STAGE",
+      "dialogueLines": 2,
+      "totalWords": 24
+    },
+    {
+      "name": "CARMINE",
+      "dialogueLines": 2,
+      "totalWords": 10
+    },
+    {
+      "name": "MOSI",
+      "dialogueLines": 2,
+      "totalWords": 34
+    },
+    {
+      "name": "ALL",
+      "dialogueLines": 2,
+      "totalWords": 16
+    },
+    {
+      "name": "AUDITION MONTAGE.",
+      "dialogueLines": 1,
+      "totalWords": 15
+    },
+    {
+      "name": "VOICE",
+      "dialogueLines": 1,
+      "totalWords": 28
+    },
+    {
+      "name": "DIES.",
+      "dialogueLines": 1,
+      "totalWords": 15
+    },
+    {
+      "name": "STAGE CREW",
+      "dialogueLines": 1,
+      "totalWords": 8
+    },
+    {
+      "name": "LOCAL CHURCH.",
+      "dialogueLines": 1,
+      "totalWords": 10
+    },
+    {
+      "name": "SUPERINTENDENT",
+      "dialogueLines": 1,
+      "totalWords": 11
+    },
+    {
+      "name": "SEA.",
+      "dialogueLines": 1,
+      "totalWords": 24
+    },
+    {
+      "name": "PREME",
+      "dialogueLines": 1,
+      "totalWords": 21
+    },
+    {
+      "name": "GRANTED.",
+      "dialogueLines": 1,
+      "totalWords": 33
+    },
+    {
+      "name": "PETE",
+      "dialogueLines": 1,
+      "totalWords": 8
+    },
+    {
+      "name": "UNFOLD.",
+      "dialogueLines": 1,
+      "totalWords": 12
+    },
+    {
+      "name": "IV.",
+      "dialogueLines": 1,
+      "totalWords": 8
+    },
+    {
+      "name": "A LITTLE LATER.",
+      "dialogueLines": 1,
+      "totalWords": 10
+    },
+    {
+      "name": "BACKSTAGE.",
+      "dialogueLines": 1,
+      "totalWords": 7
+    },
+    {
+      "name": "SEVEN YEARS LATER.",
+      "dialogueLines": 1,
+      "totalWords": 18
+    }
+  ],
+  "scenes": [
+    {
+      "number": 1,
+      "heading": "INT. THEATER - DAY",
+      "characters": [
+        "MAN ON STAGE"
+      ],
+      "dialogues": [
+        {
+          "character": "MAN ON STAGE",
+          "parenthetical": "",
+          "text": "For aught that I could ever read, could ever hear by tale or history, the course of true love never did run smooth."
+        },
+        {
+          "character": "MAN ON STAGE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "A MAN on a stage. Bathed in a lone spotlight, standing in a grove of trees. Butterflies flutter around him. A soft breeze crackles through the speakers. He looks around at the swaying branches. And speaks. He stares out into the darkness of the theater and resumes his monologue. But either it was di"
+    },
+    {
+      "number": 2,
+      "heading": "INT. BACKSTAGE - A LITTLE LATER",
+      "characters": [
+        "TITLE CARD."
+      ],
+      "dialogues": [],
+      "actionPreview": "The man is holding a slice of cheese pizza in his teeth while he changes out of his costume. INTO A GREEN JUMPSUIT. The rest of the cast don identical jumpsuits while TWO CORRECTIONS OFFICERS watch over them. Yet still, the excitement among the company is electric -- everyone congratulating each oth"
+    },
+    {
+      "number": 3,
+      "heading": "EXT. SING SING CORRECTIONAL FACILITY - MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Sing Sing Correctional Facility is rooted on the shore of the Hudson River. Red brick, ancient stone, razor wire. The lull of water on the bank, the breeze through forest trees. The only prison in the U.S. where a commuter train whips through the yard heading to Cold Spring, to Poughkeepsie, to town"
+    },
+    {
+      "number": 4,
+      "heading": "INT. B BLOCK - EARLY MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "First light. Sing Sing’s infamous B BLOCK - 4 stories tall and housing over 800 men - is raucous and echoes with noise. As we move down the corridor we hear the sound of typing. We arrive at Divine G’s cell. He’s seated in front of a TYPEWRITER, headphones on as he types. He slides a fresh sheet of "
+    },
+    {
+      "number": 5,
+      "heading": "INT. CELLBLOCK CORRIDOR - MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "A long line of men snaking through corridors and gates. Each gate thundering open before them, pounding shut behind. A sound felt in the bones."
+    },
+    {
+      "number": 6,
+      "heading": "INT. MESS HALL - LATER",
+      "characters": [
+        "BOOK FAN",
+        "DIVINE G"
+      ],
+      "dialogues": [
+        {
+          "character": "BOOK FAN",
+          "parenthetical": "",
+          "text": "Excuse me. I’ve been trying to catch you in the yard, but..."
+        },
+        {
+          "character": "BOOK FAN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Of course. (sees the title)"
+        },
+        {
+          "character": "BOOK FAN",
+          "parenthetical": "",
+          "text": "Spent two years there. How’d you know?"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "This one was very popular there for a while. Got a pen?"
+        },
+        {
+          "character": "BOOK FAN",
+          "parenthetical": "",
+          "text": "Man I can’t believe Puck did you dirty like that."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Hell of a twist."
+        },
+        {
+          "character": "BOOK FAN",
+          "parenthetical": "",
+          "text": "But hey man, for real..."
+        },
+        {
+          "character": "BOOK FAN",
+          "parenthetical": "",
+          "text": "(CONT’D) I hadn’t seen anything like that before."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Releasing those tears is healthy for you. Don’t tamp that shit down."
+        }
+      ],
+      "actionPreview": "Divine G moves his fork through runny powdered eggs. His instant coffee steaming. A man stands next to him. Divine G doesn’t look up. Divine G looks up at him. The man holds out a BOOK: a bedraggled copy of MONEY GRIP by Divine G. Mind signing it? Divine G warms up. You from Rikers? Divine G signs t"
+    },
+    {
+      "number": 7,
+      "heading": "EXT. YARD - AFTERNOON",
+      "characters": [
+        "DIVINE G"
+      ],
+      "dialogues": [
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Come on. Don’t hog it all from your brothers."
+        }
+      ],
+      "actionPreview": "Divine G stands against a wall in a corner of the yard. He pulls out a baggie of carrots and green beans and shakes it out on the ground. A GROUP OF GEESE gather around him. They know Divine G, they eat greedily. Divine G scolds one of them. He watches the patterns of men in the yard. Then a SIREN W"
+    },
+    {
+      "number": 8,
+      "heading": "INT. CLASSROOM - ANOTHER DAY",
+      "characters": [
+        "DIVINE G",
+        "DAP",
+        "MIKE MIKE"
+      ],
+      "dialogues": [
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Alright gentlemen. Beautiful work last night. Let’s hear those kudos."
+        },
+        {
+          "character": "DAP",
+          "parenthetical": "",
+          "text": "When you looked around at those butterflies..."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "It’s because I forgot the rest of the monologue. I was thinking."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MIKE MIKE",
+          "parenthetical": "",
+          "text": "Man. I’m still riding high. Already miss stepping on the wood. (looking around)"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Alright. Well, Want to go over the waitlist? See if there’s anyone to pull up?"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MIKE MIKE",
+          "parenthetical": "",
+          "text": "I talked to some people about him."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Alright. Maybe he stays on the waitlist one more round. Then we revisit him?"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "(CONT’D) I know it. But he’s teaching a history class with the NAACP. He’s smart. He just needs something better than yard work to channel his talents into."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "Divine G -- reading glasses low on his nose and a notepad in his lap -- sits with a group of four other men in a cramped classroom. This is the STEERING COMMITTEE. Inspirational posters hang askew on the walls around them: You’ll always miss 100% of the shots you don’t take. Attitudes are contagious"
+    },
+    {
+      "number": 9,
+      "heading": "EXT. YARD BERM - ANOTHER DAY",
+      "characters": [
+        "MIKE MIKE",
+        "DIVINE G"
+      ],
+      "dialogues": [
+        {
+          "character": "MIKE MIKE",
+          "parenthetical": "",
+          "text": "(looks at the sky)"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "There he is."
+        }
+      ],
+      "actionPreview": "Divine G and Mike Mike are talking on the edge of the yard. Both scanning the yard, looking for someone. It’s too hot for this. Let’s look for him another day. Divine G just watches the yard. Divine G starts walking, Mike Mike follows."
+    },
+    {
+      "number": 10,
+      "heading": "EXT. YARD COURTYARD, 2ND LEVEL - CONTINUOUS",
+      "characters": [
+        "DIVINE G",
+        "DIVINE EYE"
+      ],
+      "dialogues": [
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Excuse me, could I have a word? I--"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "Be with you in a second. I gotta take care of something right quick."
+        }
+      ],
+      "actionPreview": "They approach a man walking across the yard. He’s broad- shouldered and muscular, yet graceful: like he could dance as well as he could fight. This is CLARENCE “DIVINE EYE” MACLIN. Divine Eye keeps walking. He descends some steps into the lower courtyard. Divine G and Mike Mike stand there, annoyed,"
+    },
+    {
+      "number": 11,
+      "heading": "EXT. YARD COURTYARD, 1ST LEVEL - CONTINUOUS",
+      "characters": [
+        "CLAY",
+        "DIVINE EYE"
+      ],
+      "dialogues": [
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "Oh hey man."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "Yo. Nice layup out there."
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "You saw that?"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "What you mean? Of course I saw that."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "Yeah, of course. I held it all day just like you told me."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "And you didn’t tell no one you had it, right?"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "No, no, of course not."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "Well let’s see it then."
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "Oh yeah."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "Appreciate you helping me out like that. I won’t forget it."
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "What...?"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "What the fuck is this?"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "What do you mean,"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "Huh? Yes it is, I just--"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "What is this, fucking aspirin? What the fuck are you trying to pull?"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "Hey man, I didn’t... I put it in my pocket just like you told me and--"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "(quietly livid)"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "No man, I swear to God."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "You saying I’m lying then? That I don’t know what I’m looking at?"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "No, I believe you, I just--"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "This is aspirin. You know what I fucking left with you?"
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "Not fucking aspirin."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "(CONT’D) I don’t know what you did or didn’t do, and I don’t care. That was five hundred dollars. You fucked me. Now you owe me five hundred dollars."
+        },
+        {
+          "character": "CLAY",
+          "parenthetical": "",
+          "text": "Oh please man, come on--"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "Next time I see you, you better have a plan for how to get me my money."
+        }
+      ],
+      "actionPreview": "Divine G and Mike Mike watch from a distance as Divine Eye approaches a YOUNG PRISONER -- clearly new here -- who has been waiting for him. This is CLAY. Divine Eye steps close to him. Divine Eye leans closer. You got what I left with you? They stand there awkwardly a moment. Clay scrambles in his p"
+    },
+    {
+      "number": 12,
+      "heading": "EXT. YARD COURTYARD, 2ND LEVEL - CONTINUOUS",
+      "characters": [
+        "MIKE MIKE",
+        "DIVINE EYE",
+        "DIVINE G"
+      ],
+      "dialogues": [
+        {
+          "character": "MIKE MIKE",
+          "parenthetical": "",
+          "text": "That’s fucked up."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "He’s gotta learn what it’s like around here. Can’t be going around trusting people. What can I help yall with?"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "You signed up for RTA. We’ve got a couple openings for our next production. Maybe you could put your acting talents to better use than hustling people."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "What, that? That was nothing. You haven’t seen acting yet."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Why did you sign up for the program?"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "Heard yall got chick volunteers."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "No. You just have to be honest."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "I’m bored. Tired of this yard shit. I came across this book that fell off the library cart. Read a couple lines."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "So King Lear just happened to fall off the library cart? And you just read a few lines."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "Yeah well, life’s funny, isn’t it?"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "We’ll be in touch."
+        }
+      ],
+      "actionPreview": "Divine Eye is laughing as he climbs the stairs back to where Divine G and Mike Mike wait for him. Divine G seems to be studying him. Divine G just stares at him. Sees through the act. Do I need a reason? Divine Eye looks around. When we are born, we cry that we are born to this great stage of fools."
+    },
+    {
+      "number": 13,
+      "heading": "EXT. HUDSON RIVER - MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The water is gentle over the Hudson. Sing Sing’s walls paint the shoreline. CO’s move between guard towers like toy soldiers. A sailboat lists by lazily."
+    },
+    {
+      "number": 14,
+      "heading": "INT. CLASSROOM - ANOTHER DAY",
+      "characters": [
+        "BRENT"
+      ],
+      "dialogues": [
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "Hello everyone. I see some familiar faces, but for those of you who don’t know me, my name is Brent, I’ll be at your service as your director for, whatever you decide to do for your upcoming production."
+        }
+      ],
+      "actionPreview": "The classroom is now bustling with 15 MEN who have been selected for the program. A few actors filtering coffee through a sock. Others are warming up with vocal exercises. Divine G catches a glimpse of Divine Eye stepping into the classroom. Circling the room, not sure where to stand or who to talk "
+    },
+    {
+      "number": 15,
+      "heading": "INT. CLASSROOM - LATER",
+      "characters": [
+        "BRENT",
+        "DIVINE G",
+        "DIVINE EYE",
+        "MIKE MIKE",
+        "DAP",
+        "BIG E"
+      ],
+      "dialogues": [
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "Gentlemen. Congratulations on"
+        },
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "(CONT’D) I love it. Do you have something in mind, G?"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Well, I don’t know..."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "(CONT’D) OK. I just finished one actually."
+        },
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "Wow. Sounds amazing. Well, do we have a any other ideas? Or should we take a vote?"
+        },
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "Yeah, I don’t want to step on anybody’s toes in here, and I don’t mean no disrespect, but does every play have to be so serious?"
+        },
+        {
+          "character": "MIKE MIKE",
+          "parenthetical": "",
+          "text": "What do you mean?"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "I’m just saying, every day in here is a drama. Every day is a tragedy."
+        },
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "How does everyone else feel?"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "With a comedy, you could really turn it up. Have music numbers, dance numbers. Make it big."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "What kind of comedy would you propose doing?"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "What do you mean, what kind of comedy?"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Do you want to do something broad?"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "Man I don’t know. I’m just saying--"
+        },
+        {
+          "character": "DAP",
+          "parenthetical": "",
+          "text": "A cowboy comedy."
+        },
+        {
+          "character": "DAP",
+          "parenthetical": "",
+          "text": "(CONT’D) I’ve always wanted to do a cowboy play."
+        },
+        {
+          "character": "MIKE MIKE",
+          "parenthetical": "",
+          "text": "OK hold on. Does anyone know a comedy out there has all that?"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "That’s not really in my wheelhouse."
+        },
+        {
+          "character": "BIG E",
+          "parenthetical": "",
+          "text": "It could time travel."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "I know, but--"
+        },
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "That’s true. It could time travel through all these places. Have a ton of roles to get more people up on stage. Have a message."
+        },
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "(CONT’D) I uh... I could write it if you aren’t feeling it, G."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Doesn’t bother me. If everyone else is on board."
+        },
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "I’ll run it by Katherine and if the script is bad, we can always pivot to something else."
+        },
+        {
+          "character": "MIKE MIKE",
+          "parenthetical": "",
+          "text": "Well. I guess let’s take a vote."
+        }
+      ],
+      "actionPreview": "The company are all seated in chairs in a big circle. Midsummer. You did beautiful work. You should be proud. Have you decided what’s next? The men start to discuss a range of shows. From On The Waterfront to A Few Good Men to Candide to... Then one of the men speaks up. Says it’s time they finally "
+    },
+    {
+      "number": 16,
+      "heading": "INT. DIVINE G’S CELL - LATER",
+      "characters": [
+        "MIKE MIKE",
+        "DIVINE G"
+      ],
+      "dialogues": [
+        {
+          "character": "MIKE MIKE",
+          "parenthetical": "(O.C.)",
+          "text": "I’ve read five drafts of Fine"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "(laughs)"
+        },
+        {
+          "character": "MIKE MIKE",
+          "parenthetical": "(O.C.)",
+          "text": "Do you have another play that’s funnier? Maybe we can take another vote."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Appreciate it brother. But--"
+        },
+        {
+          "character": "MIKE MIKE",
+          "parenthetical": "(O.C.)",
+          "text": "I think it’s important that we do a play written by one of our own. It would say a lot. And I hate to see you get passed over when--"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Mike Mike. Please. I’m really OK with it. When the time is right -- if the time is right -- we’ll do one of mine. If not, it’s fine man."
+        },
+        {
+          "character": "MIKE MIKE",
+          "parenthetical": "(O.C.)",
+          "text": "OK OK. Not trying to be pushy."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "I can’t remember the last time everyone was that excited about a play. Maybe he’s right. Maybe a comedy will take the edge off around here."
+        },
+        {
+          "character": "MIKE MIKE",
+          "parenthetical": "",
+          "text": "I’ll say one thing, it’ll be easier than all that dying stuff from the last production."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Dying is easy. Comedy is hard."
+        }
+      ],
+      "actionPreview": "Divine G is at his desk after lights out. Trying to repair the bent arm of his glasses without breaking them. A voice comes from the cell across from his. Print. It’s good man. And I mean... it could be funny. With the right take. Or maybe you could write a musical number in it. It’s a straight dram"
+    },
+    {
+      "number": 17,
+      "heading": "INT. CLASSROOM - ONLY DAYS LATER",
+      "characters": [
+        "BRENT",
+        "DIVINE G",
+        "MIKE MIKE"
+      ],
+      "dialogues": [
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "I took everything you all wanted and put it in here. Ancient Egypt, pirates, Old West Gunfights. And I sprinkled in the Black Plague and"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "(thumbing through)"
+        },
+        {
+          "character": "MIKE MIKE",
+          "parenthetical": "",
+          "text": "...over the weekend?"
+        },
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "It was a lot to fit in. It’s got some dance numbers, some songs, a"
+        },
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "The theater group is together again. Brent is passing out scripts for the play. He looks exhausted from jamming this play out in just a few days. Divine G looks at the title page. BREAKIN’ THE MUMMY’S CODE. Roman Gladiators because it seemed like a good idea at the time. A hundred and forty-seven pa"
+    },
+    {
+      "number": 18,
+      "heading": "INT. CLASSROOM - ANOTHER DAY",
+      "characters": [
+        "BRENT"
+      ],
+      "dialogues": [
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "OK. Whenever you’re ready."
+        }
+      ],
+      "actionPreview": "Brent sits at a long table with Divine G and the Steering Committee. Each with a notepad and a script. The door opens and one of the men steps in. They thank him for coming and ask him what role he’s going out for. He names three characters. The man stands quietly a moment, readying himself. Then he"
+    },
+    {
+      "number": 19,
+      "heading": "INT. CLASSROOM - DAY",
+      "characters": [
+        "AUDITION MONTAGE."
+      ],
+      "dialogues": [
+        {
+          "character": "AUDITION MONTAGE.",
+          "parenthetical": "",
+          "text": "Actors step in one after another. Their auditions range from the silly to the profound."
+        }
+      ],
+      "actionPreview": "They act out gonzo scenes from the play. Tell stories from their childhood. Sing. Dance. Freestyle rap. They are all range of ages and talents. CUT TO:"
+    },
+    {
+      "number": 20,
+      "heading": "INT. CLASSROOM - CONTINUOUS",
+      "characters": [
+        "DIVINE G",
+        "BRENT"
+      ],
+      "dialogues": [
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Someone else is going out for"
+        },
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "Divine Eye is."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "I’ll send him in."
+        }
+      ],
+      "actionPreview": "And finally we land on Divine G as he FINISHES HIS AUDITION. He went to the bottom of the well to pull out what he just brought. The Committee is speechless. Divine G is still recovering. He goes to take his seat but they tell him he can’t observe the next audition since they’re going out for the sa"
+    },
+    {
+      "number": 21,
+      "heading": "INT. CORRIDOR - MOMENTS LATER",
+      "characters": [
+        "DIVINE G",
+        "DIVINE EYE"
+      ],
+      "dialogues": [
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "You’re up."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "Sounded good in there. Intense."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Thanks. Hey... Could I ask you something?"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "Anything."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "You asked to do a comedy."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "And now we’re doing a comedy."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "I’m excited."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "And yet you’re auditioning for the only dramatic role in the whole play."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "Comedy’s tough, man. I don’t want to bomb up there."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Good luck then."
+        }
+      ],
+      "actionPreview": "Divine G steps out of the classroom. Divine Eye waits on a bench with his head leaned back against the wall, as if he might be asleep. Divine Eye stands. Divine Eye thinks a moment. Divine G nods. Divine Eye steps into the room. Divine G takes a seat in the corridor, listening to the muffled auditio"
+    },
+    {
+      "number": 22,
+      "heading": "INT. REC ROOM - DAY",
+      "characters": [
+        "DIVINE G",
+        "VOICE"
+      ],
+      "dialogues": [
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "I would also like to note,"
+        },
+        {
+          "character": "VOICE",
+          "parenthetical": "(O.C.)",
+          "text": "I see that in your packet. I’m just going to go out on a limb here and guess that that was before you became a rampaging drug dealer."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Well sir, I only hustled that one year after my accident and then..."
+        }
+      ],
+      "actionPreview": "Close on Divine G. Sitting up alert in a chair. Commissioners, that I was a candidate to become a New York City Police Officer. Mike Mike, can you get your feet off the desk?"
+    },
+    {
+      "number": 23,
+      "heading": "INT. REC ROOM - CONTINUOUS",
+      "characters": [
+        "MIKE MIKE",
+        "DIVINE G"
+      ],
+      "dialogues": [
+        {
+          "character": "MIKE MIKE",
+          "parenthetical": "",
+          "text": "My bad."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "It’s just hard to get the vibe with you lounging like that."
+        },
+        {
+          "character": "MIKE MIKE",
+          "parenthetical": "",
+          "text": "Alright, I got you."
+        },
+        {
+          "character": "MIKE MIKE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "No. That was a DJ group. We were--"
+        },
+        {
+          "character": "MIKE MIKE",
+          "parenthetical": "",
+          "text": "I’ll bet it was funky as hell, wasn’t it?"
+        },
+        {
+          "character": "MIKE MIKE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "We see Mike Mike now. They’re on opposite sides of a desk. Mike Mike puts his feet down. Mike Mike gets back into character, serious again. He talks like a cop from an old movie. We’re not interested in what you could have been, Whitfield. We’re here to talk about what you are. I see here you were i"
+    },
+    {
+      "number": 24,
+      "heading": "INT. THEATER - LATER",
+      "characters": [
+        "CARMINE",
+        "DINO",
+        "BRENT",
+        "DIVINE EYE",
+        "DIVINE G"
+      ],
+      "dialogues": [
+        {
+          "character": "CARMINE",
+          "parenthetical": "",
+          "text": "Man. How was I cast as a tree?"
+        },
+        {
+          "character": "DINO",
+          "parenthetical": "",
+          "text": "I started out as background on my first production. Can’t have a believable Sherwood Forest without believable trees."
+        },
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "OK. I want you all to step into the circle, say your name, step out, then step back in and introduce yourself as your character, in that voice."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "Prince Hamlet of Denmark."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Gladiator Goliathon."
+        }
+      ],
+      "actionPreview": "The theater inside is cavernous, with dramatic arched ceilings, light pouring in through big windows. The whole company is gathered on stage. Brent has handed out the roles to everyone. They’re looking over their sides. Divine G flips through his script, reserved. Divine Eye is trying to find his pa"
+    },
+    {
+      "number": 25,
+      "heading": "INT. THEATER / ONSTAGE - LATER",
+      "characters": [
+        "BRENT",
+        "MOSI",
+        "DAP",
+        "DIVINE G"
+      ],
+      "dialogues": [
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "MOSI",
+          "parenthetical": "",
+          "text": "I have a question about my character. Wouldn’t he be freaked out by some cat from Ancient Egypt time traveling into the Middle"
+        },
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "Well, good questions, but remember, it’s a comedy, so we can take some liberties and have fun with it. Why don’t we workshop it when we get to it and see how it plays?"
+        },
+        {
+          "character": "DAP",
+          "parenthetical": "",
+          "text": "I also had a question. Of what nature is the time travel in this play?"
+        },
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "The nature of...?"
+        },
+        {
+          "character": "DAP",
+          "parenthetical": "",
+          "text": "Is it via a wormhole? A rip in the space-time fabric? I’m just wondering how we play it. How hard would it be on the human body?"
+        },
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "Well, again, those are great questions, but um... why don’t we take those scene by scene?"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Brent. May I?"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "(CONT’D) (to everyone)"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "Well, uh, thanks. That’s great. Why don’t we start with your scene? CUT TO:"
+        }
+      ],
+      "actionPreview": "They have transitioned into the work for the day. Brent gives an overview of the rehearsal schedule. The big dance and musical numbers. An actor RAISES HIS HAND. Ages? I mean, if I put myself into the mind of someone from that time, I don’t even know what a mummy is. And do we even have a common lan"
+    },
+    {
+      "number": 26,
+      "heading": "INT. THEATER / ONSTAGE - LATER",
+      "characters": [
+        "BRENT",
+        "DIVINE EYE"
+      ],
+      "dialogues": [
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "Amazing! Who’s next?"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "I’ll do my scene."
+        }
+      ],
+      "actionPreview": "Divine G is with Mike Mike. They’re working out a scene, reading from sides as they act. Divine G’s years of skill shines through in this moment. He reads from the script as he moves around the stage and somehow emotion flows out of every moment. Divine Eye stands in the wings, barely paying attenti"
+    },
+    {
+      "number": 27,
+      "heading": "INT. THEATER / ONSTAGE - LATER",
+      "characters": [
+        "BRENT"
+      ],
+      "dialogues": [
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "OK, that was a good start. It will get smoother. Who wants to go next?"
+        }
+      ],
+      "actionPreview": "Divine Eye is center stage with his scene partners. He’s trying to keep up with them as they do the scene, but he keeps losing his place in the scene, fumbling lines. Squints at his page. Complains that he doesn’t have his glasses. Someone gives him a pair. Still brutal. Brent helps him, tells him t"
+    },
+    {
+      "number": 28,
+      "heading": "INT. SING SING HALLWAY - LATER",
+      "characters": [
+        "DAP",
+        "MIKE MIKE",
+        "DINO",
+        "DIVINE G"
+      ],
+      "dialogues": [
+        {
+          "character": "DAP",
+          "parenthetical": "",
+          "text": "So is the mummy time traveling too?"
+        },
+        {
+          "character": "MIKE MIKE",
+          "parenthetical": "",
+          "text": "I thought the mummy was a metaphor. JJ"
+        },
+        {
+          "character": "DINO",
+          "parenthetical": "",
+          "text": "And it’s going to run four hours. B"
+        },
+        {
+          "character": "MIKE MIKE",
+          "parenthetical": "",
+          "text": "At least we won’t have to finish the play."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "I say we go for it. I think this is one of those instances where the art we are seeking is also seeking us. I have no idea why... (laughs)"
+        }
+      ],
+      "actionPreview": "Class is over. Divine G and the other members of the Steering Committee are standing in line, waiting for a gate to open. They’re talking about how crazy the play is. Asking if they’re in over their heads. Or just her son? Forget that. How are we going to get this thing done? It’s too many props, to"
+    },
+    {
+      "number": 29,
+      "heading": "INT. THEATER - ANOTHER DAY",
+      "characters": [
+        "DIVINE EYE"
+      ],
+      "dialogues": [
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "I’m good man. I’ll catch it on the next round."
+        }
+      ],
+      "actionPreview": "The group is in the middle of another exercise: physical acting. They’re “becoming objects”: a statue, a tree, a tomato. When it’s Divine Eye’s turn, he declines. It throws off the energy of the group. But they move on."
+    },
+    {
+      "number": 30,
+      "heading": "INT. THEATER - LATER",
+      "characters": [
+        "DIVINE G",
+        "DIVINE EYE"
+      ],
+      "dialogues": [
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Yo. Before you leave, let me show you something."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "Alright."
+        }
+      ],
+      "actionPreview": "Later, they’re done for the day. Everyone looks exhausted as they’re straightening the room. Divine G stops Divine Eye on his way out. Divine Eye looks to others leaving, as if he has somewhere to be. It’ll only take a second."
+    },
+    {
+      "number": 31,
+      "heading": "INT. THEATER / WINDOW - CONTINUOUS",
+      "characters": [
+        "DIVINE EYE",
+        "DIVINE G"
+      ],
+      "dialogues": [
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "You know they call this room The"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Window’s got a nice view too. You ever look out there?"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "I don’t look where I can’t go. And I don’t think you brought me up here to look at some mountains."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Listen. You uh, you seem... frustrated with the work. I can see you struggling and I’ve been there."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "I’m not struggling, those exercises are just goofy."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "They’re leading to something bigger. You’ll find the depth if you lean into it. There’s no bottom to what the work will give you if you--"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "Is this the speech you give all the new guys?"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "It’s not a--"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "Listen man, I know your type."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "I’ve been wanting to put a play of mine up for years."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "(CONT’D)",
+          "text": "But then you walk in and ask for a comedy"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "Cause I was right. Cause everybody likes a comedy."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Because it’s what the group wanted."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "(sarcastic)"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "I know you’ve got a knife in your waistband."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "I don’t need you telling me what’s necessary."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "You’ve got your armor up. Afraid of what might be underneath it. Afraid that if--"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "You practice that line?"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "(quickly)"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "That’s it?"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "That’s it."
+        }
+      ],
+      "actionPreview": "Divine G leads Divine Eye deeper backstage. To a corner with a LITTLE CAGED WINDOW. Through it they can see rolling green mountains. Divine G stands by the window. Divine Eye is looking around the room. (MORE) Steeple. Lotta business gets done in here. Divine Eye stares at him. The conversation stop"
+    },
+    {
+      "number": 32,
+      "heading": "INT. MESS HALL - ANOTHER DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Divine G sits at a table by himself. Jots notes on a legal pad while he sips his coffee. Divine G looks up to see Divine Eye moving along a table, stopping every few men, small exchanges of product and currency, subtle as sleight of hand. Divine G returns to his legal pad, tries to ignore it, frustr"
+    },
+    {
+      "number": 33,
+      "heading": "INT. THEATER - LATER THAT DAY",
+      "characters": [
+        "MOSI",
+        "BRENT",
+        "BIG E"
+      ],
+      "dialogues": [
+        {
+          "character": "MOSI",
+          "parenthetical": "",
+          "text": "Carlos is on A Block. They’ve been on keeplock all day."
+        },
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "What about Divine Eye? Is he on A"
+        },
+        {
+          "character": "BIG E",
+          "parenthetical": "",
+          "text": "Nope. He’s B Block. No idea where he is."
+        }
+      ],
+      "actionPreview": "The group sits in a circle onstage. They start roll call. They’re missing two. (MORE) Block? They decide to move on with class. Divine G stares at the empty chair where Divine Eye should be."
+    },
+    {
+      "number": 34,
+      "heading": "INT. DIVINE G’S CELL - NIGHT",
+      "characters": [
+        "CO"
+      ],
+      "dialogues": [
+        {
+          "character": "CO",
+          "parenthetical": "",
+          "text": "Random contraband check. Step out of the cell."
+        },
+        {
+          "character": "CO",
+          "parenthetical": "",
+          "text": "(CONT’D) OK. Go back in."
+        }
+      ],
+      "actionPreview": "Divine G is back in his cell, working at his desk. The gates open and a CO appears. Divine G knows the drill. He sighs. Steps out and holds onto the bars. The CO goes in the cell and turns it over, goes through every drawer, turns over his bed, fans out books and drops them. Turns meticulous order t"
+    },
+    {
+      "number": 35,
+      "heading": "INT. THEATER - LATER",
+      "characters": [
+        "BRENT",
+        "MIKE MIKE"
+      ],
+      "dialogues": [
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "Close your eyes and go to your most perfect spot. Most perfect moment. (MORE)"
+        },
+        {
+          "character": "BRENT",
+          "parenthetical": "(CONT’D)",
+          "text": "What are the sounds? Do you hear anything? Who is there?"
+        },
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MIKE MIKE",
+          "parenthetical": "",
+          "text": "You know uh... I really tried to go somewhere else. Squeezed my eyes."
+        }
+      ],
+      "actionPreview": "All the men sit onstage, cross-legged. Brent walks between them. Divine G closes his eyes. Slows his breathing. He hears someone come in and join the circle late. He sneaks a look. It’s Divine Eye. Do you feel the temperature? Is there a breeze? Are you inside? Out? What are the smells? Hold yoursel"
+    },
+    {
+      "number": 36,
+      "heading": "INT. THEATER - ANOTHER DAY",
+      "characters": [
+        "BRENT",
+        "DIVINE EYE",
+        "DINO"
+      ],
+      "dialogues": [
+        {
+          "character": "BRENT",
+          "parenthetical": "(CONT’D)",
+          "text": "Divine Eye is agitated, having trouble focusing. One of the men walks behind him in the blocking."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "Hey hey. He can’t walk back there. I get nervous with people walking behind me."
+        },
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "Well you’re gonna have to get used to that. Or act like it doesn’t bother you."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "He could walk in front of me."
+        },
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "At some point, someone will walk behind you. Do you remember your first mark?"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "I’m supposed to be next to"
+        },
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "Great. Let’s run it."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "Shit. Line!"
+        },
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "Whether ‘tis nobler... Let’s take it from the top."
+        },
+        {
+          "character": "DINO",
+          "parenthetical": "",
+          "text": "Stop!"
+        },
+        {
+          "character": "DINO",
+          "parenthetical": "",
+          "text": "(CONT’D) I was a keeplock monster. My anger consumed me. I worked everything out with violence. But one morning at breakfast there was this guy sitting across from me -- had a big mole on his nose, I’ll never forget that. I don’t know who he was but somebody stepped up behind him and just cut him. Ear to ear, didn’t say nothing. The blood, it was... everywhere. On the table, on my clothes, on my... face. But I didn’t move. None of us did. We just sat there... still. Didn’t even look at him as he"
+        }
+      ],
+      "actionPreview": "Divine Eye is in the middle of blocking his scene. Divine G is with the rest of the company that circles the stage, watching on. The guy stops, looks to Brent. Gravedigger. Then Leslie and Marion magically appear stage left. Got it. Divine Eye tries to calm himself. Begins his soliloquy. Stumbles. T"
+    },
+    {
+      "number": 37,
+      "heading": "INT. SING SING HALLWAY - ANOTHER DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Divine G stands in a long line of people in a hallway. The gate ahead is shut -- they’re stuck between places. They’ve been waiting here a long time. Divine G is clearly agitated. One man in line yells out to ask what’s going on. A CO yells back for him to shut the fuck up. So they continue to wait."
+    },
+    {
+      "number": 38,
+      "heading": "INT. THEATER - LATER THAT DAY",
+      "characters": [
+        "DIVINE EYE",
+        "DIVINE G"
+      ],
+      "dialogues": [
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "Why ain’t you up there?"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "(without looking back)"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "So you just come through to keep a check on everybody?"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "I just enjoy watching them is all."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "What are those notes then? Writing love letters?"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Nah. Legal work. Some brothers want healthier food in the mess hall. I’m researching some litigation to see if we can fix that."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "Yeah..."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Trust the process."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "You got any kids?"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Two girls and a boy."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "What are their names?"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "You’re all up in my business today..."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "You don’t write your girls?"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "... They don’t... I don’t want to bother them. They’re trying to live their lives. We think we’re the only ones in a prison, but they’re locked up in here with us. In their own way."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "When I started my bid, my boy was young, but he was taken care of."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "(CONT’D) I feel different in here. If I’d had this on the outside, I’d’ve done something else, I know it. I wouldn’t be in here. And he wouldn’t be in here either."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "There’s a trick to that, you know."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "(finally)"
+        }
+      ],
+      "actionPreview": "Divine G is sitting in a row of empty seats. He watches the actors onstage blocking a dance number for a pirate ship scene. Brent directs the action. The men aren’t off book. They don’t know their marks yet. The choreography is all over the place. Divine G jots some notes in a notebook on his lap. S"
+    },
+    {
+      "number": 39,
+      "heading": "INT. REC ROOM - THE NEXT DAY",
+      "characters": [
+        "DIVINE EYE",
+        "DIVINE G"
+      ],
+      "dialogues": [
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "Holy shit."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "You can’t memorize your lines until you know what they mean. (MORE)"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "(CONT’D)",
+          "text": "Gotta get down under them."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "Thanks. What are those big ones?"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Ah these..."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "Bro. I’ve met serial killers that weren’t this organized."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Helps me fight the slow time."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "What’s that one?"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "The most important one. Other than the play. Got a parole hearing coming up. A clemency hearing."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "They say you found a tape. Proving you’re innocent."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Took me ten years. But yes."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "Well then you got the golden goose. I don’t even have to say good luck."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "We’ll see... Do you feel prepared for your date?"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "(CONT’D) I saw the docket. I don’t want to get in your business, but to be successful you have to--"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "(quick) I’m good man. I’ve gotta take care of some business. Thanks for the help."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Hey."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "(CONT’D) (holds out the paper)"
+        }
+      ],
+      "actionPreview": "Divine G lays his script across a table. It’s got notes all over it, more notes than lines. Paraphrase, whatever you’ve got to do to understand what they’re actually saying. Then... Divine G pulls out a ROLL OF PAPER. He’s taped a bunch of paper together to make one long scroll. It’s filled with wri"
+    },
+    {
+      "number": 40,
+      "heading": "INT. THEATER - ANOTHER DAY",
+      "characters": [
+        "DIES.",
+        "BRENT",
+        "DIVINE G",
+        "DIVINE EYE"
+      ],
+      "dialogues": [
+        {
+          "character": "DIES.",
+          "parenthetical": "",
+          "text": "More peasants appear and as soon as they see the dead peasant they die too."
+        },
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "OK OK OK. Umm... We’re too restrained. Too stiff. This is supposed to fly off the rails."
+        },
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "(CONT’D) OK. I want you to die for each other. There’s no right way, no wrong way, anyway you want, the only rule is... you have to make your partner laugh. Let’s go."
+        },
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "You want to go first?"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "Nah, let’s see the pro in action."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Not bad, huh?"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "You know when somebody tells a joke so bad, that you have to laugh at just how bad it is?"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Oh come on. I threw a little"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "I never met him. Where’s he doing his bid?"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "OK smartass, show me how it’s done then."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "Alright then, I just have to--"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "You can’t use props though, that’s cheating."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "I didn’t hear Brent say that in the rules. Hey Brent! Did you say anything about props?"
+        },
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "(across the room)"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Nevermind that. You can cheat."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "I’ll give you that one. Reminded me of my corny uncle."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Nuh uh. You’re just playing it cool. You loved it."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "Whatever. But do you know how to die like this--"
+        }
+      ],
+      "actionPreview": "ONSTAGE, the actor playing ALOTINCOMMON is walking through the MEDIEVAL ENGLAND set. A PEASANT appears, says a joke, and Brent hops onstage. He thinks. Everyone on stage. (sees hesitation) Let’s go. Everyone. The cast steps up on stage, Divine G bringing up the rear. Pair up. We’re going to do a lit"
+    },
+    {
+      "number": 41,
+      "heading": "INT. THEATER - LATER",
+      "characters": [
+        "BRENT",
+        "DIVINE EYE",
+        "DIVINE G",
+        "THIS IS MY FUCKIN THEATER."
+      ],
+      "dialogues": [
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "Want to try it again?"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "Why? Did I do something wrong?"
+        },
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "Let’s just try something."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "Long as you don’t say anything about eating any fucking elephants."
+        },
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "I don’t know what that means, but I won’t... OK. Let’s start at the beginning."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "With my first line?"
+        },
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "No no no. To before you even walk onstage. Go to the wing, then step into the scene."
+        },
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "(to Brent)"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "I’M FUCKIN HERE."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "THIS MY FUCKIN THEATER!!"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "That’s how you do it. Alright."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "I’m mad."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Mad. Why?"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "Cause Maid Marion left me for him. I gave her this rock to remember me. And she threw it out like garbage."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "But anger. That’s easy. It’s the easiest thing to play. You go big, you scream, and wow, he’s angry."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BRENT",
+          "parenthetical": "(O.C.)",
+          "text": "Let’s run it from the top! CUT TO: MONTAGE OF THE PLAY COMING TOGETHER:"
+        }
+      ],
+      "actionPreview": "Divine Eye finishes his monologue but it lands flat, lacking conviction. Brent watches him. Divine Eye looks around. Go ahead. Let’s see it. Divine Eye sighs. Then trudges off. Comes back in and stands on his mark. Brent looks confused. Sorry, did you do it already? I fell asleep. The company laughs"
+    },
+    {
+      "number": 42,
+      "heading": "INT. REC ROOM - LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The group is rehearsing lines from their play as a group as camera moves around them."
+    },
+    {
+      "number": 43,
+      "heading": "INT. CELLBLOCK - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "- Rehearsing between cells after lights out."
+    },
+    {
+      "number": 44,
+      "heading": "INT. MESS HALL - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "- Rehearsing across trays at chow."
+    },
+    {
+      "number": 45,
+      "heading": "EXT. WEIGHT POUND - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "- Rehearsing between reps at the weight pound. CUT TO:"
+    },
+    {
+      "number": 46,
+      "heading": "INT. THEATER - ANOTHER DAY",
+      "characters": [
+        "DAP",
+        "BRENT",
+        "BIG E",
+        "MIKE MIKE"
+      ],
+      "dialogues": [
+        {
+          "character": "DAP",
+          "parenthetical": "",
+          "text": "This isn’t an Egyptian headband, it’s clearly Phoenician."
+        },
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "Hmm. We’ll take a look at that."
+        },
+        {
+          "character": "BIG E",
+          "parenthetical": "",
+          "text": "Brent. Brocolli? I need a six shooter. Make it cardboard. Paint it in crayons. What am I supposed to do with broccoli? No one’s gonna buy it."
+        },
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "It’s funny. They’re expecting a six- shooter. Make em expect a six- shooter. Then give em broccoli."
+        },
+        {
+          "character": "MIKE MIKE",
+          "parenthetical": "",
+          "text": "You’re Freddy Krueger dude. Your motivation is slicing people up."
+        },
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "The moral is in the mummy. CUT TO:"
+        }
+      ],
+      "actionPreview": "Brent is fielding a barrage of questions about creative choices. Check with props. The actor playing Coal steps up holding his script. The actor doesn’t totally buy it. Then the man playing Freddy Krueger approaches, tense. JJ We’ve got a serious issue here. The RTA principles are not clear in my ch"
+    },
+    {
+      "number": 47,
+      "heading": "INT. THEATER / ONSTAGE",
+      "characters": [
+        "STAGE CREW",
+        "DIVINE EYE",
+        "BRENT"
+      ],
+      "dialogues": [
+        {
+          "character": "STAGE CREW",
+          "parenthetical": "(O.S.)",
+          "text": "Can you skooch a tad to the right,"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "I’m on my mark. Why don’t you skooch your fuckin light?"
+        },
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "We can move the mark a little."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "Alright, let’s move the mark."
+        }
+      ],
+      "actionPreview": "One of the stage crew is on ladder rigging a light. Divine Eye below him standing on his mark. The stage crew turns it on, but the spot is off by a foot. Eye? The stage crew looks to Brent. Divine Eye is silent a moment, like he might fight it."
+    },
+    {
+      "number": 48,
+      "heading": "INT. HALLWAY OUTSIDE THEATER - ANOTHER DAY",
+      "characters": [
+        "BRENT",
+        "MIKE MIKE"
+      ],
+      "dialogues": [
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "The Superintendent has some big money out in the seats. Money that can buy us curtains. We need to melt their faces off with this fight scene."
+        },
+        {
+          "character": "MIKE MIKE",
+          "parenthetical": "",
+          "text": "We got this."
+        },
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "Make it savage."
+        }
+      ],
+      "actionPreview": "Brent is with Divine G, Mike Mike and a few other men. He speaks to them quietly."
+    },
+    {
+      "number": 49,
+      "heading": "INT. THEATER / ONSTAGE - MOMENTS LATER",
+      "characters": [
+        "LOCAL CHURCH.",
+        "BRENT",
+        "SUPERINTENDENT"
+      ],
+      "dialogues": [
+        {
+          "character": "LOCAL CHURCH.",
+          "parenthetical": "",
+          "text": "Brent looks to the men. Too late to back out."
+        },
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "Don’t worry guys. We can figure it out without curtains."
+        },
+        {
+          "character": "SUPERINTENDENT",
+          "parenthetical": "",
+          "text": "I can’t believe you chose that scene. But... they loved it."
+        }
+      ],
+      "actionPreview": "They jog onstage to find the Superintendent with WOMEN FROM A Divine G and Mike Mike engage in mortal gladiatorial combat, moving in slow motion. Stabbing each other with fake swords. Brent glancing nervously between the women and the scene unfolding. They finish and bow to polite clapping from thei"
+    },
+    {
+      "number": 50,
+      "heading": "INT. THEATER - ANOTHER DAY",
+      "characters": [
+        "DIVINE G",
+        "DIVINE EYE"
+      ],
+      "dialogues": [
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Need a line reading?"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "Huh?"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Nothing. Bad joke. You OK?"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "It’s just, Hamlet bro. That soliloquy. (looks for the words)"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "I forget how different this version of Hamlet is. But listen. That’s not what I see. You’re an artist."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "(CONT’D)",
+          "text": "This isn’t turning you into something else, it’s revealing the parts of you that have been hidden."
+        }
+      ],
+      "actionPreview": "Lunch is brought to the theater so the men can keep rehearsing. Divine Eye and Divine G are off to the side in their own row. Divine Eye is pushing the sad looking meal around with his fork. Divine Eye looks for how to say it. My slings and arrows are on the inside. And all this make believe ain’t g"
+    },
+    {
+      "number": 51,
+      "heading": "INT. ONSTAGE - ANOTHER DAY",
+      "characters": [
+        "BRENT",
+        "DIVINE EYE"
+      ],
+      "dialogues": [
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "Some of you have expressed that a traditional curtain call is not in the spirit of Mummy’s Code."
+        },
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "Fuck it. Let’s roll."
+        }
+      ],
+      "actionPreview": "Everyone is now lined up onstage. Brent looks around the company. So instead of a bow... we’re gonna dance. Keys... hit it. Keys presses play on a boombox in the wings. A CD whirls to life. Music pulses through the dusty speakers. No one wants to make the first move. Divine Eye starts to move. And l"
+    },
+    {
+      "number": 52,
+      "heading": "INT. THEATER - LATER",
+      "characters": [
+        "SEA.",
+        "DIVINE G"
+      ],
+      "dialogues": [
+        {
+          "character": "SEA.",
+          "parenthetical": "",
+          "text": "They layer the boards and stand on either end, pulling them back and forth to make it look like ROLLING WAVES, endless open ocean."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "(CONT’D)",
+          "text": "(MORE)"
+        }
+      ],
+      "actionPreview": "Score continues as the sets are unveiled. The men push each other around in a ROMAN CHARIOT. Wielding cardboard swords. Two long-cut boards are brought in, painted like WAVES ON THE Everyone is in awe as they watch. Transported."
+    },
+    {
+      "number": 53,
+      "heading": "INT. THEATER - LATER",
+      "characters": [
+        "DIVINE EYE",
+        "BRENT"
+      ],
+      "dialogues": [
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "Perchance... Perchaaaance--"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "(CONT’D) (smiling) --aaand there it went."
+        },
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "Very close. And very good. One more time from the top?"
+        }
+      ],
+      "actionPreview": "Divine Eye takes the stage with confidence. The whole company surrounds the stage watching. He finds his mark. Divine G and Mike Mike are on pins and needles with the rest. Divine Eye starts the soliloquy. It’s flawless. Everyone leaning forward as he nears the end. But he stumbles on the very last "
+    },
+    {
+      "number": 54,
+      "heading": "EXT. YARD - ANOTHER DAY",
+      "characters": [
+        "DIVINE G",
+        "DIVINE EYE"
+      ],
+      "dialogues": [
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Hey. Been waiting for you. Spin the yard with me?"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "(CONT’D) I know you haven’t had a lot of time to prep for your parole board hearing."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "(CONT’D)",
+          "text": "I don’t want to step on your toes, but I know you’ve been busy with the play -- I remember how much it was my first year -- so I did a little prep work for you."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "What did I say the last time we talked about this?"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "I did what I could on the forms, you’ll just need to fill in the addresses and all that. And write your essay. The other stuff is just a template. You’ll need to put it in your own words to--"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "How can you stand here and have all this faith in the system?"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Are you telling me they got you?"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "Who got me?"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "They’ve got you convinced that you belong in here. That this is where you’re supposed to be--"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "--That ain’t it--"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "--and now you can act tough and say you’re not going to prepare but that’s what’s real, isn’t it? They got you fooled."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "What do I got out there? Got no real family to speak of. All my friends are in here. Even my son is in here. Shit. I’ve been in so long, I don’t even know what I’d do if they let me out. Maybe this is..."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Don’t say it. They want you to say it. But you’re not a lap dog, you’re a fucking wolf."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "(slowly)"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Then you try again on the next one."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "How long does the essay need to be?"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "There’s no limit. Three to five pages is a good length, from my research."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "I heard sometimes they don’t even tell you their decision. You just wait."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "They always send a letter. If it’s a thick letter, you didn’t get it."
+        }
+      ],
+      "actionPreview": "Divine G is walking the yard, slowly around the perimeter, deep in thought. He has a folder under his arm. He sees Divine Eye standing off by himself. He approaches him. Divine Eye follows him and they start walking the path together. (MORE) He hands Divine Eye the folder. Divine Eye opens it. Divin"
+    },
+    {
+      "number": 55,
+      "heading": "INT. DIVINE G'S CELL - NIGHT",
+      "characters": [
+        "MIKE MIKE",
+        "DIVINE G"
+      ],
+      "dialogues": [
+        {
+          "character": "MIKE MIKE",
+          "parenthetical": "",
+          "text": "Ballet? Are you joking?"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "(laughs)"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "Divine G and Mike Mike are talking across their cells. Just sharing stories and chatting. Mike Mike shares a story about growing up in the Bay, talking about his childhood. Divine G is listening, laughing. It reminds Divine G of his youth. He starts talking about his time at the FAME school. How he "
+    },
+    {
+      "number": 56,
+      "heading": "EXT. DIVINE G'S CELL - CONTINUOUS",
+      "characters": [
+        "DIVINE G"
+      ],
+      "dialogues": [
+        {
+          "character": "DIVINE G",
+          "parenthetical": "(O.S.)",
+          "text": "(smiles)"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "(O.S.)",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "After I sat through your dumbass story. He rolls over. Good night, Mike Mike. You dick."
+    },
+    {
+      "number": 57,
+      "heading": "INT. DIVINE G'S CELL - NEXT MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Divine G is laying on his side, staring at the wall. A sound fills his space, coming from another cell: cleaning, scrubbing, shoving contents into trash bags. He just stares into space, a blank look on his face. Through the portal in his door we see the source of the noise: A JANITOR is cleaning out"
+    },
+    {
+      "number": 58,
+      "heading": "INT. THEATER - SOME TIME LATER",
+      "characters": [
+        "BIG E",
+        "PREME"
+      ],
+      "dialogues": [
+        {
+          "character": "BIG E",
+          "parenthetical": "",
+          "text": "Man, I can understand a brother stringing up. I can understand a stabbing. But his brain just shut down..."
+        },
+        {
+          "character": "PREME",
+          "parenthetical": "",
+          "text": "My dad died of an aneurism. One day he was fine, the next just... I found him leaned over the sink."
+        }
+      ],
+      "actionPreview": "The whole cast sits in a big circle on the stage. Except for ONE EMPTY CHAIR. Mike Mike’s. We let them sit in silence for a while. Taking in each face. Their grief. Finally one of the men speaks up. Toothbrush still in his mouth. They start to share stories about what Mike Mike did for each of them."
+    },
+    {
+      "number": 59,
+      "heading": "INT. THEATER - A LITTLE LATER",
+      "characters": [
+        "DIVINE EYE",
+        "DIVINE G"
+      ],
+      "dialogues": [
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "Do you want to talk about it?"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Everything that needed to be said, got said. Right? Do you need to get anything off your chest?"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "I’m only asking because you didn’t say much earlier and--"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "(sharp)"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "Look man. I didn’t mean anything by it. I’m just saying, if you need--"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "I’m good."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "(CONT’D) I gotta go write a dozen letters to his family tonight. So I need to finish up these chairs. Appreciate it."
+        }
+      ],
+      "actionPreview": "Divine G is stacking chairs again. Divine Eye comes beside him to help. Divine Eye stops stacking. What’s that supposed to mean? Divine G realizes his tone. Softens a bit. Divine G steps away with three stacked chairs."
+    },
+    {
+      "number": 60,
+      "heading": "INT. REC ROOM - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "MONTAGE: THE NEXT FEW DAYS We watch Divine G go through life, living in the slow time. - Watching TV with other men in the common area."
+    },
+    {
+      "number": 61,
+      "heading": "EXT. YARD COURTYARD - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "- Divine G circles the courtyard. As he’s been doing for hours. And will continue to do."
+    },
+    {
+      "number": 62,
+      "heading": "INT. THEATER - LIGHTING BOOTH - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "- Divine G watches down on the rehearsals. The men onstage are paired up and waltzing around part of the pirate ship set."
+    },
+    {
+      "number": 63,
+      "heading": "INT. PAY PHONE - ANOTHER DAY",
+      "characters": [
+        "DIVINE G"
+      ],
+      "dialogues": [
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "...No, that’s not what I’m saying but-- (listens)"
+        }
+      ],
+      "actionPreview": "A singular PAY PHONE hangs on the wall. A long line of people waiting to use it. Currently, Divine G is on a call, though his mind seems far away. But you need to tell them that they can’t talk to you like-- (listens) I hear you, Mama, but-- (listens, now frustrated) Well why are we even talking abo"
+    },
+    {
+      "number": 64,
+      "heading": "INT. PAROLE BOARD HEARING - DAY",
+      "characters": [
+        "LEAD COMMISSIONER FERGUSON",
+        "DIVINE G"
+      ],
+      "dialogues": [
+        {
+          "character": "LEAD COMMISSIONER FERGUSON",
+          "parenthetical": "",
+          "text": "Mr. Whitfield, this is a Clemency hearing for your conviction of murder in the second, for which you were convicted of 25 to life, as well as weapons possession, second and third, two counts on each, two to seven and five to 15 respectively. The sentences are verdict by trial."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "That’s correct."
+        },
+        {
+          "character": "LEAD COMMISSIONER FERGUSON",
+          "parenthetical": "",
+          "text": "You have also served out your sentence for criminal possession of a controlled substance, third degree, one to three year sentence by plea."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "LEAD COMMISSIONER FERGUSON",
+          "parenthetical": "",
+          "text": "I’ll note at the outset we were able to acquire the sentencing minutes, which will be considered as well as your parole packet."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Did you also have time to review the letter from the Jeffrey"
+        },
+        {
+          "character": "LEAD COMMISSIONER FERGUSON",
+          "parenthetical": "",
+          "text": "No, we have it here. I believe I saw that. But before we get to that, we’ve got to finish defining what it is that we’re talking about. Now we’re talking about the"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "As far as I understand."
+        },
+        {
+          "character": "LEAD COMMISSIONER FERGUSON",
+          "parenthetical": "",
+          "text": "And in terms of this offense you have exhausted your appeals, you had the Innocence Project look at this, Legal Aid, you hired an investigator. Apparently you’ve raised other issues of prosecutorial and police department misconduct. And there were some... (reading) ...other exculpatory statements made by another person that were never given to you for your trial."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Harold Wesley exonerated me on the audio tape I submitted."
+        },
+        {
+          "character": "LEAD COMMISSIONER FERGUSON",
+          "parenthetical": "",
+          "text": "But in the end your appeals were not successful."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "To date. That’s correct."
+        },
+        {
+          "character": "LEAD COMMISSIONER FERGUSON",
+          "parenthetical": "",
+          "text": "You do understand that we cannot overturn or invalidate the conviction of this court? We can only take into consideration your assertions of innocence and the information presented to support your claims."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "I understand."
+        },
+        {
+          "character": "LEAD COMMISSIONER FERGUSON",
+          "parenthetical": "",
+          "text": "This tape that you submitted, supposedly proving your innocence..."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "(excited)"
+        },
+        {
+          "character": "LEAD COMMISSIONER FERGUSON",
+          "parenthetical": "",
+          "text": "Yes, that’s part of the issue. It’s been next to impossible for us to verify the authenticity of it because the person who made the tape is deceased. And we can’t get the DA’s office to return our calls."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "I don’t..."
+        },
+        {
+          "character": "LEAD COMMISSIONER FERGUSON",
+          "parenthetical": "",
+          "text": "You understand that creates a complicated legal issue, don’t you?"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Well, yes, but I can’t control--"
+        },
+        {
+          "character": "LEAD COMMISSIONER FERGUSON",
+          "parenthetical": "",
+          "text": "(barreling on) --Since you’ve been in custody you’ve been involved in numerous programs -- it’s too long of a list to go over every one -- but I have a question about the theater program. You’ve been involved in that many years, have you not?"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Yes. I’m one of the founding members of that program. I’m very proud of it."
+        },
+        {
+          "character": "LEAD COMMISSIONER FERGUSON",
+          "parenthetical": "",
+          "text": "And what part do you play in that program? Actor, director...?"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "No I’m not a director. I’m on the"
+        },
+        {
+          "character": "LEAD COMMISSIONER FERGUSON",
+          "parenthetical": "",
+          "text": "So are you acting at all during this interview?"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "(fumbling)"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "(CONT’D)",
+          "text": "The program is designed to help individuals learn management skills and just, become better human beings. That’s all I was trying to get across."
+        },
+        {
+          "character": "LEAD COMMISSIONER FERGUSON",
+          "parenthetical": "",
+          "text": "I read about the program. It’s a good program. OK, any other questions from the board? (none)"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Thank you for the time. And thank you for the consideration."
+        }
+      ],
+      "actionPreview": "Divine G sits in a room more befitting a congressman’s office than a prison. THREE COMMISSIONERS sit in high-backed chairs. Thumbing through his file. They make him a wait a long time before speaking to him. Deskovic Foundation for Justice? I received a letter saying there was some issue with the ti"
+    },
+    {
+      "number": 65,
+      "heading": "INT. PACKAGE ROOM - ANOTHER DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Diving G checks his mail one afternoon. There’s a LETTER. From The Parole Board. It’s THICK, HEAVY. He immediately knows what it says without opening it. We read it all over his face."
+    },
+    {
+      "number": 66,
+      "heading": "INT. THEATER / WINDOW - A LITTLE LATER",
+      "characters": [
+        "GRANTED.",
+        "DIVINE G",
+        "DIVINE EYE"
+      ],
+      "dialogues": [
+        {
+          "character": "GRANTED.",
+          "parenthetical": "",
+          "text": "Divine G steps up next to him. Sees tears have been running down Divine Eye’s face. Divine G just looks out the window and they both quietly stare out a while before speaking."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "You’re going home."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "I can’t believe it. It still doesn’t feel real."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "(CONT’D)",
+          "text": "(MORE)"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "(CONT’D) I wouldn’t be here without you, beloved. Thank you."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Come on. They’re waiting for you."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "I have to keep looking at it to make sure I read it right."
+        }
+      ],
+      "actionPreview": "Divine G steps to the small window looking out at the mountains. Someone else is already there, looking out: Divine Eye. He holds his own LETTER in his hand. A single page. PAROLE What about yours man? Have you heard anything yet? Divine G wants to do anything but stamp out Divine Eye’s enthusiasm r"
+    },
+    {
+      "number": 67,
+      "heading": "INT. THEATER - A LITTLE LATER",
+      "characters": [
+        "DIVINE EYE"
+      ],
+      "dialogues": [
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "This, um, reminds me of something I read on the wall in the box. Got me through my longest stretch in there. (thinks a moment) (MORE)"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "(CONT’D)",
+          "text": "We the willing, led by the unknowing, have been doing the impossible for the ungrateful for so long, with so little, that now we are qualified to do anything with nothing . (considers the cupcake) I love yall man. Every one of you."
+        }
+      ],
+      "actionPreview": "A SINGLE CUPCAKE is carried onstage where Divine Eye waits, everyone gathered around him. PRE-LAP: Audio of people telling stories of Divine Eye. The stories continue as everyone congratulates him on getting parole. Divine G hangs back in the wings, watching it all. After a few stories, Divine Eye s"
+    },
+    {
+      "number": 68,
+      "heading": "INT. THEATER - DAY",
+      "characters": [
+        "PETE",
+        "DIVINE EYE"
+      ],
+      "dialogues": [
+        {
+          "character": "PETE",
+          "parenthetical": "",
+          "text": "I haven’t worn a suit in fifteen years."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "OK, that’s good. Can you move over toward the stage, brother? Lotta guys need to use this mirror."
+        }
+      ],
+      "actionPreview": "ONER tracking backstage and frontstage as COSTUMES are brought in by the program founder Katherine and the buzz is palpable as everyone tries them on for the first time. The outfits are eccentric. Outrageous. Katherine jokes about the strange places she had to look to find them but says its worth it"
+    },
+    {
+      "number": 69,
+      "heading": "INT. ONSTAGE - LATER",
+      "characters": [
+        "UNFOLD."
+      ],
+      "dialogues": [
+        {
+          "character": "UNFOLD.",
+          "parenthetical": "",
+          "text": "Throughout these moments WE TRACK DIVINE G as his mind seems elsewhere."
+        }
+      ],
+      "actionPreview": "The cast is onstage. Cheering as every set is shown off and wheeled in. We get a beautiful pep talk from Brent. This is the final dress rehearsal before opening night. He thanks the men for trusting the process, for trusting him to be part of it. We now drift across the stage as MOMENTS FROM THE PLA"
+    },
+    {
+      "number": 70,
+      "heading": "INT. THEATER - ANCIENT EGYPT SET",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The Egyptian Set is wheeled in. The prince does his Egyptian slide across the stage. Two Egyptian guards stand beside Mummy in her sarcophagus."
+    },
+    {
+      "number": 71,
+      "heading": "INT. THEATER - WHISKERANDOS TOWER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Leslie, Maid Marion, and a companion walk in place as Whiskerandos Tower is wheeled closer. Tower is turned and reveals Whiskerandos, He says his big line. A remote controlled car brings a clue to their next destination."
+    },
+    {
+      "number": 72,
+      "heading": "INT. THEATER - FREDDY KRUEGER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The growing shadow puppet of Freddy Krueger looms closer."
+    },
+    {
+      "number": 73,
+      "heading": "INT. THEATER - HAMLET",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "We enter this scene after Divine Eye finishes his soliloquy. Now we see the bizarre turns that Mummy’s Code has in store for us."
+    },
+    {
+      "number": 74,
+      "heading": "INT. THEATER - PIRATE SHIP SCENE",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Focus on the entrance of the bathtub sailing across the sea, the pirate ship entering the stage opposite. We cut to Leslie and Maid Marion waltzing across the sea. Then the pirates in Hawaiian shirts pair off and join them."
+    },
+    {
+      "number": 75,
+      "heading": "INT. THEATER - LATER",
+      "characters": [
+        "DIVINE G",
+        "IV.",
+        "BRENT",
+        "DIVINE EYE"
+      ],
+      "dialogues": [
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Zakariedies has got me locked into a 25 year no-pay contract. If I don't stay and be his number one gladiator, he's gonna kill my wife and daughters and feed me to the lions."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "(CONT’D) (to first actor)"
+        },
+        {
+          "character": "IV.",
+          "parenthetical": "",
+          "text": "Divine G looks out into the empty seats."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BRENT",
+          "parenthetical": "(O.S.)",
+          "text": "Um. Why don’t we take five and--"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Why? It’s not going to help. More time and more time, if we don’t have it now, we’re not going to get it, don’t you all understand that?"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "C’mon bro. Let’s take a walk."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "(snaps)"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "You done?"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "No. I’m not. (long pause)"
+        }
+      ],
+      "actionPreview": "DIVINE G’S SCENE IN THE GLADIATOR COLISEUM IS UP. He enters the stage with three others. He gives his line reading, fast and flat. The timing throws his scene partner, who stumbles. Then asks for his line. Brent starts to read the line, but Divine G railroads them. You say, We sure could’a used you "
+    },
+    {
+      "number": 76,
+      "heading": "INT. THEATER - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "SING SING - VARIOUS A series of shots of EMPTY SPACES throughout the prison: - The THEATER. The stage filled with props, but dark and empty."
+    },
+    {
+      "number": 77,
+      "heading": "INT. CLASSROOM - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "- A CLASSROOM. Filled with chairs, the lights out."
+    },
+    {
+      "number": 78,
+      "heading": "EXT. YARD - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "- The YARD. Wind blowing the dirt around. Little wrens searching for scraps."
+    },
+    {
+      "number": 79,
+      "heading": "INT. CLASSROOM - ANOTHER DAY",
+      "characters": [
+        "DINO",
+        "BRENT"
+      ],
+      "dialogues": [
+        {
+          "character": "DINO",
+          "parenthetical": "",
+          "text": "Hey!"
+        },
+        {
+          "character": "DINO",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DINO",
+          "parenthetical": "",
+          "text": "(CONT’D) (to another)"
+        },
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "I remember my first time directing a production in here. I decided all the roles, who would get what parts. It’s how you do it on the outside, the director decides. Then I brought that list in and Divine G pulled me aside and said, that’s not how we do it here. We decide together."
+        },
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "The entire cast sits in a circle of chairs. The conversation is chaotic, everyone talking over each other. The subject: Divine G leaving. Divine Eye sits in a chair at the edge, barely in the circle. Brent is here too, mostly listening. The cast is talking about Divine G, mostly talking shit about h"
+    },
+    {
+      "number": 80,
+      "heading": "INT. MESS HALL - ANOTHER DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Divine Eye sits by himself, eating silently, full of questions. Someone walks across behind him, DROPS A WAD OF CASH on the table by his tray. Divine Eye instinctively hides it under his tray. He looks up to see who has passed. Clay. The young man he extorted crosses the room and sits with a GROUP O"
+    },
+    {
+      "number": 81,
+      "heading": "INT. DIVINE EYE'S CELL - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "VARIOUS SHOTS of Divine Eye’s cell. Stacked cans of soup. Air Jordans. Ramen for days. A wealth amassed over the years. But not the wealth Divine Eye longs for any longer. Divine Eye sits at his desk. Lit by a single desk lamp. After a while he pulls out his script. Opens it to his first scene. He s"
+    },
+    {
+      "number": 82,
+      "heading": "INT. CLASSROOM - LATER",
+      "characters": [
+        "BRENT",
+        "CHARLIE.",
+        "CHARLIE",
+        "A LITTLE LATER.",
+        "CARMINE"
+      ],
+      "dialogues": [
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "Now hold that face in your mind."
+        },
+        {
+          "character": "CHARLIE",
+          "parenthetical": "",
+          "text": "Did it look like me?"
+        },
+        {
+          "character": "A LITTLE LATER.",
+          "parenthetical": "",
+          "text": "Charlie sits in the circle with them. Telling a story."
+        },
+        {
+          "character": "CHARLIE",
+          "parenthetical": "",
+          "text": "(looking for the words) I’ve been talking to a counselor and she says, you know, I might have the, uh, the PT..."
+        },
+        {
+          "character": "CARMINE",
+          "parenthetical": "",
+          "text": "(softly) PTSD."
+        },
+        {
+          "character": "CHARLIE",
+          "parenthetical": "",
+          "text": "I miss yall is all. I feel like my family is in here and I’m just..."
+        },
+        {
+          "character": "CHARLIE",
+          "parenthetical": "",
+          "text": "(CONT’D) (collecting himself)"
+        },
+        {
+          "character": "CHARLIE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BRENT",
+          "parenthetical": "",
+          "text": "Yeah. Definitely. Let’s all get up on our feet. Stop sitting around like a sewing circle."
+        }
+      ],
+      "actionPreview": "Divine Eye is back with the rest of the cast. Brent starts a warmup. He asks everyone to close their eyes. He has them IMAGINE A FRIEND. Anyone they would like to see who they haven’t in a long time. And open your eyes. A man in street clothes stands there, smiling. This is They group explodes with "
+    },
+    {
+      "number": 83,
+      "heading": "EXT. YARD / STAIRCASE - AFTERNOON",
+      "characters": [
+        "DIVINE EYE",
+        "DIVINE G"
+      ],
+      "dialogues": [
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "You know, I lied when I came into the program. I said I didn’t know what those plays were and I just wanted to talk to the chicks and all that. I mean, I did want to talk to chicks, but I knew about the plays. I was artistic, you know. When I was a kid."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "(CONT’D) I painted. Drew a lot. Anytime my mom’s friends were sick, she’d have me draw a card for them. Or paint something. But I was always, you know, I didn’t look like an artist."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "(CONT’D) I was out here in the yard one day, couple years back, and it starts pouring rain, so they shut it down."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Which one was it?"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "The one with the... guys in the asylum--"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Cuckoo’s Nest. Not a comedy."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "(smiles at that)"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "I knew you were lying about that too. I never forget a face out in that crowd."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "(laughs)"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "I fucked up."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "You did."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "What’s that?"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "You gotta admit that I absolutely crushed that soliloquy. Like,"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "You did. You did, my beloved."
+        }
+      ],
+      "actionPreview": "Divine Eye sees Divine G across the yard, sitting on some stairs. Watching the Hudson River. The town beyond the river. People going home. Soon he crosses the yard and sits quietly with him. After a while the passenger train goes through the yard. Divine Eye lets the silence settle back in before he"
+    },
+    {
+      "number": 84,
+      "heading": "INT. THEATER - EVENING",
+      "characters": [
+        "BACKSTAGE.",
+        "DIVINE G",
+        "ALL",
+        "WASH TO WHITE."
+      ],
+      "dialogues": [
+        {
+          "character": "BACKSTAGE.",
+          "parenthetical": "",
+          "text": "The cast is in a tight huddle."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "I thought I was stronger. And uh... I’m just grateful for this family."
+        },
+        {
+          "character": "ALL",
+          "parenthetical": "",
+          "text": "(starting quiet)"
+        },
+        {
+          "character": "ALL",
+          "parenthetical": "",
+          "text": "(CONT’D) ENERGY! ENERGY!! FLOWING THROUGH MY BODY!!! CUT TO: ONSTAGE. LATER. JUST BEFORE SHOWTIME."
+        }
+      ],
+      "actionPreview": "Divine G looks across the cast. They look him back at him, waiting for him to say something. And everyone understands this. They nod. Welcome him back. Then one actor starts a chant that the others soon join. Energy. Energy. Flowing through my body. (a little louder) Energy. Energy! Flowing through "
+    },
+    {
+      "number": 85,
+      "heading": "INT. CORRIDOR - DAYS LATER",
+      "characters": [
+        "CO"
+      ],
+      "dialogues": [
+        {
+          "character": "CO",
+          "parenthetical": "",
+          "text": "Yall were pretty good out there the other night."
+        }
+      ],
+      "actionPreview": "Divine G is walking down the cellblock, escorted by a CO, passing one cell after another. Each a little microcosm, showing the life of the person inside."
+    },
+    {
+      "number": 86,
+      "heading": "INT. DIVINE EYE'S CELL - A LITTLE LATER",
+      "characters": [
+        "DIVINE G",
+        "DIVINE EYE"
+      ],
+      "dialogues": [
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "They let me come down and say goodbye. Still waiting?"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "Been the longest two days of my whole bid."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "I’ve heard that. (of the cell)"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "I didn’t have that much to start with. Sorry I didn’t have nothing to give you. I didn’t feel like I had nothing good enough."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "You’ve given me plenty."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "This ain’t goodbye, you know. I’ll see you out there before long."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Nah..."
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "Come on man. Don’t get all, what’d you call it, fatalistic. Don’t bum me out on my last day in here."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Nah, It’s not like that. I’m good."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "(CONT’D) I had a little brother, Jeffrey. He had a, condition, it was congenital. His heart wasn’t strong enough to pump blood around his body... looked all blue since I can remember. It was ironic because he was the biggest hearted person I ever met. He knew things too. From the time he was ten he started saying he was gonna die soon, that he wouldn’t be with us long. He always said, Davey, don’t worry mama when I’m gone. I used to get so fuckin mad at him but... (MORE)"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "(CONT’D)",
+          "text": "it was just cause I was scared of what he was saying. Scared of losing him."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "(CONT’D) I used to carry him to the park in the afternoons. The 260 park in"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "Divine Eye’s cell is completely empty. He sits on his cot in there. Divine G smiles when he sees him, leans on the bars. (MORE) You cleaned out. They sit with that a moment. Here. Whatever that means. Divine G is thoughtful a moment. Divine G is quiet. Seems to be working out what he’s trying to say"
+    },
+    {
+      "number": 87,
+      "heading": "INT. CLASSROOM - SOME TIME LATER",
+      "characters": [
+        "DIVINE G",
+        "BIG E",
+        "DAP"
+      ],
+      "dialogues": [
+        {
+          "character": "DIVINE G",
+          "parenthetical": "(CONT’D)",
+          "text": "JJ"
+        },
+        {
+          "character": "BIG E",
+          "parenthetical": "",
+          "text": "So what do we want to do next?"
+        },
+        {
+          "character": "DAP",
+          "parenthetical": "",
+          "text": "What about one of Divine G’s plays?"
+        },
+        {
+          "character": "DAP",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "I don’t know... JJ"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "Ah yeah. Fine Print. But that one still needs some work. Lost in the second act. (thinks)"
+        }
+      ],
+      "actionPreview": "Another day. Divine G and three others of the Steering Committee sit in a circle in the classroom. A few seats remain empty. Divine G sips his tea and makes a few notes. The others are still buzzing from the play, talking about what a joy it was to do a comedy. Yeah, but I thought a comedy would be "
+    },
+    {
+      "number": 88,
+      "heading": "INT. THEATER - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Music begins as we see grainy DV CAM footage begin of: SEVEN YEARS OF CURTAIN CALLS. We see the end of play after play, moments of Divine G with rotating casts, dressed in an array of costumes from different eras and countries, all stepping out as the curtains part to take their bow. Intercut with A"
+    },
+    {
+      "number": 89,
+      "heading": "INT. DIVINE G'S CELL - ANOTHER DAY",
+      "characters": [
+        "SEVEN YEARS LATER."
+      ],
+      "dialogues": [
+        {
+          "character": "SEVEN YEARS LATER.",
+          "parenthetical": "",
+          "text": "Divine G sits alone in his cell, a box on his lap. Everything else has been cleaned out."
+        }
+      ],
+      "actionPreview": "On top of the box, A LETTER. LIGHT AS A FEATHER. His GATE clangs open. He steps out, carrying his box, and stands outside his gate, waiting for his CO escort. He looks around. His eyes land on Mike Mike’s old cell. A new face looks out at him from it. A young man. They nod to each other, a subtle mo"
+    },
+    {
+      "number": 90,
+      "heading": "EXT. THE GATE - SOON AFTER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Divine G stands with his paper sack. A twenty foot steel gate lumbers open. He steps in a narrow passage between gates. His heart starts to thunder in his chest. A CO steps out of an office a clipboard. We watch their interaction without words from the watchtower, high as a bird. The CO makes a note"
+    },
+    {
+      "number": 91,
+      "heading": "INT. / EXT. PARKED SUV - DAY",
+      "characters": [
+        "DIVINE EYE",
+        "DIVINE G"
+      ],
+      "dialogues": [
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "Was starting to get worried."
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "I was just trying not to walk too fast. Didn’t want them to see me running, think I was escaping and shoot me."
+        }
+      ],
+      "actionPreview": "Peering through a windshield, we see a little road that wraps around the prison fence, layers of razor wire in the background. Soon, Divine G comes walking around the bend. We pan to see the person leaned on the hood of the car, waiting for Divine G. Divine Eye. Thought you had decided to stay. They"
+    },
+    {
+      "number": 92,
+      "heading": "EXT. SING SING FENCE LINE - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Divine Eye meets G along the fence. They grab each other a deep hug. Holding it for a while. An expanse of prison and razor wire stretches out beyond them."
+    },
+    {
+      "number": 93,
+      "heading": "INT. SUV / COUNTRY ROAD - LATER",
+      "characters": [
+        "DIVINE EYE",
+        "DIVINE G",
+        "THE END."
+      ],
+      "dialogues": [
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "You good?"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "It’s a lot, isn’t it?"
+        },
+        {
+          "character": "DIVINE G",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DIVINE EYE",
+          "parenthetical": "",
+          "text": "Just sit with it man. Sit with it."
+        }
+      ],
+      "actionPreview": "A blur of green out the window. Divine Eye drives along a road socked in with trees. Wind sings through the open windows. Divine G looks out. The movement is overwhelming. Divine G looks for the words. He looks over to Divine Eye. Divine Eye nods. Almost too much. Divine G’s emotions are welling up."
+    }
+  ]
+}

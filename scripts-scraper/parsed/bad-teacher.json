@@ -1,0 +1,22 @@
+{
+  "slug": "bad-teacher",
+  "title": "Bad Teacher",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 23414,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                  BAD TEACHER </b> Written by Lee Eisenberg & Gene Stupnitsky June 6, 2008 <b>                         FADE IN: </b> <b>          EXT. JOHN ADAMS MIDDLE SCHOOL - DAY </b> To establish. A school marquee with removable plastic letters reads, \"GOOD LUCK WITH FINALS!\" A JANITOR opens the glass and starts removing the letters. <b>          INT. TEACHER'S LOUNGE - DAY </b> POP! A Champagne cork hits the ceiling. TEACHERS who rarely get to drink at work, jockey for po",
+      "dialogue_count": 0,
+      "word_count": 23414
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "slug": "beavis-and-butt-head-do-america",
+  "title": "Beavis and Butt-head Do America",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 21647,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<html><head><title>Beavis and Butt-Head Do America - by Mike Judge and Joe Stillman </title> <script> <b><!-- </b>if (window!= top) top.location.href=location.href <b>// --> </b></script> </head> <pre> <b> </b><b> </b><b> </b><b> </b><b> </b><b> </b><b> </b><b> </b><b> </b><b> </b><b> </b><b> </b><b>\t\"BEAVIS AND BUTT-HEAD DO AMERICA\" </b><b> </b>\tby <b> </b>\tMike Judge and Joe Stillman <b> </b><b> </b><b> </b><b> </b>\t\tThe movie begins with scenes of people screaming in horror and running down t",
+      "dialogue_count": 0,
+      "word_count": 21647
+    }
+  ]
+}

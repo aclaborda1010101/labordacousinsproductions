@@ -1,0 +1,26 @@
+{
+  "slug": "analyze-that",
+  "title": "Analyze That",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 1,
+  "characters": [
+    "ANALYZE THAT"
+  ],
+  "total_words": 24784,
+  "total_dialogue": 1,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "ANALYZE THAT"
+      ],
+      "action_text": "ANALYZE THAT Screenplay by PETER STEINFELD and HAROLD RAMIS and PETER TOLAN Based on characters created by KENNETH LONERGAN and PETER TOLAN June 2002 Draft <b>              FOR EDUCATIONAL </b><b>               PURPOSES ONLY </b><b> </b><b>FADE IN: </b> <b>INT. DIMLY-LIT BAR - NIGHT </b> Two men, CAESAR and MARTY \"DUCKS,\" stand at  the   end of the deserted bar, talking quietly, oblivious to  the   exotic dancer grinding her pelvis on a pole in the middle  of   the small stage. Body language and",
+      "dialogue_count": 1,
+      "word_count": 24784
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "slug": "do-the-right-thing",
+  "title": "Do The Right Thing",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 17948,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>\t\t\t\t DO THE RIGHT THING </b> by Spike Lee Second Draft March 1, 1988; Brooklyn, N.Y. Forty Acres and a Mule Filmworks, Inc. <b>YA-DIG SHO-NUFF </b><b>BY ANY MEANS NECESSARY </b><b>WGA #45816 </b> \"The greatest miracle Christianity has achieved in America is that the black man in white Christian hands has not grown violent.  It is a miracle that 22 million black people have not risen up against their oppressors--in which they would have been justified by all moral criteria, and even by the dem",
+      "dialogue_count": 0,
+      "word_count": 17948
+    }
+  ]
+}

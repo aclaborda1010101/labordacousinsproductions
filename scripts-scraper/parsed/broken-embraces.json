@@ -1,0 +1,22 @@
+{
+  "slug": "broken-embraces",
+  "title": "Broken Embraces",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 47743,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                    BROKEN EMBRACES </b><b> </b> Written by Pedro Almodovar <b> </b> <b> </b> <b> </b> <b>          DUSK, OR NIGHT HAS ONLY BARELY FALLEN. </b> <b> </b> <b> </b> <b> </b> <b> </b>          A huge clock marks 7:55 p.m. (The clock belongs to some landmark building, to be determined). Immediately following, the building goes dark. Establishing shot of the Eiffel Tower, lit. Suddenly, all the lights go out. The same thing happens with the Granada's Alhambra, Sevill",
+      "dialogue_count": 0,
+      "word_count": 47743
+    }
+  ]
+}

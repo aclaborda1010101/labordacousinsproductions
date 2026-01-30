@@ -1,0 +1,22 @@
+{
+  "slug": "50-50",
+  "title": "50-50",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 23900,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                           50/50 (I'M WITH CANCER) </b> Written by Will Reiser <b>                                                               7/2/08 </b><b>          FADE IN: </b> <b>          OPENING TITLE SEQUENCE </b> <b>          EXT. SAN DIEGO - DAY </b> It's another picture perfect day in San Diego. The beaches, golf courses, and yacht clubs are packed with hundreds of rapturous citizens. <b>          EXT. BUS STOP - DAY </b> A BUS pulls up and unloads it's passengers. We follow ADAM",
+      "dialogue_count": 0,
+      "word_count": 23900
+    }
+  ]
+}

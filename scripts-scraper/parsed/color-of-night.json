@@ -1,0 +1,22 @@
+{
+  "slug": "color-of-night",
+  "title": "Color of Night",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 31472,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                    COLOR OF NIGHT </b> Written by Billy Ray & Matthew Chapman <b>                         CREDITS </b> Credits start on a black screen, then they continue during the whole scene at Michelle's place, and they end at the beginning of the scene at Bill Capa's office. <b>          MICHELLE'S PLACE - INTERIOR DAY </b> Close-up on a silver lipstick stand made into a bad taste musical box. We see Michelle's hand selecting a lipstick then we see Michelle putting the l",
+      "dialogue_count": 0,
+      "word_count": 31472
+    }
+  ]
+}

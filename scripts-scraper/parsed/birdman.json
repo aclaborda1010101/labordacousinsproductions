@@ -1,0 +1,22 @@
+{
+  "slug": "birdman",
+  "title": "Birdman",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 24921,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                 BIRDMAN </b> <b> </b> Written by Alejandro G. Inarritu Nicolas Giacobone Alexander Dinelaris, Jr. Armando Bo <b>1    BLACK                                                        1 </b> We hear a clock ticking. <b>                                                      FADE IN: </b> <b>1    INT. RIGGAN'S DRESSING ROOM - THEATER - DAY                  1 </b>     Close on the brilliant colors of a middle eastern rug, the center of what seems to be a makeshift \"medi",
+      "dialogue_count": 0,
+      "word_count": 24921
+    }
+  ]
+}

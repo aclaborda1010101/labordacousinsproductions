@@ -1,0 +1,26 @@
+{
+  "slug": "argo",
+  "title": "Argo",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 1,
+  "characters": [
+    "IRAN."
+  ],
+  "total_words": 26987,
+  "total_dialogue": 1,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "IRAN."
+      ],
+      "action_text": "<b>                                ARGO </b> Written by Chris Terrio Based on the May 2007 \"Wired\" magazine article entitled \"The Great Escape\" by Joshuah Bearman; and chapter nine of the book entitled \"The Master of Disguise\" by Antonio Mendez. <b>                         FADE IN: </b> <b>                         BEGINNING LOGO </b>          The familiar logo WARNER BROS. PRESENTS COMES UP. After a beat, it is consumed by FIRE. It becomes AN AMERICAN FLAG, BURNING in the street. <b>          1",
+      "dialogue_count": 1,
+      "word_count": 26987
+    }
+  ]
+}

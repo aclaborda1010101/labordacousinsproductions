@@ -1,0 +1,50 @@
+{
+  "slug": "amelia",
+  "title": "Amelia",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 13,
+  "characters": [
+    "GEORGE",
+    "AMELIA",
+    "DOROTHY",
+    "MELIA",
+    "ELINOR",
+    "EORGE",
+    "MAN",
+    "ENE",
+    "E         AMELIA",
+    "DALTEN",
+    "BELLARTS",
+    "THOMPSON",
+    "COMMANDER"
+  ],
+  "total_words": 31203,
+  "total_dialogue": 53,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "GEORGE",
+        "AMELIA",
+        "DOROTHY",
+        "MELIA",
+        "ELINOR",
+        "EORGE",
+        "MAN",
+        "ENE",
+        "E         AMELIA",
+        "DALTEN",
+        "BELLARTS",
+        "THOMPSON",
+        "COMMANDER"
+      ],
+      "action_text": "<b> </b><b>                                        AMELIA </b> <b> </b> Written by Ronald Bass & Anna Hamilton Phelan <b> </b> September 14, 2007 <b> </b> <b>          1                                                                1 </b> <b>              EXT. BAR, LAE, NEW GUINEA - DAY </b> CLOSE on a mud-streaked AIRFIELD in mist and driving RAIN. A Lockheed ELECTRA sits. Sleek, twin-engine, state-of-the- art, its metallic surface battered by the monsoon. Waiting. PULL BACK to see... ...our V",
+      "dialogue_count": 53,
+      "word_count": 31203
+    }
+  ]
+}

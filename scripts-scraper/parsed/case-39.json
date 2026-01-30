@@ -1,0 +1,22 @@
+{
+  "slug": "case-39",
+  "title": "Case 39",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 26159,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                     CASE 39 </b> Written by Ray Wright <b>                                                            02/06/06 </b> <b>          INSPIRED BY REAL EVENTS </b><b>           1. </b> Pitch black. We hear FOOTSTEPS sneaking up an old wooden staircase. Two people moving as one. Topping the stairs, they creep down the hall to the closed door that protects us. We can hear them behind it, whispering, bickering insanely, one shushing the other. The squeak of a door knob",
+      "dialogue_count": 0,
+      "word_count": 26159
+    }
+  ]
+}

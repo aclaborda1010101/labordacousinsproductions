@@ -1,0 +1,22 @@
+{
+  "slug": "alien-3",
+  "title": "Alien 3",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 23940,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "Alien III Screenplay by John Fasano Story by Vincent Ward & John Fasano <b> </b><b>\t\t\t\t\tFIRST DRAFT </b>\t\t\t\t\tMarch 29, 1990 \"But how will you die when your time comes, Narcissus, since you have no mother?  Without a mother, one cannot love.  Without a mother, one cannot die.\" - Hesse <b>ALIEN III </b> <b>THE SCREEN IS BLACK </b> A pinpoint of light appears. Red.  An ember. Unseen BELLOWS blow. <b>GLASS FURNACE </b> The embers glow.  Flame. The fire GROWS. <b>A RIVER OF MOLTEN GLASS </b> Heated b",
+      "dialogue_count": 0,
+      "word_count": 23940
+    }
+  ]
+}

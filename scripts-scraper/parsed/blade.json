@@ -1,0 +1,30 @@
+{
+  "slug": "blade",
+  "title": "Blade",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 3,
+  "characters": [
+    "ABRAHAM WHISTLER",
+    "QUINN",
+    "VOICE"
+  ],
+  "total_words": 26343,
+  "total_dialogue": 4,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "ABRAHAM WHISTLER",
+        "QUINN",
+        "VOICE"
+      ],
+      "action_text": "<html> <head> <script> <b><!-- </b>if (window!= top) top.location.href=location.href <b>// --> </b></script> <title>BLADE - by David S. Goyer</title> </head> <pre> <b>                                BLADE </b><b>                                ----- </b> by <b> </b>                            David S. Goyer Darkness, BLOOD-CURDLING SCREAMS. Presentation credits roll as we <b>\tFADE UP ON: </b> <b>\tINT. HOSPITAL, INNER-CITY TRAUMA WARD - NIGHT </b> It's 1967, the Summer of Love and -- BOOM! Entry",
+      "dialogue_count": 4,
+      "word_count": 26343
+    }
+  ]
+}

@@ -1,0 +1,314 @@
+{
+  "version": "4.0-rescue",
+  "total": 525,
+  "processedAt": "2026-01-29T20:40:52.233Z",
+  "quality": {
+    "withCharacters": 525,
+    "withDialogue": 525,
+    "withScenes": 497,
+    "highConfidence": 525,
+    "mediumConfidence": 0,
+    "withCharactersPercent": 100,
+    "withDialoguePercent": 100,
+    "withScenesPercent": 95,
+    "highConfidencePercent": 100
+  },
+  "avgMetrics": {
+    "avgScenes": 44,
+    "avgRuntime": 21,
+    "avgCharacters": 38,
+    "avgDialogues": 227.9,
+    "avgDialogueRatio": 0.63
+  },
+  "genres": {
+    "action": 172,
+    "drama": 147,
+    "comedy": 101,
+    "thriller": 71,
+    "horror": 10,
+    "scifi": 14,
+    "romance": 10
+  },
+  "topExamples": [
+    {
+      "title": "12 Strong",
+      "characters": 40,
+      "dialogues": 316,
+      "scenes": 54,
+      "genre": "action",
+      "topChars": [
+        "NELSON",
+        "SPENCER",
+        "ON",
+        "INTO",
+        "DOSTUM"
+      ]
+    },
+    {
+      "title": "12 Years A Slave",
+      "characters": 40,
+      "dialogues": 332,
+      "scenes": 55,
+      "genre": "action",
+      "topChars": [
+        "SOLOMON",
+        "FINAL",
+        "FORD",
+        "HAMILTON",
+        "BROWN"
+      ]
+    },
+    {
+      "title": "20th Century Women",
+      "characters": 40,
+      "dialogues": 448,
+      "scenes": 96,
+      "genre": "drama",
+      "topChars": [
+        "DOROTHEA",
+        "JAMIE",
+        "ABBIE",
+        "JULIE",
+        "WILLIAM"
+      ]
+    },
+    {
+      "title": "22 July",
+      "characters": 40,
+      "dialogues": 504,
+      "scenes": 164,
+      "genre": "action",
+      "topChars": [
+        "LIPPESTAD",
+        "SAME TIME",
+        "VILJAR",
+        "CHRISTIN",
+        "UTOYA"
+      ]
+    },
+    {
+      "title": "22 Jump Street",
+      "characters": 40,
+      "dialogues": 94,
+      "scenes": 23,
+      "genre": "comedy",
+      "topChars": [
+        "SCHMIDT",
+        "JENKO",
+        "ANNIE",
+        "YANG",
+        "ALAN"
+      ]
+    },
+    {
+      "title": "A Fantastic Woman",
+      "characters": 40,
+      "dialogues": 155,
+      "scenes": 27,
+      "genre": "drama",
+      "topChars": [
+        "MARINA",
+        "ADRIANA",
+        "SONIA",
+        "WANDA",
+        "ORLANDO"
+      ]
+    },
+    {
+      "title": "A Knock At The Cabin",
+      "characters": 40,
+      "dialogues": 230,
+      "scenes": 20,
+      "genre": "thriller",
+      "topChars": [
+        "ANDREW",
+        "LEONARD",
+        "SABRINA",
+        "ADRIANE",
+        "ERIC"
+      ]
+    },
+    {
+      "title": "A Monster Calls",
+      "characters": 40,
+      "dialogues": 423,
+      "scenes": 158,
+      "genre": "horror",
+      "topChars": [
+        "CONOR",
+        "DAD",
+        "MONSTER",
+        "GRANDMA",
+        "MUM"
+      ]
+    },
+    {
+      "title": "A Most Violent Year",
+      "characters": 40,
+      "dialogues": 317,
+      "scenes": 40,
+      "genre": "action",
+      "topChars": [
+        "ABEL",
+        "ANNA",
+        "LAWRENCE",
+        "ANDREW",
+        "WALSH"
+      ]
+    },
+    {
+      "title": "A Quiet Place",
+      "characters": 40,
+      "dialogues": 154,
+      "scenes": 70,
+      "genre": "drama",
+      "topChars": [
+        "AFTERNOON",
+        "JOHN",
+        "MIA",
+        "APRIL",
+        "WIND"
+      ]
+    },
+    {
+      "title": "A Simple Favor",
+      "characters": 40,
+      "dialogues": 297,
+      "scenes": 46,
+      "genre": "drama",
+      "topChars": [
+        "STEPHANIE",
+        "SEAN",
+        "EMILY",
+        "NICKY",
+        "MORTICIAN"
+      ]
+    },
+    {
+      "title": "A Star Is Born",
+      "characters": 40,
+      "dialogues": 457,
+      "scenes": 60,
+      "genre": "comedy",
+      "topChars": [
+        "ALLY",
+        "JACK",
+        "RAMON",
+        "REZ",
+        "BOBBY"
+      ]
+    },
+    {
+      "title": "A Very English Scandal 101 Episode 1 1",
+      "characters": 40,
+      "dialogues": 355,
+      "scenes": 86,
+      "genre": "drama",
+      "topChars": [
+        "JEREMY",
+        "NORMAN",
+        "BESSELL",
+        "LORD",
+        "ARRAN"
+      ]
+    },
+    {
+      "title": "A Very English Scandal 102 Episode 1 2",
+      "characters": 40,
+      "dialogues": 257,
+      "scenes": 61,
+      "genre": "thriller",
+      "topChars": [
+        "NORMAN",
+        "JEREMY",
+        "ANDREW",
+        "DAVID",
+        "GWEN"
+      ]
+    },
+    {
+      "title": "A Very English Scandal 103 Episode 1 3",
+      "characters": 40,
+      "dialogues": 214,
+      "scenes": 38,
+      "genre": "thriller",
+      "topChars": [
+        "JEREMY",
+        "MARION",
+        "DAVID",
+        "CHALLES",
+        "ORME"
+      ]
+    },
+    {
+      "title": "About Alex",
+      "characters": 40,
+      "dialogues": 300,
+      "scenes": 37,
+      "genre": "comedy",
+      "topChars": [
+        "SARAH",
+        "ALEX",
+        "BEN",
+        "SIRI",
+        "JOSH"
+      ]
+    },
+    {
+      "title": "Ad Astra",
+      "characters": 40,
+      "dialogues": 133,
+      "scenes": 20,
+      "genre": "scifi",
+      "topChars": [
+        "MCBRIDE",
+        "ROY",
+        "MED",
+        "MED TECH",
+        "CLIFFORD"
+      ]
+    },
+    {
+      "title": "After The Wedding",
+      "characters": 40,
+      "dialogues": 160,
+      "scenes": 39,
+      "genre": "comedy",
+      "topChars": [
+        "THERESA",
+        "ISABEL",
+        "JONATHAN",
+        "GRACE",
+        "OSCAR"
+      ]
+    },
+    {
+      "title": "Alex Cross",
+      "characters": 40,
+      "dialogues": 494,
+      "scenes": 135,
+      "genre": "action",
+      "topChars": [
+        "ALEX",
+        "SULLIVAN",
+        "TOMMY",
+        "NANA",
+        "DAWSON"
+      ]
+    },
+    {
+      "title": "Alien Covenant",
+      "characters": 40,
+      "dialogues": 166,
+      "scenes": 23,
+      "genre": "scifi",
+      "topChars": [
+        "DAVID",
+        "ORAM",
+        "WALTER",
+        "DANIELS",
+        "LOPE"
+      ]
+    }
+  ]
+}

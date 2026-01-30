@@ -1,0 +1,22 @@
+{
+  "slug": "citizen-kane",
+  "title": "Citizen Kane",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 37870,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<html> <head> <script> <b><!-- </b>if (window!= top) top.location.href=location.href <b>// --> </b></script> <title>CITIZEN KANE</title> </head> <pre> Citizen Kane By Herman J. Mankiewicz <b>                                        & </b> Orson Welles <b> </b><b> </b> <b>                                     PROLOGUE </b> <b>          FADE IN: </b> <b>          EXT. XANADU - FAINT DAWN - 1940 (MINIATURE) </b> Window, very small in the distance, illuminated. All around this is an almost totally bla",
+      "dialogue_count": 0,
+      "word_count": 37870
+    }
+  ]
+}

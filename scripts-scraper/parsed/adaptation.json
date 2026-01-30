@@ -1,0 +1,54 @@
+{
+  "slug": "adaptation",
+  "title": "Adaptation",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 15,
+  "characters": [
+    "ADAPTATION",
+    "TONY",
+    "MARGARET",
+    "LAROCHE",
+    "BOY",
+    "DONALD",
+    "KAUFMAN",
+    "ORLEAN",
+    "STEWARDESS",
+    "BOTANIST",
+    "MIKE OWEN",
+    "GUY ON BENCH",
+    "ORLEAN PHOTO",
+    "VALERIE",
+    "MCKEE"
+  ],
+  "total_words": 27773,
+  "total_dialogue": 68,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "ADAPTATION",
+        "TONY",
+        "MARGARET",
+        "LAROCHE",
+        "BOY",
+        "DONALD",
+        "KAUFMAN",
+        "ORLEAN",
+        "STEWARDESS",
+        "BOTANIST",
+        "MIKE OWEN",
+        "GUY ON BENCH",
+        "ORLEAN PHOTO",
+        "VALERIE",
+        "MCKEE"
+      ],
+      "action_text": "ADAPTATION by Charlie Kaufman and Donald Kaufman adapted from the book <b>      THE ORCHID THIEF </b> by Susan Orlean September 24, 1999 Second Draft <b> </b><b>EXT. ROCKY TERRAIN - DAY </b> Endless barren landscape. No sign of life. The atmosphere is hazy, toxic-looking. Volcanoes erupt. Meteors bombard. Lightning strikes, concussing murky pools of water. Silence. <b>INT. LARGE EMPTY LIVING ROOM - MORNING </b> <b>SUBTITLE: HOLLYWOOD, CA, FOUR BILLION AND FORTY YEARS LATER </b> Beamed ceilings a",
+      "dialogue_count": 68,
+      "word_count": 27773
+    }
+  ]
+}

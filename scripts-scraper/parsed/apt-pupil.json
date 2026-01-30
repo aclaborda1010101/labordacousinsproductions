@@ -1,0 +1,26 @@
+{
+  "slug": "apt-pupil",
+  "title": "Apt Pupil",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 1,
+  "characters": [
+    "DUSSANDER"
+  ],
+  "total_words": 31594,
+  "total_dialogue": 1,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "DUSSANDER"
+      ],
+      "action_text": "<html> <head> <title>APT PUPIL by Brandon Boyce</title> </head> <body bgcolor=\"#ffffff\"> <pre> <u>Apt Pupil</u> by Brandon Boyce Based on the novel by: Stephen King <b>                                                  PRODUCTION DRAFT #4A </b>                                                          4/25/96 rev. <b>     FADE IN: </b> Through the window of a moving vehicle, we see a series of small, middle-class houses.  This could be any suburban street in America. <b>     INT. CITY BUS - DAY </",
+      "dialogue_count": 1,
+      "word_count": 31594
+    }
+  ]
+}

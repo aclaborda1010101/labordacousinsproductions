@@ -1,0 +1,36 @@
+{
+  "slug": "chaos",
+  "title": "Chaos",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 6,
+  "characters": [
+    "LORENZ",
+    "AGENT DOYLE",
+    "CONNERS",
+    "JENKINS",
+    "DEKKER",
+    "DAX"
+  ],
+  "total_words": 23059,
+  "total_dialogue": 13,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "LORENZ",
+        "AGENT DOYLE",
+        "CONNERS",
+        "JENKINS",
+        "DEKKER",
+        "DAX"
+      ],
+      "action_text": "<b>                                   CHAOS </b> Written by Tony Giglio Shooting script March 15th, 2004 <b>     FADE IN: </b> <b>     BEGIN OPENING CREDITS: </b> <b>A1   EXT.   PEARL STREET BRIDGE- NIGHT                               A1 </b> CLOSE ON...   A BRONZE PLAQUE which reads, \"PEARL STREET <b>     BRIDGE.\" </b> ON THE BRIDGE... RAIN POURS DOWN. An SUV steers out of control and CRASHES into a STALLED OUT VEHICLE. It's quiet NOW, EXCEPT FOR THE INCESSANT pounding rain.    IN THE DISTANCE,",
+      "dialogue_count": 13,
+      "word_count": 23059
+    }
+  ]
+}

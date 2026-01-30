@@ -1,0 +1,22 @@
+{
+  "slug": "bad-boys",
+  "title": "Bad Boys",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 28719,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "Rev.   06/20/94   (Pink) Rev.   06/21/94   (Yellow) Rev.   06/22/94   (Green) Rev.   06/23/94   (Goldenrod) Rev.   06/23/94   (PM) (Buff) Rev.   06/24/94   (Salmon) Rev.   06/24/94   PM (Cherry) <b>                BAD BOYS </b>                        Revised Draft by <b>                       DOUG RICHARDSON </b> Property of: Don Simpson/Jerry Bruckheimer Films          REVISED DRAFT (Blue) 500 S. Bunea Vista St. Burbank, CA 91521                            June 20, 1994 <b> </b><b>",
+      "dialogue_count": 0,
+      "word_count": 28719
+    }
+  ]
+}

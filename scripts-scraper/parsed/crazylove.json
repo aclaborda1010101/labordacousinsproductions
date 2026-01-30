@@ -1,0 +1,22 @@
+{
+  "slug": "crazylove",
+  "title": "Crazylove",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 26307,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b> </b><b> </b><b>                                  CRAZY LOVE </b><b> </b><b> </b>                                  Written by <b> </b>                                 Carol Watson <b> </b><b> </b><b>                                                      REVISED 3/10/04 </b><b> </b><b> </b><b> </b><b>          FADE IN: </b><b> </b><b>          INT. BEDROOM - APARTMENT - DAY </b><b> </b>          The sweet silence of slumber. Suddenly, an alarm clock on a nightstand SHRIEKS the operatic tones of",
+      "dialogue_count": 0,
+      "word_count": 26307
+    }
+  ]
+}

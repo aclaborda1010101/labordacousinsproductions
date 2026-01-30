@@ -1,0 +1,22 @@
+{
+  "slug": "bridesmaids",
+  "title": "Bridesmaids",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 27583,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                 BRIDESMAIDS </b> Written by Annie Mumolo <b>                                                           8/12/09 </b> <b>          INT. CLEAN, UPSCALE. MODERN BATHROOM. </b> Annie is in nice lingerie, happily getting ready for the day. She puts a lot of effort into her appearance. Products everywhere, too many hair-flips, eye-cream, no hair out of place. She walks into the bedroom, where TED, a gorgeous man sleeps. She sneaks back into the bed, carefully positio",
+      "dialogue_count": 0,
+      "word_count": 27583
+    }
+  ]
+}

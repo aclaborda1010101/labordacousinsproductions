@@ -1,0 +1,22 @@
+{
+  "slug": "500-days-of-summer",
+  "title": "500 Days of Summer",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 23072,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b> </b><b> </b><b> </b><b>                               500 DAYS OF SUMMER </b><b> </b><b> </b><b> </b>                                   Written by <b> </b>                       Scott Neustadter & Michael H. Weber <b> </b><b> </b><b> </b><b> </b><b> </b>                                                           First Draft <b> </b><b> </b><b> </b><b>          SIMPLE BLACK ON WHITE CREDITS ROLL TO BIG STAR'S \"I'M IN LOVE </b>          WITH A GIRL.\" When all is said and done, up comes a single",
+      "dialogue_count": 0,
+      "word_count": 23072
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "slug": "dream-scenario",
+  "title": "Dream Scenario",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 21052,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                              DREAM SCENARIO </b> Written by Kristoffer Borgli <b>FINAL DRAFT </b><b>DREAM SCENARIO                                                           1 </b> <b> 1      EXT. PAUL'S HOUSE - BACKYARD - MORNING                       1 </b> It's a quiet morning in a suburban neighborhood. SOPHIE, a twelve-year-old girl, is seated by the patio table, while her father PAUL is hosing the lawn. Suddenly a set of keys falls from the sky and through the patio table, shattering th",
+      "dialogue_count": 0,
+      "word_count": 21052
+    }
+  ]
+}

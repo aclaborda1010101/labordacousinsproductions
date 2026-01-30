@@ -1,0 +1,26 @@
+{
+  "slug": "being-human",
+  "title": "Being Human",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 1,
+  "characters": [
+    "BEING HUMAN"
+  ],
+  "total_words": 42660,
+  "total_dialogue": 1,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "BEING HUMAN"
+      ],
+      "action_text": "BEING HUMAN Written by Bill Forsyth <b>                                           THIRD DRAFT </b> January, 1992 <b>WARNER BROS. INC.                          � 1992 </b>4000 Warner Boulevard                      WARNER BROS. INC. Burbank, California 91522                  All Rights Reserved <b> </b>\"... and as he stared at the sky and listened to a cow mooing almost dreamily in a distant village, he tried to understand what it all meant -- the sky, and the fields, and the humming telegraph pol",
+      "dialogue_count": 1,
+      "word_count": 42660
+    }
+  ]
+}

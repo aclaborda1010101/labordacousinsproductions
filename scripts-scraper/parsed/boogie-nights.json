@@ -1,0 +1,28 @@
+{
+  "slug": "boogie-nights",
+  "title": "Boogie Nights",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 2,
+  "characters": [
+    "BOOGIE NIGHTS",
+    "JACK"
+  ],
+  "total_words": 34998,
+  "total_dialogue": 2,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "BOOGIE NIGHTS",
+        "JACK"
+      ],
+      "action_text": "BOOGIE NIGHTS by Paul Thomas Anderson <b>1 EXT. HOT TRAXX NIGHTCLUB - NIGHT </b> CAMERA holds on this PACKED disco on Van Nuys Blvd. TITLE CARD: \"San Fernando Valley, 1977\" A CADILLAC SEVILLE pulls up to the valet area and CAMERA (STEADICAM) moves across the street, towards the car, landing close; From the Seville steps, JACK HORNER (50s) and AMBER WAVES (early 30s). CAMERA follows them (this is one continous shot) as they pass the crowd, greet a DOORMAN and enter -- INSIDE THE NIGHTCLUB. Twice",
+      "dialogue_count": 2,
+      "word_count": 34998
+    }
+  ]
+}

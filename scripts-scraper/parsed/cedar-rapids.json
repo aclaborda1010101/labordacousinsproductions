@@ -1,0 +1,22 @@
+{
+  "slug": "cedar-rapids",
+  "title": "Cedar Rapids",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 27027,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                          CEDAR RAPIDS </b> Written by Phil Johnston <b>                                                                 DRAFT: </b>                                                          June 12, 2009 <b>          FADE IN ON: </b> <b>          A SHODDILY PRODUCED TV COMMERCIAL </b> The ad depicts videotaped scenes from Wisconsin's north country-- a farmer and a cow, a woman waterskiing, a guy mowing his lawn. A flat, nasally V.O. accompanies the images. <b>           ROGER",
+      "dialogue_count": 0,
+      "word_count": 27027
+    }
+  ]
+}

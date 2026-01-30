@@ -1,0 +1,30 @@
+{
+  "slug": "broken-arrow",
+  "title": "Broken Arrow",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 2,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 21858,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b> </b><b>                                  BROKEN ARROW </b> Written by Graham Yost <b>                                                          FOURTH DRAFT </b>                                                         March 7, 1995 <b> </b> <b> </b> <b>          FADE IN: </b> <b>          A FIST HITS A FACE </b>          The fist is in a boxing glove. It belongs to VIC DEAKINS, 38. The face belongs to RAWLEY HALE, 28. They are in... <b>          INT. GYMNASIUM, WHITEMAN AFB - DAY </b> Hale an",
+      "dialogue_count": 0,
+      "word_count": 6168
+    },
+    {
+      "scene_number": 2,
+      "slugline": "Ext. Canyonlands - 4wd trail",
+      "characters": [],
+      "action_text": "Hale and Terry are hurrying along a 4WD trail toward Terry's truck. Terry taken a look at Hale's ripped and torn flightsuit. <b>          TERRY </b>          Is that the new uniform? <b>          HALE </b>          Yeah. Less constricting. <b>          TERRY </b>          The dayshift guy left some work clothes in the truck. You can have them if you want. Hale nods. His feet crunch on something. <b>          TERRY </b>          Don't walk there. <b>          HALE </b>          Don't walk where?",
+      "dialogue_count": 0,
+      "word_count": 15690
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "slug": "cider-house-rules-the",
+  "title": "Cider House Rules, The",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 28588,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                  THE CIDER HOUSE RULES </b> Written by John Irving Production Draft <b> </b> <b>               FADE IN. BEGIN TITLE SEQUENCE. </b> <b>               EXT. ST CLOUD'S - TRAIN STATION - DAWN </b> An establishing shot of the rundown train station on an overcast morning. There's snow on the station platform. A train arrives and departs. <b>                                     LARCH (V.O.) </b>                         In other parts of the world, young men of promis",
+      "dialogue_count": 0,
+      "word_count": 28588
+    }
+  ]
+}

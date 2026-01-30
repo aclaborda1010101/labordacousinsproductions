@@ -1,0 +1,22 @@
+{
+  "slug": "deer-hunter-the",
+  "title": "Deer Hunter, The",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 31063,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<html> <head> <script> <b><!-- </b>if (window!= top) top.location.href=location.href <b>// --> </b></script> <title>The Deer Hunter</title> </head> <pre> <b>EXT. PENNSYLVANIA STEEL MILL - LIGHT SNOW - DAY </b> The plant is massive, grime-streaked, squatting in the valley under five massive stacks, each one trailing a black ribbon across the winter sky. Fires can be seen flickering through the windows and long flames weave and dance from the tops of guyed metal flues. Steam rises in clouds from v",
+      "dialogue_count": 0,
+      "word_count": 31063
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "slug": "all-about-steve",
+  "title": "All About Steve",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 26393,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b> </b><b>                                ALL ABOUT STEVE </b> <b> </b>                                  Written by Kim Barker November 2006 <b> </b> <b> </b> <b>          TNT. KITCHEN - DAY </b>          A New York Times crossword puzzle. The hand of MARY HOROWITZ scratches the answers in ink without pausing even a second between each one. <b>          MARY (V.O.) </b>          Vita aenigma est. Life is a puzzle. It is. Specifically, life is most like a crossword puzzle. There are a million re",
+      "dialogue_count": 0,
+      "word_count": 26393
+    }
+  ]
+}

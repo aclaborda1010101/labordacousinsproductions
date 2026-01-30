@@ -1,0 +1,26 @@
+{
+  "slug": "days-of-heaven",
+  "title": "Days of Heaven",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 1,
+  "characters": [
+    "DOCTOR"
+  ],
+  "total_words": 31685,
+  "total_dialogue": 1,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "DOCTOR"
+      ],
+      "action_text": "<html> <head> <LINK rel=\"stylesheet\" type=\"text/css\" href=\"style.css\" title=\"style1\"> <b> </b><META http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\"> <script> <b><!-- </b>if (window!= top) top.location.href=location.href <b>// --> </b></script> </HEAD> <title>�DAYS OF HEAVEN� by Terry Malick REVISED: 6/2/76</title> </head> <body> </p><p><p ID=\"act\">DAYS OF HEAVEN\" </p><p><p ID=\"act\">by Terry Malick </p><p><p ID=\"act\">REVISED: 6/2/76 </p><p><p ID=\"act\">SETTING The story is set in",
+      "dialogue_count": 1,
+      "word_count": 31685
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "slug": "9",
+  "title": "9",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 21790,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b> </b><b> </b><b>                                            9 </b><b> </b><b> </b>                                        Written by <b> </b>                                      Pamela Pettler <b> </b><b> </b><b> </b>                                      Short story by <b> </b>                                       Shane Acker <b> </b><b> </b><b> </b><b> </b><b> </b><b> </b><b> </b><b>          SEQ. 05 - PROLOGUE </b><b> </b>           The Focus Features logo appears on screen and we slide I",
+      "dialogue_count": 0,
+      "word_count": 21790
+    }
+  ]
+}

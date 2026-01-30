@@ -1,0 +1,26 @@
+{
+  "slug": "dumb-and-dumber",
+  "title": "Dumb and Dumber",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 1,
+  "characters": [
+    "BURNING."
+  ],
+  "total_words": 25593,
+  "total_dialogue": 1,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "BURNING."
+      ],
+      "action_text": "FADE IN: <b>EXT. PROVIDENCE, RHODE ISLAND - WINTER MORNING </b> A PRETTY YOUNG WOMAN is standing on the street corner waiting for a bus. She's carrying books and looking very collegiate. A black stretch LIMOUSINE with darkened windows drives past, SLAMS ON ITS BRAKES, and backs up. The Young Woman stares at her reflection in the windows, wondering what this is all about. Finally, the REAR PASSENGER WINDOW zips down, revealing LLOYD CHRISTMAS, age 30. He's a pleasant-enough looking guy, if a litt",
+      "dialogue_count": 1,
+      "word_count": 25593
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "total": 525,
+  "success": 525,
+  "errors": 0,
+  "genresChanged": 5,
+  "notComedyDetected": 0,
+  "changes": [
+    {
+      "title": "Argo",
+      "from": "action",
+      "to": "scifi"
+    },
+    {
+      "title": "Brads Status",
+      "from": "drama",
+      "to": "scifi"
+    },
+    {
+      "title": "Breaking Bad 305 Mas",
+      "from": "horror",
+      "to": "thriller"
+    },
+    {
+      "title": "The Sun Is Also A Star",
+      "from": "drama",
+      "to": "scifi"
+    },
+    {
+      "title": "Wonder Woman",
+      "from": "action",
+      "to": "scifi"
+    }
+  ]
+}

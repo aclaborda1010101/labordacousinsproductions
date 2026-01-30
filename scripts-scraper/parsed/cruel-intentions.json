@@ -1,0 +1,46 @@
+{
+  "slug": "cruel-intentions",
+  "title": "Cruel Intentions",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 11,
+  "characters": [
+    "SEBASTIAN",
+    "DR. GREENBAUM",
+    "KATHRYN",
+    "MRS. CALDWELL",
+    "AUNT HELEN",
+    "ANNETTE",
+    "RONALD",
+    "CECILE",
+    "GREG",
+    "NURSE",
+    "MRS. O'SHEA"
+  ],
+  "total_words": 19736,
+  "total_dialogue": 124,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "SEBASTIAN",
+        "DR. GREENBAUM",
+        "KATHRYN",
+        "MRS. CALDWELL",
+        "AUNT HELEN",
+        "ANNETTE",
+        "RONALD",
+        "CECILE",
+        "GREG",
+        "NURSE",
+        "MRS. O'SHEA"
+      ],
+      "action_text": "<html> <head> <title>\"Cruel Intentions\", by Roger Kumble</title> </head> <body bgcolor=\"#FFFFFF\"> <pre> <b>                           CRUEL INVENTIONS </b> by Roger Kumble based on the novel Les Liaisons Dangereuses by Choderlos De Laclos February 10, 1998 <b>1    EXT. MANHATTAN SKYLINE - DAY                               1 </b> We circle around the island of Manhattan moving closer and closer till we're looking down on Fifth Avenue. As the melody continues to play we MOVE towards a building and",
+      "dialogue_count": 124,
+      "word_count": 19736
+    }
+  ]
+}

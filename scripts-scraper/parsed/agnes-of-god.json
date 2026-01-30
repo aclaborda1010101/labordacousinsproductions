@@ -1,0 +1,40 @@
+{
+  "slug": "agnes-of-god",
+  "title": "Agnes of God",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 8,
+  "characters": [
+    "AGNES OF GOD",
+    "MARTHA",
+    "MOTHER MIRIAM",
+    "AGNES",
+    "LARRY",
+    "MAN",
+    "NUN",
+    "LEVEAU"
+  ],
+  "total_words": 16135,
+  "total_dialogue": 28,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "AGNES OF GOD",
+        "MARTHA",
+        "MOTHER MIRIAM",
+        "AGNES",
+        "LARRY",
+        "MAN",
+        "NUN",
+        "LEVEAU"
+      ],
+      "action_text": "AGNES OF GOD <b>FADE IN: </b> <b>EXT - CONVENT - DAY </b> Whispering of nuns at prayer. <b>DISSOLVE TO: </b> <b>INT - CHAPEL - DAY </b> Nuns at prayer; MOTHER MIRIAM, the Superior closes the gate and locks it. <b>DISSOLVE TO: </b> <b>EXT - COURTYARD - DAY </b> The nuns walking around the courtyard in an anticlockwise direction saying the rosary. <b>DISSOLVE TO: </b> <b>INT - CHAPEL - DAY </b> A line of nuns kneeling at prayer. Closeups of various individuals. <b>DISSOLVE TO: </b> <b>EXT - CONVEN",
+      "dialogue_count": 28,
+      "word_count": 16135
+    }
+  ]
+}

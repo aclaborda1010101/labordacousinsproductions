@@ -1,0 +1,5695 @@
+{
+  "slug": "conclave-2024",
+  "title": "Conclave",
+  "parsedWith": "v2",
+  "parsedAt": "2026-01-29T22:09:07.711Z",
+  "stats": {
+    "scenes": 154,
+    "dialogues": 792,
+    "characters": 49
+  },
+  "characters": [
+    {
+      "name": "LAWRENCE",
+      "dialogueLines": 336,
+      "totalWords": 2420
+    },
+    {
+      "name": "BELLINI",
+      "dialogueLines": 76,
+      "totalWords": 732
+    },
+    {
+      "name": "BENITEZ",
+      "dialogueLines": 60,
+      "totalWords": 401
+    },
+    {
+      "name": "TEDESCO",
+      "dialogueLines": 46,
+      "totalWords": 131
+    },
+    {
+      "name": "TREMBLAY",
+      "dialogueLines": 45,
+      "totalWords": 349
+    },
+    {
+      "name": "CARDINAL LOMBARDI",
+      "dialogueLines": 35,
+      "totalWords": 81
+    },
+    {
+      "name": "ADEYEMI",
+      "dialogueLines": 31,
+      "totalWords": 286
+    },
+    {
+      "name": "MONSIGNOR O'MALLEY",
+      "dialogueLines": 28,
+      "totalWords": 268
+    },
+    {
+      "name": "ARCHBISHOP WOZNIAK",
+      "dialogueLines": 18,
+      "totalWords": 154
+    },
+    {
+      "name": "CARDINAL SABBADIN",
+      "dialogueLines": 17,
+      "totalWords": 150
+    },
+    {
+      "name": "SISTER AGNES",
+      "dialogueLines": 16,
+      "totalWords": 91
+    },
+    {
+      "name": "ARCHBISHOP MANDORFF",
+      "dialogueLines": 12,
+      "totalWords": 114
+    },
+    {
+      "name": "OMITTED",
+      "dialogueLines": 11,
+      "totalWords": 11
+    },
+    {
+      "name": "CARDINAL NAKITANDA",
+      "dialogueLines": 7,
+      "totalWords": 73
+    },
+    {
+      "name": "CARDINAL BROTZKUS",
+      "dialogueLines": 5,
+      "totalWords": 11
+    },
+    {
+      "name": "CARDINAL MENDOZA",
+      "dialogueLines": 4,
+      "totalWords": 10
+    },
+    {
+      "name": "GUTTOSO",
+      "dialogueLines": 4,
+      "totalWords": 14
+    },
+    {
+      "name": "CARDINAL VILLANUEVA",
+      "dialogueLines": 3,
+      "totalWords": 31
+    },
+    {
+      "name": "FATHER HAAS",
+      "dialogueLines": 3,
+      "totalWords": 9
+    },
+    {
+      "name": "ALL CARDINALS",
+      "dialogueLines": 2,
+      "totalWords": 10
+    },
+    {
+      "name": "CARDINAL LANDOLFI",
+      "dialogueLines": 2,
+      "totalWords": 13
+    },
+    {
+      "name": "GUERRINI",
+      "dialogueLines": 2,
+      "totalWords": 6
+    },
+    {
+      "name": "NUN",
+      "dialogueLines": 2,
+      "totalWords": 6
+    },
+    {
+      "name": "LOMBARDI",
+      "dialogueLines": 2,
+      "totalWords": 22
+    },
+    {
+      "name": "ADEYEMI.",
+      "dialogueLines": 1,
+      "totalWords": 22
+    },
+    {
+      "name": "TITLES BEGIN",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "CONCLAVE.",
+      "dialogueLines": 1,
+      "totalWords": 2
+    },
+    {
+      "name": "A SPIRA L PATTERN...",
+      "dialogueLines": 1,
+      "totalWords": 21
+    },
+    {
+      "name": "CLOSE ON LAWRENCE'S FACE",
+      "dialogueLines": 1,
+      "totalWords": 11
+    },
+    {
+      "name": "LAWR ENCE",
+      "dialogueLines": 1,
+      "totalWords": 4
+    },
+    {
+      "name": "ON LAWRENCE",
+      "dialogueLines": 1,
+      "totalWords": 2
+    },
+    {
+      "name": "ARCHBISHOP WOZ NIAK",
+      "dialogueLines": 1,
+      "totalWords": 3
+    },
+    {
+      "name": "BEL LINI",
+      "dialogueLines": 1,
+      "totalWords": 13
+    },
+    {
+      "name": "CLOSE ON SISTER AGNES",
+      "dialogueLines": 1,
+      "totalWords": 30
+    },
+    {
+      "name": "C ARDINAL LOMBARDI",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "L AWRENCE",
+      "dialogueLines": 1,
+      "totalWords": 10
+    },
+    {
+      "name": "A DREAM IMAGE",
+      "dialogueLines": 1,
+      "totalWords": 9
+    },
+    {
+      "name": "HIGH ANGLE",
+      "dialogueLines": 1,
+      "totalWords": 18
+    },
+    {
+      "name": "CARDIN AL LOWENSTEIN",
+      "dialogueLines": 1,
+      "totalWords": 14
+    },
+    {
+      "name": "SISTER AGN ES",
+      "dialogueLines": 1,
+      "totalWords": 22
+    },
+    {
+      "name": "TREMB LAY",
+      "dialogueLines": 1,
+      "totalWords": 11
+    },
+    {
+      "name": "BE LLINI",
+      "dialogueLines": 1,
+      "totalWords": 2
+    },
+    {
+      "name": "INT.",
+      "dialogueLines": 1,
+      "totalWords": 9
+    },
+    {
+      "name": "A BLANK BALLOT.",
+      "dialogueLines": 1,
+      "totalWords": 37
+    },
+    {
+      "name": "KRASINSKI",
+      "dialogueLines": 1,
+      "totalWords": 28
+    },
+    {
+      "name": "EXT CASA SANTA MARTA",
+      "dialogueLines": 1,
+      "totalWords": 7
+    },
+    {
+      "name": "ON LAWRENCE...",
+      "dialogueLines": 1,
+      "totalWords": 21
+    },
+    {
+      "name": "HAAS",
+      "dialogueLines": 1,
+      "totalWords": 6
+    },
+    {
+      "name": "BE NITEZ",
+      "dialogueLines": 1,
+      "totalWords": 3
+    }
+  ],
+  "scenes": [
+    {
+      "number": 1,
+      "heading": "EXT. APARTMENT BLOCK - ROME - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "1 1 A large, modern apartment block in a modest part of the city. The streets are quiet. Everyone sleeps."
+    },
+    {
+      "number": 2,
+      "heading": "INT. APARTMENT - ROME - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "2 2 CLOSE on a WINDOW PANE, small, leaded. We HOLD on the glass, nothing but black night outside, not sure what we’re supposed to be looking at. Then, with a sharp ping , the pane cracks. ON A SLEEPING MAN, his back to us. Woken by the sound, the man raises his head from the pillow, stares at the cr"
+    },
+    {
+      "number": 3,
+      "heading": "EXT. TUNNEL NEAR VATICAN - ROME - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "3 3 CLOSE - PUSHING the MAN as he walks quickly through a tunnel, his sleep-whorled hair standing in undignified tufts from the back of his head. A lone car passes."
+    },
+    {
+      "number": 4,
+      "heading": "EXT. STREET NEAR VATICAN - ROME",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "- NIGHT 3A 3A The MAN continues to rush through the empty streets. The only sound is his heavy breathing and footsteps. Ahe ad of him a blue light pulses in SOFT FOCUS against the vague bulk of St Peter’s."
+    },
+    {
+      "number": 5,
+      "heading": "I/E. SHOP - STREET NEAR VATICAN - NIGHT",
+      "characters": [
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "4"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "4A"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "5"
+        }
+      ],
+      "actionPreview": "3B 3B Outside on the street the MAN passes a SHOP WINDOW and for a moment we hold on the display - rows of PLASTIC PIETÀS. 4 4A CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 1. 5"
+    },
+    {
+      "number": 6,
+      "heading": "INT. CASA SANTA MARTA - LIFT PAPAL CORRIDOR - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "6 6 In the lift the MAN - CARDINAL LAWRENCE - stares down at his hand and realises he is clutching his red zucchetto . We are still on his back as he smoothes down his hair and puts it on his head. Then he turns to the mirror and we see his face for the first time: careworn, anonymous. An administra"
+    },
+    {
+      "number": 7,
+      "heading": "INT. CASA SANTA MARTA - PAPAL CORRIDOR - NIGHT",
+      "characters": [
+        "ARCHBISHOP WOZNIAK",
+        "LAWRENCE"
+      ],
+      "dialogues": [
+        {
+          "character": "ARCHBISHOP WOZNIAK",
+          "parenthetical": "",
+          "text": "(Helplessly)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Janusz, your presence made him so happy."
+        }
+      ],
+      "actionPreview": "7 7 The wall of SECURITY parts with difficulty and he makes his way through them towards the Papal Suite. White marbled floors. It could be a hotel, a clinic. ARCHBISHOP WOZNIAK, built like a labourer, eyes, behind his glasses, red from crying, comes to meet him. Eminence... Lawrence takes his cheek"
+    },
+    {
+      "number": 8,
+      "heading": "INT. PAPAL SUITE - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "8 8 Lawrence stops, surprised by the throng of people crowd ed into the little living room. He realises with a faint stab of pain, that he must have been one of the last summoned. He follows Wozniak through the open doors into..."
+    },
+    {
+      "number": 9,
+      "heading": "INT. PAPAL BEDROOM - NIGHT",
+      "characters": [
+        "ADEYEMI.",
+        "ADEYEMI",
+        "ALL CARDINALS",
+        "TREMBLAY"
+      ],
+      "dialogues": [
+        {
+          "character": "ADEYEMI.",
+          "parenthetical": "",
+          "text": "The room is so small he has to step over the backs of their legs to reach the head of the bed."
+        },
+        {
+          "character": "ADEYEMI",
+          "parenthetical": "",
+          "text": "Subvenite, Sancti Dei.. ."
+        },
+        {
+          "character": "ADEYEMI",
+          "parenthetical": "",
+          "text": "(CONT’D) ..."
+        },
+        {
+          "character": "ALL CARDINALS",
+          "parenthetical": "",
+          "text": "Suscipiat te Christus qui vocavit te et in sinum"
+        },
+        {
+          "character": "ALL CARDINALS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "TREMBLAY",
+          "parenthetical": "",
+          "text": "He is with God."
+        },
+        {
+          "character": "TREMBLAY",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "TREMBLAY",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "9 9 The room is almost shockingly plain - a chest of drawers, nightstand, an anonymous bed that could be found in any hotel. And lying on this bed, slightly propped up on pillows, lies the dead Pope. CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 2. Kneeling around the bed are the three "
+    },
+    {
+      "number": 10,
+      "heading": "INT. PAPAL SUITE - NIGHT",
+      "characters": [
+        "LAWRENCE",
+        "BELLINI"
+      ],
+      "dialogues": [
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Joining him)"
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "Do you think anyone would m ind if I took this, Thomas? As a keepsake?"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Of course. Take it. He would have wanted you to have it."
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "We used to play quite often at the end of the day. He said it helped him relax."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Who won? CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 4."
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "Oh, he did. Always eight moves ahead."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Ah, Aldo, I’m so sorry. What happened, do you know?"
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "They say heart attack. There had been warnings."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "I hadn’t heard that."
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "He didn’t want anyone to know. He thought if word got out"
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "(CONT’D) (Quietly)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "We’ll have to be careful what we say to the media about his condition."
+        }
+      ],
+      "actionPreview": "10 10 Groups of dignitaries stand in whispered conference. Lawrence gingerly works his way through the throng to a lone figure standing by the desk: the lean, ascetic frame of his friend, Cardinal Bellini, Secretary of State. Aldo... Bellini is staring down at a little plastic travel CHESS SET on th"
+    },
+    {
+      "number": 11,
+      "heading": "INT. PAPAL SUITE - SITTING ROOM - NIGHT",
+      "characters": [
+        "LAWRENCE",
+        "ARCHBISHOP WOZNIAK",
+        "TREMBLAY",
+        "ADEYEMI",
+        "BELLINI"
+      ],
+      "dialogues": [
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Janusz, I know this is hard for you, but we’ll need to prepare a detailed statement. Who discovered the Holy Father’s body? CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 5."
+        },
+        {
+          "character": "ARCHBISHOP WOZNIAK",
+          "parenthetical": "",
+          "text": "I did, Your Eminence."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Well, thank God, that’s something."
+        },
+        {
+          "character": "ARCHBISHOP WOZNIAK",
+          "parenthetical": "",
+          "text": "I called the Holy Father’s doctor."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "What time was this?"
+        },
+        {
+          "character": "ARCHBISHOP WOZNIAK",
+          "parenthetical": "",
+          "text": "Around eleven thirty, Eminence. (Off Thomas' surprise) I would have called you sooner, but..."
+        },
+        {
+          "character": "TREMBLAY",
+          "parenthetical": "",
+          "text": "Thomas, I’m so sorry. I know His"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Well, I’m sure you acted for the best."
+        },
+        {
+          "character": "TREMBLAY",
+          "parenthetical": "",
+          "text": "(walking towards them)"
+        },
+        {
+          "character": "TREMBLAY",
+          "parenthetical": "",
+          "text": "(CONT’D) I’ve prepared a time-line of His"
+        },
+        {
+          "character": "TREMBLAY",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "TREMBLAY",
+          "parenthetical": "",
+          "text": "(CONT’D) (Pointing)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Joe, perhaps...perhaps we could release the data, but not the photograph? It feels too...too...."
+        },
+        {
+          "character": "TREMBLAY",
+          "parenthetical": "",
+          "text": "I know, Thomas, I know. But there"
+        },
+        {
+          "character": "ADEYEMI",
+          "parenthetical": "",
+          "text": "The ti me before Vespers? What was he doing then?"
+        },
+        {
+          "character": "TREMBLAY",
+          "parenthetical": "",
+          "text": "Routine meetings as far as I understand it."
+        },
+        {
+          "character": "ADEYEMI",
+          "parenthetical": "",
+          "text": "Who was the last to have a scheduled meeting with him?"
+        },
+        {
+          "character": "TREMBLAY",
+          "parenthetical": "",
+          "text": "I believe that may have been me. I saw him at four. Is that right"
+        },
+        {
+          "character": "ARCHBISHOP WOZNIAK",
+          "parenthetical": "",
+          "text": "You were, Eminence."
+        },
+        {
+          "character": "ADEYEMI",
+          "parenthetical": "",
+          "text": "Put in all the meetings he had that day. It will show how hard he was working, right up to the end. CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 7."
+        },
+        {
+          "character": "TREMBLAY",
+          "parenthetical": "",
+          "text": "That might look as if we were placing a huge burden on a sick man."
+        },
+        {
+          "character": "ADEYEMI",
+          "parenthetical": "",
+          "text": "The Papacy is a huge burden."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Has anyone telephoned Cardinal"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "Courtesy? What has he ever done to deserve courtesy? If anyone can be said to have killed the Holy"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "I have to ring him, Aldo."
+        }
+      ],
+      "actionPreview": "10A 10A Lawrence and Bellini find Wozniak sitting alone in the dark. Lawren ce addresses him gently. What did you do? He always spent the night in the room next door. But... it was too late. Wozniak shrugs helplessly. Tremblay arriv es just in time at the door. Holiness had no closer colleagues than"
+    },
+    {
+      "number": 12,
+      "heading": "INT. PAPAL OFFICE - NIGHT",
+      "characters": [
+        "LAWRENCE",
+        "TEDESCO",
+        "BELLINI",
+        "TREMBLAY",
+        "ADEYEMI"
+      ],
+      "dialogues": [
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Italian, To Operator)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(To Operator)"
+        },
+        {
+          "character": "TEDESCO",
+          "parenthetical": "(O.S.)",
+          "text": "(Over phone)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Italian)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Goffredo? Sono Lawrence."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D) (Italian)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "TEDESCO",
+          "parenthetical": "(O.S.)",
+          "text": "(Beat, Italian)"
+        },
+        {
+          "character": "TEDESCO",
+          "parenthetical": "(O.S.)",
+          "text": "(Beat)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "He already knew."
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "Of course he knew. This place is full of his supporters. He probably knew before we did."
+        },
+        {
+          "character": "TREMBLAY",
+          "parenthetical": "",
+          "text": "(Checki ng his phone)"
+        },
+        {
+          "character": "ADEYEMI",
+          "parenthetical": "",
+          "text": "We should wait until daylight. The dignity of the office requires..."
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "For God’s sake, Joshua. When did the Holy Father ever care about the “dignity of the office?” Look at h is rooms. CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 9."
+        },
+        {
+          "character": "TREMBLAY",
+          "parenthetical": "",
+          "text": "The body should be embalmed."
+        },
+        {
+          "character": "ADEYEMI",
+          "parenthetical": "",
+          "text": "Well, Dean. The responsibility for the Conclave falls upon you."
+        }
+      ],
+      "actionPreview": "11 11 Lawrence st eps through the open door of the SMALL OFFICE and dials the desk phone. < The Patriarch’s Palace in Venice, please. Cardinal Tedesco’s private line. > Il Palazzo Patriarcale di Venezia, per favore. La linea privata del cardinale Tedesco. After a moment. Tedesco. CONCLAVE by Peter S"
+    },
+    {
+      "number": 13,
+      "heading": "INT. PAPAL SUITE - BEDROOM - NIGHT",
+      "characters": [
+        "LAWRENCE",
+        "TITLES BEGIN",
+        "CONCLAVE."
+      ],
+      "dialogues": [
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Italian)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Sigillate la stanza."
+        },
+        {
+          "character": "TITLES BEGIN",
+          "parenthetical": "",
+          "text": "13"
+        },
+        {
+          "character": "CONCLAVE.",
+          "parenthetical": "",
+          "text": "FADE IN"
+        }
+      ],
+      "actionPreview": "12 12 Lawrence stands, watching WOZNIAK laying a t hin white VEIL over the dead Pope’s face. He turns to the PRIESTS of the Apostolic Camera, standing waiting. < Seal the room. > 13 The Pope’s body is zipped into a a semi-transparent white body bag and heaved onto a gurney. Lawrence watches as it is"
+    },
+    {
+      "number": 14,
+      "heading": "INT/EXT. CASA SANTA MARTA - FACADE - MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "13A 13A WORKMEN are fitting electronic SHUTTERS over the windo ws. The whine of power tools as screws are tightened into place."
+    },
+    {
+      "number": 15,
+      "heading": "INT. CASA SANTA MARTA - BEDROOM - MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "13B 13B Inside the Casa a WORKMAN tests the closing of the shutters with a remote control. It works."
+    },
+    {
+      "number": 16,
+      "heading": "INT. CASA SANTA MARTA - CORRIDOR - MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "13C 13C More Workmen emerge from the bedrooms, each trundling a dolly loaded with the TELEVISIONS being removed from the rooms."
+    },
+    {
+      "number": 17,
+      "heading": "INT. SISTINE CHAPEL - MORNING",
+      "characters": [
+        "A SPIRA L PATTERN...",
+        "CLOSE ON LAWRENCE'S FACE",
+        "ARCHBISHOP MANDORFF",
+        "LAWRENCE",
+        "MONSIGNOR O'MALLEY",
+        "LAWR ENCE"
+      ],
+      "dialogues": [
+        {
+          "character": "A SPIRA L PATTERN...",
+          "parenthetical": "",
+          "text": "Intricate and beautiful. A mosaic floor. As we watch a wide red carpet is rolled across the frame, obscuring the mosaic."
+        },
+        {
+          "character": "CLOSE ON LAWRENCE'S FACE",
+          "parenthetical": "",
+          "text": "...looking up. As we watch, a SHADOW falls over his face."
+        },
+        {
+          "character": "ARCHBISHOP MANDORFF",
+          "parenthetical": "",
+          "text": "Security say they’d like to test the electronic"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Then they’d better be quick. (Of the windows)"
+        },
+        {
+          "character": "ARCHBISHOP MANDORFF",
+          "parenthetical": "",
+          "text": "Apparently so. Security say... (reading, slightly mystified) ...eavesdroppers can use lasers to “read the vibrations on the glass?”"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Let’s hope none of our brothers suffer from claustrophobia. Who knows how long we’ll have to be in here."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D) (shouting over the racket) I assume we"
+        },
+        {
+          "character": "ARCHBISHOP MANDORFF",
+          "parenthetical": "",
+          "text": "They will work through the night if they have to. It will be fine,"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Sorry to fuss."
+        },
+        {
+          "character": "MONSIGNOR O'MALLEY",
+          "parenthetical": "",
+          "text": "Well, Eminence, I’d say this is a pretty fair vision of hell."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Don’t be blasphemous, Ray. Hell arrives tomorrow when we bring in the cardinals."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D) (Of a name)"
+        },
+        {
+          "character": "ARCHBISHOP MANDORFF",
+          "parenthetical": "",
+          "text": "Kahl-koh , Eminence. He’s Indian."
+        },
+        {
+          "character": "LAWR ENCE",
+          "parenthetical": "",
+          "text": "Kahl-koh. Thank you Willi."
+        },
+        {
+          "character": "MONSIGNOR O'MALLEY",
+          "parenthetical": "",
+          "text": "Archbishop Wozniak has asked if he may have a word, Eminence?"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "I don’t think that’s possible. The cardinals will begin arriving in an hour. What’s it about?"
+        },
+        {
+          "character": "MONSIGNOR O'MALLEY",
+          "parenthetical": "",
+          "text": "He didn’t say. (B eat). I wouldn’t have mentioned it but he seemed so...upset?"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "We’re going to be sequestered from six o’clock. He should have come earlier."
+        },
+        {
+          "character": "MONSIGNOR O'MALLEY",
+          "parenthetical": "",
+          "text": "Yes, your Eminence. I’ll tell him. CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 13."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Ray? Tell him I’ll see him after I’ve met the cardinals. The poor fellow will be worrying about his future. O’Malley nods and leaves."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D) (Wryly)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D) (Rising with a wince)"
+        }
+      ],
+      "actionPreview": "14 14 An easy-lift rises in front of the last judgement. Above him, metal panels are being fitted over the high windows, shutting out the daylight, obscuring the ceiling in near gloom. Lawrence stands in the chapel, watching the sealing of the windows unhappily. CONCLAVE by Peter Straughan - Pink Re"
+    },
+    {
+      "number": 18,
+      "heading": "INT. SISTINE CHAPEL - ANTECHAMBER - MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "15 15 Behind the altar of the chapel Lawrence descends a set of stairs. He crosses a narrow sacristy to descend into a small room."
+    },
+    {
+      "number": 19,
+      "heading": "INT. SISTINE CHAPEL - ROOM OF TEARS - MORNING",
+      "characters": [
+        "BELLINI",
+        "LAWRENCE"
+      ],
+      "dialogues": [
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "Shelter from the Storm."
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Apparently Pope John the Twenty-"
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "You look tired."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "All this... it’s a duty I never thought I’d have to perform. (Beat) I always assumed he would out-live us all."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D) I asked for his permission to retire as Dean. Join an order. I have been having... difficulties."
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "(Beat)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "He refused my resignation. Said that some were chosen to be"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "The Holy Father told me of your... crisis of faith. He said you had difficulties with prayer. CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 15."
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "The Pope had doubts about God?"
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "Never about God. What he had lost faith in was the Church."
+        }
+      ],
+      "actionPreview": "15A 15A Lawrence closes the door, muffling the sound of the work beyond. He stands for a moment, savouring the relative pe ace. He finds himself staring at the THRONE, on which the newly- elected Pontiff will sit. He crosses to a clothes rail and brushes a hand along the row of cellophane wrapped pa"
+    },
+    {
+      "number": 20,
+      "heading": "I/E. MINIBUS - MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "16 16 A group of NUNS, wearing blue habit, sit on a minibus, the walls of the Vatican outside the window. In their midst a woman with an arist ocratic air - SISTER AGNES."
+    },
+    {
+      "number": 21,
+      "heading": "EXT. CASA SANTA MARTA - PARKING - MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "17 17 As the buses park inside the Vatican the NUNS descend and walk up to the Casa."
+    },
+    {
+      "number": 22,
+      "heading": "INT. CASA SANTA MARTA - LOBBY - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "18 18 The line of NUNS are entering the building."
+    },
+    {
+      "number": 23,
+      "heading": "INT. CASA SANTA MARTA - BACK OFFICE - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "19 19 Sister Agnes arrives in her office. She puts down her bag and takes off her coat, glances at the plan for the day. In the corner a canary in a cage. Sister Agnes walks over and feeds it."
+    },
+    {
+      "number": 24,
+      "heading": "EXT. CASA SANTA MARTA - COURTYARD - DAY",
+      "characters": [
+        "ARCHBISHOP MANDORFF",
+        "LAWRENCE",
+        "CARDINAL MENDOZA"
+      ],
+      "dialogues": [
+        {
+          "character": "ARCHBISHOP MANDORFF",
+          "parenthetical": "",
+          "text": "Here they come, Your Eminence. CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 16."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Brothers, welcome."
+        },
+        {
+          "character": "CARDINAL MENDOZA",
+          "parenthetical": "",
+          "text": "Are we criminals now? Searched?"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Taking his hands) I’m so sorry, Your Eminence, but we are"
+        },
+        {
+          "character": "CARDINAL MENDOZA",
+          "parenthetical": "",
+          "text": "(In disgust)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Quietly)"
+        }
+      ],
+      "actionPreview": "20 20 Lawrence stands, wrapped in a winter coat against the cold, on the steps of the Casa, staring up at the sky. He is flanked again by O’Malley and Mandorff, other members of staff hovering beside them. For a moment LAWRENCE listens to the faint sound of thousands of voices outside on the streets"
+    },
+    {
+      "number": 25,
+      "heading": "EXT. CASA SANTA MARTA - COURTYARD - LATER",
+      "characters": [
+        "LAWRENCE",
+        "TREMBLAY"
+      ],
+      "dialogues": [
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Pronouncing carefully)"
+        },
+        {
+          "character": "TREMBLAY",
+          "parenthetical": "",
+          "text": "Thomas!"
+        },
+        {
+          "character": "TREMBLAY",
+          "parenthetical": "",
+          "text": "(CONT’D) (Of the cases)"
+        }
+      ],
+      "actionPreview": "21 21 In MONTAGE we see further arrivals: The Africans led by the magisterial Adeyemi, pointing out this building and that to his party, like a proprietor. From the Eastern Ministries, the Archbishops of Lebanon and Antioch. From India the Archbishops of Trivandrum, Ernakulam-Angamaly and... Eminenc"
+    },
+    {
+      "number": 26,
+      "heading": "EXT. CASA SANTA MARTA - COURTYARD - AFTERNOON",
+      "characters": [
+        "ON LAWRENCE",
+        "LAWRENCE",
+        "ARCHBISHOP MANDORFF",
+        "MONSIGNOR O'MALLEY",
+        "BELLINI",
+        "TEDESCO"
+      ],
+      "dialogues": [
+        {
+          "character": "ON LAWRENCE",
+          "parenthetical": "",
+          "text": "...staring up"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "How many is that, Willi?"
+        },
+        {
+          "character": "ARCHBISHOP MANDORFF",
+          "parenthetical": "",
+          "text": "One hundred and three, Eminence."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "I wonder where Tedesco has got to."
+        },
+        {
+          "character": "MONSIGNOR O'MALLEY",
+          "parenthetical": "",
+          "text": "Perhaps he isn’t coming?"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "That would be too much to hope for."
+        },
+        {
+          "character": "MONSIGNOR O'MALLEY",
+          "parenthetical": "",
+          "text": "(Of the cold)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "No, let’s get some fresh air while we still can."
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "Am I the last? CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 18."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Not quite. How are you?"
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "Oh fairly dreadful. You’ve seen the papers? Apparently it’s already decided it’s to be me."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "And I happen to agree with them."
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "What if I don’t want it? No sane man would want the papacy."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Some of our colleagues seem to."
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "But what if I know in my heart I’m not worthy?"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "You’re more worthy than any of us."
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "I’m not."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Then... t ell your supporters not to vote for you. Pass the chalice..."
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "And let it go to him? How am I to live with myself if I don’t try to stop him?"
+        },
+        {
+          "character": "TEDESCO",
+          "parenthetical": "",
+          "text": "< Apologies, Lawr ence. My train was delayed in Venice.>"
+        },
+        {
+          "character": "TEDESCO",
+          "parenthetical": "",
+          "text": "Chiedo scusa, Lawrence. Il mio treno era in ritardo a"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Italian)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Padre Tedesco. Ci siete mancato."
+        },
+        {
+          "character": "TEDESCO",
+          "parenthetical": "",
+          "text": "(Italian)"
+        },
+        {
+          "character": "TEDESCO",
+          "parenthetical": "",
+          "text": "Non c'è dubbio. Ma non preoccupatevi, i miei amici - how do you say - mi hanno tenuto ben informato."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Italian)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "State bene?"
+        },
+        {
+          "character": "TEDESCO",
+          "parenthetical": "",
+          "text": "(Italian)"
+        },
+        {
+          "character": "TEDESCO",
+          "parenthetical": "",
+          "text": "Ah, no-one is ever well at our age. Come vi trovate con le vostre nuove responsabilità? Avete tutto sotto controllo?"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "< I believe so. >"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Credo di sì."
+        },
+        {
+          "character": "TEDESCO",
+          "parenthetical": "",
+          "text": "< Good. >"
+        },
+        {
+          "character": "TEDESCO",
+          "parenthetical": "",
+          "text": "Bene."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Heavenly Father, Bless this"
+        }
+      ],
+      "actionPreview": "22 22 THE SKY -- the drone of a helicopter, either security or media, hidden from our sight by the low cloud cover. at the clouds, listening to the sinister hum. He turns back to Mandorff and O’Malley who are waiting with him in the cold. It’s getting dark now. We can wait inside if you prefer? He n"
+    },
+    {
+      "number": 27,
+      "heading": "INT. CASA SANTA MARTA - BEDROOMS - EVENING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "22A 22A The NUNS glide silently around the rooms. Beds are turned down, pillows smoothed."
+    },
+    {
+      "number": 28,
+      "heading": "INT. CASA SANTA MARTA - BATHROOM - EVENING",
+      "characters": [
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "22C"
+        }
+      ],
+      "actionPreview": "22B 22B Little packets of toiletries are placed by the NUNS. 22C CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 20."
+    },
+    {
+      "number": 29,
+      "heading": "INT. CASA SANTA MARTA - SECURITY GATE - EVENING",
+      "characters": [
+        "SISTER AGNES"
+      ],
+      "dialogues": [
+        {
+          "character": "SISTER AGNES",
+          "parenthetical": "",
+          "text": "(Italian)"
+        },
+        {
+          "character": "SISTER AGNES",
+          "parenthetical": "",
+          "text": "Anche l'iPad, Eminenza."
+        }
+      ],
+      "actionPreview": "23 23 The surreal sight of cardinals handing in their mobile phones at reception, queueing to pass through a METAL DETECTOR. Sister Agnes watches over the process. < The iPad too, your Eminence. >"
+    },
+    {
+      "number": 30,
+      "heading": "INT. CASA SANTA MARTA - STORAGE ROOM - EVENING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "24 24 A NUN is placing the confiscated MOBILE PHONES and devices into dockets, each in a labelled plastic bag."
+    },
+    {
+      "number": 31,
+      "heading": "INT. CASA SANTA MARTA - HALLWAY - EVENING",
+      "characters": [
+        "LAWRENCE"
+      ],
+      "dialogues": [
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Impatient)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "* (handing coat and scarf to Haas; Italian)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Me li porta di sopra, per favore? O’MALLEY"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "No, no, I’ll deal with it."
+        }
+      ],
+      "actionPreview": "25 25 Lawrence walks quickly with Monsignor O’Malley, both trailed by the young chaplain, FATHER HAAS. Where is he? O’MALLEY The meeting room, Your Eminence. Will you take these upstairs for me? Do you w ant me to sit in?"
+    },
+    {
+      "number": 32,
+      "heading": "INT. CASA SANTA MARTA - MEETING ROOM - EVENING",
+      "characters": [
+        "LAWRENCE",
+        "ARCHBISHOP WOZNIAK",
+        "ARCHBISHOP WOZ NIAK",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Closing the door after him)"
+        },
+        {
+          "character": "ARCHBISHOP WOZNIAK",
+          "parenthetical": "",
+          "text": "In the name of the Father, the Son and the Holy Ghost. My last confession was four weeks ago..."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Helping him up)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ARCHBISHOP WOZNIAK",
+          "parenthetical": "",
+          "text": "I should have come to you before."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Promised who?"
+        },
+        {
+          "character": "ARCHBISHOP WOZNIAK",
+          "parenthetical": "",
+          "text": "Cardinal Tremblay."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Janusz, the doors close soon and you’ll have to leave. Now if you promised Father Tremblay then perhaps it isn’t right for you to..."
+        },
+        {
+          "character": "ARCHBISHOP WOZNIAK",
+          "parenthetical": "",
+          "text": "(Blurting)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Impatient)"
+        },
+        {
+          "character": "ARCHBISHOP WOZNIAK",
+          "parenthetical": "",
+          "text": "At that meeting, the Holy Father dismissed him from all his offices in the Church."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "ARCHBISHOP WOZNIAK",
+          "parenthetical": "",
+          "text": "He sacked him."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Tight)"
+        },
+        {
+          "character": "ARCHBISHOP WOZ NIAK",
+          "parenthetical": "",
+          "text": "For gross misconduct."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "You...you tell me this"
+        },
+        {
+          "character": "ARCHBISHOP WOZNIAK",
+          "parenthetical": "",
+          "text": "Forgive me! But it wasn’t until the last few days, when I started to hear the rumours..."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Sharply)"
+        },
+        {
+          "character": "ARCHBISHOP WOZNIAK",
+          "parenthetical": "",
+          "text": "That he might be elected Pope."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "And you see it as your duty to"
+        },
+        {
+          "character": "ARCHBISHOP WOZNIAK",
+          "parenthetical": "",
+          "text": "I no l onger know what my duty is. CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 23."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Beat)"
+        },
+        {
+          "character": "ARCHBISHOP WOZNIAK",
+          "parenthetical": "",
+          "text": "No, Your Eminence. The Holy Father told me about it afterwards, when we had supper."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Did he tell you"
+        },
+        {
+          "character": "ARCHBISHOP WOZNIAK",
+          "parenthetical": "",
+          "text": "No. He said the reasons would become clear soon enough. He was very angry ."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Does anyone else know about this?"
+        },
+        {
+          "character": "ARCHBISHOP WOZNIAK",
+          "parenthetical": "",
+          "text": "Monsignor Morales was at the meeting."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Why hasn’t he mentioned anything to me? He was there in the apartment with us the night the Holy Father died."
+        },
+        {
+          "character": "ARCHBISHOP WOZNIAK",
+          "parenthetical": "",
+          "text": "(Tearing up)"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "27"
+        }
+      ],
+      "actionPreview": "26 26 He opens the door to the room and finds Wozniak with his back to him at the far end of the room, staring at the wall. Janusz? CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 21. Wozniak turns, looking ashen. He’s been drinking. He sinks to his knees, makes the sign of the cross. CON"
+    },
+    {
+      "number": 33,
+      "heading": "INT. CASA SANTA MARTA - LOBBY - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "28 28 Only the ground floor is now lit, like an aquarium. Lawrence stands at the entrance in the green light, watching Wozniak as he walks away. Wozniak raises a hand in awkward farewell then walks on, as shutters rattle their way down over the windows, shutting out the world. A SECURITY GUARD close"
+    },
+    {
+      "number": 34,
+      "heading": "INT. CASA SANTA",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "MARTA - KITCHENS - NIGHT 29 29 The kitchen is crowded with NUNS busy preparing the evening meal for the 107 cardinals. Despite their number, the atmosphere is hushed, each focussed on her task."
+    },
+    {
+      "number": 35,
+      "heading": "INT. CASA SANTA MARTA - DINING ROOM - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "30 30 The NUNS are laying the tables for the evening meal. SISTER AGNES inspects the placement of the silverware, correcting it with military precision."
+    },
+    {
+      "number": 36,
+      "heading": "INT. CASA SANTA MAR TA - STAIRCASE - NIGHT",
+      "characters": [
+        "LAWRENCE",
+        "MONSIGNOR O'MALLEY",
+        "ARCHBISHOP MANDORFF"
+      ],
+      "dialogues": [
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Oh dear God, one of them’s died. MONSIGNOR O’MALLEY"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Have we lost a Cardinal? CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 25."
+        },
+        {
+          "character": "MONSIGNOR O'MALLEY",
+          "parenthetical": "",
+          "text": "No, Your Eminence. We seem to have acquired one. (Off Lawrence’s stern face) I mean it literally, Eminence."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "If we’ve left someone off the list..."
+        },
+        {
+          "character": "MONSIGNOR O'MALLEY",
+          "parenthetical": "",
+          "text": "He was never"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Beat)"
+        },
+        {
+          "character": "MONSIGNOR O'MALLEY",
+          "parenthetical": "",
+          "text": "That’s what I thought, Eminence."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "What’s this I’m hearing?"
+        },
+        {
+          "character": "ARCHBISHOP MANDORFF",
+          "parenthetical": "",
+          "text": "(Shaken)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Archbishop of"
+        },
+        {
+          "character": "ARCHBISHOP MANDORFF",
+          "parenthetical": "",
+          "text": "Kabul. He’s Mexican. The Holy"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Last year? And how has this been kept a secret? CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 26."
+        },
+        {
+          "character": "ARCHBISHOP MANDORFF",
+          "parenthetical": "",
+          "text": "I thought, perhaps, you would be aware of his elevation."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "No. I am not."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ARCHBISHOP MANDORFF",
+          "parenthetical": "",
+          "text": "He has a letter of appointment from the Pope addressed to the archdiocese of Kabul, which they kept secret at the Hol y Father’s request. (Beat)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Where is he now?"
+        }
+      ],
+      "actionPreview": "31 31 Lawrence is walking up the stairs, eager to get to his room. Behind him O’Malley calls out from reception. MONSIGNOR O’MALLEY Your Eminence... O’Malley hurries over. The usually cheerful Irishman looks disconcerted. He hesitates. What? Another cardinal has just turned up. Lawrence stares at hi"
+    },
+    {
+      "number": 37,
+      "heading": "INT. CASA SANTA MARTA - KITCHEN STORAGE - NIGHT",
+      "characters": [
+        "BEL LINI",
+        "LAWRENCE",
+        "BELLINI"
+      ],
+      "dialogues": [
+        {
+          "character": "BEL LINI",
+          "parenthetical": "",
+          "text": "A cardinal in Afghanistan? It’s absurd. How many catholics are there in Afghanistan?"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "He was the Head of the Catholic"
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "The Americans will be appalled. How could we possibly ensure his safety?"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Presumably that’s why the Holy"
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "(Quietly)"
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Beat)"
+        }
+      ],
+      "actionPreview": "32 32 We’re looking at a slim man dressed in a somewhat shabby plain black attire with no skull cap. This is BENITEZ. He sits on a plastic chair, rosary in hand. Lawrence, Bellini, Mandorff and O’Malley watch him through the glass wall of the room. Lawrence gestures to the LETTER he’s holding. Missi"
+    },
+    {
+      "number": 38,
+      "heading": "INT. CASA SANTA MARTA - KITCHEN OFFICE - NIGHT",
+      "characters": [
+        "LAWRENCE",
+        "BENITEZ",
+        "BELLINI"
+      ],
+      "dialogues": [
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Welcome to the Vatican, Archbishop. I’m Father Lawrence, Dean of the"
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "It is I who must apologise for such an unexpected entrance."
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "(Reluctantly)"
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "Why is that, Your Eminence?"
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "I would have thought the position of Christians in Central Asia w as perilous enough without you having been made a cardinal and showing yourself in Rome."
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "I’m aware of the risks."
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "But now you’re here I don’t see how you expect to go back."
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "I’ll go back. And face the consequences of my faith, like so many others."
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "Your return will have diplomatic repercussions and therefore will not,"
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "(Mildly)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Well, the first thing is to find you a room. Where’s your luggage?"
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "I don’t have any."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "None?"
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "I thought it best to go to the airport empty-handed, to disguise my intentions."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Recovering)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "(Half-apologetic)"
+        }
+      ],
+      "actionPreview": "33 33 Benitez stands as LAWRENCE and Bellini walk in. College. This is Father Bellini. I’m sorry you’ve had to wait. We had to make checks I’m afraid. CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 28. Benitez smoothes a lock of dark hair back from his rather boyish face. Archbishop, for"
+    },
+    {
+      "number": 39,
+      "heading": "INT. CASA SANTA MARTA - CORRIDOR - NIGHT",
+      "characters": [
+        "LAWRENCE",
+        "ADEYEMI"
+      ],
+      "dialogues": [
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "We’re neighbours, Joshua."
+        },
+        {
+          "character": "ADEYEMI",
+          "parenthetical": "",
+          "text": "It seems so."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(making conversation) I thought - a little more work on my homily for tomorrow..."
+        },
+        {
+          "character": "ADEYEMI",
+          "parenthetical": "",
+          "text": "Ah, yes of course... I look forward to it."
+        },
+        {
+          "character": "ADEYEMI",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "34 34 Lawrence walks down the corridor to his room and finds Adeyemi approaching from the other end. He raises a hand in g reeting. Both stop at the mid-point of the corridor. They stand smiling, slightly awkwardly, key cards in hand. CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 30. (M"
+    },
+    {
+      "number": 40,
+      "heading": "INT. CASA SANTA MARTA - LAWRENCE'S ROOM - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "35 35 Lawrence sits, back to us, hunched over the small de sk, staring at the shuttered window in front of him, lost in thought. From the next room, through the thin walls, he hears the sound of coughing, a toilet flushing... He stirs, picks up his pen and resumes work on his sermon."
+    },
+    {
+      "number": 41,
+      "heading": "INT. CASA SANTA MARTA - LAWRENCE'S BATHROOM - NIGHT",
+      "characters": [
+        "LAWRENCE"
+      ],
+      "dialogues": [
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Italian)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "I nostri ultimi Papi sono stati tutti instancabili promotori di pace e cooperazione a livello internazionale. Preghiamo che il futuro Papa continui questa incessante opera di carità"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "36 36 CLOSE ON LAWRENCE - staring at us. < Our recent Popes have all been tireless promoters of peace and co-oper ation at the international level. Let us pray that the future Pope will continue this ceaseless work of charity and love ... > e amore... We realise Lawrence is practicing his sermon in "
+    },
+    {
+      "number": 42,
+      "heading": "INT. CASA SANTA MARTA - DINING ROOM - NIGHT",
+      "characters": [
+        "CLOSE ON SISTER AGNES",
+        "LAWRENCE",
+        "BENITEZ",
+        "TEDESCO"
+      ],
+      "dialogues": [
+        {
+          "character": "CLOSE ON SISTER AGNES",
+          "parenthetical": "",
+          "text": "...a watchful silent presence, as ever. She monitors the nuns as they fan through the... ...LARGE ROOM running down one side of the lobby. White marble floors, tables set for"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Your Eminences, before we eat I should like to introduce a new member of our order, whose existence was not known to any of us until a few hours ago."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "Bless us, O Lord, and these Your gifts which we are about to receive from Your bounty."
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "(CONT’D) (in Spanish)"
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "TEDESCO",
+          "parenthetical": "",
+          "text": "(Italian)"
+        },
+        {
+          "character": "TEDESCO",
+          "parenthetical": "",
+          "text": "Decano!"
+        },
+        {
+          "character": "TEDESCO",
+          "parenthetical": "",
+          "text": "(CONT’D) (Italian)"
+        },
+        {
+          "character": "TEDESCO",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "(CONT’D)",
+          "text": "CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 33."
+        },
+        {
+          "character": "TEDESCO",
+          "parenthetical": "",
+          "text": "(CONT’D) (Italian)"
+        },
+        {
+          "character": "TEDESCO",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Italian)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Sì."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D) (Italian)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "TEDESCO",
+          "parenthetical": "",
+          "text": "(Italian)"
+        },
+        {
+          "character": "TEDESCO",
+          "parenthetical": "",
+          "text": "Guardate bene. Notate come"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(in English)"
+        },
+        {
+          "character": "TEDESCO",
+          "parenthetical": "",
+          "text": "(in English)"
+        },
+        {
+          "character": "TEDESCO",
+          "parenthetical": "",
+          "text": "(CONT’D) (Italian)"
+        },
+        {
+          "character": "TEDESCO",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "So... what? The next Pope must be"
+        },
+        {
+          "character": "TEDESCO",
+          "parenthetical": "",
+          "text": "(Italian)"
+        },
+        {
+          "character": "TEDESCO",
+          "parenthetical": "",
+          "text": "Sono più di quarant'anni che non abbiamo un Papa italiano."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Italian)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Scusatemi, devo fare il giro tra i nostri Confratelli."
+        }
+      ],
+      "actionPreview": "37 37 dinner, the din of conversation from the assembled cardinals. It could be a business convention. Her gaze lands on the Americans seated at one table, talking loudly. Tremblay in the middle, joking and laughing with them. Lawrence takes a knife and glass and raps it for attention. The room grad"
+    },
+    {
+      "number": 43,
+      "heading": "INT. CASA SANTA MARTA - AULA - NIGHT",
+      "characters": [
+        "LAWRENCE",
+        "CARDINAL SABBADIN",
+        "BELLINI",
+        "CARDINAL LANDOLFI",
+        "CARDINAL VILLANUEVA"
+      ],
+      "dialogues": [
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "I’ll give him this, he clearly has no i ntention of tempering his views to win votes."
+        },
+        {
+          "character": "CARDINAL SABBADIN",
+          "parenthetical": "",
+          "text": "It was shrewd of him to stay away from Rome until today. One outspoken newspaper interview could have written Tedesco off. Instead, he will do well tomorrow, I think."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Define “well.” CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 35."
+        },
+        {
+          "character": "CARDINAL SABBADIN",
+          "parenthetical": "",
+          "text": "I’d say he’s worth fifteen votes in the first ballot."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "And your man?"
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "Why do I feel like a cow being priced by the farmer?"
+        },
+        {
+          "character": "CARDINAL SABBADIN",
+          "parenthetical": "",
+          "text": "(Ignoring this)"
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "By real work, you mean - what, exactly?"
+        },
+        {
+          "character": "CARDINAL LANDOLFI",
+          "parenthetical": "",
+          "text": "Your Eminence, those who seek the papacy..."
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "(Irritated) I don’t “seek” the papacy. I..."
+        },
+        {
+          "character": "CARDINAL VILLANUEVA",
+          "parenthetical": "",
+          "text": "Listen you"
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "Tell them I stand for a common- sense approach to issues such as gays, or divorce. Tell them I stand for never returning to the days of the Latin liturgy, families of ten children because Mamma and Papa know no better. (MORE) CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 36."
+        },
+        {
+          "character": "CARDINAL SABBADIN",
+          "parenthetical": "",
+          "text": "Let’s... let’s not mention women."
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "Brother, I have no intention of concealing my views or pretending to be anything oth er than I am in order to try and sway any of our number who are undecided. So if you are going to canvas on my behalf, make sure my message is clear..."
+        },
+        {
+          "character": "CARDINAL SABBADIN",
+          "parenthetical": "",
+          "text": "Rocco, you talk to the Americans."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "He doesn’t want this. Any of it."
+        },
+        {
+          "character": "CARDINAL SABBADIN",
+          "parenthetical": "",
+          "text": "Of course. That’s why I support him. The men who are dangerous are the ones who actively desire it."
+        }
+      ],
+      "actionPreview": "38 38 Lawrence sits with Bellini and his circle of liberal supporters, having a coffee after their meal. Sabbadin rocks his head from side to side, appraising. Bellini looks pained as Sabbadin studies him in the same thoughtful way. First ballot? Between twenty and twenty-five. But it’s tomorrow nig"
+    },
+    {
+      "number": 44,
+      "heading": "INT. CASA SANTA MARTA - TREMBLAY’S ROOM - NIGHT",
+      "characters": [
+        "BELLINI",
+        "TREMBLAY",
+        "LAWRENCE",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "BELLINI",
+          "parenthetical": "(CONT’D)",
+          "text": "CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 37."
+        },
+        {
+          "character": "TREMBLAY",
+          "parenthetical": "",
+          "text": "(Letting Lawrence in) I’m enjoying the mystery Thomas but I suppose you should tell me what you want to talk about?"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Your last meeting with the Holy"
+        },
+        {
+          "character": "TREMBLAY",
+          "parenthetical": "",
+          "text": "Uhuh? What about"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "I’ve been told it was difficult."
+        },
+        {
+          "character": "TREMBLAY",
+          "parenthetical": "",
+          "text": "(Surprised)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "I’m sorry to have to ask this, Joe, but... To be specific, I was told that the Holy Father demanded your resignation."
+        },
+        {
+          "character": "TREMBLAY",
+          "parenthetical": "",
+          "text": "(Beat)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Beat)"
+        },
+        {
+          "character": "TREMBLAY",
+          "parenthetical": "",
+          "text": "(Beat )"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "So, there isn’t"
+        },
+        {
+          "character": "TREMBLAY",
+          "parenthetical": "",
+          "text": "God, no, of course not! It’s absurd. You didn’t think...?"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "I had to ask."
+        },
+        {
+          "character": "TREMBLAY",
+          "parenthetical": "",
+          "text": "No, I understand, of course. But, no."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "I would but at the moment we happen to be sequestered."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "TREMBLAY",
+          "parenthetical": "",
+          "text": "I can’t. I really...coffee? (Lawrence shakes his head) I’m quite... I’m shocked."
+        },
+        {
+          "character": "TREMBLAY",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "TREMBLAY",
+          "parenthetical": "",
+          "text": "The drinking? (Beat) I don’t like to bring it up, but w e both know his drinking has been getting heavier and perhaps it’s affecting his judgement, his mind even? I know my name has been mentioned as a future Pope and if the Archbishop does not approve of the idea then perhaps... CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 39."
+        },
+        {
+          "character": "TREMBLAY",
+          "parenthetical": "",
+          "text": "(CONT’D) I don’t know. I’m just trying to make sense of... and I know the poor man was shattered by the Holy"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Yes. Indeed. Again, Joe, my apologies for..."
+        },
+        {
+          "character": "TREMBLAY",
+          "parenthetical": "",
+          "text": "No, not at all. I quite understand."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "What"
+        },
+        {
+          "character": "TREMBLAY",
+          "parenthetical": "",
+          "text": "Forgive me, but it was a private conversation, Thomas. And very precious. The last words I exchanged with the Holy Father."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "I quite understand."
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "40"
+        }
+      ],
+      "actionPreview": "39 39 Darkness. Silence. Then a door opens, a switch is flicked and Tremblay’s room glares into light. It’s a suite, like the Pope’s. Lawrence hesitates, but the sooner he gets this over with the sooner they can put it behind them. Father. it? Was it? Difficult? No? Not that I can recall. Lawrence h"
+    },
+    {
+      "number": 45,
+      "heading": "INT. CASA SANTA MARTA - LAWRENCE'S ROOM - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "41 41 Lawrence wakes suddenly. From the next room comes the sound of stentorian snoring. He tries to screen it out. But sleep seems impossible now. He sits up in bed."
+    },
+    {
+      "number": 46,
+      "heading": "INT. CASA SANTA MARTA - GYM - NIGHT",
+      "characters": [
+        "FIRST DAY OF CONCLAVE"
+      ],
+      "dialogues": [],
+      "actionPreview": "42 42 Lawrence walks on the treadmill, the only figure in the large room. He stares at his reflection in the mirrored wall as he speed walks, listening to the h ypnotic thrum, thrum of the treadmill. TITLE CARD:"
+    },
+    {
+      "number": 47,
+      "heading": "EXT. CASA SANTA MARTA - COURTYARD - MORNING",
+      "characters": [
+        "FATHER HAAS"
+      ],
+      "dialogues": [
+        {
+          "character": "FATHER HAAS",
+          "parenthetical": "(O.S.)",
+          "text": "Your Eminence?"
+        }
+      ],
+      "actionPreview": "43 43 HIGH ANGLE - from the top of the balcony. The courtyard below is a sea of red: cardinals robed for the coming service. Lawrence stands staring down at them, an air of trepidation behind the eyes. Below a single nun in blue is lost among the red. Behind him Father Haas has appeared in the hall."
+    },
+    {
+      "number": 48,
+      "heading": "INT. CASA SANTA MARTA - SIDE ROOM - MORNING",
+      "characters": [
+        "FATHER HAAS",
+        "LAWRENCE"
+      ],
+      "dialogues": [
+        {
+          "character": "FATHER HAAS",
+          "parenthetical": "",
+          "text": "How does it feel, Your"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Good. Thank you."
+        }
+      ],
+      "actionPreview": "44 44 Haas is robing Lawrence, fussing around like a tailor, adjusting the heavy red chasuble. He places the tall, white mitre on Lawrence’s head, stands back to survey its angle critically. He hands Lawrence the crozier - a golden Shepherd’s crook. Eminence? We hear the chanting of the Gospel of St"
+    },
+    {
+      "number": 49,
+      "heading": "INT. “ROOM OF CARDINALS” - MORNING",
+      "characters": [
+        "FATHER HAAS",
+        "LAWRENCE"
+      ],
+      "dialogues": [
+        {
+          "character": "FATHER HAAS",
+          "parenthetical": "",
+          "text": "(Concerned, softly)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "I’m fine."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D) (Reading, Italian)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D) (In English)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "45 45 A bare space. Lawrence looks out at the rows of the congregation that have been crammed into the room: the red of the cardinals, purple of the Bishops, white of the Priests... They sit and stand in front of him. Lawrence sits, clutching the sermon in his lap, hiding the turmoil going on inside"
+    },
+    {
+      "number": 50,
+      "heading": "INT. “ROOM OF CARDINALS” ANTECHAMBER - MORNING",
+      "characters": [
+        "LAWRENCE"
+      ],
+      "dialogues": [
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "St Paul said that God’s gift to the"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D) “"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D) (back to English)"
+        }
+      ],
+      "actionPreview": "46 46 ... whilst right outside the door SISTER AGNES and a few of her nuns are silently listening to Lawrence’s speech. Church is its variety. It is this variety, this diversity of people and views that gives our Church its strength. In the course of a long life in the service of our Mother th e Chu"
+    },
+    {
+      "number": 51,
+      "heading": "EXT. CASA SANTA MARTA - COURTYARD - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "47 47 Lawrence is led by Haas and some ASSISTANTS through the courtyard, crowded with cardinals. Lawrence feels their eyes upon him."
+    },
+    {
+      "number": 52,
+      "heading": "INT. CASA SANTA MARTA - SIDE ROOM - DAY",
+      "characters": [
+        "MONSIGNOR O'MALLEY",
+        "LAWRENCE"
+      ],
+      "dialogues": [
+        {
+          "character": "MONSIGNOR O'MALLEY",
+          "parenthetical": "",
+          "text": "(Awkward)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "I’m not sure either."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MONSIGNOR O'MALLEY",
+          "parenthetical": "",
+          "text": "(Hurriedly)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Smiling)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D) (As Haas leaves)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "I need you to do something for me."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "I need to know what happened in the final meeting between the Holy"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Specifically, did anything occur that might render Cardinal Tremblay unfit to assume the papacy? O’Malley gapes at him, recovers himself. MONSIGNOR O’MALLEY"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Bless you."
+        }
+      ],
+      "actionPreview": "48 48 Lawrence stands being disrobed by Haas and the Assistants. None of the younger men can look Lawrence in the face. O’Malley arrives holding the discarded sermon. Dean, your homily... I’m not entirely clear whether or not it should be placed in the Vatican archive or not? As it was not the homil"
+    },
+    {
+      "number": 53,
+      "heading": "INT. CASA SANTA MARTA - LOBBY - DAY",
+      "characters": [
+        "TEDESCO",
+        "LAWRENCE"
+      ],
+      "dialogues": [
+        {
+          "character": "TEDESCO",
+          "parenthetical": "(O.S.)",
+          "text": "(Booming, Italian)"
+        },
+        {
+          "character": "TEDESCO",
+          "parenthetical": "(O.S.)",
+          "text": "(tonante)"
+        },
+        {
+          "character": "TEDESCO",
+          "parenthetical": "",
+          "text": "(CONT’D) (Italian)"
+        },
+        {
+          "character": "TEDESCO",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "TEDESCO",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "TEDESCO",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(in Latin)"
+        }
+      ],
+      "actionPreview": "49 49 Lawrence is heading for the lift when... < Well, Dean... > Beh, Decano... Lawrence turns to find Tedesco advancing on him, drawing the attention of the crowded lobby. CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 45A. < St Paul as an Apostle of Doubt. I’ve never heard that one bef"
+    },
+    {
+      "number": 54,
+      "heading": "INT. CASA SANTA MARTA - LOBBY LIFT - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "50 50 Lawrence, a little pleased with his retort, is about to press the button for his floor when he su ddenly pats his pockets. He closes his eyes."
+    },
+    {
+      "number": 55,
+      "heading": "INT. CASA SANTA MARTA - LOBBY - DAY",
+      "characters": [
+        "LAWRENCE",
+        "SISTER AGNES",
+        "BELLINI"
+      ],
+      "dialogues": [
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "I’m sorry, I forgot my key. SISTER AGNES examines him sternly from behind the desk."
+        },
+        {
+          "character": "SISTER AGNES",
+          "parenthetical": "",
+          "text": "I hope you take better care of"
+        },
+        {
+          "character": "SISTER AGNES",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "(Quietly)"
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "51 51 Lawrence emerges from the lift again, to the surprise of Tedesco and the other cardinals. Aware he’s just ruined his exit, he walks back to the RECEPTION DESK, trying to look unconcerned. the Keys of St Peter than you do of the keys to your room. She reaches under the counter and hands him a K"
+    },
+    {
+      "number": 56,
+      "heading": "EXT. CASA SANTA MARTA - PARKING - DAY",
+      "characters": [
+        "MONSIGNOR O'MALLEY"
+      ],
+      "dialogues": [
+        {
+          "character": "MONSIGNOR O'MALLEY",
+          "parenthetical": "",
+          "text": "(Directing the boarding)"
+        }
+      ],
+      "actionPreview": "52 52 The cardinals are boarding a fleet of white minibuses as it begins to rain. Cardinal Gambino... Cardinal Dell’Acqua... Lawrence waits to board, still thinking of Bellini’s words. We hear an organ playing, a choir singing Veni Creator Spiritus..."
+    },
+    {
+      "number": 57,
+      "heading": "I/E. MINIBUS - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "53 53 As the music continues we find Lawrence sitting alone, biretta on his lap, staring out the rain-smeared windows to the security men patrolling the Vatican grounds beyond. The cardinals all around him are silent, the mood on the bus is sombre, the moment of responsibility has come."
+    },
+    {
+      "number": 58,
+      "heading": "EXT. CORTILE DEL MARESCIALLO - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "54 54 A narrow strip of grey sky above the parked buses. Security for ces linger about, smoking and chatting. The bus driver eats a sandwich. CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 47."
+    },
+    {
+      "number": 59,
+      "heading": "INT. SCALA REGIA - DAY",
+      "characters": [
+        "GUERRINI"
+      ],
+      "dialogues": [
+        {
+          "character": "GUERRINI",
+          "parenthetical": "(O.S.)",
+          "text": "(In Latin)"
+        },
+        {
+          "character": "GUERRINI",
+          "parenthetical": "(O.S.)",
+          "text": "...Et ego Antonius Cardinalis"
+        }
+      ],
+      "actionPreview": "54A 54A A security guard scrolls through his phone, standing on the marble staircase. We hear the cardinals taking their oath. JUNIOR CARDINAL-DEACON < ...I Antonio Cardinal Guerrini do so promise, pledge and swear, so help me God and these Holy Gospels which I touch with my hand. > JUNIOR CARDINAL-"
+    },
+    {
+      "number": 60,
+      "heading": "INT. SISTINE CHAPEL - DAY",
+      "characters": [
+        "CARDINAL BROTZKUS",
+        "CARDINAL NAKITANDA",
+        "ARCHBISHOP MANDORFF"
+      ],
+      "dialogues": [
+        {
+          "character": "CARDINAL BROTZKUS",
+          "parenthetical": "",
+          "text": "(In Latin)"
+        },
+        {
+          "character": "CARDINAL BROTZKUS",
+          "parenthetical": "",
+          "text": "...Et ego Romualdus"
+        },
+        {
+          "character": "CARDINAL BROTZKUS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CARDINAL BROTZKUS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CARDINAL NAKITANDA",
+          "parenthetical": "",
+          "text": "Et ego Irumbus Cardinalis Nakitanda s pondeo, voveo ac iuro, sic me Deus adiuvet et haec Sancta Dei"
+        },
+        {
+          "character": "ARCHBISHOP MANDORFF",
+          "parenthetical": "",
+          "text": "Extra omnes ."
+        }
+      ],
+      "actionPreview": "55 55 The last of the cardinals stand taking the oath. The others have now taken their seats at the rows of desks filling the room. < ...I Romuald Cardinal Brotzkus do so promise, pledge and swear... > Cardinalis Brotzkus spondeo, voveo ac iuro... Lawrence finds himself staring up at Michelangelo’s "
+    },
+    {
+      "number": 61,
+      "heading": "INT. OUTSIDE SISTINE CHAPEL - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "56 56 ...to close them after him."
+    },
+    {
+      "number": 62,
+      "heading": "INT. SISTINE CHAPEL - DAY",
+      "characters": [
+        "LAWRENCE"
+      ],
+      "dialogues": [
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "< Cardinal brothers, we will now proceed to the first ballot. >"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Fratelli Cardinali, procederà ora al primo scrutinio."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D) (In Latin)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "57 57 We hear the sound of a key turning. The great bell of St Peter’s begins tolling five o’clock. The Conclave has begun . LAWRENCE walks to the microphone. (Holding up a ballot paper) < You will find in front of you your ballot paper. On the top half is written... > (Glancing ironically at Tedesc"
+    },
+    {
+      "number": 63,
+      "heading": "INT. SISTINE CHAPEL - DAY / LATER",
+      "characters": [
+        "CARDINAL LOMBARDI",
+        "C ARDINAL LOMBARDI"
+      ],
+      "dialogues": [
+        {
+          "character": "CARDINAL LOMBARDI",
+          "parenthetical": "",
+          "text": "(Italian)"
+        },
+        {
+          "character": "CARDINAL LOMBARDI",
+          "parenthetical": "",
+          "text": "Il primo voto è per il"
+        },
+        {
+          "character": "CARDINAL LOMBARDI",
+          "parenthetical": "",
+          "text": "(CONT’D) (Italian)"
+        },
+        {
+          "character": "CARDINAL LOMBARDI",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CARDINAL LOMBARDI",
+          "parenthetical": "",
+          "text": "(CONT’D) (Italian)"
+        },
+        {
+          "character": "CARDINAL LOMBARDI",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CARDINAL LOMBARDI",
+          "parenthetical": "",
+          "text": "(CONT’D) (Reading the next ballot)"
+        },
+        {
+          "character": "CARDINAL LOMBARDI",
+          "parenthetical": "",
+          "text": "(CONT’D) (Reading the next ballot)"
+        },
+        {
+          "character": "C ARDINAL LOMBARDI",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CARDINAL LOMBARDI",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CARDINAL LOMBARDI",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CARDINAL LOMBARDI",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "58 58 The three Scrutineers sit at the table in front of the altar, counting the votes from the urn. Luksa unfolds a ballot, notes the name, passes it to Lombardi who also records the result an d passes it to Mercurio who pierces the vote through the word elect and threads it onto a length of scarle"
+    },
+    {
+      "number": 64,
+      "heading": "INT. SISTINE CHAPEL - DAY / LATER",
+      "characters": [
+        "CARDINAL LOMBARDI",
+        "LAWRENCE"
+      ],
+      "dialogues": [
+        {
+          "character": "CARDINAL LOMBARDI",
+          "parenthetical": "",
+          "text": "< Cardinal Bellini. >"
+        },
+        {
+          "character": "CARDINAL LOMBARDI",
+          "parenthetical": "",
+          "text": "Cardinale Bellini."
+        },
+        {
+          "character": "CARDINAL LOMBARDI",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CARDINAL LOMBARDI",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CARDINAL LOMBARDI",
+          "parenthetical": "",
+          "text": "(CONT’D) (Italian)"
+        },
+        {
+          "character": "CARDINAL LOMBARDI",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CARDINAL LOMBARDI",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CARDINAL LOMBARDI",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Raising his voice over the hubbub )"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Raising his voice above the hubbub)"
+        }
+      ],
+      "actionPreview": "59 59 CLOSE on the URN - now almost empty of ballots. Luksa’s hand reaches in. Lawrence is hurriedly adding up the votes in pencil beside his list. (Italian, Receiving the next ballot) < Cardinal Tremblay. > (Beat) < Cardinal Adeyemi. > (Italian, Receiving the next ballot) Cardinale Tremblay. (Beat)"
+    },
+    {
+      "number": 65,
+      "heading": "INT. OUTSIDE SISTINE CHAPEL - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "59A 59A Archbishop Mandorff waits outside the Sistine Chapel. He now unlocks the doors and they begin to swing open..."
+    },
+    {
+      "number": 66,
+      "heading": "INT. SISTINE CHAPEL - VESTIBULE - LATE AFTERNOON",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "60 60 Monsignor O’Malley squats by the stove, their chimneys rising to a window high above. He bundles inside the threaded ballo t papers. He ignites them with a fire-lighter, closes the door as they begin to blaze. He turns to the second stove and presses a switch."
+    },
+    {
+      "number": 67,
+      "heading": "INT. INSIDE THE STOVE - LATE AFTERNOON",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "60A 60A INSIDE THE STOVE - the canister of potassium perchlorate, anthracene and sulphur activates with a whoosh. .."
+    },
+    {
+      "number": 68,
+      "heading": "EXT. SISTINE CHAPEL - LATE AFTERNOON",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "61 61 The temporary metal chimney jutting out above the roof of the chapel begins t o gush jet-black smoke, illuminated by a search-light. The smoke streams up to the winter sky and the waiting world. A dull roar swells and fades. It takes us a moment to realise it’s the response of the vast crowd g"
+    },
+    {
+      "number": 69,
+      "heading": "INT. EMPTY ROOMS - LATE AFTERNOON",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "61A 61A As the dull roar continues to resound from outside rooms inside the Vatican lie still and empty in the late afternoon light. The canary listens in his cage."
+    },
+    {
+      "number": 70,
+      "heading": "INT. SALA REGIA - LATE AFTERNOON",
+      "characters": [
+        "MONSIGNOR O'MALLEY",
+        "LAWRENCE"
+      ],
+      "dialogues": [
+        {
+          "character": "MONSIGNOR O'MALLEY",
+          "parenthetical": "",
+          "text": "The media have noticed the presence of a cardinal who doesn’t appear on the official lists, Dean. The press off ice have been receiving requests for information, so I’ve taken the liberty of putting together a draft statement. I’ve also put together some biographical details for you. (Glancing through some sheets of paper)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Absently)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D) (Quietly)"
+        }
+      ],
+      "actionPreview": "62 62 Lawrence and O’Malley hurry through the hall. Ministries in Veracruz, the Congo, established a hospital for female victims of the genocidal sexual violence during the first and second wars. Then Baghdad. And finally the Mission in Ka bul. There was some question of his resigning on health grou"
+    },
+    {
+      "number": 71,
+      "heading": "INT. SCALA REGIA - LATE AFTERNOON",
+      "characters": [
+        "MONSIGNOR O'MALLEY",
+        "LAWRENCE"
+      ],
+      "dialogues": [
+        {
+          "character": "MONSIGNOR O'MALLEY",
+          "parenthetical": "",
+          "text": "I spoke to Monsignor Morales. He was emphatic that he knows of no reason why Cardinal Tremblay should not be Pope."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Thank you."
+        },
+        {
+          "character": "MONSIGNOR O'MALLEY",
+          "parenthetical": "",
+          "text": "(Low)"
+        },
+        {
+          "character": "MONSIGNOR O'MALLEY",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "A “report?” A report on what?"
+        },
+        {
+          "character": "MONSIGNOR O'MALLEY",
+          "parenthetical": "",
+          "text": "That I couldn’t say, Eminence."
+        }
+      ],
+      "actionPreview": "63 63 The two men descend the stairs, dwarfed by the vast sweep of white marble. Another SECURITY MAN waits below them. Lawrence nods, wonders why he does not feel any relief. They pass the SECURITY GUARD who turns and wh ispers into his sleeve. When they are safely past, O’Malley hesitates. Then..."
+    },
+    {
+      "number": 72,
+      "heading": "I/E. MINIBUS - LATE AFTERNOON",
+      "characters": [
+        "CARDINAL SABBADIN",
+        "LAWRENCE"
+      ],
+      "dialogues": [
+        {
+          "character": "CARDINAL SABBADIN",
+          "parenthetical": "",
+          "text": "(Sourly)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Without looking at him)"
+        },
+        {
+          "character": "CARDINAL SABBADIN",
+          "parenthetical": "",
+          "text": "Alright, that’s five votes coming to us, which takes us to twenty- two. All the candidates who received one vote today will fall away. Tha t leaves thirty-one votes available. We simply have to pick up most of them."
+        }
+      ],
+      "actionPreview": "64 64 Lawrence is last on the bus and the only seat still available is at the front, near Sabbadin. CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 54. Reluctantly Lawrence sits down across the aisle from him. For a moment the two sit in silence, Sabbadin staring out of the window. Then.."
+    },
+    {
+      "number": 73,
+      "heading": "INT. CASA SANTA MARTA - DINING ROOM - NIGHT",
+      "characters": [
+        "CARDINAL MENDOZA",
+        "LAWRENCE",
+        "TEDESCO",
+        "L AWRENCE",
+        "TREMBLAY"
+      ],
+      "dialogues": [
+        {
+          "character": "CARDINAL MENDOZA",
+          "parenthetical": "",
+          "text": "(Of Benitez)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "You know him?"
+        },
+        {
+          "character": "CARDINAL MENDOZA",
+          "parenthetical": "",
+          "text": "Of"
+        },
+        {
+          "character": "TEDESCO",
+          "parenthetical": "(O.S.)",
+          "text": "(in English)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Don’t be absurd. I will do all in my power to withdraw my name from the second vote."
+        },
+        {
+          "character": "TEDESCO",
+          "parenthetical": "",
+          "text": "(English)"
+        },
+        {
+          "character": "L AWRENCE",
+          "parenthetical": "",
+          "text": "Because I don’t wish to compromise my neutrality as Dean."
+        },
+        {
+          "character": "TEDESCO",
+          "parenthetical": "",
+          "text": "(English)"
+        },
+        {
+          "character": "TEDESCO",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "TEDESCO",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "If anyone brings up my name please tell them of my intentions. All I want to do is serve the Conclave. I can’t do that if I’m seen as a contender myself."
+        },
+        {
+          "character": "TREMBLAY",
+          "parenthetical": "",
+          "text": "Alright. CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 56A."
+        },
+        {
+          "character": "TREMBLAY",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Cool)"
+        }
+      ],
+      "actionPreview": "65 65 The cardinals stand around in cliques, sipping wine before the evening meal. Adeyemi, as the front runner, seems to have gathered the largest crowd. Alone, Lawre nce is watching Benitez talking to the cardinals from Asia and Oceania. Cardinal Mendoza arrives beside him, follows his gaze. An in"
+    },
+    {
+      "number": 74,
+      "heading": "EXT. APOSTOLIC PALACE - PORTONE DI BRONZO - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "66 66 Lawrence and O’Malley walk towards the vast bronze entrance to the palace, past s aluting Swiss Guards."
+    },
+    {
+      "number": 75,
+      "heading": "INT. APOSTOLIC PALACE - STAIRCASE - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "67 67 The two walk in silence up the deserted staircase of what would traditionally be the Papal Apartments."
+    },
+    {
+      "number": 76,
+      "heading": "INT. APOSTOLIC PALACE - SALA - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "67A 67A They cross a big room and walk into..."
+    },
+    {
+      "number": 77,
+      "heading": "INT. PAPAL SECRETARY’S OFFICE - NIGHT",
+      "characters": [
+        "LAWRENCE"
+      ],
+      "dialogues": [
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "No, no... (Gesturing to the room, them)"
+        }
+      ],
+      "actionPreview": "68 68 Lawrence stands at a filing cabinet, looking through the folders of documents inside. He checks the final folder, clos es the drawer, unsure whether he feels relieved or disappointed. O’Malley watches. A beat. MONSIGNOR O’MALLEY (Tentatively) I could try and speak to Monsignor Morales again? S"
+    },
+    {
+      "number": 78,
+      "heading": "EXT. VATICAN GROUNDS - FOUNTAIN - NIGHT",
+      "characters": [
+        "LAWRENCE",
+        "BENITEZ"
+      ],
+      "dialogues": [
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "You go on, Ray."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "I thought for a moment I was imagining them... Where I come from, they are considered very special animals. They symbolise healing and transformation."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Well, here they keep escaping and being run over. We should"
+        }
+      ],
+      "actionPreview": "69 69 The two are walking back towards the Casa Santa Marta. Lawrence spots Benitez standing by a FOUNTAIN staring into the water. He walks down a flight of stairs to app roach Benitez who is gazing into a pool with swimming TURTLES. The Holy Father’s turtles. He was very fond of them. A gift from A"
+    },
+    {
+      "number": 79,
+      "heading": "EXT. VATICAN GROUNDS - NIGHT",
+      "characters": [
+        "LAWRENCE",
+        "BENITEZ"
+      ],
+      "dialogues": [
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "How are you bearing up? Your health?"
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "My health is excellent, thank you."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "(CONT’D)",
+          "text": "CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 58."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Oh, I only meant have you recovered from your journey?"
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "I have indeed."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Good. And I noticed in the Sistine that you found someone to vote for?"
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "(A shy smile)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "No, it’s not... I’m honoured, but...My dear Vincent - may I call you Vincent? - I’m not a serious candidate. My vocation lies in a different..."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "Why?"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "I have been experiencing some..."
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "With your faith?"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Prayer. I..."
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "(Understanding)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "I only mention it to illustrate my point that I am in no way worthy to be Pope."
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "Any man who is truly worthy must consider himself unworthy. Isn’t that the point you were making in your homily? That without doubt there can be no faith? It resonated with my own exper ience. In my ministry I have witnessed scenes which would make any man skeptical of God’s mercy."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Trying again)"
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "I did. It was absurd."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Then imagine how you would feel if I insisted on voting for you and by some miracle you won."
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "(Solemnly)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "That is how it would be if I became"
+        }
+      ],
+      "actionPreview": "69A 69A Lawrence and Benitez walk back towards the Casa. Benitez seems to tense a little at the question. Yes. I voted for you. (Off his stricken expression) Forgive me! Am I not supposed to say? He struggles to think of a suitable term, then finds himself, to his own surprise, continuing... After t"
+    },
+    {
+      "number": 80,
+      "heading": "INT. CASA SANTA MARTA - PAPAL CORRIDOR - NIGHT",
+      "characters": [
+        "LAWRENCE",
+        "BELLINI"
+      ],
+      "dialogues": [
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Aldo, I feel wretched that my meagre tally may have come at your expense."
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "I had no idea you were so ambitious."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Stung)"
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "Is it...? I thought we had your support. If we liberals are not united then Tedesco will become"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "You talk as if you were the only alternative, Aldo. Adeyemi has the wind behind him..."
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "Adeyemi? A man who believes homosexuals should be sent to prison in this world and hell in the next? Adeyemi isn’t the answer to anything and you know it! If you want to defeat... CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 61."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "“Defeat?” This is a"
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "Because it"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "For God’s sake, you cannot seriously believe I have the slightest d esire to become Pope?"
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "(Dismissing this contemptuously)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Well,"
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "Deny it if you like. But search your heart and"
+        }
+      ],
+      "actionPreview": "70 70 Lawrence walks along the corridor. He slows as he sees the entrance to the Papal suite, still criss-crossed with ribbons. CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 60. On tables on either side of the door, dozens of votive candles flicker. Bellini stands before them, looking l"
+    },
+    {
+      "number": 81,
+      "heading": "INT. CASA SANTA MARTA - LAWRE NCE'S ROOM - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "71 71 Lawrence kneels by his bed , in prayer. His eyes stray to the bed itself, anonymous and bland, the padded headboard, a faint echo of a similar moment... But before he can locate the memory his exhaustion overcomes him. His eyelids flutter, close and slowly he begins to sink forward into sleep."
+    },
+    {
+      "number": 82,
+      "heading": "INT. PAPAL BEDROOM - NIGHT",
+      "characters": [
+        "A DREAM IMAGE"
+      ],
+      "dialogues": [
+        {
+          "character": "A DREAM IMAGE",
+          "parenthetical": "",
+          "text": "CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 62."
+        }
+      ],
+      "actionPreview": "71A 71A Lawrence straightens, still kneeling by a bed. The LATE POPE lies before him, just as at the opening of the film. But now his eyes are open and he stares at Lawrence. A charged moment. Something vital is about to be said. Lawrence leans in a little. The Pope opens his mouth to speak and..."
+    },
+    {
+      "number": 83,
+      "heading": "INT. CASA SANTA MARTA - LAWRENCE'S ROOM - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "72 72 ... Lawrence wakes in the darkness, hears a muffled conversation, hushed and urgent. A man’s baritone. Then, in reply... a woman’s voice. Lawrence reaches out a fumbling hand and switches on the light. Gingerly he straightens up from where he had fallen asleep, slumped over the bed, his joints"
+    },
+    {
+      "number": 84,
+      "heading": "INT. CASA SANTA MARTA - CORRIDOR - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "72A 72A Lawrence peers out into the corridor, just in time to see a flash of the blue uniform as it disappears around the corner . He stands undecided for a moment, then quietly closes the door and..."
+    },
+    {
+      "number": 85,
+      "heading": "INT. CASA SANTA MARTA - LAWRENCE’S ROOM - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "72B 72B ... sits on his bed, mind whirring. TITLE CARD: SECOND DAY OF CONCLAVE"
+    },
+    {
+      "number": 86,
+      "heading": "EXT. CASA SANTA MARTA - COURTYARD - MORNING",
+      "characters": [
+        "MONSIGNOR O'MALLEY",
+        "LAWRENCE"
+      ],
+      "dialogues": [
+        {
+          "character": "MONSIGNOR O'MALLEY",
+          "parenthetical": "",
+          "text": "Good morning, Your Eminence. Did you sleep well?"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Perfectly, thank you."
+        },
+        {
+          "character": "MONSIGNOR O'MALLEY",
+          "parenthetical": "",
+          "text": "The buses are ready."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "I think I’ll walk."
+        }
+      ],
+      "actionPreview": "73 73 The sea of cardinals mill around the courtyard, ready for the second day of the Conclave. Lawrence, bleary-eyed from his broken night, sees O’Malley approach. CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 63. Lawrence notices Bellini in the throng, watching him."
+    },
+    {
+      "number": 87,
+      "heading": "EXT. VATICAN GARDENS - MORNING",
+      "characters": [
+        "LAWRENCE",
+        "ADEYEMI",
+        "CARDINAL NAKITANDA"
+      ],
+      "dialogues": [
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Under his breath)"
+        },
+        {
+          "character": "ADEYEMI",
+          "parenthetical": "",
+          "text": "Good morning, Dean."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Joshua."
+        },
+        {
+          "character": "ADEYEMI",
+          "parenthetical": "",
+          "text": "I want you to know that I very much agreed with your homily yesterday."
+        },
+        {
+          "character": "ADEYEMI",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "And tolerance. CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 64."
+        },
+        {
+          "character": "ADEYEMI",
+          "parenthetical": "",
+          "text": "Exactly. Tolerance. I trust that when this election is over, your moderating voice will be heard in the very highest counsels of the"
+        },
+        {
+          "character": "CARDINAL NAKITANDA",
+          "parenthetical": "(O.S.)",
+          "text": "Joshua!"
+        },
+        {
+          "character": "ADEYEMI",
+          "parenthetical": "",
+          "text": "Excuse me, Dean."
+        }
+      ],
+      "actionPreview": "74 74 Lawrence walks, aware of the inevitable SECURITY MAN trailing him and the crackle of his walkie-talkie. From the sky above comes the drone of circling heli copters. A gust of wind almost takes Lawrence’s zucchetto. Oh, do go away . Moments later a figure appears at his side - Adeyemi. They wal"
+    },
+    {
+      "number": 88,
+      "heading": "INT. SISTINE CHAPEL - MORNING",
+      "characters": [
+        "CARDINAL LOMBARDI",
+        "LAWRENCE"
+      ],
+      "dialogues": [
+        {
+          "character": "CARDINAL LOMBARDI",
+          "parenthetical": "",
+          "text": "(Italian )"
+        },
+        {
+          "character": "CARDINAL LOMBARDI",
+          "parenthetical": "",
+          "text": "I risultati del secondo scrutinio sono i seguenti."
+        },
+        {
+          "character": "CARDINAL LOMBARDI",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CARDINAL LOMBARDI",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Italian)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Fratelli, in conformità con la Costituzione apostolica, non ci fermeremo a bruciare le schede a questo punto , ma procederemo immediatamente al successivo scrutinio..."
+        }
+      ],
+      "actionPreview": "75 75 Pencils scratch the names of cardinals on ballot papers... Elderly cardinals labour down the aisle, ballots held aloft in shaking hands... Ballot papers are dropped into the urn... A needle pierces a ballot paper with scarlet thread... Cardinal Lombardi leans into the microphone. < The results"
+    },
+    {
+      "number": 89,
+      "heading": "INT. SISTINE CHAPEL - MORNING / LATER",
+      "characters": [
+        "CARDINAL LOMBARDI"
+      ],
+      "dialogues": [
+        {
+          "character": "CARDINAL LOMBARDI",
+          "parenthetical": "",
+          "text": "(Italian)"
+        },
+        {
+          "character": "CARDINAL LOMBARDI",
+          "parenthetical": "",
+          "text": "I risultati del terzo scrutinio sono i seguenti."
+        },
+        {
+          "character": "CARDINAL LOMBARDI",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CARDINAL LOMBARDI",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CARDINAL LOMBARDI",
+          "parenthetical": "",
+          "text": "(CONT’D) (Resuming)"
+        },
+        {
+          "character": "CARDINAL LOMBARDI",
+          "parenthetical": "",
+          "text": "(CONT’D) (Resuming)"
+        }
+      ],
+      "actionPreview": "76 76 Again... Pencils scratch the names of cardinals on ballot papers... Elderly cardinals labour down the aisle, ballots held aloft in shaking hands... Ballot papers are dropped into the urn... A needle pierces a ballot paper with scarlet thread... Lawrence holds his pen, tip down, on his desk, wa"
+    },
+    {
+      "number": 90,
+      "heading": "INT. CASA SANTA MARTA - KITCHEN CORRIDOR - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "77 77 Two NUNS stand at a window, staring out at the city beyond. A sinister thread of black smoke is rising from somewhere in the east, on the Quirinal Hill. Distantly we hear the sound of sirens wailing. One of the Nuns clasps her hands and begins to pray in a low, urgent murmur. Sister Agnes appe"
+    },
+    {
+      "number": 91,
+      "heading": "INT. SALA REGIA - DAY",
+      "characters": [
+        "LAWRENCE"
+      ],
+      "dialogues": [
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Quietly) I take it something has happened? MONSIGNOR O’MALLEY"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Dear God. A bomb? MONSIGNOR O’MALLEY"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Say nothing to the cardinal- electors about this Ray. We are sequestered and t hey must be shielded from any news of the outside world in case it influences their judgement. You understand? MONSIGNOR O’MALLEY"
+        }
+      ],
+      "actionPreview": "78 78 Lawrence walks with O’Malley. Two SECU RITY MEN hurry past them. There’s been an explosion your Eminence. In the Piazza Barberini. It’s unclear at this moment. There are injuries but no talk of fatalities so far. Lawrence considers for a moment. Of course your Eminence. CONCLAVE by Peter Strau"
+    },
+    {
+      "number": 92,
+      "heading": "INT. CASA SANTA MARTA - DINING ROOM - DAY",
+      "characters": [
+        "CARDINAL VILLANUEVA",
+        "CARDINAL SABBADIN",
+        "GUTTOSO",
+        "LAWRENCE",
+        "BELLINI",
+        "CARDINAL LANDOLFI"
+      ],
+      "dialogues": [
+        {
+          "character": "CARDINAL VILLANUEVA",
+          "parenthetical": "",
+          "text": "Well, it would seem that Adeyemi will be Pope before the day is out."
+        },
+        {
+          "character": "CARDINAL VILLANUEVA",
+          "parenthetical": "",
+          "text": "(CONT’D) I suppose the first black Pope will be a tremendous thing for the world."
+        },
+        {
+          "character": "CARDINAL SABBADIN",
+          "parenthetical": "",
+          "text": "What am I supposed to tell them in"
+        },
+        {
+          "character": "GUTTOSO",
+          "parenthetical": "",
+          "text": "(Quietly, Italian)"
+        },
+        {
+          "character": "GUTTOSO",
+          "parenthetical": "",
+          "text": "(Quietly)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Interrupting, Italian)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Interrupting, Italian)"
+        },
+        {
+          "character": "GUTTOSO",
+          "parenthetical": "",
+          "text": "< Of course, but as a Roman myself... >"
+        },
+        {
+          "character": "GUTTOSO",
+          "parenthetical": "",
+          "text": "Certo, ma"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Firmly)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Firmly)"
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "Tell your congregation in Milan to celebrate the first African pontiff in the history of the Church."
+        },
+        {
+          "character": "CARDINAL SABBADIN",
+          "parenthetical": "",
+          "text": "If Adeyemi was white we’d all be condemning him as more reactionary then Tedesco. It’s only because he’s..."
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "(Sharp)"
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "What happened?"
+        },
+        {
+          "character": "CARDINAL LANDOLFI",
+          "parenthetical": "",
+          "text": "She dropped a bottle of wine."
+        }
+      ],
+      "actionPreview": "79 79 The cardinals at lunch. Some surreptitiously look to the windows, searching the skies for the dispersing veil of distant smoke. Lawrence comes with a plate from the buffet, hesitates, then takes a seat at Bellini’s table. The two men avoid each other’s gaze. The other cardinals continue their "
+    },
+    {
+      "number": 93,
+      "heading": "INT. CASA SANTA MARTA - DINING ROOM BUFFET - DAY",
+      "characters": [
+        "CARDINAL NAKITANDA",
+        "LAWRENCE",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "CARDINAL NAKITANDA",
+          "parenthetical": "",
+          "text": "May we have a word, Dean?"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Of course."
+        },
+        {
+          "character": "CARDINAL NAKITANDA",
+          "parenthetical": "",
+          "text": "Our brother Joshua is troubled."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "What just happened?"
+        },
+        {
+          "character": "CARDINAL NAKITANDA",
+          "parenthetical": "",
+          "text": "One of the nuns serving our table started talking to him. He tried to ignore her and then she dropped her tray and shouted something. He got up and left."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "What did she say to him?"
+        },
+        {
+          "character": "CARDINAL NAKITANDA",
+          "parenthetical": "",
+          "text": "We don’t know. She was speaking"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Where is Cardinal Adeyemi now?"
+        },
+        {
+          "character": "CARDINAL NAKITANDA",
+          "parenthetical": "",
+          "text": "Clearly something is wrong, Dean, and he"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "81"
+        }
+      ],
+      "actionPreview": "80 80 Lawrence stands getting coffee. He turns and finds three of the African Cardinals behind him, their expressions mournful. And his heart sinks. For a moment he has a mad impulse to flee. But... The cardinals exchan ge glances. Yoruba. Nakitanda shrugs, takes his arm. must tell us what. We have "
+    },
+    {
+      "number": 94,
+      "heading": "INT. CASA SANTA MARTA - KITCHEN - DAY",
+      "characters": [
+        "LAWRENCE",
+        "NUN"
+      ],
+      "dialogues": [
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Italian)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Potreste dirmi dove si trova la sorella che ha fatto cadere"
+        },
+        {
+          "character": "NUN",
+          "parenthetical": "",
+          "text": "(Italian)"
+        },
+        {
+          "character": "NUN",
+          "parenthetical": "",
+          "text": "È con Suor Agnes, Vostra"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "< Would you be kind enough to take me to her? >"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Sareste così gentile da portarmi da lei?"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "81A 81A The kitchen is full of NUNS preparing food. Lawrence crosses towards the back, looking for the missing nun. Those closest to him bow their heads as he passes. In the back the office is empty. Lawrence returns. < Could you tell me, where is the sister who just had the accident? > la bottiglia"
+    },
+    {
+      "number": 95,
+      "heading": "INT. CASA SANTA MARTA - OUTSIDE BAC K OFFICE - DAY",
+      "characters": [
+        "LAWRENCE",
+        "SISTER AGNES"
+      ],
+      "dialogues": [
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Good afternoon, Sister. I need to speak to the nun who dropped her tray just now."
+        },
+        {
+          "character": "SISTER AGNES",
+          "parenthetical": "",
+          "text": "She is safe with me, Your Eminence. I am dealing with the situation."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "I am sure you are Sister Agnes."
+        },
+        {
+          "character": "SISTER AGNES",
+          "parenthetical": "",
+          "text": "I hardly think a dropped tray should concern the Dean of the"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Even so..."
+        },
+        {
+          "character": "SISTER AGNES",
+          "parenthetical": "",
+          "text": "The welfare of the Sister is"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Icy)"
+        }
+      ],
+      "actionPreview": "82 82 The Nun knocks on the door of the office. There is no reply. Lawrence steps forward and knocks more loudly. After a moment, the door opens a little and SISTER AGNES peers out. But I must see her myself. College of Cardinals. CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 71. He gri"
+    },
+    {
+      "number": 96,
+      "heading": "INT. CASA SANTA MARTA - BACK OFFICE - DAY",
+      "characters": [
+        "LAWRENCE",
+        "SISTER AGNES"
+      ],
+      "dialogues": [
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Please, sit, my child. My name is"
+        },
+        {
+          "character": "SISTER AGNES",
+          "parenthetical": "",
+          "text": "She’s feeling much better."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(To the Nun)"
+        },
+        {
+          "character": "SISTER AGNES",
+          "parenthetical": "",
+          "text": "Her name is Shanumi."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(To the Nun)"
+        },
+        {
+          "character": "SISTER AGNES",
+          "parenthetical": "",
+          "text": "Eminence, I really do think it would be better if..."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Without looking at her)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "83 83 The NUN - a plump middle-aged Nigerian woman - sits in a corner of the office. She sta nds as Lawrence enters. Cardinal Lawrence. How are you feeling? Could you tell me your name? Please, do sit down. Would you be so good as to leave us now, S ister Agnes? CONCLAVE by Peter Straughan - Pink Re"
+    },
+    {
+      "number": 97,
+      "heading": "INT. CASA SANTA MARTA - CORRIDOR - DAY",
+      "characters": [
+        "ADEYEMI"
+      ],
+      "dialogues": [
+        {
+          "character": "ADEYEMI",
+          "parenthetical": "",
+          "text": "I’ll be ready in a moment, Dean."
+        }
+      ],
+      "actionPreview": "84 84 TRACKING with Lawrence as he walks determinedly down the corridor. He reaches the door of Adeyemi’s room - the room next to his own and knocks. After a moment Adeyemi opens the door, drying his face. He walks back into the room. Lawrence hesitates, then follows him... CONCLAVE by Peter Straugh"
+    },
+    {
+      "number": 98,
+      "heading": "INT. CASA SANTA MARTA - ADEYEMI’S ROOM - CONTINUOUS",
+      "characters": [
+        "ADEYEMI",
+        "LAWRENCE"
+      ],
+      "dialogues": [
+        {
+          "character": "ADEYEMI",
+          "parenthetical": "",
+          "text": "Shouldn’t we be leaving?"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "In a moment."
+        },
+        {
+          "character": "ADEYEMI",
+          "parenthetical": "",
+          "text": "That sounds ominous."
+        },
+        {
+          "character": "ADEYEMI",
+          "parenthetical": "",
+          "text": "(CONT’D) I am the victim of a disgraceful plot to ruin my reputation. Someone brought that woman here and staged this melodrama. She’d never left"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "With respect, Joshua, how she came here is secondary to the"
+        },
+        {
+          "character": "ADEYEMI",
+          "parenthetical": "",
+          "text": "(turning) I have no relationship to her! I hadn’t set eyes on her for thirty years until she turned up outside my room last night!"
+        },
+        {
+          "character": "ADEYEMI",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "And have you asked forgiveness?"
+        },
+        {
+          "character": "ADEYEMI",
+          "parenthetical": "",
+          "text": "I confessed my sin at the time! My bishop moved me to another parish and I never lapsed again! Such relationships were not uncommon in those days. You know that!"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Quietly)"
+        },
+        {
+          "character": "ADEYEMI",
+          "parenthetical": "",
+          "text": "The child? The child was brought up in a Christian household, and to this day he has no idea who his father is - if indeed it is me."
+        },
+        {
+          "character": "ADEYEMI",
+          "parenthetical": "",
+          "text": "(CONT’D) (Beat. Broken)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "No, Your Eminence."
+        },
+        {
+          "character": "ADEYEMI",
+          "parenthetical": "",
+          "text": "Thomas,"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(sadly)"
+        },
+        {
+          "character": "ADEYEMI",
+          "parenthetical": "",
+          "text": "So... I still have hope?"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Gently)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D) ( Moved) I am more sorry than I can say. You will never be Pope. You"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D) (Fiercely)"
+        },
+        {
+          "character": "ADEYEMI",
+          "parenthetical": "",
+          "text": "Will you...will you pray with me?"
+        }
+      ],
+      "actionPreview": "85 85 Adeyemi is in the bathroom. We hear the steady stream of urination, followed by the flush. He walks out, buttoning his cassock, seems surprised to find LAWRENCE there. ( Studying himself in the mirror ) If this is about the incident downstairs, I have no desire to talk about it. Lawrence watch"
+    },
+    {
+      "number": 99,
+      "heading": "EXT. VATICAN GARDENS - DAY",
+      "characters": [
+        "HIGH ANGLE"
+      ],
+      "dialogues": [
+        {
+          "character": "HIGH ANGLE",
+          "parenthetical": "",
+          "text": "...watching the tiny figure of Lawrence below us, walking through the formal geometries of the gardens. He joins"
+        }
+      ],
+      "actionPreview": "86 86 Nakitanda and his two colleagues on a seat. We watch them talk for a moment. Nakitanda drops his head in dismay. CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 76."
+    },
+    {
+      "number": 100,
+      "heading": "INT. SISTINE CHAPEL - DAY",
+      "characters": [
+        "ADEYEMI"
+      ],
+      "dialogues": [
+        {
+          "character": "ADEYEMI",
+          "parenthetical": "",
+          "text": "(Solemnly, in Latin)"
+        },
+        {
+          "character": "ADEYEMI",
+          "parenthetical": "",
+          "text": "(Solemnly)"
+        }
+      ],
+      "actionPreview": "87 87 The Fourth and Fifth Ballots in progress. We’re watching Adeyemi walk down the aisle, his ballot held high in his hand. He passes the seats of the African Cardinals who, to a man, avert their eyes. He reaches the microphone. < I call as my witness Christ the Lord, who will be my judge, that my"
+    },
+    {
+      "number": 101,
+      "heading": "INT. SISTINE CHAPEL - DAY / LATER",
+      "characters": [
+        "CARDINAL LOMBARDI",
+        "LOMBARDI"
+      ],
+      "dialogues": [
+        {
+          "character": "CARDINAL LOMBARDI",
+          "parenthetical": "",
+          "text": "(Italian)"
+        },
+        {
+          "character": "CARDINAL LOMBARDI",
+          "parenthetical": "",
+          "text": "I risultati del quinto scrutinio sono i seguenti."
+        },
+        {
+          "character": "CARDINAL LOMBARDI",
+          "parenthetical": "",
+          "text": "(CONT’D) (Italian)"
+        },
+        {
+          "character": "CARDINAL LOMBARDI",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CARDINAL LOMBARDI",
+          "parenthetical": "",
+          "text": "(CONT’D) (Italian)"
+        },
+        {
+          "character": "CARDINAL LOMBARDI",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LOMBARDI",
+          "parenthetical": "",
+          "text": "(Italian)"
+        },
+        {
+          "character": "LOMBARDI",
+          "parenthetical": "",
+          "text": "Fratelli, qui si conclude il quinto scrutinio. Poiché nessun candidato ha ottenuto la maggioranza nece ssaria, le votazioni riprenderanno domani mattina."
+        }
+      ],
+      "actionPreview": "88 88 Cardinal Lombardi is reading the results. < The results of the Fifth Ballot are... Cardinal Tremblay, forty votes. > Cardinale Tremblay: quaranta voti. The Canadian bows his head and places his hands together, as his colleagues twist in their seats to examine the new front- runner. < Cardinal "
+    },
+    {
+      "number": 102,
+      "heading": "INT. SISTINE CHAPEL - VESTIBULE - EVENING",
+      "characters": [
+        "LAWRENCE",
+        "MONSIGNOR O'MALLEY"
+      ],
+      "dialogues": [
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Noticing)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "No, Ray. I too must be shielded from any knowledge which could act as an... interference"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Anything else? O’Malley glances at his clipboard. MONSIGNOR O’MALLEY"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Alright. Thank you, Ray. O’Malley lingers. Lawrence gives him a questioning look."
+        },
+        {
+          "character": "MONSIGNOR O'MALLEY",
+          "parenthetical": "",
+          "text": "(Hesitantly)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "I’m not a Wi tchfinder. It isn’t my job to go hunting for secrets in my colleagues’ pasts! O’Malley nods, taken aback. Beat. Lawrence relents, touches O’Malley’s wrist."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D) I’m sorry, Ray. No more investigations. I think we’ve heard enough secrets. (Standing)"
+        },
+        {
+          "character": "MONSIGNOR O'MALLEY",
+          "parenthetical": "",
+          "text": "Good night then, Your Eminence. CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 79."
+        }
+      ],
+      "actionPreview": "89 89 The chapel has emptied. O’Malley bundles the ballots into the stove and burns them. He crosses the vestibule and turns to where Lawrence sits in the chapel, lost in thought, picks up his clipboard of notes. Yes, Ray? MONSIGNOR O’MALLEY The incident this morning, your Eminence. I have more info"
+    },
+    {
+      "number": 103,
+      "heading": "INT. CASA SANTA MARTA - LAWRENCE'S ROOM - NIGHT",
+      "characters": [
+        "BELLINI"
+      ],
+      "dialogues": [
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "Thomas."
+        }
+      ],
+      "actionPreview": "90 90 Lawrence sits on his bed, struggling to unlace his shoes. He manages to remove one and has to pause to regain his breath. A KNOCK at the door jerks him upright and startled. He crosses to the door and opens it to reveal Bellini and Sabbadin outside."
+    },
+    {
+      "number": 104,
+      "heading": "INT. CASA SANTA MARTA - BACK STAIRS - NIGHT",
+      "characters": [
+        "CARDINAL SABBADIN",
+        "LAWRENCE",
+        "BELLINI"
+      ],
+      "dialogues": [
+        {
+          "character": "CARDINAL SABBADIN",
+          "parenthetical": "",
+          "text": "(Hushed)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Is this really necessary? I feel as if I’m at some American political convention."
+        },
+        {
+          "character": "CARDINAL SABBADIN",
+          "parenthetical": "",
+          "text": "(Gloomily)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "It isn’t over yet."
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "(Heavily) I’m afraid, as far as I’m concerned, it is. The question arises, if I can’t win, whom should I advise my supporters to vote for?"
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CARDINAL SABBADIN",
+          "parenthetical": "",
+          "text": "(Bluntly)"
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "I’m no more of an enthusiast for"
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Is this what we are reduced to?"
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "(Irritated)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Beat) I have been informed that, shortly before his death, the Holy Father had fallen out with Tremblay. In fact, that he intended to dismiss him from all offices in the Church."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "A rumour? (Beat)"
+        },
+        {
+          "character": "CARDINAL SABBADIN",
+          "parenthetical": "",
+          "text": "(Joining in)"
+        },
+        {
+          "character": "CARDINAL SABBADIN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "(Impatient)"
+        },
+        {
+          "character": "CARDINAL SABBADIN",
+          "parenthetical": "",
+          "text": "The point is - we will"
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "(Flat)"
+        }
+      ],
+      "actionPreview": "91 91 Lawrence , Bellini and Sabbadin stand in a staircase. We need to decide how we are going to proceed. Lawrence glances around at the shadowy staircase. This feels absurd. Well, it isn’t going to take long. Our friend here does not have sufficient support amongst our colle agues to be elected Po"
+    },
+    {
+      "number": 105,
+      "heading": "INT. CASA SANTA MARTA - LIFT - NIGHT",
+      "characters": [
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "92A"
+        }
+      ],
+      "actionPreview": "92 92 Lawrence stands lost in thought as the elevator rises. It stops at a floor and the doors slide open. The ancient Cardinal LOWENSTEIN, grey-faced wi th fatigue, leaning on his walking stick, creeps slowly into the lift. Lawrence bites down on his impatience, flashes a smile, holding the door fo"
+    },
+    {
+      "number": 106,
+      "heading": "INT. CASA SANTA MARTA - LIFT - NIGHT",
+      "characters": [
+        "CARDIN AL LOWENSTEIN",
+        "LAWRENCE"
+      ],
+      "dialogues": [
+        {
+          "character": "CARDIN AL LOWENSTEIN",
+          "parenthetical": "",
+          "text": "If this drags on much longer I might die before we find a new"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Grimly)"
+        }
+      ],
+      "actionPreview": "92B 92B The doors slide closed again and the elevator continues its ascent. For a moment the only sound is Lowenstein’s laboured breathing. Then... Pope. Lawrence is still thinking about what he’s just seen - the formation of a new right-wing voting block? Then let’s try to finish it. CONCLAVE by Pe"
+    },
+    {
+      "number": 107,
+      "heading": "INT. CASA SANTA MARTA - UPPER CORRIDOR - NIGHT",
+      "characters": [
+        "BENITEZ",
+        "LAWRENCE"
+      ],
+      "dialogues": [
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "Your Eminence?"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "I’m sorry to disturb you. May I have a word?"
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "Of course. One moment."
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "(CONT’D) (Ushering him in)"
+        }
+      ],
+      "actionPreview": "93 93 A door opens a little and Benitez peers cautiously out at us, his open cassock clutched together at his throat. Lawrence is a little taken aback by Benitez’ wariness. To Thomas' surprise, Benitez disappears back into the room, leaving him standing in the corridor. After a moment he reappears, "
+    },
+    {
+      "number": 108,
+      "heading": "INT. CASA SANTA MARTA - BENITEZ ROOM - CONTINUOUS",
+      "characters": [
+        "BENITEZ",
+        "LAWRENCE",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "(Apologetically)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Politely) I must see if it helps me."
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "Yes. Your difficulty with prayer."
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "(CONT’D) (Gently)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Yes. I’m sure you’re right."
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "Excuse me..."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "The other night you were kind enough to say yo u had voted for me. I don’t know if you’ve continued to do so, but if you have I would like to repeat my plea to you to stop."
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "Why?"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "First, because I lack the spiritual depth to be Pope. And secondly I can’t possibly win. A long drawn out Conclave would be seen by the media as proof that the Church is in crisis."
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "You have come to ask me to vote for"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Yes. A nd to urge your supporters to do the same."
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "Cardinal Tremblay has already spoken to me about this."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Bitterly) I’m sure he has. CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 85."
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "You want me to vote for a man you see as ambitious?"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "I do not want to see Tedesco as"
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "I’m sorry. I cannot vote for a man unless he is the one I deem most worthy to be Pope. And for me, that is not Cardinal Tremblay. It is you."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "I don’t"
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "(Calmly)"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "95"
+        }
+      ],
+      "actionPreview": "94 94 Lawrence takes in the room - identical to his own, except for a few lit candles here and the bathroom beyond. In my travels I became used to not always having electricity. Now I find it helpful when I pray alone. He watches Lawrence, the same keen gaze. Lawrence nods. CONCLAVE by Peter Straugh"
+    },
+    {
+      "number": 109,
+      "heading": "INT. CASA SANTA MARTA - DINING ROOM - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "96 96 Tedesco sits, holding court with his supporters. Adeyemi and the African cardinals sit with him now. On the other side of the room, Tremblay circulates amongst his supporters, shaking hands, exchanging a few remarks, every inch the political campaigner. Lawrence sits watching the two factions,"
+    },
+    {
+      "number": 110,
+      "heading": "INT. CASA SANTA MARTA - BACK OFFICE - NIGHT",
+      "characters": [
+        "SISTER AGNES",
+        "LAWRENCE",
+        "SISTER AGN ES"
+      ],
+      "dialogues": [
+        {
+          "character": "SISTER AGNES",
+          "parenthetical": "",
+          "text": "Sister Shanumi is on her way home to Nigeria. (Off Thomas' look)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Beat. Quietly)"
+        },
+        {
+          "character": "SISTER AGN ES",
+          "parenthetical": "",
+          "text": "I received notification from the office of the Superioress General that she would be joining us. The arrangements were made in Paris."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "I would, except that, as you know, I am sequestered for the duration of the Conclave."
+        },
+        {
+          "character": "SISTER AGNES",
+          "parenthetical": "",
+          "text": "Then you can ask them afterwards."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "The information is of value to me now."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D) I know you were close to the late"
+        }
+      ],
+      "actionPreview": "97 97 Lawrence sits with Sister Agnes, her eyes darting to the cage with the canary. There was a flight to Lagos this evening. I thought it was best for everyone if she was on it. How did Sister Shanumi come to be in Rome? You should ask the Rue de Bac, Your Eminence. Sister Agnes stares at him, her"
+    },
+    {
+      "number": 111,
+      "heading": "INT. CASA SANTA MARTA - STAIRCASE - NIGHT",
+      "characters": [
+        "LAWRENCE",
+        "TREMBLAY"
+      ],
+      "dialogues": [
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "(O.S.)",
+          "text": "Your Eminence, a word if I may?"
+        },
+        {
+          "character": "TREMBLAY",
+          "parenthetical": "",
+          "text": "(Smiling) I was just on my way to bed."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "It won’t take a moment. Come."
+        }
+      ],
+      "actionPreview": "98 98 After dinner Cardinals are heading for the stairs and elevator. Tremblay amongst a group of acolytes. Tremblay turns -- Lawrence stands on the st aircase above him, waiting. Tremblay’s smile is suddenly wary as Lawrence leads him to..."
+    },
+    {
+      "number": 112,
+      "heading": "EXT. CASA SANTA MARTA - COURTYARD CORRIDOR - NIGHT",
+      "characters": [
+        "TREMBLAY",
+        "LAWRENCE",
+        "TREMB LAY"
+      ],
+      "dialogues": [
+        {
+          "character": "TREMBLAY",
+          "parenthetical": "",
+          "text": "(still smiling) I know you enjoy"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "I want you to withdraw your name from the next ballot."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "TREMBLAY",
+          "parenthetical": "",
+          "text": "Well, forty of our colleagues would disagree with you, so..."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Only because they don’t know you as I do."
+        },
+        {
+          "character": "TREMBLAY",
+          "parenthetical": "",
+          "text": "This is sad, Thomas. I shall pray for you and..."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Over) I know there was some kind of report into your activities. I know the Holy Father raised the matter with you hours befo re he died and that he dismissed you from all your posts. And I know that, somehow, you discovered Adeyemi’s surrender to temptation thirty years ago and arranged for the woman involved to be brought to Rome, with the express intention of destroying"
+        },
+        {
+          "character": "TREMBLAY",
+          "parenthetical": "",
+          "text": "I deny that accusation."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "You deny asking our Superioress to transfer one of her sisters to"
+        },
+        {
+          "character": "TREMB LAY",
+          "parenthetical": "",
+          "text": "No. I asked her - but not on my own behalf."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "On whose behalf, then?"
+        },
+        {
+          "character": "TREMBLAY",
+          "parenthetical": "",
+          "text": "The Holy Father’s."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "You would"
+        },
+        {
+          "character": "TREMBLAY",
+          "parenthetical": "",
+          "text": "It isn’t libel, it’s the truth! The"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "That is a d espicable accusation."
+        },
+        {
+          "character": "TREMBLAY",
+          "parenthetical": "",
+          "text": "Is it? I wonder if you really"
+        },
+        {
+          "character": "TREMBLAY",
+          "parenthetical": "",
+          "text": "(CONT’D) I shall pretend this conversation never took place."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(After him, impotent anger)"
+        }
+      ],
+      "actionPreview": "99 99 The corridor is empty and in semi-darkness. Tremblay and Lawrence stand in the light of the fluorescents, their breath pluming in the air. mystery novels Thomas but this is... Tremblay sighs, shakes his head with a sorrowful smile. CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 88."
+    },
+    {
+      "number": 113,
+      "heading": "INT. CASA SANTA MARTA - LAWRENCE'S ROOM - NIGHT",
+      "characters": [
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "101"
+        }
+      ],
+      "actionPreview": "100 100 The only source of light shining from the bathroom Lawrence lies on his bed, praying. After a moment his eyes open and he stares blindly ahead, hoping for some sign, some guidance... The sound of Adeyemi’s snoring coming from next door. Suddenly Lawrence sits up in bed, a decision forming in"
+    },
+    {
+      "number": 114,
+      "heading": "INT. CASA SANTA MARTA - PAPAL CORRIDOR - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "102 102 At the end of the corridor the lift doors open, a silhouette appearing in the hall. Lawrence silently walks down the empty corridor. In front of the papal suite the votive candles flicker in their red glasses. The locked door is still criss-crossed with red ribbons. Lawrence stares at the do"
+    },
+    {
+      "number": 115,
+      "heading": "INT. PAPAL SUITE - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "103 103 Lawrence fumbles on the light and stares around the familiar, plain room, the few simple items of furniture: the blue scalloped sofa and matching armchairs, the coffee table, the prie-dieu. IN T. PAPAL OFFICE - NIGHT 103A 103A Lawrence sits at the desk, takes the briefcase on his knee and op"
+    },
+    {
+      "number": 116,
+      "heading": "INT. PAPAL CORRIDOR - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "103B 103B SISTER AGNES is walking down the corridor. She slows, seeing the broken seals of the papal suite and the light showing beneath the door. She stops at the door, listening. Then the LIGHT below the Papal Suite door switches off."
+    },
+    {
+      "number": 117,
+      "heading": "INT. PAPAL SUITE - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "103C 103C Lawrence stands by the light switch in the darkness, practically holding his breath - aware that someone is ju st on the other side of the door."
+    },
+    {
+      "number": 118,
+      "heading": "INT. OUTSIDE THE PAPAL SUITE - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "103D 103D SISTER AGNES hesitates, her hand on the door handle, considering who the intruder could be. And suddenly she is certain that it is Lawrence on the other side of the door. A strange moment of connection. Then TWO NUNS cross the corridor behind her, deep in conversation in Italian, breaking "
+    },
+    {
+      "number": 119,
+      "heading": "INT. PAPAL SUITE - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "103E 103E Lawrence waits in the dark, listening to her footsteps recede. Then he switches the light back on."
+    },
+    {
+      "number": 120,
+      "heading": "INT. PAPAL BEDROOM - MOMENTS LATER",
+      "characters": [
+        "OF PAPER."
+      ],
+      "dialogues": [],
+      "actionPreview": "104 104 Lawrence enters, silhouetted in the door frame. The bed has been strippe d. He opens the wardrobe - a simple closet that has been emptied of everything except two ghost-like cassocks that hang from the rail. The sight of them makes his heart ache. He turns to the bedside cabinet, kneels care"
+    },
+    {
+      "number": 121,
+      "heading": "INT. CASA SANTA MARTA - UPPER CORRIDOR - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "105 105 Bellini opens his door and blinks at Lawrence."
+    },
+    {
+      "number": 122,
+      "heading": "INT. CASA SANTA MARTA - BELLINI’S ROOM - NIGHT",
+      "characters": [
+        "LAWRENCE",
+        "BELLINI",
+        "BE LLINI"
+      ],
+      "dialogues": [
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "It’s the report on"
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "(Reading) I am aware of what simony is, thank you."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "He only obtained all those votes on the first ballot because he bought them. Cardenas, Diene, Figarella,"
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "(Of the papers)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Because I’ve seen their bank statements."
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "Dear God."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Ours too. It would seem the Holy"
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "Where did you find these?"
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "(CONT’D) (Appalled)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "What choice did I have? I suspected"
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "And did he?"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "He asked for the transfer. He"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "(CONT’D)",
+          "text": "CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 94."
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "Put them back. Put them back or burn them or... put them back. (Off Thomas' stare) I couldn’t possibly become Pope in such circumstances, a dirty trick, a stolen document, the smearing of a brother cardinal... I’d be the"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Then keep clear of this. Leave it to me. I’m willing to take the consequences and..."
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "(Over)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "I thought we were here to serve"
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "Oh, don’t be naive!"
+        },
+        {
+          "character": "BE LLINI",
+          "parenthetical": "",
+          "text": "(CONT’D) (Quietly)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Beat)"
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "We’ve had worse."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Beat)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "106 106 Lawrence stands sipping a glass of water. Bellini sits on the bed, reading the sheets of paper. the activities of Tremblay. It’s an overwhelming prima facie case that he is guilty of simony - an offence that is stipulated in the Holy Scripture as... Baptiste... (MORE) CONCLAVE by Peter Strau"
+    },
+    {
+      "number": 123,
+      "heading": "INT. CASA SANTA MARTA - SECURITY GATE - EARLY MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "107 107 Dawn. Security check the line of NUNS arriving to prepare breakfast. They bow their heads to a Cardinal as he passes."
+    },
+    {
+      "number": 124,
+      "heading": "INT. CASA SANTA MARTA - STORAGE ROOM - EARLY MORNING",
+      "characters": [
+        "SISTER AGNES",
+        "LAWRENCE",
+        "INT."
+      ],
+      "dialogues": [
+        {
+          "character": "SISTER AGNES",
+          "parenthetical": "(O.S.)",
+          "text": "I’ll do that for you, Your"
+        },
+        {
+          "character": "SISTER AGNES",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "One hundred and eight."
+        },
+        {
+          "character": "INT.",
+          "parenthetical": "",
+          "text": "CASA SANTA MARTA - DINING ROOM - MORNING 109"
+        }
+      ],
+      "actionPreview": "108 108 A sheet from the REPORT is placed on the photocopier plate. The heading reads Strictly Confidential. The names of some cardinals have been obliterated with pen. Lawrence, bleary from a sleepless night, stands staring at the array of settings. He presses a button. “Error” flashes on the scree"
+    },
+    {
+      "number": 125,
+      "heading": "INT. CASA SANTA MARTA - DINING ROOM - MORNING / LATER",
+      "characters": [
+        "CARDINAL SABBADIN",
+        "BENITEZ",
+        "LAWRENCE",
+        "TREMBLAY",
+        "TEDESCO",
+        "SISTER AGNES",
+        "ADEYEMI"
+      ],
+      "dialogues": [
+        {
+          "character": "CARDINAL SABBADIN",
+          "parenthetical": "",
+          "text": "(Hissing)"
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "You should eat Dean."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Did I do the right thing, Vincent?"
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "No one who follows their conscience ever does wrong, Your Eminence."
+        },
+        {
+          "character": "TREMBLAY",
+          "parenthetical": "",
+          "text": "(Loudly)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "No, Your Eminence. You are."
+        },
+        {
+          "character": "TREMBLAY",
+          "parenthetical": "",
+          "text": "(For the room)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Calmly)"
+        },
+        {
+          "character": "TREMBLAY",
+          "parenthetical": "",
+          "text": "He did no such thing! As Monsignor"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "And yet Archbishop Wozniak insists that the Holy Father told him personally of the conversation..."
+        },
+        {
+          "character": "TREMBLAY",
+          "parenthetical": "",
+          "text": "(Over)"
+        },
+        {
+          "character": "TEDESCO",
+          "parenthetical": "",
+          "text": "(Standing, Italian)"
+        },
+        {
+          "character": "TEDESCO",
+          "parenthetical": "",
+          "text": "(Standing)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Beat)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D) (Almost drowned by the comm otion)"
+        },
+        {
+          "character": "SISTER AGNES",
+          "parenthetical": "(O.S.)",
+          "text": "Your Eminences... Your Eminences..."
+        },
+        {
+          "character": "SISTER AGNES",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "TREMBLAY",
+          "parenthetical": "",
+          "text": "My brothers, it’s true the Holy"
+        },
+        {
+          "character": "ADEYEMI",
+          "parenthetical": "",
+          "text": "Judas."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "(CONT’D)",
+          "text": "CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 99."
+        }
+      ],
+      "actionPreview": "110 110 The dining room is now full, the buzz of excited conversation. Cardinals turn in their seats to stare at Lawrence who sits, impassive, feeling strangely calm. Sabbadin appears in front of him, tosses the report on the table before him. You have wasted this report! We could have used it to co"
+    },
+    {
+      "number": 126,
+      "heading": "INT. CASA SANTA MARTA - PRAYER ROOM - MORNING",
+      "characters": [
+        "BELLINI",
+        "LAWRENCE",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "(Wryly)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "You should take over the supervision of this election, Aldo."
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "Ha! No, thank you. You are steering this Conclave. Exactly"
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "(CONT’D) I had the temerity to tell you to examine your heart, when all the time my own was..."
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "John. I would choose John."
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "It has a weight to it."
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "112"
+        }
+      ],
+      "actionPreview": "111 111 Lawrence kneels in prayer. He looks up as Bellini kneels beside him. A beat. We seem to be running out of favourites. where I do not know, but you are certainly steering it. And that firm hand of yours has i ts admirers. (Beat) I’ve come to ask your forgiveness. Surprised, Lawrence looks at "
+    },
+    {
+      "number": 127,
+      "heading": "INT. SISTINE CHAPEL - DAY",
+      "characters": [
+        "A BLANK BALLOT.",
+        "LAWRENCE"
+      ],
+      "dialogues": [
+        {
+          "character": "A BLANK BALLOT.",
+          "parenthetical": "",
+          "text": "Lawrence stares at his own sheet, for the first time at a loss as to which name to write. He closes his eyes, hoping f or inspiration, some sign. Nothing comes. He opens his eyes, looks up..."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(in Latin)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Testor Christum Dominum, qui me iudicaturus est, me eum eligere, quem secundum Deum iudico eligi debere."
+        }
+      ],
+      "actionPreview": "113 113 And finds Tedesco watching him. The Patriarch raises his eyebrows in amused complicity: Just you and me. Lawrence picks up his pen, feeling he no longer has a choice. Slowly he writes a name on the ballot. “Lawrence.” He stands and holding the ballot above his head, walks down the aisle to t"
+    },
+    {
+      "number": 128,
+      "heading": "INT. SISTINE CHAPEL - VESTIBULE - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "113A 113A Two SECURITY GUARDS, guns drawn, begin to push their way in. Frightened faces peer from behind them."
+    },
+    {
+      "number": 129,
+      "heading": "INT. PAULINE CHAPEL - DAY",
+      "characters": [
+        "MONSIGNOR O'MALLEY",
+        "LAWRENCE"
+      ],
+      "dialogues": [
+        {
+          "character": "MONSIGNOR O'MALLEY",
+          "parenthetical": "",
+          "text": "Everyone has been taken to the Casa"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Without looking at him)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D) (Softly)"
+        },
+        {
+          "character": "MONSIGNOR O'MALLEY",
+          "parenthetical": "",
+          "text": "How are you feeling? CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 102."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Beat) I was looking at the darkness at the top of the painting. (MORE) CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 102A."
+        },
+        {
+          "character": "MONSIGNOR O'MALLEY",
+          "parenthetical": "",
+          "text": "Your Eminence? The Conclave? Do we continue?"
+        }
+      ],
+      "actionPreview": "114 114 CLOSE ON A FRESCO - Michelangelo’s Crucifixion of St Peter . Lawrence stands, staring at the huge fresco. St Pe ter, about to be crucified upside down, cranes his neck upward, eyes us reproachfully. O’Malley pads down the chapel and joins him. Santa Marta, Your Eminence. No one was seriously"
+    },
+    {
+      "number": 130,
+      "heading": "I/E. POLICE CAR - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "115 115 Lawrence stares out from the back of the car as it speeds through the court yards of the Vatican, siren blaring, the startled faces of the Swiss Guards they pass, bathed in pulsing blue light. He glances up at the sky, watching the helicopter that buzzes angrily overhead, missiles protruding"
+    },
+    {
+      "number": 131,
+      "heading": "EXT. CASA SANTA MARTA - LOBBY - DAY",
+      "characters": [
+        "LAWRENCE"
+      ],
+      "dialogues": [
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(As he passes him)"
+        }
+      ],
+      "actionPreview": "116 116 PUSHING LAWRENCE as he strides into the Casa, sweeps through the courtyard, past frightened groups of NUNS and CURIA. Mandorff wait s for him. Complete privacy, Willi. Mandorff nods grimly and follows him towards the Casa..."
+    },
+    {
+      "number": 132,
+      "heading": "INT. CASA SANTA MARTA - AULA - DAY",
+      "characters": [
+        "LAWRENCE",
+        "KRASINSKI",
+        "BELLINI",
+        "TEDESCO",
+        "BENITEZ"
+      ],
+      "dialogues": [
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "My brothers, I would like to have the authority of the Conclave to discuss what has happened."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "(CONT’D)",
+          "text": "CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 103."
+        },
+        {
+          "character": "KRASINSKI",
+          "parenthetical": "",
+          "text": "Paragraph four of the constitution states that nothing can be done in the College of Cardinals that “in any way affects the procedures governing the election of the"
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "It’s quite clear that something serious"
+        },
+        {
+          "character": "TEDESCO",
+          "parenthetical": "",
+          "text": "(Italian)"
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "No doubt you think we shouldn’t listen to explosions either, but we all heard one!"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Will all those who wish the"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D) (Reading from the sheet of paper)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "TEDESCO",
+          "parenthetical": "",
+          "text": "(Italian)"
+        },
+        {
+          "character": "TEDESCO",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "TEDESCO",
+          "parenthetical": "",
+          "text": "(CONT’D) (switching to English)"
+        },
+        {
+          "character": "BELLINI",
+          "parenthetical": "",
+          "text": "(English))"
+        },
+        {
+          "character": "TEDESCO",
+          "parenthetical": "",
+          "text": "(English)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "(CONT’D)",
+          "text": "CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 105."
+        },
+        {
+          "character": "TEDESCO",
+          "parenthetical": "",
+          "text": "(CONT’D) (Italian)"
+        },
+        {
+          "character": "TEDESCO",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "TEDESCO",
+          "parenthetical": "",
+          "text": "(CONT’D) (Italian)"
+        },
+        {
+          "character": "TEDESCO",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "* (to Tedesco, over the"
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "(CONT’D) I carried out my ministry in the"
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "(CONT’D) *"
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "117 117 The assembled cardinals look up anxiously from their seats. Archbishop Krasinski, a Tedesco supporter, stands. Supreme Pontiff.” The very fact that you are holding this meeting outside the Sistine Chapel is an interference! Beside Lawrence, Bellini is already on his feet. has occurred and I "
+    },
+    {
+      "number": 133,
+      "heading": "EXT. CASA SANTA MARTA - SECOND FLOOR - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "117A 117A * A nun walks quickly away from camera *"
+    },
+    {
+      "number": 134,
+      "heading": "INT. CASA SANTA",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "MARTA/ EXT AULA - DAY 117B 117B * Cardinals exit down the steps. *"
+    },
+    {
+      "number": 135,
+      "heading": "INT. CASA SANTA MARTA/ EXT AULA - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "117C 117C * A group of Nuns walk quickly down a stairway. * CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 107."
+    },
+    {
+      "number": 136,
+      "heading": "EXT. CASA SANTA MARTA COURTYARD - DAY",
+      "characters": [
+        "EXT CASA SANTA MARTA"
+      ],
+      "dialogues": [
+        {
+          "character": "EXT CASA SANTA MARTA",
+          "parenthetical": "",
+          "text": "COURTYARD – SECOND FLOOR - DAY 117G"
+        }
+      ],
+      "actionPreview": "117D 117D * Nun’s walk hurriedly past Cardinals standing in small groups * having animated conversations * EXT CASA SANTA MARTA COURTYARD - DAY 117E 117E * Many Cardinals stand in small groups having animated * conversations * EXT CASA SANTA MARTA COURTYARD - DAY 117F 117F * Three Cardinals have a h"
+    },
+    {
+      "number": 137,
+      "heading": "EXT. CASA SANTA MARTA - PARKING - DAY",
+      "characters": [
+        "ARCHBISHOP MANDORFF",
+        "LAWRENCE"
+      ],
+      "dialogues": [
+        {
+          "character": "ARCHBISHOP MANDORFF",
+          "parenthetical": "",
+          "text": "The drivers aren’t ready, Your"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Then we shall walk, Willi. CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 107A."
+        }
+      ],
+      "actionPreview": "118 118 Lawrence sits alone, digest ing the contentious gathering, as a light drizzle of rain hits the pavement. Archbishop Mandorff quietly approaches. Eminence. Lawrence tears himself away from his thoughts."
+    },
+    {
+      "number": 138,
+      "heading": "EXT. VATICAN GARDENS - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "119 119 Lawrence leads the cardinals from the hostel. Overhead helicopters drone. Lawrence ignores them and opens up his umbrella. It has begun to rain. The mass of cardinals follow, walking in silence, a sea of white umbrellas crossing the gardens. A sense of silent solidarity. Bellini arrives besi"
+    },
+    {
+      "number": 139,
+      "heading": "INT. SISTINE CHAPEL - DAY",
+      "characters": [
+        "LAWRENCE",
+        "ON LAWRENCE..."
+      ],
+      "dialogues": [
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Latin)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Ecclesiae tuae, Domine, rector et custos, infunde, quaesumus, famulis tuis spiritum intelligentiae, veritatis et pacis, ut, quae tibi placita sunt, toto corde cognoscant et agnita tota virtute sectentur. Per"
+        },
+        {
+          "character": "ON LAWRENCE...",
+          "parenthetical": "",
+          "text": "...sitting staring up at the painted ceiling high above. His gaze slips to the rows of cardinals, lingers a moment on"
+        }
+      ],
+      "actionPreview": "120 120 The broken glass has been swept away. A faint breeze blows through the space where the windows were. Lawrence stands at the microphone. The beginning of what he senses will be the final ballot of the Conclave. < O Father, so that we may guide and watch over Your Church, give to us, Your serv"
+    },
+    {
+      "number": 140,
+      "heading": "INT. SISTINE CHAPEL - MONTAGE - DAY",
+      "characters": [
+        "LAWRENCE",
+        "BENITEZ"
+      ],
+      "dialogues": [
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Latin)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Acceptasne electionem de te canonice factam in Summum"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D) (Latin)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "(Latin)"
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "Accepto."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Latin)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Quo nomine vis vocari?"
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "(Latin)"
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "Innocentius."
+        }
+      ],
+      "actionPreview": "121 121 ...ballots fall into the waiting urn.... ...the ballots are pierced by the needle, threaded on the scarlet strand. ...the hands of the Scrutineers take ballots from the urn and pass it along... ...the white cloth is smoo thed over the table, the final urn of counted votes is placed at its ce"
+    },
+    {
+      "number": 141,
+      "heading": "INT. SISTINE CHAPEL - DAY / LATER",
+      "characters": [
+        "LAWRENCE",
+        "MONSIGNOR O'MALLEY"
+      ],
+      "dialogues": [
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(amused)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D) I think you should start gathering the cardinal’s notes. The sooner we light the stoves, the sooner the world will know we have a new Pope. O’Malley blinks at him, looking confused, almost frightened. CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 110."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MONSIGNOR O'MALLEY",
+          "parenthetical": "",
+          "text": "It wasn’t... It wasn’t the outcome I expected."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "No. But it’s wonderful all the same."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(CONT’D) (Quietly)"
+        }
+      ],
+      "actionPreview": "122 122 Lawrence stands with Mandorff preparing the deed of acceptance. Mandorff is filling in Benitez’s name on the deed ready for the Pontiff’s and witnesses’ signatures. Lawrence glances at O’Malley and finds him standing at a table, staring with strange fixity. Monsignor, I’m sorry to interrupt "
+    },
+    {
+      "number": 142,
+      "heading": "INT. SALA REGIA - DAY",
+      "characters": [
+        "MONSIGNOR O'MALLEY",
+        "LAWRENCE"
+      ],
+      "dialogues": [
+        {
+          "character": "MONSIGNOR O'MALLEY",
+          "parenthetical": "",
+          "text": "I’m sorry Your Eminence, I should have told you this morning as soon as I found out, but then...with everything that happened...and I didn’t"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Just tell me what’s troubling you."
+        },
+        {
+          "character": "MONSIGNOR O'MALLEY",
+          "parenthetical": "",
+          "text": "I found out..."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Switzerland? You mean the hospital in Geneva? O’Malley looks at him, stricken. CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 111A."
+        },
+        {
+          "character": "MONSIGNOR O'MALLEY",
+          "parenthetical": "",
+          "text": "It wasn’t a hospital. It was a clinic."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "(Beat)"
+        }
+      ],
+      "actionPreview": "123 123 The two men stand, alone. dream that Cardinal Benitez would become... He trails off, helpless . Switzerland . Cardinal Benitez’ trip to Switzerland. CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 111. A clinic for what?"
+    },
+    {
+      "number": 143,
+      "heading": "INT. SISTINE CHAPEL - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "124 124 Lawrence strides through the chapel towards the “Room of Tears.”"
+    },
+    {
+      "number": 144,
+      "heading": "INT. SISTINE CHAPEL - ANTECHAMBER - DAY",
+      "characters": [
+        "HAAS",
+        "LAWRENCE"
+      ],
+      "dialogues": [
+        {
+          "character": "HAAS",
+          "parenthetical": "",
+          "text": "His Holiness won’t get robed, Your"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "If you please, Father Haas..."
+        }
+      ],
+      "actionPreview": "124A 124A He descends the stairs and crosses the sacristy, knocking on the door. Father Haas opens it a little and looks at Lawrence in alarm. Eminence . Haas steps hurriedly aside. Lawrence enters the little room."
+    },
+    {
+      "number": 145,
+      "heading": "INT. SISTINE CHAPEL - ROOM OF TEARS - CONTINUOUS",
+      "characters": [
+        "LAWRENCE",
+        "BENITEZ",
+        "BE NITEZ"
+      ],
+      "dialogues": [
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "May I speak to you alone?"
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "Of course."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "You too, Father."
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "(ruefully)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "You must tell me about this treatment at the clinic in Geneva."
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "Must I, Dean?"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Yes, you must! Within the hour you will be the most famous man in the world! So tell me -"
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "My “situatio n,” as you call it, is the same as when I was ordained a priest, the same as when I was made a cardinal."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "But the..."
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "There was no treatment. I considered it, prayed for guidance."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "And what would it have been, this treatment?"
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "It was called a laparoscopic hysterectomy."
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "(CONT’D) (Gently)"
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "He"
+        },
+        {
+          "character": "BE NITEZ",
+          "parenthetical": "",
+          "text": "Yes. He knew."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "And he thought it was acceptable for you to continue as an ordained minister?"
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "I would assume so. After all, he made me a cardinal"
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "(CONT’D)",
+          "text": "(MORE) CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 114."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Then you... you are still...?"
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "I am what God made me. And perhaps it is my difference that will make me useful. I think again of your sermon."
+        },
+        {
+          "character": "LAWRENCE",
+          "parenthetical": "",
+          "text": "Who knows about this, apart from O’Ma lley?"
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "Only yourself."
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BENITEZ",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "125 125 A pale Benitez sits on a narrow bench in the corner, hunched over, looking small. The PAPAL TAILOR helplessly holds the white cassock of the Pope, not knowing what to do. The TAILOR puts the cassock away and withdraws. Surprised, Haas bows and leaves, closing the door behind him. Lawrence an"
+    },
+    {
+      "number": 146,
+      "heading": "INT. PAULINE CHAPEL - LATE AFTERNOON",
+      "characters": [
+        "BENITEZ"
+      ],
+      "dialogues": [
+        {
+          "character": "BENITEZ",
+          "parenthetical": "(CONT’D)",
+          "text": "CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 115."
+        }
+      ],
+      "actionPreview": "126 126 Silence. Lawrence sits, staring blankly ahead, trying to absorb what he has just learned. Does it fundamentally change who Benitez is? He finds himself small i n a place so vast, staring at the floor, trying to pray, hoping for guidance, some sense of connection. His mind remains numb. Sudde"
+    },
+    {
+      "number": 147,
+      "heading": "INT. SISTINE CHAPEL - VESTIBULE - LATE AFTERNOON",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "127 127 O’Malley places ballot papers and notes, any record of the Conclave into the stove and lights them. Then he activates the chemical canister. His eyes are drawn slowly up the length of the flue to the point where it projects through the open window and out into th e sky."
+    },
+    {
+      "number": 148,
+      "heading": "EXT. VATICAN GROUNDS - LATE AFTERNOON",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "128 128 Lawrence walks back to the fountain and places the turtle gently back into the water. And then he hears it. The distant roar of a quarter of a million voices raised in hope and acclamation as they react to the white smoke now rising from the Vatican. Lawrence listens as the great wave of joy"
+    },
+    {
+      "number": 149,
+      "heading": "INT. CASA SANTA MARTA - LAWRENCE’S BEDROOM - EVENING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "129 129 Lawrence packs his clothes and few belongings into his case. Finally he sits, at the same time feeling an overwhelming exhaustion as well as the sensation of having accomplished his task. He looks up, hearing an electronic whine. The metal shutters at his window are slowly ascending. He open"
+    },
+    {
+      "number": 150,
+      "heading": "INT. CASA SANTA MARTA - LOBBY - EVENING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "129A 129A The shutters in the lobby rise, letting in the evening light."
+    },
+    {
+      "number": 151,
+      "heading": "INT. CASA SANTA MARTA - BACK OFFICE - EVENING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "129B 129B In the office the canary sits in his cage, reacting to the sound from outside. He begins to quietly chirp. CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 116."
+    },
+    {
+      "number": 152,
+      "heading": "EXT. STREETS IN ROME - EVENING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "130 130 Deserted streets in this ancient city. A newspaper in the gutter. An abandoned car on the corner. Next to it an old statue in crumbling marble under the steady stream of a fountain."
+    },
+    {
+      "number": 153,
+      "heading": "I/E. SHOP - STREET NEAR VATICAN - EVENING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "130A 130A The store with the PLASTIC PIETÀS from the beginning. And suddenly there is Cardinal Lawrence, suitcase in hand, resting his gaze on the small statues. Then he heads down the street and disappears around the corner. We HOLD on the display, the Pietàs, the compassion of the WOMAN cradling t"
+    },
+    {
+      "number": 154,
+      "heading": "INT. SALE E TABACCHI - EVENING",
+      "characters": [
+        "CARDINAL BROTZKUS"
+      ],
+      "dialogues": [
+        {
+          "character": "CARDINAL BROTZKUS",
+          "parenthetical": "",
+          "text": "Annuntio vobis gaudium magnum."
+        }
+      ],
+      "actionPreview": "131 131 A near-empty bar in a small café. On the counter a cold espresso that someone didn’t have time to finish. Behind it, in the background, the faint flicker of a TV. The screen shows the balcony of St. Pet er. The red shape of a Cardinal steps through the curtains. Habemus Papam! A small figure"
+    }
+  ]
+}

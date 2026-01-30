@@ -1,0 +1,48 @@
+{
+  "slug": "confidence",
+  "title": "Confidence",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 12,
+  "characters": [
+    "BUTCH",
+    "MILES",
+    "KING PIN",
+    "JAKE",
+    "LILY",
+    "MOONAN",
+    "FRANKIE",
+    "MR. LEWIS",
+    "LUPUS",
+    "HARLIN",
+    "ASHBY",
+    "GORDO"
+  ],
+  "total_words": 26575,
+  "total_dialogue": 22,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "BUTCH",
+        "MILES",
+        "KING PIN",
+        "JAKE",
+        "LILY",
+        "MOONAN",
+        "FRANKIE",
+        "MR. LEWIS",
+        "LUPUS",
+        "HARLIN",
+        "ASHBY",
+        "GORDO"
+      ],
+      "action_text": "confidence by Doug Jung First Draft March 2000 <b> </b><b>BLACK: </b><b>                       JAKE (V.O.) </b>           So I'm dead... <b>FADE IN: </b><b>EXT. - BACK ALLEY- NIGHT (PRESENT) </b>Dumpsters overflow with the day's garbage. A pillar of steam rises from an underground grate. It's the dark place between buildings that a reasonable person avoids. We see JAKE VIG, a guy in his late 20's whose fashionable suit and good looks are in obvious contrast to the surroundings-- At first glance,",
+      "dialogue_count": 22,
+      "word_count": 26575
+    }
+  ]
+}

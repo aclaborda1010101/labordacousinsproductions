@@ -1,0 +1,26 @@
+{
+  "slug": "candle-to-water",
+  "title": "Candle to Water",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 1,
+  "characters": [
+    "COP"
+  ],
+  "total_words": 20853,
+  "total_dialogue": 1,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "COP"
+      ],
+      "action_text": "<b>                         CANDLE TO WATER </b> Written by Nick Green Shooting draft (05/04/12) <b>   BLACK </b> <b>   SUPER </b> `Veracity' Then: <b>                           BROOKE VO </b>                        (phone filter) There's never been anyone like you, since you. I love you Vaughn. I love you like no-one else ever has, or could. I'm not going to try to persuade you. Just follow your heart. OK? <b>   FADE IN ON </b> <b>   1.01 INT. SALOON CAR � EVENING </b> The car is stuck in rush-",
+      "dialogue_count": 1,
+      "word_count": 20853
+    }
+  ]
+}

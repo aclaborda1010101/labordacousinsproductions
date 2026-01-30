@@ -1,0 +1,22 @@
+{
+  "slug": "at-first-sight",
+  "title": "At First Sight",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 31495,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b><HTML> <HEAD>       <TITLE>AT FIRST SIGHT</TITLE> </b><LINK rel=\"stylesheet\" type=\"text/css\"> <META http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\"> <style type=\"text/css\"> BODY { background-color: \"#FFFFFF\"; font-family: Courier New, Helvetica, sans-serif; font-size:10.0pt } DIV { position:absolute; left:5px; top:20px; width:734px; height:500px;  } #loc { font-family:Courier New; font-weight: normal;margin-top:0in; margin-right:1.2in; margin-bottom:0in; margin-left:0.8in;te",
+      "dialogue_count": 0,
+      "word_count": 31495
+    }
+  ]
+}

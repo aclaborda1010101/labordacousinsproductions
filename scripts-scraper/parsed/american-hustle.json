@@ -1,0 +1,22 @@
+{
+  "slug": "american-hustle",
+  "title": "American Hustle",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 34449,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                           AMERICAN HUSTLE </b> Written by Eric Warren Singer and David O. Russell <b>    TITLE CARD: SOME OF THIS ACTUALLY HAPPENED </b> <b>    OVER BLACK: APRIL 26, 1978, PLAZA HOTEL, NEW YORK </b> <b>1   FADE IN: </b> <b>2   INT. PLAZA HOTEL WINDOW NYC - DAY </b> IRVING ROSENFELD, not a small man, gets dressed and meticulously constructs his combover. Camera WRAPS AROUND, see his hands with rings adjust his dark velvet suit, up to his face, serious, concentrated, intense, h",
+      "dialogue_count": 0,
+      "word_count": 34449
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "slug": "dances-with-wolves",
+  "title": "Dances with Wolves",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 38474,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                    DANCES WITH WOLVES </b> Written by Michael Blake <b>                                                         MAY 23, 1989 </b>                                                         Final Draft <b> </b> <b>               INT. FIELD HOSPITAL TENT - DAY </b> A black screen. The sound of a knife cutting through boot leather. Fade in on the waists of two men (THE SURGEONS) hovering around a crude operating table. In the extreme background, TWO STRETCHER BEARER",
+      "dialogue_count": 0,
+      "word_count": 38474
+    }
+  ]
+}

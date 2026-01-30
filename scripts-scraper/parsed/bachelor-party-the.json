@@ -1,0 +1,22 @@
+{
+  "slug": "bachelor-party-the",
+  "title": "Bachelor Party, The",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 28489,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                               THE BACHELOR PARTY </b><b> </b>                               by Paddy Chayefsky <b>\tFADE IN. </b><b> </b><b>\tEXTERIOR. STUYVESANT TOWN HOUSING PROJECT -- DAY. </b>\tUnder the credits, the CAMERA PANS slowly across the project, capturing the sober monotony, the endless straight apartment houses. Seven o'clock in the morning. <b> </b><b>\t\t\t\t\t\tDISSOLVE TO: </b><b> </b><b> </b><b>\tINTERIOR. CHARLIE'S BEDROOM </b>\tThe bedroom of a two-and-a-half-room apartment in the",
+      "dialogue_count": 0,
+      "word_count": 28489
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "slug": "bamboozled",
+  "title": "Bamboozled",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 26728,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "Bamboozled by Spike Lee <b>BLACK SCREEN </b> We HEAR the voice of MALCOLM X. <b>\t\t\t\tMALCOLM X (V.O.) </b>\t\t\tYou've been hoodwinked.  You've been had.  You've been took. You've been led astray, run amok. You've been bamboozled. His followers ROAR. <b>CUT TO TITLE: </b> <b>\"BAMBOOZLED\" </b> <b>CUT TO CRAWL: </b> <b>WHITE LETTERS ON BLACK </b> WE HEAR the VOICE of PIERRE DELACROIX. <b>\t\t\t\tDELACROIX (V.O.) </b>\t\t\tSatire.  1a.  A literary work in which human vice or folly is ridiculed or attacked sco",
+      "dialogue_count": 0,
+      "word_count": 26728
+    }
+  ]
+}

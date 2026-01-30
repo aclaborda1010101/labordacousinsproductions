@@ -1,0 +1,26 @@
+{
+  "slug": "legend",
+  "title": "Legend",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 1,
+  "characters": [
+    "LEGEND"
+  ],
+  "total_words": 25800,
+  "total_dialogue": 1,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "LEGEND"
+      ],
+      "action_text": "LEGEND ORIGINAL SCREENPLAY by WILLIAM HJORTSBERG 2nd Draft Revised 10 March 1984 <b>1EXTERIOR FOREST NIGHT </b> Huge trees taper upward like columns supporting the roof of heaven. Moonlit dewdrops spangle a delicate spiderweb. The setting is tranquil and utterly majestic. Over the brow of a distant hill, a pair of brilliant light beams scintillate in an etheral ballet. Numerous small animals gather to behold this wonder. They stand on the hillcrest, staring down as if at the Nativity. Squirrels,",
+      "dialogue_count": 1,
+      "word_count": 25800
+    }
+  ]
+}

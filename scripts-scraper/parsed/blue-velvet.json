@@ -1,0 +1,26 @@
+{
+  "slug": "blue-velvet",
+  "title": "Blue Velvet",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 1,
+  "characters": [
+    "FRANK"
+  ],
+  "total_words": 29134,
+  "total_dialogue": 1,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "FRANK"
+      ],
+      "action_text": "<b>\t\t\t\tB L U E   V E L V E T </b> screenplay by David Lynch <b>FADE IN: </b> <b>FOLDS OF BLUE VELVET UNDULATE EVER SO SLOWLY. </b> <b>WITH TITLES </b> <b>\t\t\t\t\t\t\t\t\tDISSOLVE TO: </b> <b>1. EXT. BEAUMONTS' FRONT LAWN - DAY </b> Blue skies. PAN SLOWLY DOWN to clean white picket fence, with beautiful red roses in front of it. Birds CHIRP in the distance. A faint sprinkler SOUND is heard. Very sweet MUSIC is playing. <b>\t\t\t\t\t\t\t\t\tDISSOLVE TO: </b> <b>2. EXT. TREE - DAY </b> A songbird SINGS in the tree",
+      "dialogue_count": 1,
+      "word_count": 29134
+    }
+  ]
+}

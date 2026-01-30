@@ -1,0 +1,22 @@
+{
+  "slug": "autumn-in-new-york",
+  "title": "Autumn in New York",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 26126,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                    AUTUMN IN NEW YORK </b> Screenplay by Allison Burnett Shooting Draft <b>                                                                      2000 </b> <b> </b> <b>               FADE IN: </b> <b>               EXT. CENTRAL PARK -- SEPTEMBER AFTERNOON </b> A COUPLE moves down a walkway, deep in subdued conversation. All around them trees explode with autumn color. Birds sing. Their path is dappled with leafy shadow. To their left, on the sunny meadow, TEENA",
+      "dialogue_count": 0,
+      "word_count": 26126
+    }
+  ]
+}

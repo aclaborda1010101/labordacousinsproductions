@@ -1,0 +1,22 @@
+{
+  "slug": "an-education",
+  "title": "An Education",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 24534,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                              AN EDUCATION </b> Written by Nick Hornby <b> </b><b>1    INT. SCHOOL. DAY                                              1 </b> <b>     JANUARY 1962. MONTAGE </b> A nice girls' school in a south west London suburb. We see girls doing what girls did in a nice girls' school in 1962: walking with books on their heads, practising their handwriting, making cakes, playing lacrosse, dancing with each other. <b>1A   INT. CLASSROOM. DAY",
+      "dialogue_count": 0,
+      "word_count": 24534
+    }
+  ]
+}

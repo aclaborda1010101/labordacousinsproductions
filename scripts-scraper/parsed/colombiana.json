@@ -1,0 +1,22 @@
+{
+  "slug": "colombiana",
+  "title": "Colombiana",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 28627,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                           COLOMBIANA </b> Written by Robert Mark Kamen & Luc Besson August 2009 <b>          ON A BLACK SCREEN </b> <b>          BOGOTA, COLOMBIA 1997 </b> <b>          CLOSE ON A PAGE OF A LARA CROFT COMIC BOOK </b> Being copied, with uncanny precision, down to the last detail, by a ten year old hand clutching a pencil. <b>                          VOICE </b>           Cataleya! The page of a notebook turns, revealing neat cursive handwriting, covers the comic. <b>",
+      "dialogue_count": 0,
+      "word_count": 28627
+    }
+  ]
+}

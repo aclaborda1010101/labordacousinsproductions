@@ -1,0 +1,22 @@
+{
+  "slug": "a-million-miles-away",
+  "title": "A Million Miles Away",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 24422,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                         A MILLION MILES AWAY </b> Written by Alejandra Marquez Abella Hernan Jimenez Bettina Gilois ii. <b>                       BASED ON A TRUE STORY. </b> Original dialogue in Spanish translated to English on right column. <b>                      LAUNCH CONTROL (V.O.) </b>           This is Launch Operations Manager. The launch team wishes you good luck and godspeed. <b>                                                     FADE IN: </b> <b>EXT. LA PIEDAD, MICHOACAN, MEXICO",
+      "dialogue_count": 0,
+      "word_count": 24422
+    }
+  ]
+}

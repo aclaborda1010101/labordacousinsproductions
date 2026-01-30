@@ -1,0 +1,5711 @@
+{
+  "slug": "my-old-ass-2024",
+  "title": "My Old Ass",
+  "parsedWith": "v2",
+  "parsedAt": "2026-01-29T22:09:12.149Z",
+  "stats": {
+    "scenes": 80,
+    "dialogues": 933,
+    "characters": 32
+  },
+  "characters": [
+    {
+      "name": "ELLIOTT",
+      "dialogueLines": 400,
+      "totalWords": 3182
+    },
+    {
+      "name": "CHAD",
+      "dialogueLines": 127,
+      "totalWords": 991
+    },
+    {
+      "name": "MY OLD ASS",
+      "dialogueLines": 87,
+      "totalWords": 828
+    },
+    {
+      "name": "OLDER ELLIOTT",
+      "dialogueLines": 74,
+      "totalWords": 486
+    },
+    {
+      "name": "RO",
+      "dialogueLines": 72,
+      "totalWords": 513
+    },
+    {
+      "name": "KATHY",
+      "dialogueLines": 42,
+      "totalWords": 349
+    },
+    {
+      "name": "RUTHIE",
+      "dialogueLines": 35,
+      "totalWords": 212
+    },
+    {
+      "name": "MAX",
+      "dialogueLines": 25,
+      "totalWords": 153
+    },
+    {
+      "name": "SPENCER",
+      "dialogueLines": 15,
+      "totalWords": 81
+    },
+    {
+      "name": "TOM",
+      "dialogueLines": 12,
+      "totalWords": 109
+    },
+    {
+      "name": "BOY",
+      "dialogueLines": 11,
+      "totalWords": 85
+    },
+    {
+      "name": "WOMAN",
+      "dialogueLines": 7,
+      "totalWords": 38
+    },
+    {
+      "name": "CHELSEA",
+      "dialogueLines": 5,
+      "totalWords": 51
+    },
+    {
+      "name": "VOICE",
+      "dialogueLines": 3,
+      "totalWords": 15
+    },
+    {
+      "name": "RUTHI E",
+      "dialogueLines": 1,
+      "totalWords": 4
+    },
+    {
+      "name": "RO.",
+      "dialogueLines": 1,
+      "totalWords": 8
+    },
+    {
+      "name": "ELLI OTT",
+      "dialogueLines": 1,
+      "totalWords": 7
+    },
+    {
+      "name": "OLDER EL LIOTT",
+      "dialogueLines": 1,
+      "totalWords": 4
+    },
+    {
+      "name": "O LDER ELLIOTT",
+      "dialogueLines": 1,
+      "totalWords": 8
+    },
+    {
+      "name": "CUT",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "BACKGROUND VOICE",
+      "dialogueLines": 1,
+      "totalWords": 2
+    },
+    {
+      "name": "EL LIOTT",
+      "dialogueLines": 1,
+      "totalWords": 2
+    },
+    {
+      "name": "I KNOW.",
+      "dialogueLines": 1,
+      "totalWords": 13
+    },
+    {
+      "name": "ELLIOT T",
+      "dialogueLines": 1,
+      "totalWords": 3
+    },
+    {
+      "name": "DAY.",
+      "dialogueLines": 1,
+      "totalWords": 8
+    },
+    {
+      "name": "HOUSE. LATE AFTERNOON.",
+      "dialogueLines": 1,
+      "totalWords": 10
+    },
+    {
+      "name": "ELL IOTT",
+      "dialogueLines": 1,
+      "totalWords": 6
+    },
+    {
+      "name": "RO AND RUTHIE",
+      "dialogueLines": 1,
+      "totalWords": 2
+    },
+    {
+      "name": "THUNDER.",
+      "dialogueLines": 1,
+      "totalWords": 9
+    },
+    {
+      "name": "C HAD",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "CHA D",
+      "dialogueLines": 1,
+      "totalWords": 2
+    },
+    {
+      "name": "CUT TO BLACK.",
+      "dialogueLines": 1,
+      "totalWords": 2
+    }
+  ],
+  "scenes": [
+    {
+      "number": 1,
+      "heading": "EXT. DUKES ROASTERY DOCK — L ATE MORNING.",
+      "characters": [
+        "RO",
+        "RUTHIE",
+        "ELLIOTT",
+        "RUTHI E"
+      ],
+      "dialogues": [
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "Oh, now we gotta stop here so you can get with some like, random girl, but whatever."
+        },
+        {
+          "character": "RUTHIE",
+          "parenthetical": "",
+          "text": "Yeah. 1"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "She’s not some random girl! We’ve been, like, flirting with each other since fucking grade eight. I gotta at least shoot my shot before I leave."
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "If this works, you’ve officially gotten every girl in town. Every single girl."
+        },
+        {
+          "character": "RUTHIE",
+          "parenthetical": "",
+          "text": "That’s true."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "That’s not true. That’s not --"
+        },
+        {
+          "character": "RUTHIE",
+          "parenthetical": "",
+          "text": "OH MY --"
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "Holy shit!"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "I’m-I ’m so sorry!"
+        },
+        {
+          "character": "RUTHIE",
+          "parenthetical": "",
+          "text": "(to Ro)"
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "Is my neck still there?"
+        },
+        {
+          "character": "RUTHIE",
+          "parenthetical": "",
+          "text": "No. You’re good, you’re good, you’re good..."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "I’m gonna be honest and tell her I’m leaving in three weeks. If that leads to us banging..."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "That musta been God’s plan. That’s out of my hands. You know what I mean?"
+        },
+        {
+          "character": "RUTHIE",
+          "parenthetical": "",
+          "text": "You gotta slow down. You gotta slow down."
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "Bro."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "I’m sorry, I’m like, I’m so used to driving boats that drive like this... (she mimics a steering wheel)"
+        },
+        {
+          "character": "RUTHIE",
+          "parenthetical": "",
+          "text": "Maybe you should actually get your boating license."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "I’ve been driving heavy machinery since I was eight, Ruthie. So..."
+        },
+        {
+          "character": "RUTHI E",
+          "parenthetical": "",
+          "text": "Are you sure... oh!"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Oh, shit. Sorry."
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "You know... it’s an idea."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Help me pull it in. Pull it in. (as they do) I don’t think boating licenses are, like, a real thing. It’s like a formality."
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "You guys got it? Okay."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Yeah."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Okay. Grab that rope at the end..."
+        },
+        {
+          "character": "RUTHIE",
+          "parenthetical": "",
+          "text": "Oh, my gosh."
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "Fucking life or death experience right there."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Okay. Made it. It’s “go” time."
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "You’re alive. You’ve got this."
+        },
+        {
+          "character": "RUTHIE",
+          "parenthetical": "",
+          "text": "Have fun in there."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Thank you."
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "You be s afe, kid. Wrap it up!"
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "Oh, bitch. My back is thrown."
+        },
+        {
+          "character": "RUTHIE",
+          "parenthetical": "",
+          "text": "I know. Like, my neck... CUT TO:"
+        }
+      ],
+      "actionPreview": "A close up of a teenage girl driving a boat really, really, fast. This is ELLIOTT LABRANT. Eighteen, an undeniable sparkle in her eye. The type of teenager that’s high off their ass with youthful energy and gusto. Fucks with our perception of femininity. She’s funny, confident with an inherent levit"
+    },
+    {
+      "number": 2,
+      "heading": "INT. DUKES ROASTERY. LATER.",
+      "characters": [
+        "CHELSEA",
+        "ELLIOTT"
+      ],
+      "dialogues": [
+        {
+          "character": "CHELSEA",
+          "parenthetical": "",
+          "text": "They’re like, they’re a medical marvel, right ?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "That’s true. CONTINUED: 4"
+        },
+        {
+          "character": "CHELSEA",
+          "parenthetical": "",
+          "text": "They cure our UTI’s. We need them."
+        },
+        {
+          "character": "CHELSEA",
+          "parenthetical": "",
+          "text": "So ... you said you’re leaving town really soon, right?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Twenty two days."
+        },
+        {
+          "character": "CHELSEA",
+          "parenthetical": "",
+          "text": "Okay, shit. It’s like that? You have to do a countdown. You just so in a rush?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "I mean, there is"
+        }
+      ],
+      "actionPreview": "Elliott is mid-conversation with CHELSEA, a girl maybe a year older. She wears a Dukes Roastery uniform, uber feminine, very cool, smart girl energy. They clearly know each other. They fight for us, we should fight for them. They both laugh, definitely flirting. Elliott smiles. one thing I’ll really"
+    },
+    {
+      "number": 3,
+      "heading": "EXT. DUKES BACK STAIRWELL. SECONDS LATER.",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Elliott and Chelsea make out HARDCORE, like ear biting, little bit of choking vibes against the wall. Off Chelsea, moaning with pleasure. CUT TO:"
+    },
+    {
+      "number": 4,
+      "heading": "EXT. ELLIOTT’S HOUSE. LATE MORNING.",
+      "characters": [
+        "SPENCER"
+      ],
+      "dialogues": [
+        {
+          "character": "SPENCER",
+          "parenthetical": "(O.C.)",
+          "text": "Her hair’s starting to melt! CUT TO: CONTINUED: 5"
+        }
+      ],
+      "actionPreview": "A wide shot of a charming old traditional Muskoka cottage s itting amongst tall pine trees on the edge of the water. The sun makes the water sparkle. It’s stunning. We overlap a boy’s voice, whining."
+    },
+    {
+      "number": 5,
+      "heading": "INT. ELLIOTT’S KITCHEN. SAME TIME.",
+      "characters": [
+        "SPENCER",
+        "MAX",
+        "KATHY"
+      ],
+      "dialogues": [
+        {
+          "character": "SPENCER",
+          "parenthetical": "",
+          "text": "It’s going to ruin the surprise!"
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "That looks like a sheep."
+        },
+        {
+          "character": "SPENCER",
+          "parenthetical": "",
+          "text": "Took me an hour."
+        },
+        {
+          "character": "KATHY",
+          "parenthetical": "",
+          "text": "(confidence waning)"
+        }
+      ],
+      "actionPreview": "Elliott’s mom, KATHY, late 40’s, warm, Ina Garten energy, and her dad, TOM, the quintessential small town farmer, sit at the kitchen table finishing breakfast with their sons. The theme of the kitchen is cranberry-heavy. Cranberry dishes, cranberry art, cranberry napkins. You get it. They all stare "
+    },
+    {
+      "number": 6,
+      "heading": "EXT. DUKES ROASTERY DOCK. SAME TIME.",
+      "characters": [
+        "RO",
+        "RUTHIE",
+        "ELLIOTT"
+      ],
+      "dialogues": [
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "No, so listen. I had an uncle because my aunt married this guy... but then they got divorced, but he had a guinea pig. The PetSmart that he bought it from, he had..."
+        },
+        {
+          "character": "RUTHIE",
+          "parenthetical": "",
+          "text": "(a bit sketched out)"
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "Noooo."
+        },
+        {
+          "character": "RUTHIE",
+          "parenthetical": "",
+          "text": "Do we just chew them?"
+        },
+        {
+          "character": "RUTHIE",
+          "parenthetical": "",
+          "text": "I’ll look it up."
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "(sniffs bag)"
+        },
+        {
+          "character": "RUTHIE",
+          "parenthetical": "",
+          "text": "(typing)"
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "That’s Africa."
+        },
+        {
+          "character": "RUTHIE",
+          "parenthetical": "",
+          "text": "(still searching) I-I don’t know, “mushrooms.”"
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "Um, I thin k you can like chew them or, like, maybe some type of herbal tea with them or some shit."
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "Finally."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "No, we’re not making tea with them. I heard if you make tea with them you can’t control how high you get."
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "(impressed)"
+        },
+        {
+          "character": "RUTHIE",
+          "parenthetical": "",
+          "text": "What were you doing?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Not now, Mom. CONTINUED:"
+        },
+        {
+          "character": "RO",
+          "parenthetical": "(CONT’D)",
+          "text": "7"
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "Kathy, WE’RE VERY BUSY."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "We’re trying to do drugs,"
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "Come on!"
+        }
+      ],
+      "actionPreview": "Ruthie and Ro sit on a bench on the dock waiting for E lliott, inspecting the contents of a small plastic baggie. she had a kid, and the kid gave me the drugs. Uh, so, a literal stranger. I just told you that... (changes topic) (MORE) 6 No. Listen. He said they’re super rare and they’re from South A"
+    },
+    {
+      "number": 7,
+      "heading": "EXT. LAKE. MOMENTS LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "A dope song starts playing as we see their tiny boat from above as they fly across the open water. CUT TO:"
+    },
+    {
+      "number": 8,
+      "heading": "EXT. CAMPSITE. AFTERNOON.",
+      "characters": [
+        "RO",
+        "ELLIOTT",
+        "RUTHIE"
+      ],
+      "dialogues": [
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "Before we get too far into it, should we make an emergency pla n in case, IN CASE anything bad happens?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "No! Nothing bad is gonna happen."
+        },
+        {
+          "character": "RUTHIE",
+          "parenthetical": "",
+          "text": "What if one of us like, gets too high and says something fucked up and it changes the fabric of our friendship forever?"
+        }
+      ],
+      "actionPreview": "Over the song, they set up their tents (badly). That’s like, the whole point of shrooms. Nothing bad happens on shrooms. Clearly none of them had thought about that before. Off their unsure faces. CUT TO:"
+    },
+    {
+      "number": 9,
+      "heading": "EXT. CAMPSITE. AFTERNOON.",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "All three squat in a line, peeing in the woods. Off Ruthie playfully pushing Elliott over, mid pee. CUT TO: CONTINUED: 8"
+    },
+    {
+      "number": 10,
+      "heading": "EXT. CAMPSITE. SUNSET.",
+      "characters": [
+        "RO",
+        "RUTHIE"
+      ],
+      "dialogues": [
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "Two point five."
+        },
+        {
+          "character": "RUTHIE",
+          "parenthetical": "",
+          "text": "Ten!"
+        }
+      ],
+      "actionPreview": "They swim in the lake. Ro and Ruthie bob around and we just see Elliott’s legs sticking up from the water - in the middle of a handstand contest. Elliott pops up, smiling. Ro and Ruthie score her. Off their laughter. CUT TO:"
+    },
+    {
+      "number": 11,
+      "heading": "EXT. CAMPSITE BONFIRE. DUSK.",
+      "characters": [
+        "RUTHIE",
+        "RO",
+        "ELLIOTT",
+        "RO."
+      ],
+      "dialogues": [
+        {
+          "character": "RUTHIE",
+          "parenthetical": "",
+          "text": "No! Not the whole bag. That’s way too many."
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "That’s why you gotta get your weight up. LATER. The three hold up their cups of mushroom tea."
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "To Elliott. (mimes a walker)"
+        },
+        {
+          "character": "RUTHIE",
+          "parenthetical": "",
+          "text": "(concerned)"
+        },
+        {
+          "character": "RO.",
+          "parenthetical": "",
+          "text": "They laugh as Ro covers her mouth. 9"
+        },
+        {
+          "character": "RUTHIE",
+          "parenthetical": "",
+          "text": "You’re burping. Oh my god."
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "I thought we were... don’t you guys wanna get there?"
+        },
+        {
+          "character": "RUTHIE",
+          "parenthetical": "",
+          "text": "Yes, but..."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Alright. Okay. One, two, three..."
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "(watching, cheering)"
+        },
+        {
+          "character": "RUTHIE",
+          "parenthetical": "",
+          "text": "I can’t do it."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "(letting out a yell)"
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "Chug it, chug it, chug it!"
+        }
+      ],
+      "actionPreview": "The three of them stand around the bonfire, Elliott pours the entire bag of mushrooms into a tea kettl e. You old bitch. May you experience a fucking, I don’t know... a new level of consciousness or some shit tonight. They clink together their mugs of tea and take the first sip. Ruthie puckers her l"
+    },
+    {
+      "number": 12,
+      "heading": "EXT. CAMPSITE BONFIRE. NIGHT.",
+      "characters": [
+        "RUTHIE",
+        "RO",
+        "ELLIOTT",
+        "VOICE",
+        "WOMAN",
+        "OLDER ELLIOTT",
+        "ELLI OTT",
+        "OLDER EL LIOTT",
+        "O LDER ELLIOTT"
+      ],
+      "dialogues": [
+        {
+          "character": "RUTHIE",
+          "parenthetical": "",
+          "text": "Oh, I’m scared. Are you?"
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "Actually, I’m a little scared too."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "I’m weirdly... not? CONTINUED: 10"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "The fuck was that?"
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "Okay, ummmm..."
+        },
+        {
+          "character": "RUTHIE",
+          "parenthetical": "",
+          "text": "I feel like I need to call my mom."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "There are bears here. My mom told me."
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "Shut up. Let’s just be normal guys and talk about something, something normal. Something..."
+        },
+        {
+          "character": "RUTHIE",
+          "parenthetical": "",
+          "text": "Let’s just talk about something normal."
+        },
+        {
+          "character": "RUTHIE",
+          "parenthetical": "",
+          "text": "(borderline panicked)"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "My hopes... and"
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "Fucking yes. Hopes and dreams."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Word, word. I’ve got hopes and dreams. Okay. Well... (thinks, then) I’m just excited that my life is about to finally start."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Even though the world is literally on fire and full of uneducated racists, I’m trying to force m yself to have... hope? CONTINUED: (MORE) 11"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Uh. Like, mad respect to my ancestors but I do NOT wanna be a third generation... (thinks, corrects) I"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "And I always feel bad every time I say that but it’s like - I’ve got energy, I’ve got hype!"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Like the world? The world is literally our fucking oyster, like we gotta LIVE, you know what I mean?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Holy shi -- oh my god. Are you trippin? Are you guys trippin?"
+        },
+        {
+          "character": "RUTHIE",
+          "parenthetical": "",
+          "text": "(very slowly) I don’t know..."
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "I feel like grooving, man. I feel like grooving. CONTINUED:"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "(CONT’D)",
+          "text": "12"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "What the fuck? Ruthie?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Oh my god. (to herself, flabbergasted) “I feel like grooving man.” Wow."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "I don’t feel anything."
+        },
+        {
+          "character": "VOICE",
+          "parenthetical": "(O.C.)",
+          "text": "You know it’s cause you don’t tolerate drugs well."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "What the fuck --"
+        },
+        {
+          "character": "WOMAN",
+          "parenthetical": "",
+          "text": "Hey, freak."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Who are you?!"
+        },
+        {
+          "character": "WOMAN",
+          "parenthetical": "",
+          "text": "(interrupting her, realizing where she is)"
+        },
+        {
+          "character": "WOMAN",
+          "parenthetical": "",
+          "text": "(nostalgic) I used to love"
+        },
+        {
+          "character": "WOMAN",
+          "parenthetical": "",
+          "text": "Oh. Yes, yes, yes. Oh, yes. (re: the marshmallows)"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Who the FUCK are you?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Where did you come from?"
+        },
+        {
+          "character": "WOMAN",
+          "parenthetical": "",
+          "text": "(mouth full of marshmallow)"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Do you work for my da d? Did he send you here to spy on me?"
+        },
+        {
+          "character": "WOMAN",
+          "parenthetical": "",
+          "text": "HA! That"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "God?"
+        },
+        {
+          "character": "WOMAN",
+          "parenthetical": "",
+          "text": "(sighs heavily) I don’t know how to say this... (whispers)"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "(casual)"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "What are you talking about? (a beat)"
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "You fuck off."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Your teeth. Those aren’t my teeth."
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "So? What about my teeth?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "There’s a fucking gap in your teeth. I don’t have a gap in my teeth."
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "Yeah, dude, fuck you. Wear your retainer."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "And your hair, it’s so dry... and it’s dark."
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "Take it easy."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "You have bangs. I don’t have bangs - I have no plans on getting bangs."
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "Take it easy, bitch."
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "First of all...."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "And your boobs are saggy. My boobs aren’t saggy."
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "(inspects sweater)"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "I just don’t see it."
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "Oh my god."
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "Forgot how fucking dense I was. Let me show you something. Um, this... (points to a scar)"
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "Left boob, one cup smaller than the right. And no, it never catches up to the right but honestly, you get used to it and it’s okay. Guy’s can’ t really tell. Girls can, but..."
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "Okay, more. Fuck it..."
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "Ta-da! It’s our missing pinky toe."
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "Oh, fuck. That hasn’t happened yet."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Holy shit. I’m high."
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "Yeah..."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Nice! Okay. I’m feeling it. I’m having a reaction to the shrooms."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "I’m actually kinda hot for being middle aged."
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "Okay. Fuck you. I’m thirty-nine years old that’s not middle aged."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "No. That is middle aged."
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "No, it’s NOT. I’m a very young adult."
+        },
+        {
+          "character": "ELLI OTT",
+          "parenthetical": "",
+          "text": "Really? ‘Cause I’m getting “milfy” vibes -"
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "Oooh."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "I’m kinda gagging over it."
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "NOBODY says “gagging over it” anymore either. So..."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Wait. Oh my god. Okay. Tell me everything! Where do we live? Do we have kids? Are we like, SO happy and fulfilled?"
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "Oh my god. That"
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "Simple everything seemed."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "(starting to panic)"
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "Chill out. No. We’re alive."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "This is turning into a bad trip. I feel this is turning into a bad trip. And I’m trying to have a good time, but you’re giving me a fucking panic atta ck."
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "Okay. No. Chill out..."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Just tell me something good!"
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "Um, something good. Umm...."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Why are you struggling to find something good from the future?"
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "Oh! This is good."
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "You are going to be fucking psyched to know that you are a..."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "(anxious, waiting)"
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "PhD"
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "Fuck yeah."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "No. What? You’re joking. CONTINUED: 18"
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "But I don’t want to tell you in what because I want you to have something to look forward to."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Look FORWARD to? Did you just tell me I’m in my forties and still in SCHOOL!?"
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "Thirties. THIRTIES."
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "Dude. What the fuck? Did you honestly think you were gonna be married, have multiple kids AND your dream job by the time you were forty?"
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "Oh. You did. Okay."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Wait. I just had the best idea. You tell me who the next Apple is and I’ll invest now and then we can be INSANELY rich."
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "I don’t think that’s a good idea."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "WHY?"
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "Because I don’t know how this shit works. I"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Oh, come on. What’s the point of this conversation if you can’t at least give me some advice to make our life better? CONTINUED: 19"
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "Alright. That’s not, like, the “fix.” I don’t think that’s the..."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "You’re telling me that wouldn’t fix at least a couple of your problems?"
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "I just, I don’t think I..."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Or is our life just so flawless and perfect that you don’t wanna change anything?"
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "Can you avoid anyone named Chad?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "What? Who the fuck is Chad? (not impressed)"
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "Yeah."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Are you high?"
+        },
+        {
+          "character": "OLDER EL LIOTT",
+          "parenthetical": "",
+          "text": "No. Just do it."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "This is the weirdest fucking thing..."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Oh my god."
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "Oh my god."
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "You should have answered --"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "I’m not gonna FaceTime Mom when I’m high."
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "Dude. I know she can be annoying but, like... be nice to her."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "I’m SO nice to Mom. (off Older Elliott) I literally let her talk to me yesterday about a hummingbird for forty five minutes."
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "That’s cute."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "It was annoying."
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "Honestly, you should hang out with her. Like, hang out with her. Do stuff with her."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Oh, my god. That’s who you look like! Mom! That’s who you look like. You look exactly like Mom. What the fuck?"
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "I know, I know."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Do you get that?"
+        },
+        {
+          "character": "O LDER ELLIOTT",
+          "parenthetical": "",
+          "text": "Yes. All the time. Everybody says that. Everybody."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Holy shit. That’s crazy. Everyone just turns into their mothers. CONTINUED: 21"
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "Yeah, basically. Honestly, I thought it was a bad thing, but I kind of like it now."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "It works. It works."
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "Mom’s cool."
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "Can we hug?"
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "Get in here."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "This is so weird."
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "Mhmm."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "(PRE-LAP)",
+          "text": "I thought I’d be happier at forty. CUT TO:"
+        }
+      ],
+      "actionPreview": "It’s very quiet now. Some time has clearly passed. The three of them sit and stare silently into the crackling bonfire. The water laps. A loon cries out. A twig snaps off camera, they turn and look. Def scared. No one knows what to say. Um. Can you like talk about your hopes and dreams or something,"
+    },
+    {
+      "number": 13,
+      "heading": "INT. TENT. LATER.",
+      "characters": [
+        "OLDER ELLIOTT",
+        "ELLIOTT"
+      ],
+      "dialogues": [
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "You"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "You don’t look happy. I feel like... you’re having a midlife crisis."
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "Well, I feel like you're high on mushrooms so you don't know shit."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "True. (a beat, smiles) I have an idea. Can we... kiss?"
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "What? Why?"
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "Why?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "It's just a kiss. It's not, like... sexual."
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "A kiss is innately sexual."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "No, it’s not."
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "Why do you want to kiss yourself?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "You don't want to know what it's like to kiss yourself?"
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "I mean, yes, I do, but it's like you're younger so it's weird."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Okay, can I at least touch my old ass?"
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "Oh, my god. You need to be locked up."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Just a quickie. I'm not gonna, like..."
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "Fine, do"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "I'm not gonna, like, shove tongue in your mouth."
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "Fine, kiss me, I don't care."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Really?"
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "Fine."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "(squeals)"
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "I just wanted to know what it was like to kiss myself."
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "Okay. Well, now you know."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "I loved it."
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "Now you know."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Wow."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "That was fucking hot and you know it."
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "Okay. Can I say one last thing?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "(yawning)"
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "No, I’m serious."
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "You are so lucky. Life will never be the same as it is right now."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "(yawning again)"
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "You're gonna go to the city and everything's gonna be exciting and busy and... You don't even go home for Thanksgiving this year. You stay in the city."
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "You should go home."
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "The only thing you can't get back is time. When you get older, it goes by so fast, dude. So fast."
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "Elliott?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "(half-asleep)"
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "Oh, my god."
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "Where's your phone? (no response)"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "(half asleep)"
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "Tiddies?"
+        },
+        {
+          "character": "OLDER ELLIOTT",
+          "parenthetical": "",
+          "text": "Weirdo."
+        }
+      ],
+      "actionPreview": "They are now crammed inside the tent. A beat as they stare up at the ceiling. This cuts through Older Elliott like a KNIFE. The camera is above both of them, oddly familiar yet so different. They both sigh and move their hair out of their face in an eerily similar way. are happy. And I’m not forty, "
+    },
+    {
+      "number": 14,
+      "heading": "EXT. TENT. NIGHT.",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Ro and Ruthie are still off in their own b lissful worlds, Ruthie actually cuddling a wild bunny. Ro howling at the moon as she dances. CUT TO:"
+    },
+    {
+      "number": 15,
+      "heading": "EXT. CAMPSITE. EARLY MORNING.",
+      "characters": [
+        "RUTHIE",
+        "ELLIOTT",
+        "RO"
+      ],
+      "dialogues": [
+        {
+          "character": "RUTHIE",
+          "parenthetical": "",
+          "text": "And then the bunny sang and it sounded like Celine Dion, like so beautiful and good, and then hundreds of smaller bunnies all came out o f the woods. They spoke"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "I’m so jealous you guys had good trips. CONTINUED: 26"
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "Nah, I mean, meeting your older self sounds lit as fuck."
+        },
+        {
+          "character": "RUTHIE",
+          "parenthetical": "",
+          "text": "I feel like you don't tolerate drugs well, Elliott."
+        }
+      ],
+      "actionPreview": "Ruthie and Ro load up the boat as Elliott lays like a corpse on the ground. We only see their feet stepping over and around her. Mandarin though so I don’t know what the lyrics meant but they FELT beautiful. That phrase makes Elliott freeze. CUT TO:"
+    },
+    {
+      "number": 16,
+      "heading": "INT. ELLIOTT’S BEDROOM. DAY.",
+      "characters": [
+        "KATHY",
+        "ELLIOTT"
+      ],
+      "dialogues": [
+        {
+          "character": "KATHY",
+          "parenthetical": "",
+          "text": "Oh! I didn’t know you were here ."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Yeah, I got back a little bit ago."
+        },
+        {
+          "character": "KATHY",
+          "parenthetical": "",
+          "text": "I tried to call, we had a cake for you."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "KATHY",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "(feeling bad)"
+        },
+        {
+          "character": "KATHY",
+          "parenthetical": "",
+          "text": "Yeah."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "I’m sorry --"
+        },
+        {
+          "character": "KATHY",
+          "parenthetical": "",
+          "text": "No, it’s okay."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "I thought I told you I was leaving early with Ro."
+        },
+        {
+          "character": "KATHY",
+          "parenthetical": "",
+          "text": "Oh. Maybe you did. I probably forgot. CONTINUED: 27"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "(genuine) I’m sorry."
+        },
+        {
+          "character": "KATHY",
+          "parenthetical": "",
+          "text": "No, don’t be sorry."
+        },
+        {
+          "character": "KATHY",
+          "parenthetical": "",
+          "text": "Did you have fun?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Yeah."
+        },
+        {
+          "character": "KATHY",
+          "parenthetical": "",
+          "text": "You know, it was so cold last night, I wondered if you had enough blankets."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Yeah, we were fine."
+        },
+        {
+          "character": "KATHY",
+          "parenthetical": "",
+          "text": "Yeah? Well, at least it didn’t rain. You know, I was looking at the radar, and it said there was a fifteen percent chance of rain at seven, but then it went"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Yeah, we were good."
+        },
+        {
+          "character": "KATHY",
+          "parenthetical": "",
+          "text": "Okay. I’ll leave you to it."
+        }
+      ],
+      "actionPreview": "Elliott, now showered and in sweats, packs boxes in her room. Most of her stuff is already off the walls and in boxes. She clearly has one foot out the door. Kathy walks by, stops. We catch a flash of sadness across her mom’s face, watching her pack. Mom, you guys had a cake? Kathy waves her hand. S"
+    },
+    {
+      "number": 17,
+      "heading": "EXT. ELLIOTT’S DOCK. DUSK.",
+      "characters": [
+        "CHELSEA"
+      ],
+      "dialogues": [
+        {
+          "character": "CHELSEA",
+          "parenthetical": "",
+          "text": "(breathless) I’ve never hooked up on a boat before."
+        }
+      ],
+      "actionPreview": "Elliott and Chelsea go at it in the boat. Chelsea says between heated kisses. Elliott laughs, grabs her with a ferocious vigor. Off them going at it, the boat rocking. CUT TO:"
+    },
+    {
+      "number": 18,
+      "heading": "EXT. ELLIOTTS DOCK. EARLY MORNING.",
+      "characters": [
+        "SPENCER",
+        "ELLIOTT"
+      ],
+      "dialogues": [
+        {
+          "character": "SPENCER",
+          "parenthetical": "(O.C.)",
+          "text": "What are you guys doing?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "(one eye open)"
+        },
+        {
+          "character": "SPENCER",
+          "parenthetical": "",
+          "text": "(deadpan)"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "(look of dread on her face)"
+        }
+      ],
+      "actionPreview": "Elliott and Chelsea lie asleep in the boat, covered by a blanket. Elliot t and Chelsea look up, confused, half awake at Spencer staring down at them. Chelsea tries to cover them up with a thin blanket. Spencer! What are you doing down here at the ass crack of dawn? It’s eleven am. And with that he c"
+    },
+    {
+      "number": 19,
+      "heading": "EXT. FARM . LATE MORNING.",
+      "characters": [
+        "ELLIOTT",
+        "TOM"
+      ],
+      "dialogues": [
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "I’m here! I’m here! I’m sorry I’m late."
+        },
+        {
+          "character": "TOM",
+          "parenthetical": "",
+          "text": "Almost gave up on you, kiddo."
+        }
+      ],
+      "actionPreview": "Elliott tries to keep up with her dad’s quick pace as he busily walks along a dyke in field. 29 And with that he gets in with Max and starts driving away. Elliott feels like shit. CUT TO: MONTAGE OF ELLIOTT WORKING ON THE FARM Elliott jumps up into her tractor. Elliott drives her tractor across the "
+    },
+    {
+      "number": 20,
+      "heading": "EXT. SMALL LAKE ON FARM. LATE AFTERNOON.",
+      "characters": [
+        "ELLIOTT",
+        "BOY",
+        "CHAD"
+      ],
+      "dialogues": [
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Whoa! What the fuck?!"
+        },
+        {
+          "character": "BOY",
+          "parenthetical": "",
+          "text": "Sorry! I didn’t meant to scare you--"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "What the fuck?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "How long were you down there? I’ve been here for like, five minutes!"
+        },
+        {
+          "character": "BOY",
+          "parenthetical": "",
+          "text": "About five minutes then?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "What were y ou doing down there for so long? That’s some weird shit."
+        },
+        {
+          "character": "BOY",
+          "parenthetical": "",
+          "text": "Just swimming around. I wasn’t doing any weird stuff."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Okay, well, fuck, I’m naked so don’t come over here. Or like, don’t go under and open your eyes or some shit."
+        },
+        {
+          "character": "BOY",
+          "parenthetical": "",
+          "text": "Okay."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "(whispers)"
+        },
+        {
+          "character": "BOY",
+          "parenthetical": "",
+          "text": "Just so you know, there’s zero visibility down there. CONTINUED: (MORE) 31"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Okay. All right."
+        },
+        {
+          "character": "BOY",
+          "parenthetical": "",
+          "text": "I had such a fun first day. I learned so much stuff about cranberries. Did you know that a cranberry has FO UR pockets of air?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "(interrupting him)"
+        },
+        {
+          "character": "BOY",
+          "parenthetical": "",
+          "text": "Yeah, boy. Tom is actually such a cool guy. You’re lucky he’s your dad."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "How do you know he’s my dad?"
+        },
+        {
+          "character": "BOY",
+          "parenthetical": "",
+          "text": "Cause you got the EXACT same face."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Sick."
+        },
+        {
+          "character": "BOY",
+          "parenthetical": "",
+          "text": "Same cheeks."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Thanks. I love hearing that. It’s really nice."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "What’s your real name?"
+        },
+        {
+          "character": "BOY",
+          "parenthetical": "",
+          "text": "Chad. CONTINUED:"
+        },
+        {
+          "character": "BOY",
+          "parenthetical": "(CONT’D)",
+          "text": "32"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "What? What did you just say?"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "I said my name’s Chad."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "(grasping at straws)"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "- Just Chad."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "No? Okay. I gotta go. I gotta --"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "(facing the other way)"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Uh. It’s uh. Ray. Raymond...."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Like that guy?"
+        }
+      ],
+      "actionPreview": "It’s a beautiful late afternoon on the quiet bay. No one is around, you can’t see any houses. Elliott looks behind her and then peels her sweaty clothes off. Run jumps into the lake. She comes up, feeling refreshed when all of a sudden, another head pops up about four feet away. Elliott screams. CON"
+    },
+    {
+      "number": 21,
+      "heading": "EXT. WOODS. LATE AFTERNOON.",
+      "characters": [
+        "CUT"
+      ],
+      "dialogues": [
+        {
+          "character": "CUT",
+          "parenthetical": "",
+          "text": "TO:"
+        }
+      ],
+      "actionPreview": "Elliott speed walks, out of breath through the woods towards the farm. She’s freaking the fuck out when suddenly she stops dead in her tracks. Remembers something. Gets out her phone. We watch her scroll. She looks through her contacts. Searches “Elliott”. Nothing. “Me” No. Tries “Old Elliott” which"
+    },
+    {
+      "number": 22,
+      "heading": "EXT. LAKE. LATE AFTERNOON.",
+      "characters": [
+        "ELLIOTT",
+        "MY OLD ASS"
+      ],
+      "dialogues": [
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "(TEXT)",
+          "text": "I met Chad."
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(TEXT)",
+          "text": "Don’t go there, Ray Romano. HOLY SHIT. Elliott SCREAMS and without thinking, fires her phone into the lake. CUT TO:"
+        }
+      ],
+      "actionPreview": "Elliott sits out on the lake in her boat with the engine off. She has her finger hovered over the “MY OLD ASS” contact, deep in thought. Stops. Puts her phone down. Then, curiosity getting the best of her, changes her mind. Bites her thumb as she sends a text. Her heart is pounding. We sit on a wide"
+    },
+    {
+      "number": 23,
+      "heading": "INT. ELLIOTT’S BEDROOM. EVENING.",
+      "characters": [
+        "SPENCER",
+        "ELLIOTT",
+        "MY OLD ASS",
+        "BACKGROUND VOICE"
+      ],
+      "dialogues": [
+        {
+          "character": "SPENCER",
+          "parenthetical": "",
+          "text": "Oooo. A bowl of rice. That’s"
+        },
+        {
+          "character": "SPENCER",
+          "parenthetical": "",
+          "text": "They’re supposed to be waterproof."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "(fake smiling)"
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(OVER PH ONE)",
+          "text": "Holy shit! This worked."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "(talking into her phone)"
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(V.O.)",
+          "text": "Oh, wow, you sound so tough."
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(V.O)",
+          "text": "It’s me! I put my number in your phone the other nigh t. But, honestly, I DID NOT know this would work. This is crazy. (then)"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "No! No, I haven’t played golf with"
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(V.O)",
+          "text": "Oh my god. You’re so dramatic."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "-- to comprehend the fact that I’m on the phone with MY OLD ASS!"
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(V.O.)",
+          "text": "(re: the name) I thought that was funny. I didn’t let you touch it, so I felt bad."
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(V.O.)",
+          "text": "Wait. So are you, like, at the farm right now? It must be... oh, it’s six thirty. Oh my gosh! You guys are gonna sit down for dinner."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Wait. Is mom DEAD?"
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(V.O.)",
+          "text": "What?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Are you telling me to make Mom laugh ‘cause she’s fucking dead?"
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(V.O.)",
+          "text": "No! No, no. We just can’t do the fish... what ? No. She’s totally alive. Chill."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Thank god. I need to die before Mom does."
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(V.O.)",
+          "text": "Dude, that’s fucking dark. I have to tell my therapist you said that."
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(V.O.)",
+          "text": "Oh, wait a minute. Hang on."
+        },
+        {
+          "character": "BACKGROUND VOICE",
+          "parenthetical": "(OVER PHONE)",
+          "text": "Basement! Basement!"
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(V.O.)",
+          "text": "Uh, look, dude. I gotta go. I’ll call you later."
+        }
+      ],
+      "actionPreview": "We are looking down into a bowl of dried rice. We reveal Elliott staring at it. Anxious. A voice off camera makes her jump. never good. 34 We see Spencer standing in the doorway. Elliott shoves her hand deep into the bowl, pulling out her iPhone. Or, well, water resistant. Cool, yeah. Thanks Spencer"
+    },
+    {
+      "number": 24,
+      "heading": "INT. KITCHEN. EVENING.",
+      "characters": [
+        "KATHY",
+        "ELLIOTT"
+      ],
+      "dialogues": [
+        {
+          "character": "KATHY",
+          "parenthetical": "(O.C.)",
+          "text": "Sweetheart, do you need anything else? Here, yeah. Can you pass me that?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "(PRE-LAP)",
+          "text": "I can’ t believe this is like... CUT TO:"
+        }
+      ],
+      "actionPreview": "Elliott’s family is having dinner at the table. Elliott sits, trying to act normal but is instead acting inc redibly strange and stilted. Spencer side eyes her, weirded out. Tom looks exhausted. Max is shoveling in his second helping. Spencer sniffles, he’s watching “Brooklyn” on mute on his phone. "
+    },
+    {
+      "number": 25,
+      "heading": "INT. ELLIOTT’S BATHROOM. LATE NIGHT.",
+      "characters": [
+        "ELLIOTT",
+        "MY OLD ASS"
+      ],
+      "dialogues": [
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Real?"
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(V.O.)",
+          "text": "Me either, honestly."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "So weird. Okay, what do we do now? CONTINUED: 37"
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(V.O.)",
+          "text": "Uh, I don’t know. I guess, you take my advice and... make our life better?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Jesus. No pressure."
+        }
+      ],
+      "actionPreview": "Elliott brushes her teeth, AirPods in, talking to her Old Ass. She’s half joking. A knock at the bathroom door. Elliott finishes up. CUT TO:"
+    },
+    {
+      "number": 26,
+      "heading": "INT. ELLIOTT'S BEDROOM. SAME TIME.",
+      "characters": [
+        "MY OLD ASS",
+        "ELLIOTT"
+      ],
+      "dialogues": [
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(V.O.)",
+          "text": "But I don’t want to tell you too much, okay? I’m afraid I’ll ruin, like, the “surprises of life”"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "No, no, no, no. We HATE surprises, remember?"
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(V.O.)",
+          "text": "Yes, we hate them. Also, we have, like, no idea how this works so maybe don’t tell anyone about this?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Yeah, I was not planning on that."
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(V.O.)",
+          "text": "(laughs)"
+        }
+      ],
+      "actionPreview": "Elliott gets in her PJ’s as she continues talking to Old Ass. or whatever. And you won’t tell our gorgeous wife and three children either, right? Again, not falling for it. Three children? Oh my god. Elliott, nobody’s allowed to have three children anymore. Elliott takes a beat, falls back into her "
+    },
+    {
+      "number": 27,
+      "heading": "EXT. JOSEPH RIVER. LATE MORNING.",
+      "characters": [
+        "MY OLD ASS",
+        "EL LIOTT",
+        "RO",
+        "ELLIOTT"
+      ],
+      "dialogues": [
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(V.O.)",
+          "text": "Look, just listen to me. Don’t do anything stupid and we’ll be fine."
+        },
+        {
+          "character": "EL LIOTT",
+          "parenthetical": "",
+          "text": "(re: bridge)"
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "Elliott."
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(V.O.)",
+          "text": "I think."
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "Fuck! Fuck! Shit!"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Oh, sh it!"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "(PRE-LAP)",
+          "text": "Got you, got you. And if I don’t kill us... CUT TO: CONTINUED: 39"
+        }
+      ],
+      "actionPreview": "A small gravel road and one way bridge stretches across the river in front of her. Elliott steers her boat towards it. Ro is parked at the middle of the bridge, watching. The bridge is about two and a half feet above the water. It’s gonna work. I promise. It’s already happening. Ro leans over the br"
+    },
+    {
+      "number": 28,
+      "heading": "EXT. ELLIOTT’S PATIO. DAY.",
+      "characters": [
+        "ELLIOTT",
+        "MY OLD ASS"
+      ],
+      "dialogues": [
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "(V.O.)",
+          "text": "Will you tell me when we have our first threesome?"
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(V.O.)",
+          "text": "Oh my god. Dude, I wish I had the energy to have sex with one person, let alone two."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "(V.O.)",
+          "text": "Come on! CUT TO:"
+        }
+      ],
+      "actionPreview": "Elliott tries to meditate unsuccessfully."
+    },
+    {
+      "number": 29,
+      "heading": "INT. ELLIOTTS LIVING ROOM. DAY.",
+      "characters": [
+        "MY OLD ASS",
+        "SPENCER",
+        "KATHY",
+        "ELLIOTT"
+      ],
+      "dialogues": [
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "( V.O.)",
+          "text": "Go hang out with your brothers."
+        },
+        {
+          "character": "SPENCER",
+          "parenthetical": "",
+          "text": "Alakazam!"
+        },
+        {
+          "character": "KATHY",
+          "parenthetical": "",
+          "text": "Oh!"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "(V.O.)",
+          "text": "I don’t think you remember how annoying they are. CUT TO:"
+        }
+      ],
+      "actionPreview": "Spencer does a magic show for Elliott and her mom. Her mom is THRILLED, Elliott is distracted. Her mom starts clapping."
+    },
+    {
+      "number": 30,
+      "heading": "INT. ELLIOTT’S HOUSE. MORNING.",
+      "characters": [
+        "MAX",
+        "ELLIOTT"
+      ],
+      "dialogues": [
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "Why do you even wanna come? 40"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Because... I’m leaving soon and I want us to bond?"
+        }
+      ],
+      "actionPreview": "Elliott sashays into the kitchen where Max is making a smoothie. She’s in her version of full “golf” attire which actually means she looks like Billie Eilish about to play a show. Max VISIBLY cringes. CUT TO:"
+    },
+    {
+      "number": 31,
+      "heading": "EXT. GOLF COURSE. DAY.",
+      "characters": [
+        "ELLIOTT",
+        "MAX"
+      ],
+      "dialogues": [
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Anything new in your life?"
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "Not really."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Are you gonna miss me when I’m gone?"
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Fair."
+        }
+      ],
+      "actionPreview": "Elliott watches Max get ready to “tee up”. Elliott’s burning up in the sun. Trying to make it worthwhile. A beat. Off Elliott, boiling hot, tired and not feeling like this is working at a ll. CUT TO:"
+    },
+    {
+      "number": 32,
+      "heading": "EXT. GOLF COURSE. ANOTHER DAY.",
+      "characters": [
+        "ELLIOTT",
+        "MY OLD ASS"
+      ],
+      "dialogues": [
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "(V.O.)",
+          "text": "Dude, there’s absolutely no way this is making our life better."
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(V.O.)",
+          "text": "Dude! You played one game. Try harder."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Ow! Max!"
+        }
+      ],
+      "actionPreview": "It’s super early. Elliott is sound asleep in the golf cart as Max golfs. Max gets in and starts the cart, Elliott’s head whams forward hitting the cart, snapping her awake. CONTINUED: 41"
+    },
+    {
+      "number": 33,
+      "heading": "INT. KITCHEN. DAY.",
+      "characters": [
+        "ELLIOTT",
+        "KATHY"
+      ],
+      "dialogues": [
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Hi."
+        },
+        {
+          "character": "KATHY",
+          "parenthetical": "",
+          "text": "Hi."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Can I help you with anything?"
+        },
+        {
+          "character": "KATHY",
+          "parenthetical": "",
+          "text": "You can take out the garbage."
+        }
+      ],
+      "actionPreview": "Elliott walks into the kitchen where her mom is. She’s like, wow. I’m SO glad I asked. CUT TO:"
+    },
+    {
+      "number": 34,
+      "heading": "EXT. GARBAGE CANS. LATER.",
+      "characters": [
+        "ELLIOTT",
+        "MY OLD ASS"
+      ],
+      "dialogues": [
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "(V.O.)",
+          "text": "This advice literally sucks dick, dude."
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(V.O.)",
+          "text": "Shut up. You literally suck dick. CUT TO:"
+        }
+      ],
+      "actionPreview": "She throws trash into the neighborhood bins at the end of her driveway. It fucking STINKS. She has her t-shirt pulled up over her nose, MISERABLE."
+    },
+    {
+      "number": 35,
+      "heading": "EXT. CRANBERRY FIELDS. MORNING.",
+      "characters": [
+        "CHAD",
+        "MY OLD ASS",
+        "ELLIOTT",
+        "I KNOW."
+      ],
+      "dialogues": [
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Ray! RAYMOND! CONTINUED: 42"
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(V.O.)",
+          "text": "Wait, wait, wait, wait, wait. Is that Chad? Yo, get the fuck out of there."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "(V.O.)",
+          "text": "I am."
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(V.O.)",
+          "text": "Run!"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "(V.O.)",
+          "text": "I literally am."
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(V.O.)",
+          "text": "I told you to stay away from that guy."
+        },
+        {
+          "character": "I KNOW.",
+          "parenthetical": "",
+          "text": "She tries to hide from him. Slinks down in her seat. CUT TO:"
+        }
+      ],
+      "actionPreview": "Elliott drives her tractor like a seasoned pro, foot up on the gears. Chad waves at Elliott from the field, smiling widely."
+    },
+    {
+      "number": 36,
+      "heading": "EXT. SMALL LAKE ON FARM. DAY.",
+      "characters": [
+        "ELLIOTT"
+      ],
+      "dialogues": [
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "(V.O.)",
+          "text": "I got this. We’re good. You’re stressing over nothing. I’m not gonna fuck this up."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "(under her breath)"
+        }
+      ],
+      "actionPreview": "Elliott’s swimming, cooling off for the day. She floats, closing her eyes t rying to “be in the moment”. Suddenly she hears a noise from shore. Chad appears from the woods. Oh, fuck. Before she knows it, he’s heading towards the water. Elliott panics. Looks around but there’s nowhere to “hide”. She "
+    },
+    {
+      "number": 37,
+      "heading": "EXT. LAKE. UNDERWATER.",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "We are with Elliott un derwater as she tries to hold her breath for as long as possible. She opens one eye, wow, he was right. Murky as fuck. CONTINUED: 43 Then, she thinks she sees one of the dreaded water snakes and screams loudly. CUT TO:"
+    },
+    {
+      "number": 38,
+      "heading": "EXT. LAKE. ABOVE WATER.",
+      "characters": [
+        "ELLIOTT",
+        "CHAD",
+        "ELLIOT T"
+      ],
+      "dialogues": [
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "AHHHHHH!"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "(out of breath)"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "I saw one of those motha-fucking evil snakes! Swear to god."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "What’d it look like?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "It was brown and it was like -- (holds her hand out two feet)"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "I’ll be right back."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Look, I got him!"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "I got him. He put up a good fight, but in the end, I was stronger, smarter AND faster than him."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Something’s wrong with you."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "How much horsepower does your boat have?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "How did you know I have a boat?"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Because I saw you driving it."
+        },
+        {
+          "character": "ELLIOT T",
+          "parenthetical": "",
+          "text": "Okay, peeping Tom."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "I wasn’t peeping Tom-ing. I was just looking out at the open water."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Will you take me for a ride sometime?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "No! No, I’m not gonna “take you for a ride”, I barely know you. You could be, and most likely are, a fucking murderer."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "I’m not a murderer. I promise."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "You, I-you are a mur derer. I’m like-"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "I won’t murder you. How ‘bout that?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Plus, it’s a tiny bit broken right now anyway."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "What happened?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "I have no idea. I went down earlier and it just didn’t start."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Maybe I can fix it?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "What are you a mechanic murderer now?"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "No. But I worked at my dad’s mechanic shop my whole life."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Oh."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Are you bonded and insured?"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Let me fix the damn boat, Romano."
+        }
+      ],
+      "actionPreview": "Elliott pops up, choking on water, screaming. Chad is still close to the shore but he hears screaming and swims over as fast as he can. What’s going on? Elliott is too pa nicked to tell that he’s messing with her. This big and it fucking looked right at me and laughed. Chad feigns seriousness. He di"
+    },
+    {
+      "number": 39,
+      "heading": "EXT. ELLIOTT’S DOCK. LATER.",
+      "characters": [
+        "CHAD",
+        "ELLIOTT",
+        "CHAD."
+      ],
+      "dialogues": [
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Can you hand me those pliers?"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Are you gonna take over the farm one day? CONTINUED: 46"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "I have zero desire to be a farmer."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Saoirse Ronan, right?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "(smiling)"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Oh, ‘cause I love her, man. Have you seen"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Yea. A hundred times."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "So , if you weren’ t a farmer, what would you doing?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "I’m not totally sure yet."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "What was that?"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "I just thought if you didn’t want to take over your family legacy, then maybe you’d have some sort of aspiration. You know, like saving the planet or... becoming prime minister or something."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Well, I can’t speak French CHAD , so my dreams of becoming prime minster have sadly been put to bed. Like, what the fuck?"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "J'ai réparé votre bateau, la conduite de carburant était lâche."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "On peut faire un petit tour?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Okay, I’m never going on a boat ride with you. Okay?"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "(with a smile)"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Ya, well, I’m smarter then I look,"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "I think you look smart."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Stop being so nice!"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Okay! Fucker!"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "(like she’s scolding a dog) NO!"
+        }
+      ],
+      "actionPreview": "Chad has a small toolbox spread open on the bench seat of the boat and he’s bent over working on the engine. Elliott sits on the dock, trying hard not to stare at his sweaty shoulders. Plus, my brother wants to so I’m like, cool you do it. My middle brother. My younger brother just wants to move to "
+    },
+    {
+      "number": 40,
+      "heading": "INT. ELLIOTT’S BEDROOM. NIGHT.",
+      "characters": [
+        "ELLIOTT",
+        "MY OLD ASS"
+      ],
+      "dialogues": [
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Okay, can you just tell me, like, what does this Chad guy do again? ‘Cause, honestly, he seems so harmless. Like, I’ve never been less threatened by anyone, I don’t think."
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(V.O.)",
+          "text": "Oh, god. What happened..."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Nothing! Nothing happened."
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(V.O.)",
+          "text": "Tell me."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "He was acting all nice and he fixed the"
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(V.O.)",
+          "text": "You let him fix the boat!? NO."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "He basically MADE me let him."
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(V.O.)",
+          "text": "(groans)"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Don’t you remember that?"
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "",
+          "text": "(loaded)"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "He’s like, this weird mix of being so lovable you wanna protect him --"
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(V.O.)",
+          "text": "Oh, my god."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "-- but also so basic you wanna punch him in his weirdly symmetrical face."
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "",
+          "text": "Elliott. Do NOT have sex with him. 49"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Jesus! I’m not gonna... I can admit someones face is symmetrical and not fuck them. GOD."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Hello?"
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(V.O.)",
+          "text": "No more boat rides with Chad."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Dude. Are you okay?"
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(V.O.)",
+          "text": "You should get some sleep. It’s late."
+        }
+      ],
+      "actionPreview": "Elliott lays in bed talking to her Old Ass. boat and -- Okay. A heavy pause between them. Yeah. I do. Old Ass goes quiet. Promise? It sounds like Older Elliott is trying to hide emotion. And with that, she hangs up. Elliott puts her phone down. CUT TO:"
+    },
+    {
+      "number": 41,
+      "heading": "EXT. GOLF COURSE.",
+      "characters": [
+        "DAY.",
+        "ELLIOTT",
+        "MAX"
+      ],
+      "dialogues": [
+        {
+          "character": "DAY.",
+          "parenthetical": "",
+          "text": "Elliott and Max are driving in the cart."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Have you ever, like, off roaded with this thing? Just monster truck style?"
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "I would."
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "Sorry I’m not cool like you."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Hey. You’re cool."
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "(teasing)"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "What does that mean?"
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "(casually) I know they asked you to hang out with me. Otherwise you’d never be seen with me."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "You’re an idiot. They didn’t ask me to hang out with you."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Do you actually think I wouldn’t want to be seen with you?"
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "I mean. Yeah."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Why?"
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "‘Cause I’m"
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "On my last birthday card you wrote “I’d wish you a happy birthday, but cis white men don’t need any more happiness”."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "That was a joke."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "It was!"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Okay, sorry. I should have written, “The gender binary is killing all of us, let’s hope you don’t outlive the planet”."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "I’m sorry. I’m sorry. I know I’ve been like... narrow minded about some stuff and that’s fucked up."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "And I’m not embarrassed to be seen with you. I thought"
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "Oh, I am."
+        }
+      ],
+      "actionPreview": "Did mom and dad tell you to say that too? CONTINUED: 50 The pull up to the hole. He gets out. Max grunts. Elliott takes him in, realizing there may be more to this. everything that annoys you? I like farming. I play sports. I hate Euphoria. Elliott starts to say something but Max cuts her off as he "
+    },
+    {
+      "number": 42,
+      "heading": "EXT. ELLIOTT’S",
+      "characters": [
+        "HOUSE. LATE AFTERNOON.",
+        "ELLIOTT",
+        "MAX"
+      ],
+      "dialogues": [
+        {
+          "character": "HOUSE. LATE AFTERNOON.",
+          "parenthetical": "",
+          "text": "Elliott and Max walk up the steps towards the house."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Didn’t realize it was such a precise sport."
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "This is why I say that the form is important, alright?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "And I’m sore. Why am I sore? CONTINUED: 52"
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "‘Cause you’re not... you don’t have the right form."
+        }
+      ],
+      "actionPreview": "Elliott notices her mom in the Muskoka room. There’s something about seeing her mom, unaware of Elliott, nose scrunched in deep concentration that hits Elliott differently. Max passes behind her. Off Elliott torn for a beat, then... CUT TO:"
+    },
+    {
+      "number": 43,
+      "heading": "INT. ELLIOTT’S HOUSE MUSKOKA ROOM. EVENING.",
+      "characters": [
+        "ELLIOTT",
+        "KATHY",
+        "MY OLD ASS"
+      ],
+      "dialogues": [
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Hi."
+        },
+        {
+          "character": "KATHY",
+          "parenthetical": "",
+          "text": "Hi , pumpkin."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "How was your day?"
+        },
+        {
+          "character": "KATHY",
+          "parenthetical": "",
+          "text": "(surprised)"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Very good."
+        },
+        {
+          "character": "KATHY",
+          "parenthetical": "",
+          "text": "Good."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "(V.O.)",
+          "text": "Okay, if we weren’t the same person and you just met me at a party,"
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(V.O.)",
+          "text": "Okay. You want to know what’s one of the best things about getting older? CONTINUED: 53"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "(V.O.)",
+          "text": "What?"
+        }
+      ],
+      "actionPreview": "Elliott enters, Kathy looks up from her sudoku. Elliott goes over and snuggles next to her on the couch. It was fine. How was yours? She watches her mom work on the puzzle for a minute. Her mom playfully bumps her shoulder. Off Elliott helping her mom, the two of them snuggled on the couch. do you t"
+    },
+    {
+      "number": 44,
+      "heading": "INT. ELLIOTT’S LIVING ROOM. EVENING.",
+      "characters": [
+        "MY OLD ASS",
+        "ELLIOTT"
+      ],
+      "dialogues": [
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(V.O.)",
+          "text": "You stop worrying so much about if other people like you. It’s kinda great."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "(V.O.)",
+          "text": "I feel like... I feel like I’ve been kind of an asshole."
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(V.O.)",
+          "text": "Ah, you’re just eighteen. CUT TO:"
+        }
+      ],
+      "actionPreview": "Spencer and Elliott snuggle watching “Little Women”. She looks at Spencer."
+    },
+    {
+      "number": 45,
+      "heading": "EXT. FARM. DAY.",
+      "characters": [
+        "MY OLD ASS",
+        "ELLIOTT"
+      ],
+      "dialogues": [
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(V.O.)",
+          "text": "Honestly, everyone’s kind of an asshole at that age. (a beat, then)"
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(V.O.)",
+          "text": "Elliott. Hello?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "(V.O.)",
+          "text": "I just feel l ike everything that used to make sense doesn’t anymore."
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(V.O.)",
+          "text": "Yeah. CONTINUED: 54"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "(V.O.)",
+          "text": "Like, even Chelsea. CUT TO:"
+        }
+      ],
+      "actionPreview": "Elliott and Chad pass each other on the farm , he’s carrying something heavy. Why? Are you okay? Chad waves, Elliott waves back sweetly before stopping herself. The wave turns into an aggressive “cutting your throat” gesture. Points to himself like, “me?” She nods, mouths, “YES, YOU”. He looks confu"
+    },
+    {
+      "number": 46,
+      "heading": "INT. DUKES COFFEE. DAY.",
+      "characters": [
+        "ELLIOTT",
+        "MY OLD ASS"
+      ],
+      "dialogues": [
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "(V.O.)",
+          "text": "Like, she’s literally been my dream girl for so long -- I mean you know how long."
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(V.O.)",
+          "text": "Yeah, I know."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "(V.O.)",
+          "text": "And she’s so hot and the sex is so amazing . I’m so confused. CUT TO:"
+        }
+      ],
+      "actionPreview": "Elliott gets coffee with Ro and Ruthie. Chelsea makes fuck eyes at Elliott who is zoned out and doesn’t even notice. Chelsea looks confused. Ro clocks this."
+    },
+    {
+      "number": 47,
+      "heading": "EXT. DOCK. LATER.",
+      "characters": [
+        "ELLIOTT",
+        "MY OLD ASS"
+      ],
+      "dialogues": [
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "(V.O.)",
+          "text": "Like, why aren’t I more into this?"
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(V.O.)",
+          "text": "Well, this isn’t gonna be the last time you get exactly what you want and then realize it isn’t what you wanted."
+        }
+      ],
+      "actionPreview": "Elliott makes out with Chelsea in her boat. Her voice plays over the kissing. Elliott sighs. Taking that in. CUT TO:"
+    },
+    {
+      "number": 48,
+      "heading": "EXT. ELLIOTTS DOCK. EVENING.",
+      "characters": [
+        "ELLIOTT",
+        "MY OLD ASS"
+      ],
+      "dialogues": [
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "(V.O.)",
+          "text": "How do you ever know what you want then? Like when you actually fall in love, how do you know that it’s real?"
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(V.O.)",
+          "text": "Uh, you don’t."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "(V.O.)",
+          "text": "I feel like it’s just, like, everything feels right even when it’s really hard... correct me if I’m wrong."
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(V.O.)",
+          "text": "Uh, yeah, you’re wrong. You’re very wrong. Sorry."
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(V.O.)",
+          "text": "It’s just hard to explain."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "(V.O.)",
+          "text": "TRY! Give me SOMETHING."
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(V.O.)",
+          "text": "Okay! God. I mean, okay. Love, like healthy love. I guess it’s like..."
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(V.O.)",
+          "text": "Safety and freedom? All at"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "(V.O.)",
+          "text": "(not totally impressed)"
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(V.O.)",
+          "text": "Okay, look. I know it doesn’t SOUND romantic to you, but it is. Trust me. God."
+        }
+      ],
+      "actionPreview": "Elliott paces down the dock, talking to her Old Ass. CONTINUED: 55 She sits down on the edge of the dock with her feet hanging in the water. There’s something so pure and innocent about her fa ce as she asks it. Elliott scrunches up her nose. She thinks. Elliott anxiously awaits every word. She thin"
+    },
+    {
+      "number": 49,
+      "heading": "EXT. DUKES BACK STAIRWELL. LATER.",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Elliott makes out with Chelsea at work. All of a sudden Elliott opens her eyes and she’s no longer kissing Chelsea... she’s kissing, CHAD?! Elliott grabs his hair, very, VERY, into it... Chad begins to move lower on Elliott’s body. We are close on Elliott as she moans, loudly. CUT TO:"
+    },
+    {
+      "number": 50,
+      "heading": "INT. ELLIOTT’S BEDROOM. MORNING.",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Elliott sits up from her dream. Snaps out of her reverie. Holy SHIT. Off Elliott, stressed as hell over this MAJOR realization. CUT TO:"
+    },
+    {
+      "number": 51,
+      "heading": "INT. LIVING ROOM. MORNING.",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "As Elliott walks out of her room wearing giant sweats, her hair sticking up everywhere, she hears an unusual amount of talking and laughing from the kitchen. She hesitantly rounds the corner into the kitchen. CUT TO:"
+    },
+    {
+      "number": 52,
+      "heading": "EXT. ELLIOTT’S PATIO. MORNING.",
+      "characters": [
+        "KATHY",
+        "ELLIOTT",
+        "TOM",
+        "CHAD",
+        "SPENCER",
+        "MAX"
+      ],
+      "dialogues": [
+        {
+          "character": "KATHY",
+          "parenthetical": "",
+          "text": "Oh! Good morning, Elliott! Have you met Chad?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Uh --"
+        },
+        {
+          "character": "KATHY",
+          "parenthetical": "",
+          "text": "He’s working here for the summer."
+        },
+        {
+          "character": "KATHY",
+          "parenthetical": "",
+          "text": "Come on, sit down. Have some pancakes before they get cold. (then, to Tom)"
+        },
+        {
+          "character": "TOM",
+          "parenthetical": "",
+          "text": "Yeah."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Sup."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Sup."
+        },
+        {
+          "character": "KATHY",
+          "parenthetical": "",
+          "text": "So, uh, you were telling us about your plans after undergrad?"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Oh ya, well, I originally wanted to go into engineering -- (taking a casual bite) CONTINUED: (MORE) 58"
+        },
+        {
+          "character": "KATHY",
+          "parenthetical": "",
+          "text": "That’s very cool."
+        },
+        {
+          "character": "SPENCER",
+          "parenthetical": "",
+          "text": "(impressed)"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "If you wanna be a drug doctor why did you come spend your summer on a cranberry farm?"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "For the money and the fame."
+        },
+        {
+          "character": "TOM",
+          "parenthetical": "",
+          "text": "(like, how dare you disrespec t him)"
+        },
+        {
+          "character": "TOM",
+          "parenthetical": "",
+          "text": "One of the original cranberry farmers in this area, owned the place two lines down. His grandfather was close friends with your grandfather. You two are practically blood."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "(can’t hide her worry)"
+        },
+        {
+          "character": "KATHY",
+          "parenthetical": "",
+          "text": "(quickly changing the subj ect)"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "(CONT’D)",
+          "text": "59"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Yeah, I never um, met my grandfather or even seen the farm before it got sold or anything. He died before I was born. Yeah. It’s been really nice... I think I just wanted to, get in touch with my roots. If that isn’t the cheesiest thing you’ve ever heard."
+        },
+        {
+          "character": "KATHY",
+          "parenthetical": "",
+          "text": "No. It’s not cheesy. T hat’s wonderful."
+        },
+        {
+          "character": "TOM",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "KATHY",
+          "parenthetical": "",
+          "text": "No, I think that’s nice."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "We’re late for our tee time, Max."
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "Oh. Uh. Chad, do you want to come golfing with us?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "You want Chad to come?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "(trying to diffuse)"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "I’d love to. If that’s. .."
+        },
+        {
+          "character": "KATHY",
+          "parenthetical": "",
+          "text": "Okay, great. Let me get you some coffees to go."
+        }
+      ],
+      "actionPreview": "Elliott steps outside, screen door slamming behind her, stopping in her tracks when she sees an alarming scene. CONTINUED: 57 CHAD is sitting with her entire family having breakfast. Her mom is pouring him a cup of orange juice, Max and Chad are talking, Spencer trying desperately to get his attenti"
+    },
+    {
+      "number": 53,
+      "heading": "EXT. GOLF COURSE. EARLY MORNING.",
+      "characters": [
+        "CHAD",
+        "MAX",
+        "ELLIOTT",
+        "ELL IOTT"
+      ],
+      "dialogues": [
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Dude, what? You’re insane. You’re the real deal."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "You’re a professional golfer."
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "Come on."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "You should have told me. I’m abou t to embarrass myself."
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "Oh, come on. I’m sure you’re better than you think you are."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Nope."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Elliott told me you wanna take over the farm one day. You should just be a golfer."
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "(casually)"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "What? Who told you Mom and Dad are selling the farm?"
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "Uh, Mom and Dad ."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "What? (she climbs out)"
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "(shrugging)"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "What!? Wait, wait, wait, wait, wait. Mom and Dad are NOT selling the farm."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Maybe we can go to them together and be like, this is fucked, you can’t sell it."
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "Already tried that. It didn’t work."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "FUCK. Really?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Max! WHY are you acting like this isn’t a big deal. Why aren’t you upset?!"
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "I am upset."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "You don’t look upset!"
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "Well I’ve known for awhile..."
+        },
+        {
+          "character": "ELL IOTT",
+          "parenthetical": "",
+          "text": "You’ve known for “awhile?” CONTINUED: 62"
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "So I’m... old upset. Old upset is different than new upset."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "How have I been so left out of this!?"
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "You kinda leave yourself out,"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Max!"
+        }
+      ],
+      "actionPreview": "Max pulls the golf cart up to the first hole. Max and Chad are up front, laughing. Besties already. Of course. Elliott sits in the cart. Max takes a shot. He’s great. Okay? Max tries to hide a smile but he’s clearly OBSESSED with Chad. Chad steps up for his turn. Well, my mom and dad are selling the"
+    },
+    {
+      "number": 54,
+      "heading": "EXT. FLOODED CRANBERRY FIELD. LA TER.",
+      "characters": [
+        "ELLIOTT",
+        "TOM"
+      ],
+      "dialogues": [
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Dad! You’re SELLING the farm!?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "This is insane. This is like, the lifeblood of our family. Our roots."
+        },
+        {
+          "character": "TOM",
+          "parenthetical": "",
+          "text": "I’m really sorry, Elliott. I honestly didn’t think you’d care."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Are you selling it because I’m not taking it over? CONTINUED: 63"
+        },
+        {
+          "character": "TOM",
+          "parenthetical": "",
+          "text": "No. There are... lots of reasons."
+        },
+        {
+          "character": "TOM",
+          "parenthetical": "",
+          "text": "I’m really sorry Elliott, it’s already in progress."
+        },
+        {
+          "character": "TOM",
+          "parenthetical": "",
+          "text": "We got a really good offer I couldn’t turn down. We’ll pass it over after the fall harvest."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "And you were just never gonna mention it?"
+        },
+        {
+          "character": "TOM",
+          "parenthetical": "",
+          "text": "Of course we were. We tried. A few times. Hard to peg you down, kid do."
+        },
+        {
+          "character": "TOM",
+          "parenthetical": "",
+          "text": "I thought you’d be happy about it."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "My god! I assumed it would always BE HERE!"
+        },
+        {
+          "character": "TOM",
+          "parenthetical": "",
+          "text": "(gently)"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Oh, is that what they say, Dad?!"
+        }
+      ],
+      "actionPreview": "Elliott angry stomps through a now flooded field in waders towards where her dad is out working. He turns but before he can even answer she’s ranting. Our history. Our blood sweat and tears, our literal... LIFE! He’ s joking but also... not joking. None of which have to do with you. A loaded beat. T"
+    },
+    {
+      "number": 55,
+      "heading": "INT. ELLIOTT’S BEDROOM. DAY.",
+      "characters": [
+        "ELLIOTT"
+      ],
+      "dialogues": [
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "(V.O.)",
+          "text": "(into phone, upset)"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "(V.O.)",
+          "text": "I only have a week left here. Just please call me, okay?"
+        }
+      ],
+      "actionPreview": "Elliott sits on the floor in her room, leaving an upset message for her Old Ass. Where ARE YOU? I’ve sent you you like, fifty fucking messages. (catching her breath) Max told me about the farm. Is there anything I can do? Like, to stop it? Elliott then spends the entire day unpacking her room. She r"
+    },
+    {
+      "number": 56,
+      "heading": "EXT. FIELDS. MORNING.",
+      "characters": [
+        "ELLIOTT"
+      ],
+      "dialogues": [
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Are you doing anything right now?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Wanna help me sell my boat?"
+        }
+      ],
+      "actionPreview": "Chad’s driving his tractor when a handful of cranberries hit him in the face. He turns. Sees Elliott on the ground, trying to get his attention. He turns off his tractor. He clearly is. Elliott continues. Off Chad’s smile. CUT TO:"
+    },
+    {
+      "number": 57,
+      "heading": "EXT. JOSEPH RIVER. DAY.",
+      "characters": [
+        "CHAD",
+        "ELLIOTT"
+      ],
+      "dialogues": [
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "I’d heard some rumors. Something about zoning changes and it affecting the reservoir ponds or something but didn’t know it was a for sure thing."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "FUCK. So even the summer boy workers knew about it before me."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Whoa! Summer boy workers?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "I was fine leaving. I was really excited to leave. I just always thought it was gonna be here to come back to. So it feels REALLY diffe rent now. ‘Cause when I leave, I’m saying goodbye forever. And I HATE goodbyes. (she sighs) I just really wish time would stop for a second so I could enjoy it a little bit longer."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Sorry. I shouldn't be venting all this at you. Throwing it at you."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "What ? Dude, no, I get it. I actually get it."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Do you remember the last time you were a little kid and went to a friend’s house and just like, played pretend all day?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "I mean, I remember doing that a lot."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Yeah, but can you remember the very LAST time you ever did it?"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "It’s that sad? To think that there was a time we were just like, out riding bikes with our friends like imagining we were being chased by zombies. Covered in dirt and sweat, having the BEST TIME. And then we went home that night and put our bike in the g arage and went to bed not realizing that was the last time we were ever gonna do that."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "But the thing about not saying goodbyes is that you also miss savoring when it might be last time you’ll ever get do that thing."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "I don’t know I... sort of... it doesn’t make sense."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "That was deep as hell, Chad."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Yeah. I went to Poetry Uni versity."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Oh my god --"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Sorry."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "No, you’re good. I..."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Sorry."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "No, it’s... yeah. I..."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "I have to go. I have a... dentist appointment."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "(confused)"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Yeah. My tooth. My too th is... fucked-up. So I have to, I have to go. But you can just get the um... (looks)"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "I mean..."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Just back to my house is fine."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "I just, I just have to go."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Okay?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Do you have your boating license?"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Okay. CONTINUED: 68"
+        }
+      ],
+      "actionPreview": "Elliott and Chad cruise up the river towards the lake. 65 Chad smirks. She stops, a huge realization. Hearing the words come out of her mouth. Her Old Ass was right. She then realizes who she's confessing it too. A beat. He has Elliott’s attention. Elliott’s confused where this is going. CONTINUED: "
+    },
+    {
+      "number": 58,
+      "heading": "EXT. WOODS. MOMENTS LATER.",
+      "characters": [
+        "ELLIOTT"
+      ],
+      "dialogues": [
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "(PRE-LAP)",
+          "text": "Fuck."
+        }
+      ],
+      "actionPreview": "Elliott stands in the woods trying to call her Old Ass. TIME CUTS as it rings and rings. Off her face, getting an idea. CUT TO:"
+    },
+    {
+      "number": 59,
+      "heading": "EXT. RO’S HOUSE. AFTERNOON.",
+      "characters": [
+        "RO",
+        "ELLIOTT"
+      ],
+      "dialogues": [
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "I"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "But that should be enough for just me, right?"
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "Yeah, sure."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Okay."
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "Yo, what’s goin on? You’ve been MIA as fuck lately and then you show up manic as hell on a Wednesday, during the random ass part of the day, asking for shroomies?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "I’ve been so busy. Like, the busiest I’ve ever been."
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "Right."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "It’s not like that."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Why are you looking at me like that? I’m fine."
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "Is this about the farm?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "It’s about"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Okay? (a beat)"
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "Well. I’m not letting you go alone in the woods."
+        }
+      ],
+      "actionPreview": "Elliott holds up what’s left of the shrooms baggie at Ro’s front door. Elliott tries (unsuccessfully) to act chill. mean, there’s only a few stems and broken bits left. Ro eyes her, suspiciously. Elliott starts to leave. Elliott puts a fake smile. CONTINUED: 69 Ro isn’t buying it. Elliott takes in h"
+    },
+    {
+      "number": 60,
+      "heading": "EXT. CAMPSITE. EVENING.",
+      "characters": [
+        "RO",
+        "ELLIOTT"
+      ],
+      "dialogues": [
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "I mean, uh... oh I would... CONTINUED: 70"
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "I think that’s a good amount."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "(trying not to gag)"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Fuck me. (a beat)"
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "No."
+        }
+      ],
+      "actionPreview": "A smaller bonfire this time, Ro carefully passes Elliott a steaming mug. Before they can even finish the sentence, Elliott is guzzling the tea. Ro watches, eyebrows raised. Elliott finishes it all in one giant gulp. Delicious. Elliott smiles widely. Ro sits down, not buying it but going with it. Ell"
+    },
+    {
+      "number": 61,
+      "heading": "EXT. WOODED AREA. MOMENTS LATER.",
+      "characters": [
+        "ELLIOTT"
+      ],
+      "dialogues": [
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "(into phone)"
+        }
+      ],
+      "actionPreview": "Elliott paces with her phone. Sends a voice note. Hey, so I just did the shrooms. Again. DON’T GET MAD, I’m only trying to... conjure you since you won’t answer your fucking phone. I just really need to talk to you and I have no idea how this works so, if you get this... I’m on Maude Island. And, I’"
+    },
+    {
+      "number": 62,
+      "heading": "EXT. CAMPSITE. EVENING.",
+      "characters": [
+        "ELLIOTT",
+        "CHAD"
+      ],
+      "dialogues": [
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Ro? CONTINUED: 71"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Ro?! Dude, this isn’t funny. Ro?"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Hey."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "What are you doing here?"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Ro texted me. Said you needed to talk to me about something?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "They just left."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "(whispers, to herself)"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "So, what was it you wanted to talk to me about? Ro said something about needing to “let me inside of your world?”"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "What the fuck is going on?"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "I... I think I’m your one less lonely girl, Elliott. CONTINUED: 72"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "How did you know about my Bieber fantasy as a nine year old!?"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "(seductive) I know that while all the other girls screaming in the crowd wanted to be the one less l onely girl -- you wanted to be Bieber, handing out those red roses."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Now’s. Your. Chance."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "(a la Bieber)"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "(singing)"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "(singing)"
+        }
+      ],
+      "actionPreview": "Elliott walks out of the woods, looking for Ro. She looks around, doesn’t see Ro anywhere. Dude, what the fuck? All of a sudden, Chad walks up from the dock. Elliott is shocked? Ro did WHAT? Whatthefuck? He sits down next to the bonfire, pats the l og next to him. As he says that, an opening drum be"
+    },
+    {
+      "number": 63,
+      "heading": "EXT. CAMPSITE. SAME TIME.",
+      "characters": [
+        "RO"
+      ],
+      "dialogues": [
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "What the fuck? CUT TO:"
+        }
+      ],
+      "actionPreview": "We snap to see Ro’s sober perspective of Elliott’s trip. Elliott lays in the dirt, humming to herself, a rms over her head, rolling around suggestively on her back. Off Ro’s amused face."
+    },
+    {
+      "number": 64,
+      "heading": "EXT. CAMPSITE. SAME TIME.",
+      "characters": [
+        "ELLIOTT"
+      ],
+      "dialogues": [
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Her hearts locked and nowhere to get the key, I’ll take her and leave the world with one less lonely girl..."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "(singing)"
+        }
+      ],
+      "actionPreview": "We are back in Elliott’s trip. It’s her heaven. Ro and Ruthie bring out the dozen roses to Elliott, then dance away. She hands them to Chad, milking it, si nging her part of the song into Chad’s eyes. There’s gonna be one less lonely girl. One less lonely girl, there’s gonna be one less lonely girl."
+    },
+    {
+      "number": 65,
+      "heading": "INT. LOCAL RESTAURANT. MORNING.",
+      "characters": [
+        "RO",
+        "ELLIOTT"
+      ],
+      "dialogues": [
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "What in the fuck? Who are you?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "I’m changing. I’m growing."
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "You are."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "I’m learning."
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "Do what you want to do and fly like a bird. Wow."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "I actually don't ever want to"
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "Why?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "I got what I needed from this conversation. Moving forward, there’s nothing... we’re not talking about it anymore."
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "Okay. Oh, god. Justin-fucking-"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Okay. I have a confession. Low-key. I have a low-key confession, okay?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "I have like, weird"
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "Okay..."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "But the fucked part is... it’s --"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "A guy."
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "Oh, shit. You like a guy? (off her shrug)"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "(panicked)"
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "I mean..."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "What does this actually fucking mean?"
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "Shit. If you like him and --"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "(cutting them off) I’ve just always be en so sure that I was only into women?! Like it’s never been even a thought for me. I don’t know. I’ve just always... (sighs) I’ve just always been into women. (then)"
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "Fuck."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "(overwhelmed, throwing her head down on the table)"
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "Just ‘cause you like a man doesn’t make you any less queer. I don’t think any less of you for being straight."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Straight?!"
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "No, sorry."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "That’s the fucking worst thing you’ve ever called me in my life."
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "Like you said it yourself about labels and shit. “If they feel useful, then use them. And if they stop feeling useful, stop using it.”"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Hmm..."
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "YOU told m e that. Listen to yourself. Listen to your heart."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "But I also have to listen to my Old"
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "You like asses now or something?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Yeah."
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "Same."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "I’ve been wanting to talk to you about this for a while."
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "I like, wanna meet him."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Shut up."
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "Is he cute?"
+        }
+      ],
+      "actionPreview": "Ro and Elliott sit in an outdoor booth eating breakfast. It’s a quiet morning, only a few people scattered around. Elliott is hungover as hell, slouched over, barely touching her food. talk to you about this ever again. Bieber. (a beat, re: food) I could use some butter. Maybe some, um, salt... A si"
+    },
+    {
+      "number": 66,
+      "heading": "INT. ELLIOTT’S BEDROOM. LATER.",
+      "characters": [
+        "SPENCER",
+        "ELLIOTT"
+      ],
+      "dialogues": [
+        {
+          "character": "SPENCER",
+          "parenthetical": "",
+          "text": "(smiling)"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Spencer!"
+        },
+        {
+          "character": "SPENCER",
+          "parenthetical": "",
+          "text": "I still have three walls to finish before I move in."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Could you not have waited till I left first?!"
+        },
+        {
+          "character": "SPENCER",
+          "parenthetical": "",
+          "text": "I actually thought you left."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "(re: Saoirse poster) I’m not sleeping in that bed tonight with her staring at me."
+        },
+        {
+          "character": "SPENCER",
+          "parenthetical": "",
+          "text": "Could you put this up there? I need to see the balance. CONTINUED: 78"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "(re: photo)"
+        },
+        {
+          "character": "SPENCER",
+          "parenthetical": "",
+          "text": "Right there."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Here?"
+        },
+        {
+          "character": "SPENCER",
+          "parenthetical": "",
+          "text": "No, uh, over there. Uh, up... (she moves the picture)"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Oh my god."
+        }
+      ],
+      "actionPreview": "Elliott walks into her room to find Spencer has totally taken over and is completing a floor to ceiling collage with various photos of Saoirse Ronan. He turns. Do you love it? Elliott is stunned. Girl, this is not okay. He passes her a photo of Saoirse in Atonement and points to a high corner that’s"
+    },
+    {
+      "number": 67,
+      "heading": "EXT. FARMHOUSE. MORNING.",
+      "characters": [
+        "KATHY",
+        "ELLIOTT"
+      ],
+      "dialogues": [
+        {
+          "character": "KATHY",
+          "parenthetical": "",
+          "text": "Ugh. I can’t believe you leave in a few days. Are you excited?"
+        },
+        {
+          "character": "KATHY",
+          "parenthetical": "",
+          "text": "I was thinking about you last night. And about how, when you were two... and you still hadn't slept through the night. (laughs, then)"
+        },
+        {
+          "character": "KATHY",
+          "parenthetical": "",
+          "text": "I had to rock you for ages, and you were so specific in what you wanted. CONTINUED: (MORE) 79"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Why was I so demanding?"
+        },
+        {
+          "character": "KATHY",
+          "parenthetical": "",
+          "text": "I don’t know!"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "It tracks."
+        },
+        {
+          "character": "KATHY",
+          "parenthetical": "",
+          "text": "I remember one night I think I’d been singing Twinkle Twinkle for probably forty-five minutes over and over, my throat was SO dry and my legs were all cramped and I thought, oh my lord, I can’t"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "You should have thrown me in the crib and told me to get over myself."
+        },
+        {
+          "character": "KATHY",
+          "parenthetical": "",
+          "text": "I know."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "So what did you do?"
+        },
+        {
+          "character": "KATHY",
+          "parenthetical": "",
+          "text": "(smiling, guilty) I kept rocking you."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "(teasing)"
+        },
+        {
+          "character": "KATHY",
+          "parenthetical": "",
+          "text": "I know. (then) CONTINUED:"
+        },
+        {
+          "character": "KATHY",
+          "parenthetical": "(CONT’D)",
+          "text": "(MORE) 80"
+        },
+        {
+          "character": "KATHY",
+          "parenthetical": "",
+          "text": "And I was proud of you. ‘Cause you didn’t need me to get you to sleep anymore."
+        },
+        {
+          "character": "KATHY",
+          "parenthetical": "",
+          "text": "But, at that moment, I also realized that I wasn’t goi ng to get to rock you anymore."
+        },
+        {
+          "character": "KATHY",
+          "parenthetical": "",
+          "text": "And I guess that’s how I feel now."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "I’m gonna miss you. (emotional) SO much. And I still need you."
+        },
+        {
+          "character": "KATHY",
+          "parenthetical": "",
+          "text": "No. You’re not an idiot."
+        },
+        {
+          "character": "KATHY",
+          "parenthetical": "(CONT’D)",
+          "text": "81"
+        }
+      ],
+      "actionPreview": "Elliott sits with her Mom outside on the d eck having a cup of coffee and eating a cranberry scone. Elliott looks out over the farm. Elliott isn’t sure she is anymore. Kathy takes a breath. Oh, god. You were such a terrible sleeper. Elliott smiles, embarrassed. I had to sing “Twinkle Twinkle” and yo"
+    },
+    {
+      "number": 68,
+      "heading": "INT. ELLIOTT’S BEDROOM. NIGHT.",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Elliott tosses and turns in bed. Finally, after a few beats, gets up. CUT TO:"
+    },
+    {
+      "number": 69,
+      "heading": "INT. ELLIOTT’S HOUSE. NIGHT.",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Elliott walks towards her parents partially open door holding a pillow and blanket. She peeks in, sees them both sleeping. She then walks to the next bedroom door which is closed. A handmade sign (clearly Spencer’s handwriting) reads “Man Cave!! (but come on in, we don’t discriminate)”. She touches "
+    },
+    {
+      "number": 70,
+      "heading": "EXT. TINY M ARINA. AFTERNOON.",
+      "characters": [
+        "RUTHIE",
+        "ELLIOTT",
+        "RO",
+        "CHAD",
+        "RO AND RUTHIE"
+      ],
+      "dialogues": [
+        {
+          "character": "RUTHIE",
+          "parenthetical": "",
+          "text": "I’m so excited to meet him!"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Why am I sweating?"
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "Why are you so nervous? You introduce us to every girl you’re banging within what, like thirty seconds."
+        },
+        {
+          "character": "RUTHIE",
+          "parenthetical": "",
+          "text": "That’s true."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "We’re not--"
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "Oh, you’re not banging?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Hey! These are my best friends."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Hey!"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Nice to meet you both."
+        },
+        {
+          "character": "RO AND RUTHIE",
+          "parenthetical": "",
+          "text": "You too."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "I cannot believe someone actually wants to purchase this boat."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "I know. Right when I came up with a perfect name for it too."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Re ady? (then) “Piece of Ship.”"
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "Womp. Womp."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "No?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "That’s the best you could come up with?"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Okay. My alternative was - “Motor? I Hardly Know Her”."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Right there! Golden. Much better. CONTINUED: 83"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Or, I had “Ship Faced?”"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "“Master Baiter.”"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "“Master Baiter”, that’s classic."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Um. “Playbuoy.”"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Yo. How-how does she have so many names?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "“That’s What Sea Said.”"
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "(quiet, to Ruthie) I see why it works."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "“That’s What Sea Said” is good too, yeah. There’s so many options."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Wait, did you CLEAN her?"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Just a little bit."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "This looks like amazing. Like all the rust is basically gone. How did you do that?"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Just popped in a podcast, little bit of soap, four to six hours of scraping. It was nothing. I was chilling."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "You want to take her out for one last spin?"
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "We’re, no... we actually, we’re late for something. We gotta head out."
+        },
+        {
+          "character": "RUTHIE",
+          "parenthetical": "",
+          "text": "If there was, like, four of us on this boat? We would all sink."
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "Yeah. Right? Like, we gotta go, but bro..."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "(in a whisper into her ear)"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "It was good to meet you guys."
+        },
+        {
+          "character": "RUTHIE",
+          "parenthetical": "",
+          "text": "Have fun!"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Bye, guys."
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "Be safe!"
+        },
+        {
+          "character": "RUTHIE",
+          "parenthetical": "",
+          "text": "You guys... be so safe, okay?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Mhmm."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Nice to meet you both. CONTINUED: 85"
+        },
+        {
+          "character": "RO",
+          "parenthetical": "",
+          "text": "Nice to meet you. (then, teasing)"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Ignore. Ignore, ignore, ignore."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Sorry."
+        }
+      ],
+      "actionPreview": "Ro, Ruthie and Elliott walk towards the dock at the marina. Chad’s at the boat as they walk down the dock, ripping a “For Sale” sign off the boat. He waves at them. 82 This is Ruthie, and this is Ro. As they all shake hands, Ruthie gives Elliott a look like, holy shit, he is WAY hotter than you let "
+    },
+    {
+      "number": 71,
+      "heading": "EXT. LAKE. DAY.",
+      "characters": [
+        "ELLIOTT",
+        "CHAD",
+        "THUNDER."
+      ],
+      "dialogues": [
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "How’s it chillin over there?"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "I’m chillin... chillin good over here."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "WAIT. Wait, wait, wait. (off Chad)"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "You know what? We cut the price to three fifty? The motor’s at the bottom of Lake Muskoka now."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Fuck."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Don’t worry, don’t worry, don’t worry. My Dad’s got, like, a whole stack of old motors in his shop."
+        },
+        {
+          "character": "THUNDER.",
+          "parenthetical": "",
+          "text": "A drop of rain hits Elliott on the forehead."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Shi t. CUT TO:"
+        }
+      ],
+      "actionPreview": "A montage of Elliott and Chad having like the BEST time out on the lake. Chad drives, they do donuts. They’re jumping in and out of the water, driving fast around islands, pointing out wildlife t hey see. It’s like, the best fucking day ever. All of a sudden when they’re ripping quickly around anoth"
+    },
+    {
+      "number": 72,
+      "heading": "INT. BOAT HOUSE. AFTERNOON.",
+      "characters": [
+        "CHAD",
+        "ELLIOTT"
+      ],
+      "dialogues": [
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Go, go, go, go!"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Oh my god."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "What the hell? Why is the rain so cold?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "It’s so fucking cold."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Hoodie? CONTINUED: 87"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "What? (takes it)"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "I know. I come prepared."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Turn around. (she does, laughs)"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "I’m NOT looking."
+        }
+      ],
+      "actionPreview": "Chad and Elliott, soaking wet, have swum to shore. They rush inside an old, abandoned boat house overlooking the lake. It’s pouring rain and thundering. Elliott looks around, finds a sweater. Wow. Chad turns to change. Don’t look! Off her turned away, smiling. CUT TO:"
+    },
+    {
+      "number": 73,
+      "heading": "EXT. BOAT HOUSE. MOMENTS LATER.",
+      "characters": [
+        "CHAD",
+        "ELLIOTT",
+        "C HAD",
+        "CHA D"
+      ],
+      "dialogues": [
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Thanks for the sweater."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Anytime."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "It’s warm."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Good. T hey sit in silence, looking out over the water."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "(sweetly)"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "What do you mean? CONTINUED: 88"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "You mentioned something about like, wanting to get in touch with your roots. Like learning about cranberry farming and stuff, so I just, I don’t know. I wanted to know if you felt like you did that?"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Yeah, actually. (then)"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "(genuine)"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Where do you normally live?"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Toronto."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "What?! I’m going to U of T in like, a week."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "I go to U of T."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Wait, what? How have we never fucking talked about this?"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "(smiling) I don’t know man. (then)"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "I’m gay."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Cool."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "I thought I was gay."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "You thought you were gay?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Yeah. Till I met..."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "This person named Gary."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Gary."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Gary made me realize, I don’t know, I’m... bi. Or maybe Pan. I’ve like, yet to figure that out. But, yeah."
+        },
+        {
+          "character": "C HAD",
+          "parenthetical": "",
+          "text": "Okay."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "And then my friend... (groans)"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Whoa. Bad news?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Bad news."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "What did Gary do? CONTINUED: 90"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Well, she wouldn't tell me exactly what Gary did but just that, yeah. I just was not supposed to... go there with him."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "This friend of yours sounds rather... elusive."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Oh, yeah. She’s a real fucking buzzkill but, I’m supposed to listen to her, so."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Hmm."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "What does your gut tell you do to re: Gary?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "My gut, uh, my gut is pretty interested in what Gary’s all about."
+        },
+        {
+          "character": "CHA D",
+          "parenthetical": "",
+          "text": "I see."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "(gathering the courage) I like looking at your face."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "I like looking at your face."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "I want to kiss you."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "I want to kiss you."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Stop copying everything I say. CONTINUED: 91"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Sorry, you KNOW I don’t have a brain, don’t make me insecure about it."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Sorry. I’m bad at this, so..."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "(breathless, pulling back) I’ve never had dick sex before."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Do you want to have “dick sex”?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Maybe."
+        }
+      ],
+      "actionPreview": "Now in dry clothes, Elliott and Chad climb up to the top of the boat house and look out at the rain hitting the lake. Do you feel like you found what you were looking for by coming here? Chad is taken by her innate understanding of the situation. He thinks for a beat. My whole life, my family’s been"
+    },
+    {
+      "number": 74,
+      "heading": "EXT. ELLIOTT’S HOUSE. EARLY EVENING.",
+      "characters": [
+        "ELLIOTT",
+        "CHAD",
+        "VOICE",
+        "MY OLD ASS"
+      ],
+      "dialogues": [
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "I’d invite you in but... (teasing) I don’t really want my parents to know I hooked up with a summer worker boy."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "How embarrassing for you."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "It’s not good for me."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "See you later?"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Mhmm."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Okay. You need to go."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Okay."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "I don’t want them to see you."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "I’m going, I’m going."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Stop staring at my butt!"
+        },
+        {
+          "character": "VOICE",
+          "parenthetical": "(O.S.)",
+          "text": "Psst!"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Oh my god."
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "",
+          "text": "What was that?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "What the fuck? What the fuck are you doing here?"
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "",
+          "text": "Were you just KISSING CHAD!?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "No, no."
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "",
+          "text": "No?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "No... a little."
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "",
+          "text": "What the fuck is that? CUT TO:"
+        }
+      ],
+      "actionPreview": "Chad walks Elliott home. When the farmhouse comes into view, they stop, look at each other. Neither know quite what to say. She smirks. He le ans in, kisses her. They both have a hard time pulling away. CONTINUED: 92 She watches him walk the other direction. So. Fucking. Smitten. She laughs, is abou"
+    },
+    {
+      "number": 75,
+      "heading": "EXT. BACK OF FARM. EARLY EVENING. MOMENTS LATER.",
+      "characters": [
+        "ELLIOTT",
+        "MY OLD ASS",
+        "VOICE",
+        "CHAD"
+      ],
+      "dialogues": [
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Dude, where the fuck have you been? I thought you fucking died."
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "",
+          "text": "Dude, I was gone for four days, okay? Four days on my Hubbya retreat. I get back, I have two HUNDRED messages from you."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Whatdafuck"
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "",
+          "text": "It’s like, transcendental meditation but better. Penelope"
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "",
+          "text": "Oh, fuck, I was so worried about you. I had to eat like three pounds of my girlfriend’s friend’s weed to get here. Are you ok?"
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "",
+          "text": "What is that? Why? WHY. It’s not even dragonfly season yet."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "There are no dragonflies, dude."
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "",
+          "text": "I told you Elliott, we don’t tolerate drugs well! I don’t know what to tell you. I’m really high. I need like water or something. CONTINUED: 94"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "You can’t just disappear like that."
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "",
+          "text": "Hubbya."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "I found out about the farm and then, all the Chad stuff happened --"
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "",
+          "text": "What? WHAT CHAD STUFF. What?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Well. That’s what I’ve been trying to... talk to you... about."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "I ’ve been trying, okay? Really hard. And I get it now. All the other advice was so good. Like I was taking so much of our life and our family for granted. Yeah, I see that now, okay?"
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "",
+          "text": "Okay. Well, you’re welcome."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "But I was just too scared to tell you when I started falling in love with Chad. (off My Old Ass) I know. I’m sorry. I’m sorry. I didn’t wanna let you down or mess up our life or something. But --"
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "",
+          "text": "Just say it."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "We had sex. (My Old Ass sighs) CONTINUED: (MORE) 95"
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "",
+          "text": "Dude."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Everything about him feels so right. I’m sorry but I’ve tried SO hard to find ONE bad thing about him and I literally can’t. I don’t understand why we wouldn’t want to be with him. I just need you to tell me what he did, just fucking lay it out ‘cause I’m not gonna be able to stay away fro m him. The connection is too real. So just, TELL me. Tell me what he did."
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "WHAT DID HE DO?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Tell me what he --"
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "",
+          "text": "-- I CAN’T."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "I swear to god, tell me. It literally cannot be that bad --"
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "",
+          "text": "He died. That’s what he did. Chad dies. And he dies after you’ve fallen so madly in love wi th him you can’t see straight. Okay? After you can’t imagine loving anybody else ever again."
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "",
+          "text": "And no, you can’t save him. I know that’s what you’re gonna say. But no, you can’t save him. There’s nothing you can do. (a beat, then) CONTINUED:"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "(CONT’D)",
+          "text": "(MORE) 96"
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "",
+          "text": "It’s so hard, Elliott. So, SO hard."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "",
+          "text": "No?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "No. I’m gonna fall in love with"
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "",
+          "text": "You say that now because you’re young and dumb."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "(interrupting her)"
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(CONT’D)",
+          "text": "97"
+        },
+        {
+          "character": "VOICE",
+          "parenthetical": "(O.S.)",
+          "text": "Hey, Elliott. You dropped this."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Sorry to... interrupt."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Can you... see her?"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "See her?"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Yes?"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Am I not supposed to?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "COOL. UM. This is my uncle..."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Michelle."
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "",
+          "text": "Michelle."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Hey. I’m Chad. Nice to meet you."
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "",
+          "text": "(barely getting it out)"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "I’ve never met an uncle named"
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "",
+          "text": "That’s funny."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "(re: sweater)"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Um... I will catch you guys later."
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "",
+          "text": "No, no, don’t. Don’t leave. I was about to leave so you stay."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "(confused, hiding it behind a"
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "",
+          "text": "Stay with Elliott."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "No. You. Weren’t."
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "",
+          "text": "Yes, I was."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "No, you weren’t."
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "",
+          "text": "Yes. I was."
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "",
+          "text": "It was really nice to meet you,"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Yeah, it was good to meet you too."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "(shrugging)"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Yeah. She’ll be okay."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "Are you okay?"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Yeah."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "(re: sweater) I think this"
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "I really like you. Like, really like you. CONTINUED: 100"
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "I really, really like you too."
+        },
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "And I’m really... grateful for this moment with you."
+        },
+        {
+          "character": "CHAD",
+          "parenthetical": "",
+          "text": "(lovingly) I’m very grateful for this moment with you too."
+        }
+      ],
+      "actionPreview": "They are both hiding in the woods now, Older Elliott, trying to steady herself against a tree. is Hubbya? Disick invented it. Off Elliott’s face, did NOT see that coming. She aggressively swats at something around her face that definitely isn’t there. You should have told me you were going on some h"
+    },
+    {
+      "number": 76,
+      "heading": "EXT. FLOODED CRANBERRY BOG. SUNRISE.",
+      "characters": [
+        "MY OLD ASS"
+      ],
+      "dialogues": [
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(V.O.)",
+          "text": "Hey. Um. I’m sorry. I hope you’re okay. CUT TO:"
+        }
+      ],
+      "actionPreview": "The sun rising behind her, Elliott works in waders in the glistening cranberry bog. Red berries floating all around her. As she turns to do something, she is directly facing the sunrise. It’s so beautiful, it stops her in her tracks. She takes a long beat, fully taking it in. She looks over to her r"
+    },
+    {
+      "number": 77,
+      "heading": "INT. ELLIOTT’S KITCHEN. LATE AFTERNOON.",
+      "characters": [
+        "ELLIOTT",
+        "MY OLD ASS"
+      ],
+      "dialogues": [
+        {
+          "character": "ELLIOTT",
+          "parenthetical": "",
+          "text": "Come in."
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(V.O.)",
+          "text": "I wanted to send you... one last message. CUT TO:"
+        }
+      ],
+      "actionPreview": "Elliott opens the door and Chad is standing there. She suddenly seems shy. They give each other disgus tingly cute love eyes. Chad steps in, puts his arm around her. CONTINUED: 101"
+    },
+    {
+      "number": 78,
+      "heading": "EXT. ELLIOTT’S LIVING ROOM. MOMENTS LATER.",
+      "characters": [
+        "MY OLD ASS"
+      ],
+      "dialogues": [
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(V.O.)",
+          "text": "You’r e right, Elliott. I should listen to you. I never realized how wise my young ass was. (beat)"
+        }
+      ],
+      "actionPreview": "Elliott’s family is sitting around having game night except it’s the exact opposite of the picture perfect family scene. They’re playing Settlers of Catan and things have gotten UGLY and everyone is fighting. Spencer grabs Chad’s hand and pulls him into the living room. Okay, that sounded weird. Off"
+    },
+    {
+      "number": 79,
+      "heading": "INT. ELLIOTT’S BATHROOM. LATE NIGHT.",
+      "characters": [
+        "MY OLD ASS"
+      ],
+      "dialogues": [
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(V.O.)",
+          "text": "But, what I’m trying to say is, you’re right. You shouldn’t live your life for me, or for the future or get"
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(V.O.)",
+          "text": "I’m so happy you fell in love with"
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(V.O.)",
+          "text": "Loving Chad is a gift. And being loved by him is the best fucking thing in the world. CONTINUED: 102"
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(V.O.)",
+          "text": "So, just, fuck it. Keep being the naive, dumb, pore-less, smart, happy, confident, brave, self centered, optimistic idiot that you are because it’s... perfect. And go live your life with Chad. (then)"
+        },
+        {
+          "character": "MY OLD ASS",
+          "parenthetical": "(V.O.)",
+          "text": "Now go"
+        }
+      ],
+      "actionPreview": "Elliott pees in the dark. Plays the message. Elliott laughs, wipes away a tear. stuck in the past. Because that is not living. Elliott fights a throat lump. Chad. Because... We hear the emotion in her voice. Elliott wipes a tear. Or Chad and your three wives or whatever you decide is right for you. "
+    },
+    {
+      "number": 80,
+      "heading": "EXT. LAKE MUSKOKA. LATE MORNING.",
+      "characters": [
+        "CUT TO BLACK."
+      ],
+      "dialogues": [
+        {
+          "character": "CUT TO BLACK.",
+          "parenthetical": "",
+          "text": "CONTINUED: 103"
+        }
+      ],
+      "actionPreview": "Elliott drives the boat. Her hair whips wildly all over the place. A massive smile on her face. Off Elliott, as she yells and guns the engine to its limit."
+    }
+  ]
+}

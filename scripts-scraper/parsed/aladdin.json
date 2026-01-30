@@ -1,0 +1,22 @@
+{
+  "slug": "aladdin",
+  "title": "Aladdin",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 17179,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "ALADDIN:  THE COMPLETE SCRIPT <b>COMPILED BY BEN SCRIPPS <34RQNPQ@CMUVM.CSV.CMICH.EDU> </b>(Portions Copyright (c) 1992 The Walt Disney Company PEDDLER:    Oh I come from a land From a faraway place Where the caravan camels roam Where they cut off your ear /Where it's flat and immense If they don't like your face /And the heat is intense It's barbaric, but hey--it's home! When the wind's at your back And the sun's from the west And the sand in the glass is right Come on down, Stop on by Hop a ca",
+      "dialogue_count": 0,
+      "word_count": 17179
+    }
+  ]
+}

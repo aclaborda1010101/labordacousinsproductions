@@ -1,0 +1,22 @@
+{
+  "slug": "arbitrage",
+  "title": "Arbitrage",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 20377,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                            ARBITRAGE </b> Written by Nicholas Jarecki <b>                                                            4/17/11 </b> <b>          BLACK. </b> Over CREDITS we HEAR: <b>           MARIA (O.S.) </b>           ...but you took a huge bet on the housing crisis in the middle of the biggest boom anybody'd ever seen. Why? <b>           ROBERT (O.S.) </b>           I'm a child of the 50's. My father welded steel for the Navy. And my mother worked at the VA. <b>          IN",
+      "dialogue_count": 0,
+      "word_count": 20377
+    }
+  ]
+}

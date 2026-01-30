@@ -1,0 +1,5058 @@
+{
+  "slug": "nickel-boys-2024",
+  "title": "Nickel Boys",
+  "parsedWith": "v2",
+  "parsedAt": "2026-01-29T22:09:13.698Z",
+  "stats": {
+    "scenes": 124,
+    "dialogues": 696,
+    "characters": 62
+  },
+  "characters": [
+    {
+      "name": "TURNER",
+      "dialogueLines": 133,
+      "totalWords": 1074
+    },
+    {
+      "name": "ELWOOD",
+      "dialogueLines": 130,
+      "totalWords": 755
+    },
+    {
+      "name": "HATTIE",
+      "dialogueLines": 50,
+      "totalWords": 454
+    },
+    {
+      "name": "OMITTED",
+      "dialogueLines": 38,
+      "totalWords": 38
+    },
+    {
+      "name": "ADULT ELWOOD",
+      "dialogueLines": 36,
+      "totalWords": 295
+    },
+    {
+      "name": "ARCHIVAL FOOTAGE",
+      "dialogueLines": 33,
+      "totalWords": 33
+    },
+    {
+      "name": "BLAKELEY",
+      "dialogueLines": 27,
+      "totalWords": 165
+    },
+    {
+      "name": "SPENCER",
+      "dialogueLines": 26,
+      "totalWords": 215
+    },
+    {
+      "name": "ADULT CHICKIE PETE",
+      "dialogueLines": 25,
+      "totalWords": 299
+    },
+    {
+      "name": "HARPER",
+      "dialogueLines": 17,
+      "totalWords": 211
+    },
+    {
+      "name": "RODNEY",
+      "dialogueLines": 13,
+      "totalWords": 83
+    },
+    {
+      "name": "MR. HILL",
+      "dialogueLines": 11,
+      "totalWords": 136
+    },
+    {
+      "name": "DENISE",
+      "dialogueLines": 10,
+      "totalWords": 74
+    },
+    {
+      "name": "DESMOND",
+      "dialogueLines": 8,
+      "totalWords": 56
+    },
+    {
+      "name": "COREY",
+      "dialogueLines": 7,
+      "totalWords": 48
+    },
+    {
+      "name": "GRIFF",
+      "dialogueLines": 7,
+      "totalWords": 45
+    },
+    {
+      "name": "MRS. HARDEE",
+      "dialogueLines": 7,
+      "totalWords": 57
+    },
+    {
+      "name": "PERCY",
+      "dialogueLines": 6,
+      "totalWords": 41
+    },
+    {
+      "name": "MR. MARCONI",
+      "dialogueLines": 6,
+      "totalWords": 53
+    },
+    {
+      "name": "JAIME",
+      "dialogueLines": 6,
+      "totalWords": 14
+    },
+    {
+      "name": "BLACK MIKE",
+      "dialogueLines": 6,
+      "totalWords": 27
+    },
+    {
+      "name": "EARL",
+      "dialogueLines": 6,
+      "totalWords": 28
+    },
+    {
+      "name": "CREATED ARCHIVAL FOOTAGE",
+      "dialogueLines": 6,
+      "totalWords": 6
+    },
+    {
+      "name": "EVELYN",
+      "dialogueLines": 5,
+      "totalWords": 48
+    },
+    {
+      "name": "PREP COOK",
+      "dialogueLines": 5,
+      "totalWords": 31
+    },
+    {
+      "name": "MILLIE",
+      "dialogueLines": 5,
+      "totalWords": 35
+    },
+    {
+      "name": "OLDER GUY",
+      "dialogueLines": 4,
+      "totalWords": 48
+    },
+    {
+      "name": "POLICE OFFICER",
+      "dialogueLines": 4,
+      "totalWords": 34
+    },
+    {
+      "name": "CREATED STILL",
+      "dialogueLines": 4,
+      "totalWords": 4
+    },
+    {
+      "name": "CREATED ARCHIVAL STILL",
+      "dialogueLines": 4,
+      "totalWords": 4
+    },
+    {
+      "name": "RADIO AD",
+      "dialogueLines": 3,
+      "totalWords": 9
+    },
+    {
+      "name": "MR. GOODALL",
+      "dialogueLines": 3,
+      "totalWords": 33
+    },
+    {
+      "name": "NURSE SCARLETT",
+      "dialogueLines": 3,
+      "totalWords": 59
+    },
+    {
+      "name": "DR. COOKE",
+      "dialogueLines": 3,
+      "totalWords": 17
+    },
+    {
+      "name": "ASTRONAUT",
+      "dialogueLines": 3,
+      "totalWords": 22
+    },
+    {
+      "name": "ASTRONAUTS",
+      "dialogueLines": 3,
+      "totalWords": 45
+    },
+    {
+      "name": "ARCHIVAL STILL",
+      "dialogueLines": 3,
+      "totalWords": 3
+    },
+    {
+      "name": "STUDENT",
+      "dialogueLines": 2,
+      "totalWords": 15
+    },
+    {
+      "name": "LONNIE",
+      "dialogueLines": 2,
+      "totalWords": 12
+    },
+    {
+      "name": "ARCHIVAL IMAGES",
+      "dialogueLines": 2,
+      "totalWords": 2
+    },
+    {
+      "name": "LARRY",
+      "dialogueLines": 2,
+      "totalWords": 16
+    },
+    {
+      "name": "ADULT TURNER",
+      "dialogueLines": 2,
+      "totalWords": 5
+    },
+    {
+      "name": "ANOTHER ADULT VOICE",
+      "dialogueLines": 1,
+      "totalWords": 3
+    },
+    {
+      "name": "MRS. MARCONI",
+      "dialogueLines": 1,
+      "totalWords": 6
+    },
+    {
+      "name": "RADIO NEWS",
+      "dialogueLines": 1,
+      "totalWords": 10
+    },
+    {
+      "name": "WE SHALL WIN BY LOVE",
+      "dialogueLines": 1,
+      "totalWords": 13
+    },
+    {
+      "name": "CREATED ARCHIVAL STILLS",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "DEPUTY",
+      "dialogueLines": 1,
+      "totalWords": 19
+    },
+    {
+      "name": "ARCHIVAL IMAGE",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "YOUNG BOY AT DINING HALL",
+      "dialogueLines": 1,
+      "totalWords": 11
+    }
+  ],
+  "scenes": [
+    {
+      "number": 1,
+      "heading": "EXT. CURTIS HOME - YARD - FRENCHTOWN FL",
+      "characters": [
+        "EVELYN",
+        "HATTIE"
+      ],
+      "dialogues": [
+        {
+          "character": "EVELYN",
+          "parenthetical": "(O.S.)",
+          "text": "(calling out)"
+        },
+        {
+          "character": "HATTIE",
+          "parenthetical": "(O.S.)",
+          "text": "He’s out back, looking like he fell out."
+        }
+      ],
+      "actionPreview": "- 1958 - DAY (D1) 2A 2A ELWOOD (6-8ish) POV of the midday sky where the moon is visible against its blue hue. The underside of a lemon tree with lemons is also in view. Elwood? Elwood! (louder) El! He tilts his head toward the house, his arm outstretched in the same direction in the unruly tropical "
+    },
+    {
+      "number": 2,
+      "heading": "INT. CURTIS HOME - LIVING AREA - 1958 - NIGHT (N2)",
+      "characters": [
+        "PERCY",
+        "ANOTHER ADULT VOICE",
+        "EVELYN",
+        "HATTIE"
+      ],
+      "dialogues": [
+        {
+          "character": "PERCY",
+          "parenthetical": "",
+          "text": "Knock knock."
+        },
+        {
+          "character": "PERCY",
+          "parenthetical": "(CONT'D)",
+          "text": "Just gonna lay ‘em all off?"
+        },
+        {
+          "character": "ANOTHER ADULT VOICE",
+          "parenthetical": "(O.S.)",
+          "text": "She undercut ya."
+        },
+        {
+          "character": "PERCY",
+          "parenthetical": "",
+          "text": "You ain’t lying. Damn Ev."
+        },
+        {
+          "character": "EVELYN",
+          "parenthetical": "(O.S.)",
+          "text": "Gin is gin... you know Percy can’t count and drink at the same time."
+        },
+        {
+          "character": "PERCY",
+          "parenthetical": "",
+          "text": "(yawning)"
+        },
+        {
+          "character": "EVELYN",
+          "parenthetical": "(O.S.)",
+          "text": "(chuckles)"
+        },
+        {
+          "character": "PERCY",
+          "parenthetical": "",
+          "text": "She know she ain’t even driving, already complaining about somethin’. What you need to do is put that boy to bed."
+        },
+        {
+          "character": "EVELYN",
+          "parenthetical": "",
+          "text": "What you need to do is mind your business and get what’s coming to ya. I’ll clear it, Mama. Elwood, get down now."
+        },
+        {
+          "character": "PERCY",
+          "parenthetical": "(O.S.)",
+          "text": "(as she passes out the door)"
+        },
+        {
+          "character": "EVELYN",
+          "parenthetical": "(O.S.)",
+          "text": "I said I’d do the washing up, Mama."
+        },
+        {
+          "character": "HATTIE",
+          "parenthetical": "(O.S.)",
+          "text": "At least tell the child you’re leaving."
+        }
+      ],
+      "actionPreview": "3 3 SOUND of music playing. ELWOOD’s POV from where he’s sitting on his mother’s lap, is concentrated on a drop of condensation on a can of beer on the table before him. Lights reflect on and off the aluminum. A party is winding down. Cigarette butts in the ashtray. His mother EVELYN (late 20s, slim"
+    },
+    {
+      "number": 3,
+      "heading": "INT. CURTIS HOME - LIVING AREA - 1958 - NIGHT (N3)",
+      "characters": [
+        "HATTIE",
+        "ELWOOD"
+      ],
+      "dialogues": [
+        {
+          "character": "HATTIE",
+          "parenthetical": "",
+          "text": "(humming)"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "",
+          "text": "(startled)"
+        },
+        {
+          "character": "HATTIE",
+          "parenthetical": "",
+          "text": "(humming) ...you better not cry, you better not pout, I’m tellin’ you why.. SOUND of her humming continues..."
+        }
+      ],
+      "actionPreview": "4 4 SOUND of Christmas music on a radio in the background. It’s Christmas Eve. ELWOOD POV from where he’s lying on the floor, on a threadbare patterned carpet, looking up through the branches of a small spruce pine, moving to get a good view of Hattie. She hums along to “Santa Claus is Comin’ to Tow"
+    },
+    {
+      "number": 4,
+      "heading": "INT. CURTIS HOME - LIVING AREA - 1958 - DAY (D4)",
+      "characters": [
+        "RADIO AD",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "RADIO AD",
+          "parenthetical": "",
+          "text": "(O.S.)"
+        },
+        {
+          "character": "RADIO AD",
+          "parenthetical": "",
+          "text": "(O.S.) (CONT'D) (CONTINUED) 4."
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "6"
+        }
+      ],
+      "actionPreview": "5 5 ...until overtaken by the SOUND of a roller coaster ride, children exclaiming. It’s an ad on the radio for the “FunTown” amusement park. This holiday season, try the Crazy Daisy! Strap into the Atomic Rocket for a Trip to the Moon! CONTINUED: (2) 3 3 (MORE) (CONTINUED) 3. CONTINUED: 5 5 Try your"
+    },
+    {
+      "number": 5,
+      "heading": "EXT. PARK PLAYGROUND - TALAHASSEE FL - 1958 - DAY (D5)",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "7 7 ELWOOD POV from under a jungle gym in the park playground, on a GIRL (10) above, sticking her tongue way out and holding it there. OTHER KIDS, 5 or 6 of them, dart around playing tag. She turns and looks down at him. Her eyes widen, then she turns back. Elwood looks left toward the girl and then"
+    },
+    {
+      "number": 6,
+      "heading": "INT. RESTAURANT KITCHEN - HOTEL RICHMOND - TALLAHASSEE -",
+      "characters": [
+        "PREP COOK",
+        "RADIO AD"
+      ],
+      "dialogues": [
+        {
+          "character": "PREP COOK",
+          "parenthetical": "(O.S.)",
+          "text": "Got to always look for the pearl."
+        },
+        {
+          "character": "RADIO AD",
+          "parenthetical": "",
+          "text": "(O.S.) (CONT'D) (CONTINUED) 4."
+        },
+        {
+          "character": "PREP COOK",
+          "parenthetical": "(CONT'D)",
+          "text": "What? You don’t want it? You ever try an oyster? No?"
+        },
+        {
+          "character": "PREP COOK",
+          "parenthetical": "(CONT'D)",
+          "text": "(to dish washer; still holding the oyster)"
+        },
+        {
+          "character": "PREP COOK",
+          "parenthetical": "(CONT'D)",
+          "text": "(good-humoredly)"
+        },
+        {
+          "character": "PREP COOK",
+          "parenthetical": "(CONT'D)",
+          "text": "(slurping down an oyster himself)"
+        }
+      ],
+      "actionPreview": "8 8 1958 - DAY (D6) Elwood POV from where he’s seated on a stool in a hotel kitchen that overlooks the dining room, reading a Hardy Boys mystery. SOUND of staff clanking around, pots and pans, cutlery, voices as the breakfast shift winds down and they prep for lunch. Elwood looks over the top of the"
+    },
+    {
+      "number": 7,
+      "heading": "INT. HOTEL ROOM - RICHMOND HOTEL - 1958 - DAY (D7)",
+      "characters": [
+        "HATTIE"
+      ],
+      "dialogues": [
+        {
+          "character": "HATTIE",
+          "parenthetical": "(O.S.)",
+          "text": "(playing)"
+        }
+      ],
+      "actionPreview": "8A 8A Elwood POV from where he’s lying on a hotel bed as a fresh white bedsheet is tossed in the air above and over him onto the bed. CONTINUED: 8 8 (CONTINUED) 5. CONTINUED: 8A 8A 6. Hattie (O.S.) hums as she goes around the bed tucking it in with Elwood beneath it. It grows tauter and tauter aroun"
+    },
+    {
+      "number": 8,
+      "heading": "INT. CURTIS HOME - HATTIE’S BEDROOM - 1958 - NIGHT (N8)",
+      "characters": [
+        "ELWOOD",
+        "HATTIE",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "(softly)"
+        },
+        {
+          "character": "HATTIE",
+          "parenthetical": "",
+          "text": "El..."
+        },
+        {
+          "character": "HATTIE",
+          "parenthetical": "(CONT'D)",
+          "text": "Shhh... I ain’t going nowhere, baby."
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "10"
+        }
+      ],
+      "actionPreview": "9 9 Elwood POV as he pads down the dark upstairs hallway, turning a corner and peeking through the slit of the door and frame to Hattie’s bedroom, slowly pushing it open. He watches Hattie while she sleeps, drawing closer, fascinated by the shiny tip of a machete blade showing from under the top rea"
+    },
+    {
+      "number": 9,
+      "heading": "INT. LAUNDRY ROOM - HOTEL RICHMOND - 1958 - DAY (D9)",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "10A 10A Elwood POV of Hattie’s strong hand steering an iron across the wrinkles in a cotton hotel pillowcase on an ironing board in the laundry room. Hotel towels and sheets are drying on lines and a large linen cart is already filled with pressed sheets. As the steaming iron slowly passes back and "
+    },
+    {
+      "number": 10,
+      "heading": "INT. CURTIS HOME - HALLWAY/BA THROOM - 1958 - EVENING (E9)",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "11 11 Elwood POV as he turns the corner in the hallway, drawn to the glow of yellow light from the slit of the nearly shut door of the bathroom. He stands at the doorway and looks at Hattie submerged in a hot bath, leaning back relaxing with her face covered by a wet rag. His gaze pans to rest on th"
+    },
+    {
+      "number": 11,
+      "heading": "EXT. TALLAHASSEE STREET - SIDEWALK - 1965 - DAY (D10)",
+      "characters": [
+        "HATTIE"
+      ],
+      "dialogues": [
+        {
+          "character": "HATTIE",
+          "parenthetical": "(O.S.)",
+          "text": "Elwood didn’t need much rightin’."
+        },
+        {
+          "character": "HATTIE",
+          "parenthetical": "(O.S.)",
+          "text": "Hell if it don’t."
+        },
+        {
+          "character": "HATTIE",
+          "parenthetical": "(O.S.)",
+          "text": "Jim Crow ain’t going to just slink off his wicked self."
+        }
+      ],
+      "actionPreview": "12 12 Elwood (POV) up at a store window full of stacked TVs just as the screens go blank to static, zap to a bar that stretches out then bounces back to a dot on each before going dark. SOUND of the busy street and voices of women on the sidewalk behind Elwood. WOMAN 1 (O.S.) (teasing, impressed) Ha"
+    },
+    {
+      "number": 12,
+      "heading": "INT. CURTIS HOME - LIVING AREA - 1965 - DAY (D11)",
+      "characters": [
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "14"
+        }
+      ],
+      "actionPreview": "13 13 Elwood POV standing in the living room, looking at his arm stretched out in front of him. He watches intently as his skin rises into goose pimples, the hairs at attention... then they recede and the hairs go flat. Elwood adjusts his arm to find the best angle for the show. 14"
+    },
+    {
+      "number": 13,
+      "heading": "INT. FRENCHTOWN STREET - CITY BUS - 1966 - DAY (D12)",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "15 15 Elwood (15ish) POV from where he is seated in a city bus: his reflection is visible in half of the window frame as he leans his head against the glass, now a teen. Through the window, the city sidewalk moves from left to right. As the bus stops at a traffic light, Elwood lifts his head, and tu"
+    },
+    {
+      "number": 14,
+      "heading": "INT. MARCONI’S TOBACCO - FRENCHTOWN - 1966 - DAY (D13)",
+      "characters": [
+        "MRS. MARCONI",
+        "MR. MARCONI",
+        "ELWOOD"
+      ],
+      "dialogues": [
+        {
+          "character": "MRS. MARCONI",
+          "parenthetical": "(O.S.)",
+          "text": "Again with the cigar boxes, Mr."
+        },
+        {
+          "character": "MR. MARCONI",
+          "parenthetical": "(O.S.)",
+          "text": "Cuban"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "Sir?"
+        },
+        {
+          "character": "MR. MARCONI",
+          "parenthetical": "",
+          "text": "Why you read through all of them like that, if you’re going to buy them anyway?"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "Just making sure."
+        },
+        {
+          "character": "MR. MARCONI",
+          "parenthetical": "",
+          "text": "You need a job?"
+        }
+      ],
+      "actionPreview": "16 16 Sound of a radio playing in the background. Elwood POV from where he is standing by the magazine racks in Marconi’s Tobacco Shop, reading a comic. Up front, MR. MARCONI (50s, Italian) banters with his WIFE who is somewhere O.S. in the back, as he arranges his stock of cigars. The shop is other"
+    },
+    {
+      "number": 15,
+      "heading": "INT. LINCOLN H.S. CLASSROOM - TALLAHASSEE (1966) - DAY",
+      "characters": [
+        "MR. HILL",
+        "STUDENT",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "MR. HILL",
+          "parenthetical": "",
+          "text": "The first order of business in my class will be to strike out all the bad words they left for you."
+        },
+        {
+          "character": "MR. HILL",
+          "parenthetical": "(CONT'D)",
+          "text": "September is the tutorial in the latest epithets of white youth, which like hemlines and haircuts vary from year to year, and are quite imaginative. SOUND of a ruffling."
+        },
+        {
+          "character": "STUDENT",
+          "parenthetical": "(O.S.)",
+          "text": "Mr. Hill, you a Freedom Rider?"
+        },
+        {
+          "character": "MR. HILL",
+          "parenthetical": "",
+          "text": "Yes, I am."
+        },
+        {
+          "character": "STUDENT",
+          "parenthetical": "(O.S.)",
+          "text": "That how you got that scar over your eye?"
+        },
+        {
+          "character": "MR. HILL",
+          "parenthetical": "",
+          "text": "Nashville. White man slugged me with a tire iron. (CONTINUED) 11."
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "18"
+        }
+      ],
+      "actionPreview": "17 17 (D14) Elwood POV of a few used, scattered pencils on the floor near his desk. It’s the first day of the semester and a new teacher, MR. HILL, (late 20s, kind face above a bow tie, scar over an eye), walks the aisles, handing out black markers. Beat. Elwood turns to the right, looking past the "
+    },
+    {
+      "number": 16,
+      "heading": "INT. CITY BUS - FRENCHTOWN - 1966 - DAY (D15)",
+      "characters": [
+        "ELWOOD"
+      ],
+      "dialogues": [
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "Well, hello. Where’d you come from?"
+        }
+      ],
+      "actionPreview": "18A 18A Elwood POV seated in the city bus, Hattie (O.S.) beside him, reading the Selected Poems of Gwendolyn Brooks. As Hattie’s hand turns a page, Elwood sees a LITTLE GIRL slide herself feet first from under their seat forward into the space between his own shoes, all the way until her face is vis"
+    },
+    {
+      "number": 17,
+      "heading": "INT. MARCONI'S TOBACCO SHOP - 1966 - DAY (D16)",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "19 19 Elwood POV from a stool in Marconi’s shop, as he looks up to see TWO WOMEN (30s, one Black, one white in curlers) browsing the single small aisle. Both are magnificently dressed in big- patterned dresses. The white woman is closer to him and the Black woman is a bit further. They both lean in "
+    },
+    {
+      "number": 18,
+      "heading": "INT. CURTIS HOME - ELWOOD’S BEDROOM - 1966 - DAY (D17)",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "20 20 Elwood POV as he raises his left arm, rotating his shoulder, attempting to get the best angle to see the hair follicles stretching from out of his armpit. His hand twists and pulls this newly discovered hair, then he moves in close to sniff his armpit, the image blurring. Then he leans back an"
+    },
+    {
+      "number": 19,
+      "heading": "EXT. FRENCHTOWN STREET - 1966 - DAY (D18)",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "21 21 Elwood POV on the curb of a street near Marconi’s, waiting at a crosswalk for the light to change. He is looking down at the untied shoelaces of a LITTLE GIRL in a school dress, who is holding her MOTHER’S hand ahead of him. The bottom fabric of the little girl’s dress is blowing in the wind. "
+    },
+    {
+      "number": 20,
+      "heading": "INT. MARCONI'S TOBACCO SHOP - 1966 - DAY (D19)",
+      "characters": [
+        "MR. HILL",
+        "ELWOOD"
+      ],
+      "dialogues": [
+        {
+          "character": "MR. HILL",
+          "parenthetical": "",
+          "text": "Hi Elwood. I came to see you. (beat) Don’t worry, good news."
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "That sounds great, Mr. Hill. But I don’t know if we have the money for classes like that. (CONTINUED) 13."
+        },
+        {
+          "character": "MR. HILL",
+          "parenthetical": "",
+          "text": "That’s the thing- they’re free."
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "(looking at it)"
+        },
+        {
+          "character": "MR. HILL",
+          "parenthetical": "",
+          "text": "This fall at least, so word gets out in the community."
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "(with barely contained excitement) I’ll have to ask my grandmother-"
+        },
+        {
+          "character": "MR. HILL",
+          "parenthetical": "",
+          "text": "You do that, Elwood. And I can talk to her, too if need be. Main thing is, it’s perfect for a young man like you. You’re the type of student they came up with this for."
+        },
+        {
+          "character": "MR. HILL",
+          "parenthetical": "(CONT'D)",
+          "text": "(over his shoulder)"
+        }
+      ],
+      "actionPreview": "22 22 Elwood POV from a short step-ladder near the magazine rack. He is popping his knuckles and stretching his fingers, rotating his wrist and flexing his hand while looking at the darkly grooved life lines in his palm. On his lap is a pile of magazines. On top, LIFE magazine with young people his "
+    },
+    {
+      "number": 21,
+      "heading": "EXT. SIDEWALK - TALLAHASSEE - 1966 - DAY (D20)",
+      "characters": [
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "23A"
+        }
+      ],
+      "actionPreview": "22A 22A Elwood POV standing in a line-up of local Black TEEN BOYS against a wall along the sidewalk. He looks to his right and downward as the rubber tip of a cane taps the right, then left, pants pocket of the boy next to the boy next to him. Then it pokes into the stomach of the boy next to him. E"
+    },
+    {
+      "number": 22,
+      "heading": "INT. CURTIS HOME - LIVING AREA - 1966 - DAY (D21)",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "23 23 The curtains are partly pulled. Elwood POV from the couch where he’s lying looking up at the fan wobble on the ceiling as the light from a small black and white television flickers in the room. It bounces off a celebratory helium balloon on a long string that Elwood is tugging rhythmically to "
+    },
+    {
+      "number": 23,
+      "heading": "INT. LINCOLN H.S. - CLASSROOM - 1966 - DAY (D22)",
+      "characters": [
+        "MR. HILL"
+      ],
+      "dialogues": [
+        {
+          "character": "MR. HILL",
+          "parenthetical": "",
+          "text": "(muttering to himself)"
+        }
+      ],
+      "actionPreview": "24 24 Sound of someone RAPPING their knuckles on a desk, creating a rhythm that stops and starts seemingly without warning. The bell RINGS. Elwood’s POV of his fellow classmates trickling into the classroom from recess. At the front of the room, Mr. Hill is at a portable record player, studying the "
+    },
+    {
+      "number": 24,
+      "heading": "EXT. SIDEWALK - TALLAHASSEE - 1966 - DAY (D22)",
+      "characters": [
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "26"
+        }
+      ],
+      "actionPreview": "25 25 Elwood POV at a bus stop, looking across the street at a parked Lincoln with a freshly dry-cleaned suit on a hanger hung on the outside. Headlights streak across the suit as cars go by in different directions, making it dance with the breeze they make. Then it returns to rest. 26"
+    },
+    {
+      "number": 25,
+      "heading": "EXT. ABANDONED ELEMENTARY SCHOOL - TALLAHASSEE - 1966 - DAY",
+      "characters": [
+        "OLDER GUY",
+        "RADIO NEWS",
+        "WE SHALL WIN BY LOVE",
+        "ELWOOD"
+      ],
+      "dialogues": [
+        {
+          "character": "OLDER GUY",
+          "parenthetical": "(O.S.)",
+          "text": "We’re breaking the chain reaction of evil."
+        },
+        {
+          "character": "OLDER GUY",
+          "parenthetical": "(CONT'D)",
+          "text": "Some of us went here when we were kids. Before other folks decided to paint our town red."
+        },
+        {
+          "character": "RADIO NEWS",
+          "parenthetical": "(V.O.)",
+          "text": "“...so many arrests of Negro students that the Leon County"
+        },
+        {
+          "character": "WE SHALL WIN BY LOVE",
+          "parenthetical": "",
+          "text": "The Older Guy waves to some other teenagers trickling in from the protest."
+        },
+        {
+          "character": "OLDER GUY",
+          "parenthetical": "",
+          "text": "Mr. Hill said you might come. We’re organizing bail, can we count on you Elwood?"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "Uh, yes. I can give half my paycheck."
+        },
+        {
+          "character": "OLDER GUY",
+          "parenthetical": "",
+          "text": "Glad you felt the need to stand up."
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "I’ll be back next week."
+        }
+      ],
+      "actionPreview": "27 27 (D23) Elwood POV looking down at the interlaced legs of two BROTHERS (teenagers) lying perpendicular to each other on the floor of a derelict classroom in an abandoned school. They’re dressed well, wearing ties. Elwood turns and looks at an OLDER GUY standing beside him. He’s tall, athletic, w"
+    },
+    {
+      "number": 26,
+      "heading": "EXT. SIDEWALK - TALLAHASSEE - 1966 - DAY (D24)",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "28 28 Elwood POV as he walks down the sidewalk. SOUND of a coin being kicked. He stops and sees a gleam a few feet away. He walks over, spying a bright copper penny, and bends to pick it up. When he notices it’s “tails” he hesitates, then picks it up anyway. He flips it over, surprised to find the o"
+    },
+    {
+      "number": 27,
+      "heading": "INT. PHOTO BOOTH - TALLAHASSEE - 1966 - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "28A 28A Elwood POV seated in a photo booth. He looks down at his lap, then looks leftward to his hand resting on his leg. A teen girl’s hand reaches over and puts her hand on his. They grasp each other’s hands. Elwood looks up at Simone, the older girl who flirted with him on the street, who is smil"
+    },
+    {
+      "number": 28,
+      "heading": "EXT. PHOTO BOOTH - TALLAHASSEE - 1966 - DAY",
+      "characters": [
+        "CREATED ARCHIVAL STILLS"
+      ],
+      "dialogues": [
+        {
+          "character": "CREATED ARCHIVAL STILLS",
+          "parenthetical": "",
+          "text": "28C"
+        }
+      ],
+      "actionPreview": "28B 28B Elwood POV (CLOSE ON) the strip of photos emerging from the automated slot just outside the photo booth. 28C Full screen. The series of photos of Elwood and Simone taken in the photo booth in various joyful, affectionate poses."
+    },
+    {
+      "number": 29,
+      "heading": "INT. CURTIS HOME - KITCHEN - 1966 - DAY (D25)",
+      "characters": [
+        "HATTIE",
+        "ELWOOD"
+      ],
+      "dialogues": [
+        {
+          "character": "HATTIE",
+          "parenthetical": "",
+          "text": "...I hope it’s a good photograph of him at least? I’m not reading"
+        },
+        {
+          "character": "HATTIE",
+          "parenthetical": "(CONT'D)",
+          "text": "Has everyone in Leon County gone crazy? Course I’m proud he was there! Evelyn’d be proud, too. You know that theater was showing T he"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "Nanna, next time I want to do the civil disobedience part."
+        },
+        {
+          "character": "HATTIE",
+          "parenthetical": "",
+          "text": "I love you Elwood."
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "I love you, too, Nanna."
+        },
+        {
+          "character": "HATTIE",
+          "parenthetical": "",
+          "text": "You hungry?"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "No, I’m okay."
+        }
+      ],
+      "actionPreview": "29 29 SOUND of a radio news station in the background. Elwood POV at the kitchen table, staring at the Melvin Griggs pamphlet hanging from a magnet that is sliding very slowly down the front of the fridge. To his left he can see Hattie talking to a friend on the phone in the adjoining room, her conv"
+    },
+    {
+      "number": 30,
+      "heading": "INT. MARCONI'S TOBACCO SHOP - 1966 - DAY (D26)",
+      "characters": [
+        "ELWOOD",
+        "MR. MARCONI"
+      ],
+      "dialogues": [
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "Put it back."
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.) (CONT'D)",
+          "text": "(evenly)"
+        },
+        {
+          "character": "MR. MARCONI",
+          "parenthetical": "",
+          "text": "Look Elwood... kids take a comic or a candy today, their friends and parents spend money in the store for years."
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "So... letting them steal is an investment?"
+        },
+        {
+          "character": "MR. MARCONI",
+          "parenthetical": "",
+          "text": "Way I see it. (taps his temple)"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "Doesn’t that diminish all of us?"
+        },
+        {
+          "character": "MR. MARCONI",
+          "parenthetical": "",
+          "text": "Don’t take it personal."
+        }
+      ],
+      "actionPreview": "30 30 Sound of a radio in the background. Elwood POV from the register in Marconi’s. He sees two neighborhood boys, TITUS and PERLIE, sliding comics under their shirts. The boys stiffen, turn, look at him. CONTINUED: 29 29 (CONTINUED) 19. CONTINUED: 30 30 20. Put it back. Perlie’s expression shifts "
+    },
+    {
+      "number": 31,
+      "heading": "EXT. SIDEWALK - TALLAHASSEE - 1966 - NIGHT (N26)",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "31 31 Elwood POV walking down the sidewalk in the commercial district of town, scanning the opposite side of the street. He keeps turning to look back over his shoulder, then walks backward a beat, then continues turning right, 180 degrees then all 360 degrees. Anxious something’s going to happen. H"
+    },
+    {
+      "number": 32,
+      "heading": "INT. CURTIS HOME - LIVING AREA - 1966 - NIGHT (N26)",
+      "characters": [
+        "HATTIE",
+        "ELWOOD"
+      ],
+      "dialogues": [
+        {
+          "character": "HATTIE",
+          "parenthetical": "",
+          "text": "Ok...shh now. Hold still. They got you good."
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "(muffled)"
+        }
+      ],
+      "actionPreview": "32 32 Elwood POV lying on the couch, as Hattie moves into view with a cloth bag of ice in hand. She peers down at him with a look of concern, moving his face from side to side. Her jawline tightens, she blinks back a tear, as she puts the bag of ice over one of his eyes. Ow. The settling cubes sound"
+    },
+    {
+      "number": 33,
+      "heading": "EXT. RURAL ROAD - NEAR TALLAHASSEE - 1966 - DAY - (D27)",
+      "characters": [
+        "RODNEY",
+        "ELWOOD"
+      ],
+      "dialogues": [
+        {
+          "character": "RODNEY",
+          "parenthetical": "",
+          "text": "Going North."
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "(keeping up alongside)"
+        },
+        {
+          "character": "RODNEY",
+          "parenthetical": "",
+          "text": "Where you headed?"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "Melvin Griggs Technical College."
+        },
+        {
+          "character": "RODNEY",
+          "parenthetical": "",
+          "text": "Never heard of that one."
+        }
+      ],
+      "actionPreview": "33 33 Bright sun. Elwood POV walking down a country road, looking to hitch a ride. Two vehicles whiz past. As he walks on, he continues to glance back, thumb out. A battered pickup truck with a giant, oversized cross in the back comes into view going the other way, trailing a rope of sparks as the w"
+    },
+    {
+      "number": 34,
+      "heading": "INT. CHEVY CAR - TALAHASSEE - 1966 - DAY (D27)",
+      "characters": [
+        "RODNEY",
+        "ELWOOD",
+        "DEPUTY"
+      ],
+      "dialogues": [
+        {
+          "character": "RODNEY",
+          "parenthetical": "",
+          "text": "This always gives me trouble. Can you find something else?"
+        },
+        {
+          "character": "RODNEY",
+          "parenthetical": "(CONT'D)",
+          "text": "Good, good. What’s your name?"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "Elwood Curtis, sir."
+        },
+        {
+          "character": "RODNEY",
+          "parenthetical": "",
+          "text": "Sir? I like that. You like my wheels? Just got ‘em. Headed up to"
+        },
+        {
+          "character": "RODNEY",
+          "parenthetical": "(CONT'D)",
+          "text": "You ain’t but what, 15 by the look of you? And already a college boy?"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "I’m almost 17, sir."
+        },
+        {
+          "character": "RODNEY",
+          "parenthetical": "",
+          "text": "Still and all... young. (whistles)"
+        },
+        {
+          "character": "RODNEY",
+          "parenthetical": "(CONT'D)",
+          "text": "What’s this? (CONTINUED) 22."
+        },
+        {
+          "character": "RODNEY",
+          "parenthetical": "(CONT'D)",
+          "text": "Don’t look back. Keep cool."
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "Huh?"
+        },
+        {
+          "character": "RODNEY",
+          "parenthetical": "",
+          "text": "You don’t know me, do you?"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "No. I mean, we just met."
+        },
+        {
+          "character": "RODNEY",
+          "parenthetical": "",
+          "text": "I’ll tell him that."
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "What do you mean?"
+        },
+        {
+          "character": "RODNEY",
+          "parenthetical": "",
+          "text": "Shh. Let me handle this."
+        },
+        {
+          "character": "DEPUTY",
+          "parenthetical": "(O.S.)",
+          "text": "Well looky here. First thing I thought when they said to keep an eye out for an emerald turquoise"
+        }
+      ],
+      "actionPreview": "34 34 The emerald vinyl seats squeak as Elwood slides inside. He shakes Elwood’s hand, the rings on his fingers biting into Elwood’s. Elwood puts his satchel between his legs and looks over the space-age dashboard, all the pushbuttons sticking out of the silver detailing. Rodney taps at the radio. E"
+    },
+    {
+      "number": 35,
+      "heading": "INT. CURTIS HOME - ELWOOD’S BEDROOM - 1966 - DAY (D28)",
+      "characters": [
+        "HATTIE"
+      ],
+      "dialogues": [
+        {
+          "character": "HATTIE",
+          "parenthetical": "(O.S.)",
+          "text": "(on a phone, distraught) I am telling you Sergeant, he didn’t know the man. (pause) He was walking. The man pulled up and offered him a ride. He was heading off to college. Melvin Griggs"
+        }
+      ],
+      "actionPreview": "35 35 Elwood POV, his gaze so still with a dead humming silence that it feels less like an establishing of an empty room. CONTINUED: 34 34 (CONTINUED) 23. CONTINUED: 35 35 (CONTINUED) 24. His hand comes into view with a tremor, a thin black string wound around his ring finger, palm facing him, the r"
+    },
+    {
+      "number": 36,
+      "heading": "INT. CURTIS HOME - DOWNSTAIRS HALLWAY - 1966 - DAY (D29)",
+      "characters": [
+        "HATTIE"
+      ],
+      "dialogues": [
+        {
+          "character": "HATTIE",
+          "parenthetical": "(O.S.)",
+          "text": "(loudly calling; not the first time)"
+        },
+        {
+          "character": "HATTIE",
+          "parenthetical": "(CONT'D)",
+          "text": "Elwood! CONTINUED: 35"
+        },
+        {
+          "character": "HATTIE",
+          "parenthetical": "(CONT'D)",
+          "text": "El-wood!"
+        }
+      ],
+      "actionPreview": "36 36 Elwood POV walking down the hallway to the kitchen in his pajamas. The radio is on, tuned to GOSPEL music, but the signal is spotty so there is static interference. Elwood! Elwood slows his pace and peeks around the corner to see his grandmother in the midst of a ballet of disoriented disbelie"
+    },
+    {
+      "number": 37,
+      "heading": "INT. CURTIS HOME - ELWOOD’S BEDROOM - 1966 - DAY (D30)",
+      "characters": [
+        "HATTIE",
+        "MR. HILL"
+      ],
+      "dialogues": [
+        {
+          "character": "HATTIE",
+          "parenthetical": "(O.S.)",
+          "text": "(calling from downstairs)"
+        },
+        {
+          "character": "MR. HILL",
+          "parenthetical": "(O.S.)",
+          "text": "(calling out)"
+        }
+      ],
+      "actionPreview": "37 37 Elwood POV lying on the bed under the covers looking toward the window, which seems unusually far away, as if the room was just slightly... stretching. Sunlight moves across the room as the earth turns. Mr. Hill is by, he wants to see you before you go! Elwood?"
+    },
+    {
+      "number": 38,
+      "heading": "EXT. PARK - TALLAHASSEE - 1966 - DAY (D31)",
+      "characters": [
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "39"
+        }
+      ],
+      "actionPreview": "38 38 Elwood POV sitting on a bench. He stares down at his own body, slumped with despair. He sees his shadow at an angle on the ground. The shadow disappears slowly - the light flattens as clouds pass overhead - and then his shadow reappears as the sun remerges. 39"
+    },
+    {
+      "number": 39,
+      "heading": "INT. CURTIS HOME - DINING AREA - 1966 - EVENING (E32)",
+      "characters": [
+        "HATTIE",
+        "ELWOOD"
+      ],
+      "dialogues": [
+        {
+          "character": "HATTIE",
+          "parenthetical": "",
+          "text": "(talking to herself)"
+        },
+        {
+          "character": "HATTIE",
+          "parenthetical": "(CONT'D)",
+          "text": "Two days later, still waiting to see the judge. Hanged in your cell."
+        },
+        {
+          "character": "HATTIE",
+          "parenthetical": "(CONT'D)",
+          "text": "I ain’t take more than my portion!"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "Nanna-"
+        },
+        {
+          "character": "HATTIE",
+          "parenthetical": "",
+          "text": "(shaking her head, loud)"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "Nanna, I’ll be back soon."
+        },
+        {
+          "character": "HATTIE",
+          "parenthetical": "",
+          "text": "(focusing; gesturing)"
+        },
+        {
+          "character": "HATTIE",
+          "parenthetical": "(CONT'D)",
+          "text": "Ain’t that nice? ... Sit down, have some cake with Nanna."
+        }
+      ],
+      "actionPreview": "40 40 Sound of a radio playing Gospel in the background. Elwood POV as he turns the corner hallway and walks toward the dining area. CONTINUED: 36 36 (CONTINUED) 25. CONTINUED: 40 40 (CONTINUED) 26. Hattie’s at the dining table, her back toward him, putting out a large, lopsided, heavily icing-ed ca"
+    },
+    {
+      "number": 40,
+      "heading": "INT. POLICE CAR - RURAL ROAD - FLORIDA - 1966 - DAY (D33)",
+      "characters": [
+        "POLICE OFFICER"
+      ],
+      "dialogues": [
+        {
+          "character": "POLICE OFFICER",
+          "parenthetical": "",
+          "text": "This a repeat for you, young man? WHITE BOY 1 I’m “recalcitrant”."
+        },
+        {
+          "character": "POLICE OFFICER",
+          "parenthetical": "",
+          "text": "You two are sitting next to a bonafide car thief."
+        }
+      ],
+      "actionPreview": "41 41 Elwood POV of a passing Florida landscape, out the backseat window of a moving Department of Corrections police car. Light SOUND of a sawing, as through leather. Elwood turns to glance back into the car from where he’s seated behind a white Department of Corrections POLICE OFFICER (40s): a goo"
+    },
+    {
+      "number": 41,
+      "heading": "INT. ADULT ELWOOD’S APARTMENT - NYC - 2018 - DAY (D-FF1)",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "42 42 Brightly colored ground penetrating radar (GPR) images of unmarked graves where bodies have been buried and discovered with this technology are up on a computer screen. SOUND of a mouse click and the image changes. Someone [ADULT ELWOOD] is on a computer looking at these. Click, it changes aga"
+    },
+    {
+      "number": 42,
+      "heading": "INT. POLICE CAR - NICKEL ACADEMY - MARIANNA FL - 1966 -",
+      "characters": [
+        "POLICE OFFICER",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "POLICE OFFICER",
+          "parenthetical": "",
+          "text": "Look lively back there. Welcome to the famous Nickel Academy."
+        },
+        {
+          "character": "POLICE OFFICER",
+          "parenthetical": "",
+          "text": "Not yet."
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "44"
+        }
+      ],
+      "actionPreview": "43 43 DAY (D33) Elwood POV from the back seat of the car as it pulls into the Nickel Academy school grounds. Not what Elwood imagined. The place is lush green and dotted with buildings of red brick. It’s a perversion of the college he was intended for. The police car drives up the road to the main a"
+    },
+    {
+      "number": 43,
+      "heading": "INT. INTAKE BUILDING - NICKEL ACADEMY - 1966 - DAY (D33)",
+      "characters": [
+        "SPENCER",
+        "COREY"
+      ],
+      "dialogues": [
+        {
+          "character": "SPENCER",
+          "parenthetical": "(O.S.)",
+          "text": "When Trevor Nickel passed the baton to the current Director Hardee, he devised four ranks of behavior here: start as a Grub, work your way up to Explorer, then Pioneer, and finally, Ace."
+        },
+        {
+          "character": "SPENCER",
+          "parenthetical": "(CONT'D)",
+          "text": "Earn merits for acting right, and you move on up the ladder. CONTINUED: 43"
+        },
+        {
+          "character": "SPENCER",
+          "parenthetical": "(CONT'D)",
+          "text": "30."
+        },
+        {
+          "character": "SPENCER",
+          "parenthetical": "(CONT'D)",
+          "text": "Tell them, Corey, since you’ve come back for a second taste of Nickel."
+        },
+        {
+          "character": "COREY",
+          "parenthetical": "",
+          "text": "(stuttering VERY badly)"
+        },
+        {
+          "character": "SPENCER",
+          "parenthetical": "",
+          "text": "Why don’t you stand up."
+        },
+        {
+          "character": "COREY",
+          "parenthetical": "",
+          "text": "(standing makes it worse)"
+        },
+        {
+          "character": "SPENCER",
+          "parenthetical": "",
+          "text": "(nodding)"
+        },
+        {
+          "character": "COREY",
+          "parenthetical": "",
+          "text": "(starting again)"
+        },
+        {
+          "character": "SPENCER",
+          "parenthetical": "(CONT'D)",
+          "text": "30."
+        }
+      ],
+      "actionPreview": "44A 44A Elwood POV from where he’s seated in the intake room. It’s a stark contrast to the well-maintained outside: run-down, cracked paint, water stained ceilings. The walls are scuffed and scratched. A COMMANDING MALE VOICE is carrying loudly. Elwood looks around at the eleven other Black boys, as"
+    },
+    {
+      "number": 44,
+      "heading": "INT. ADULT ELWOOD'S APARTMENT - NYC - 2018 - NIGHT (N-FF2)",
+      "characters": [
+        "MILLIE",
+        "ADULT ELWOOD",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "MILLIE",
+          "parenthetical": "(O.S.)",
+          "text": "Hey, babe? You all right? When you going to give that computer a break?"
+        },
+        {
+          "character": "ADULT ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "A few more minutes. You go on ahead and start without me."
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "46"
+        }
+      ],
+      "actionPreview": "45 45 More GPR images of unmarked graves and their contents on Adult Elwood’s computer screen. Just enough SOUND of keyboard and mouse clicking to signal he’s been calling up these images online, then searching out more information about a horrific discovery and the start of an exhumation of graves "
+    },
+    {
+      "number": 45,
+      "heading": "INT. NICKEL ACADEMY - DORMITORY - 1966 - DAY (D33)",
+      "characters": [
+        "BLAKELEY",
+        "DESMOND",
+        "ELWOOD",
+        "ARCHIVAL FOOTAGE"
+      ],
+      "dialogues": [
+        {
+          "character": "BLAKELEY",
+          "parenthetical": "(O.S.)",
+          "text": "That’s you over there. BLAKELEY (60s, white hair, mirthful eyes, a drinker) is the"
+        },
+        {
+          "character": "BLAKELEY",
+          "parenthetical": "(CONT'D)",
+          "text": "Desmond, show him the ropes."
+        },
+        {
+          "character": "DESMOND",
+          "parenthetical": "",
+          "text": "Yes sir, Mr. Blakeley. (CONTINUED) 31."
+        },
+        {
+          "character": "BLAKELEY",
+          "parenthetical": "",
+          "text": "(to Elwood)"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "Yes sir."
+        },
+        {
+          "character": "BLAKELEY",
+          "parenthetical": "",
+          "text": "(to Desmond)"
+        },
+        {
+          "character": "ARCHIVAL FOOTAGE",
+          "parenthetical": "",
+          "text": "48"
+        }
+      ],
+      "actionPreview": "47 47 Elwood POV standing in the dorm room, staring at the floor. House Father of Elwood’s assigned dorm. Blakeley gestures toward an empty bed beside two boys, DESMOND (round head, chubby) and a LANKIER BOY. Elwood looks up in their direction. Three rows of beds stretch over the blue linoleum, each"
+    },
+    {
+      "number": 46,
+      "heading": "INT. NICKEL ACADEMY - SHOWERS - 1966 - DAY (D34)",
+      "characters": [
+        "BLAKELEY",
+        "ELWOOD"
+      ],
+      "dialogues": [
+        {
+          "character": "BLAKELEY",
+          "parenthetical": "",
+          "text": "You get two minutes."
+        },
+        {
+          "character": "BLAKELEY",
+          "parenthetical": "(CONT'D)",
+          "text": "You won’t want more."
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "(shivering, heavy breathing)"
+        },
+        {
+          "character": "BLAKELEY",
+          "parenthetical": "(O.S.)",
+          "text": "Give him back his soap!"
+        },
+        {
+          "character": "BLAKELEY",
+          "parenthetical": "(O.S.) (CONT'D)",
+          "text": "(somewhere in the background)"
+        }
+      ],
+      "actionPreview": "49 49 SOUND of showers, boys’ voices. Elwood POV moving from the line-up for the showers into place in front of a tile wall. Blakeley is beside him. Elwood turns his head over his shoulder, his gaze roving and slightly out of focus as he turns from the tile wall he is facing, to the boys to the rear"
+    },
+    {
+      "number": 47,
+      "heading": "EXT. NICKEL ACADEMY - GROUNDS - 1966 - DAY (D35)",
+      "characters": [
+        "OMITTED",
+        "ARCHIVAL IMAGE",
+        "ARCHIVAL FOOTAGE"
+      ],
+      "dialogues": [
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "51"
+        },
+        {
+          "character": "ARCHIVAL IMAGE",
+          "parenthetical": "",
+          "text": "52"
+        },
+        {
+          "character": "ARCHIVAL FOOTAGE",
+          "parenthetical": "",
+          "text": "52A"
+        }
+      ],
+      "actionPreview": "50 50 Elwood POV walking in between some buildings. His gaze is fixed on the back of the head of the boy just in front of him, Chickie Pete, the boy with the bald spot, then he shifts focus to the two other boys ahead of him. The SOUND of an engine approaching, muffled voices of boys under it, cause"
+    },
+    {
+      "number": 48,
+      "heading": "EXT. NICKEL ACADEMY - GROUNDS - 1966 - DAY (D35)",
+      "characters": [
+        "JAIME"
+      ],
+      "dialogues": [
+        {
+          "character": "JAIME",
+          "parenthetical": "",
+          "text": "Jackpot."
+        }
+      ],
+      "actionPreview": "53 53 Elwood POV outside a building on the Black side of campus, tracking an object in the sky falling toward earth in the distance. Elwood’s gaze follows the object, which we can now make out is a football, as it heads toward a small group of WHITE BOYS, on the white side of the Nickel campus down "
+    },
+    {
+      "number": 49,
+      "heading": "INT. NICKEL ACADEMY - DINING HALL - 1966 - MORNING (D35B)",
+      "characters": [
+        "YOUNG BOY AT DINING HALL",
+        "TURNER",
+        "ELWOOD",
+        "GRIFF"
+      ],
+      "dialogues": [
+        {
+          "character": "YOUNG BOY AT DINING HALL",
+          "parenthetical": "",
+          "text": "Big kids aren’t allowed to sit at the little kids’ table."
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.)",
+          "text": "You eat that oatmeal like your mama made it."
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "",
+          "text": "(looking up, prickly)"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.)",
+          "text": "I ain’t never seen someone eat this food like that- like they liked it."
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "",
+          "text": "(a beat; considered response)"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.)",
+          "text": "(a beat; also considered) I’m Turner."
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "",
+          "text": "I’m Elwood. (beat) From"
+        },
+        {
+          "character": "GRIFF",
+          "parenthetical": "(O.S.)",
+          "text": "(mimicking; sissy voice)"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "",
+          "text": "I don’t know why you so loud, you know they got their eye on you this week."
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(CONT'D)",
+          "text": "I’m from Houston myself. That’s a real city. None of this country shit y’all got up here. CONTINUED: 54"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "(tipping his head toward the bullies)"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "",
+          "text": "I didn’t do shit."
+        }
+      ],
+      "actionPreview": "54 54 ...Elwood’s POV of an orange rolling around on his tray as he walks through the mess hall with a bowl of lumpy oatmeal. The mess hall is loud and rowdy, full of boys serving up their morning round of nonsense. He finds an empty seat at one of the long tables. When he nears, an OLDER BOY AT DIN"
+    },
+    {
+      "number": 50,
+      "heading": "INT. NICKEL ACADEMY - CLASSROOM - 1966 - DAY (D35B)",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "55 55 Elwood POV looking at a couple of dusty, dried up terrariums and an aquarium, long abandoned, the water cloudy. Elwood focuses briefly on the gravel at the bottom, greenish with algae, fish scales, dead bits of plants, a cat’s eye marble and other debris, then he shifts focus through the glass"
+    },
+    {
+      "number": 51,
+      "heading": "INT. NICKEL ACADEMY - DORMITORY - 1966 - NIGHT (D35B)",
+      "characters": [
+        "BLACK MIKE",
+        "ELWOOD",
+        "ARCHIVAL FOOTAGE",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "BLACK MIKE",
+          "parenthetical": "(O.S.)",
+          "text": "(from across the room)"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "(anxious)"
+        },
+        {
+          "character": "ARCHIVAL FOOTAGE",
+          "parenthetical": "",
+          "text": "57"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "58"
+        }
+      ],
+      "actionPreview": "56 56 Elwood POV, turning from the pillow case that smells like vinegar, up to the ceiling of the dormitory room where water marks seem to contract and expand like a colony of jellyfish. Paint rinds hang like tendrils from the ceiling. Outside, katydids and crickets screech in waves, soft then loud,"
+    },
+    {
+      "number": 52,
+      "heading": "INT. NICKEL ACADEMY - CLASSROOM - 1966 - DAY (D36)",
+      "characters": [
+        "MR. GOODALL",
+        "TURNER"
+      ],
+      "dialogues": [
+        {
+          "character": "MR. GOODALL",
+          "parenthetical": "(O.S.)",
+          "text": "(oblivious) ...and On Tuesday, he made 50 dollars. Finally, on Wednesday, he made 100 dollars. How much has he made so far?"
+        },
+        {
+          "character": "MR. GOODALL",
+          "parenthetical": "(O.S.) (CONT'D)",
+          "text": "...carry the one. You carry the one, see."
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.)",
+          "text": "Not what you expected?"
+        },
+        {
+          "character": "MR. GOODALL",
+          "parenthetical": "(O.S.)",
+          "text": "(at the board)"
+        }
+      ],
+      "actionPreview": "59 59 Elwood POV from the third row of a crammed eight-row arrangement, staring at the back of the teacher MR. GOODALL (white, 60s) with tortoise shell glasses and white hair. He’s facing the blackboard, explaining basic addition. SOUND of Griff and his cronies playing cards, snickering, O.S. at the"
+    },
+    {
+      "number": 53,
+      "heading": "INT. NICKEL ACADEMY - BATHROOM - 1966 - AFTERNOON (D37)",
+      "characters": [
+        "ELWOOD",
+        "DESMOND",
+        "LONNIE",
+        "BLAKELEY",
+        "BLACK MIKE",
+        "ARCHIVAL IMAGES"
+      ],
+      "dialogues": [
+        {
+          "character": "ELWOOD",
+          "parenthetical": "",
+          "text": "Eh!"
+        },
+        {
+          "character": "DESMOND",
+          "parenthetical": "",
+          "text": "Oh shit! CONTINUED: 59"
+        },
+        {
+          "character": "DESMOND",
+          "parenthetical": "(O.S.) (CONT'D)",
+          "text": "(racing down the hall)"
+        },
+        {
+          "character": "LONNIE",
+          "parenthetical": "(O.S.)",
+          "text": "Damn Mike, why’d you have to hit him so hard. Shit."
+        },
+        {
+          "character": "BLAKELEY",
+          "parenthetical": "",
+          "text": "Ain’t you the new boy?"
+        },
+        {
+          "character": "BLACK MIKE",
+          "parenthetical": "(O.S.)",
+          "text": "His fault. He started it."
+        },
+        {
+          "character": "BLAKELEY",
+          "parenthetical": "",
+          "text": "Nuh-uh, I don’t care who’s at fault, who started it, or why."
+        },
+        {
+          "character": "BLACK MIKE",
+          "parenthetical": "",
+          "text": "(looking at it, surprised)"
+        },
+        {
+          "character": "BLAKELEY",
+          "parenthetical": "",
+          "text": "(to all of them)"
+        },
+        {
+          "character": "LONNIE",
+          "parenthetical": "(O.S.)",
+          "text": "(upset)"
+        },
+        {
+          "character": "ARCHIVAL IMAGES",
+          "parenthetical": "",
+          "text": "61"
+        }
+      ],
+      "actionPreview": "60 60 Elwood POV from inside a bathroom stall through the gap between the stall door and frame of Black Mike shoving Corey, the stutterer, into a corner, back to the walls. Black Mike squeezes Corey’s face cheeks together with one hand while Corey breathes hard. He lets go and takes a step back. Cor"
+    },
+    {
+      "number": 54,
+      "heading": "EXT. CITRUS GROVE - NICKEL PLANTATIONS - 1966 - DAY (D38)",
+      "characters": [
+        "STILT MAN",
+        "DESMOND",
+        "JAIME"
+      ],
+      "dialogues": [
+        {
+          "character": "STILT MAN",
+          "parenthetical": "(O.S.)",
+          "text": "(calling out)"
+        },
+        {
+          "character": "DESMOND",
+          "parenthetical": "",
+          "text": "(trying unsuccessfully to get his attention)"
+        },
+        {
+          "character": "DESMOND",
+          "parenthetical": "(CONT'D)",
+          "text": "Okay El, start with the ones on the bottom, and fill the basket by the trees. Take ‘em to the truck down at the end of the row. That’s it."
+        },
+        {
+          "character": "JAIME",
+          "parenthetical": "(O.S.)",
+          "text": "(cursing to himself)"
+        },
+        {
+          "character": "JAIME",
+          "parenthetical": "(CONT'D)",
+          "text": "Cuidado , chico."
+        }
+      ],
+      "actionPreview": "62 62 Elwood POV walking through a grove on a work detail behind Desmond, who turns to swiftly check if Elwood’s there. They walk between rows of trees, Elwood looking right and left at the SOUND of boys’ voices all around him. There are harvest baskets with oranges beside every tree. From somewhere"
+    },
+    {
+      "number": 55,
+      "heading": "INT. NICKEL ACADEMY - DORMITORY - 1966- NIGHT (N38)",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "63 63 Elwood POV as he awakens in his bunk to the SOUND of tires grinding gravel outside, car doors opening, feet thumping up the stairs. The men’s flashlights dance. Earl, the large black man who helped Spencer on the football field, and a couple of WHITE MEN search the bunks. They make sure to get"
+    },
+    {
+      "number": 56,
+      "heading": "EXT. NICKEL ACADEMY - “WHITE HOUSE” - 1966 - NIGHT (N38)",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "64 64 Elwood POV as the boys follow Earl in the darkness along a pathway toward the white rust-stained sugar cube building Elwood noticed when he first arrived at Nickel. Off to the side a figure is leaning against a parked Cadillac Eldorado convertible, unnoticed in the darkness until his cigar tip"
+    },
+    {
+      "number": 57,
+      "heading": "INT. “WHITE HOUSE” - 1966 - NIGHT [CONTINUOUS] (N38)",
+      "characters": [
+        "SPENCER",
+        "EARL",
+        "COREY"
+      ],
+      "dialogues": [
+        {
+          "character": "SPENCER",
+          "parenthetical": "",
+          "text": "Thought you’d be done after the last time."
+        },
+        {
+          "character": "EARL",
+          "parenthetical": "(O.S.)",
+          "text": "Piss himself again."
+        },
+        {
+          "character": "COREY",
+          "parenthetical": "(O.S.)",
+          "text": "(terrified) I’m-a hold on and be s-s-s-s-s-s-st- I’m-a hold on and be st-st-still. SOUND of Corey sobbing as they drag Black Mike out."
+        },
+        {
+          "character": "EARL",
+          "parenthetical": "(O.S.)",
+          "text": "Shut up, punk."
+        },
+        {
+          "character": "SPENCER",
+          "parenthetical": "(O.S.)",
+          "text": "Alright Corey, c’mon."
+        }
+      ],
+      "actionPreview": "65 65 Elwood POV as they enter. The stench is fierce. Urine, feces and fear are soaked into the concrete and they all react to it as they enter. A naked bulb buzzes on in the hallway. Spencer and Earl lead them to a room at the front of the building, where a line of bolted-together chairs waits, and"
+    },
+    {
+      "number": 58,
+      "heading": "INT. “WHITE HOUSE” - BEATING ROOM - 1966 - NIGHT [CONT]",
+      "characters": [
+        "SPENCER",
+        "ARCHIVAL IMAGES",
+        "HATTIE"
+      ],
+      "dialogues": [
+        {
+          "character": "SPENCER",
+          "parenthetical": "",
+          "text": "Elwood Curtis."
+        },
+        {
+          "character": "SPENCER",
+          "parenthetical": "(CONT'D)",
+          "text": "Hold on to the rail and don’t let go. Shhhh. Don’t make a sound. (pause) You’ll get more."
+        },
+        {
+          "character": "ARCHIVAL IMAGES",
+          "parenthetical": "",
+          "text": "67"
+        },
+        {
+          "character": "HATTIE",
+          "parenthetical": "(V.O.)",
+          "text": "Elwood honey, blink."
+        }
+      ],
+      "actionPreview": "66 66 (N38) Elwood POV, there it is: the gigantic industrial fan that is the source of the ROARING sound that travels all over campus. As he is brought closer to the pommel he can see fresh splatter on the concrete block wall where the fan has whipped blood in its gusting. And there’s a weird thing "
+    },
+    {
+      "number": 59,
+      "heading": "INT. NICKEL ACADEMY - INFIRMARY - 1966 - DAY (D39)",
+      "characters": [
+        "NURSE SCARLETT"
+      ],
+      "dialogues": [
+        {
+          "character": "NURSE SCARLETT",
+          "parenthetical": "(O.S.) (CONT'D)",
+          "text": "As it is written, For thy sake we are killed all the day long; we are accounted as sheep for the slaughter."
+        },
+        {
+          "character": "NURSE SCARLETT",
+          "parenthetical": "(CONT'D)",
+          "text": "Nay, in all these things we are more than conquerors through Him that loved us."
+        },
+        {
+          "character": "NURSE SCARLETT",
+          "parenthetical": "(CONT'D)",
+          "text": "For I am persuaded, that neither death, nor life, nor angels, nor principalities, nor powers, nor things present, nor things to come,"
+        }
+      ],
+      "actionPreview": "68 68 Elwood POV lying on his stomach in an infirmary bed as his eyes flutter open, his focus blurred as he looks down at his fingers dangling over the side of the bed. He GROANS in pain. NURSE SCARLETT (O.S. (reading from the Bible; Romans 8) ...who shall separate us from the love of Christ? Shall "
+    },
+    {
+      "number": 60,
+      "heading": "EXT. NICKEL FIELD - COMMUNITY SERVICE VAN - 1966 -",
+      "characters": [
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "70"
+        }
+      ],
+      "actionPreview": "DAY 69 69 (D40) From the front passenger seat of the van as it drives across a grassy field, Turner’s POV looking in the side view mirror at himself as he blows a large Bazooka bubble. An open white hand reaches across and SMACKS Turner, playfully popping the bubble but also making contact with Turn"
+    },
+    {
+      "number": 61,
+      "heading": "EXT. NICKEL - COMMUNITY SERVICE VAN - 1966 - DAY (D40)",
+      "characters": [
+        "HARPER",
+        "ARCHIVAL FOOTAGE"
+      ],
+      "dialogues": [
+        {
+          "character": "HARPER",
+          "parenthetical": "",
+          "text": "Sat down to dinner at that guard’s house once. Roast beef. His wife made an angel food cake. I was in the scouts with his sons. He taught us how to make a fire."
+        },
+        {
+          "character": "ARCHIVAL FOOTAGE",
+          "parenthetical": "",
+          "text": "72"
+        }
+      ],
+      "actionPreview": "71 71 Turner POV from the passenger seat of the van as it moves through campus. Up ahead he sees Jaime sitting at a picnic table outside a small wooden building beside a grassy corral, waiting. Anxious. Jaime meets Turner’s gaze, holding it a beat, then averts his eyes, as if ashamed. As the van pas"
+    },
+    {
+      "number": 62,
+      "heading": "EXT. MARIANNA FL - BACK ALLEY - 1966 - DAY (D41)",
+      "characters": [
+        "HARPER",
+        "TURNER"
+      ],
+      "dialogues": [
+        {
+          "character": "HARPER",
+          "parenthetical": "",
+          "text": "That don’t bode well. I can’t help it if we don’t got every can of beans he asked for."
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.)",
+          "text": "Fiver?"
+        },
+        {
+          "character": "HARPER",
+          "parenthetical": "",
+          "text": "Ten for stress. I got my draft notice this morning. You’re lucky to be in Nickel."
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.)",
+          "text": "Gonna miss your girl."
+        },
+        {
+          "character": "HARPER",
+          "parenthetical": "",
+          "text": "(nods)"
+        }
+      ],
+      "actionPreview": "73 73 Turner POV as he’s getting into the passenger seat of the van when the BUTCHER (50s), a porky white man whose apron is a palimpsest of stains, passes a smeared envelope of cash through the driver’s side window to Harper. Turner watches as the Butcher SLAPS the roof too hard, and backs away fro"
+    },
+    {
+      "number": 63,
+      "heading": "INT. NICKEL ACADEMY - INFIRMARY - 1966 - DAY (D42)",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "74 74 Elwood POV lying on his stomach on the bed. He can hear Nurse Scarlett coming, her shoes squeaking on the linoleum tiles and her uniform making a scratching sound. Her white shoes and panty-hosed legs walk back forth, as she collects bedpans and brings clean ones to the few other patients on t"
+    },
+    {
+      "number": 64,
+      "heading": "EXT. NICKEL ACADEMY - GROUNDS - 1966 - DAY (D43)",
+      "characters": [
+        "HATTIE",
+        "TURNER"
+      ],
+      "dialogues": [
+        {
+          "character": "HATTIE",
+          "parenthetical": "",
+          "text": "Young man, do you know a student named Elwood Curtis?"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.)",
+          "text": "Yessum, I do."
+        },
+        {
+          "character": "HATTIE",
+          "parenthetical": "",
+          "text": "(distraught)"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.)",
+          "text": "Yes ma’am."
+        },
+        {
+          "character": "HATTIE",
+          "parenthetical": "",
+          "text": "I’ve come all this way... it’s a crime to keep me from him, a crime. (beat) I don’t know what kind of place this is, I don’t understand why they can’t let me see him."
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.)",
+          "text": "I’m sorry, ma’am."
+        },
+        {
+          "character": "HATTIE",
+          "parenthetical": "",
+          "text": "(beat) )"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.)",
+          "text": "Turner, ma’am."
+        },
+        {
+          "character": "HATTIE",
+          "parenthetical": "",
+          "text": "Nice to know I can count on somebody round here, Turner."
+        },
+        {
+          "character": "HATTIE",
+          "parenthetical": "(CONT'D)",
+          "text": "When’s the last time you had family visit, Turner?"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.)",
+          "text": "(looking down) ...They... well, my kin, my parents, I mean my ma, she..."
+        },
+        {
+          "character": "HATTIE",
+          "parenthetical": "",
+          "text": "Well I came all this way. I can’t hug Elwood, so you’ll have to do."
+        },
+        {
+          "character": "HATTIE",
+          "parenthetical": "(CONT'D)",
+          "text": "What are they feeding you all in here? I know you can muster a better hug than that."
+        },
+        {
+          "character": "HATTIE",
+          "parenthetical": "(CONT'D)",
+          "text": "I’ll expect it the next time,"
+        }
+      ],
+      "actionPreview": "75 75 SOUND of a lawnmower, louder and louder as it approaches. Turner POV as he walks along a path that winds through the campus. On the grass alongside him, a WHITE BOY pushes a hand mower into frame, keeping pace, messing with him. The noise is deafening. An older Black woman walks past them, dem"
+    },
+    {
+      "number": 65,
+      "heading": "INT. NICKEL ACADEMY - INFIRMARY - 1966 - DAY (D43)",
+      "characters": [
+        "TURNER",
+        "ELWOOD",
+        "DR. COOKE",
+        "SPENCER"
+      ],
+      "dialogues": [
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.)",
+          "text": "How you making out here, hero?"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(CONT'D)",
+          "text": "There’s four ways out of Nickel and you were almost awarded one for “ineffective heroism”."
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "What are the other ways?"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "",
+          "text": "(enumerating)"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.) (CONT'D)",
+          "text": "How you like that witch doctor."
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(CONT'D)",
+          "text": "Come in here with your damn head cut off and he’d give you aspirin."
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(CONT'D)",
+          "text": "Come in here, head cut off, both legs, both arms cut off, and that witch doctor would be like, ‘You want one tablet, or two?’"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "(half laughing)"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "",
+          "text": "Ate some soap powder, an hour of stomach ache for a whole day off."
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "Aren’t you worried they’ll know you’re faking it? Whistling happy like that?"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "",
+          "text": "I ain’t faking- that soap powder is awful. But it’s me choosing, not anyone else."
+        },
+        {
+          "character": "DR. COOKE",
+          "parenthetical": "",
+          "text": "Turner, you again? I told you not to eat the food!"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "",
+          "text": "What else am I supposed to eat,"
+        },
+        {
+          "character": "DR. COOKE",
+          "parenthetical": "",
+          "text": "Doctor."
+        },
+        {
+          "character": "DR. COOKE",
+          "parenthetical": "(CONT'D)",
+          "text": "Yeah, they got you good."
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "",
+          "text": "Go look. See who it is. Ask what’s wrong with him."
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.)",
+          "text": "I ain’t asking nobody shit. CONTINUED: (2) 76"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "",
+          "text": "Scared?"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.)",
+          "text": "Damn, you don’t know. Pop back there for a look, maybe you have to trade places with him. Like in a ghost story."
+        },
+        {
+          "character": "SPENCER",
+          "parenthetical": "(O.S.)",
+          "text": "(from down the ward)"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "",
+          "text": "(quietly)"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.)",
+          "text": "(quietly; confessing) I never been sent down to the White"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "",
+          "text": "I have a lawyer. He can do something."
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.)",
+          "text": "You already got off lucky."
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "",
+          "text": "How?"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.)",
+          "text": "Sometimes they throw you in Hell. A sweatbox up in the eaves below that tar roof. Sweat your soul outta you."
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "",
+          "text": "Huh."
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.)",
+          "text": "Sometimes they take you and we never see your ass again. CONTINUED: (3) 76"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.)",
+          "text": "Your family asks the school what happened and they say you ran away. I’ll show you sometime, show you something that’s not in books, where it is. Boot Hill."
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(CONT'D)",
+          "text": "Problem is Elwood, you didn’t know how it works. You wanted to do some"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "I saw his face, he was scared."
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "",
+          "text": "You don’t know what makes him tick."
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "If everyone looks the other way, then everybody’s in on it. If I look the other way, I’m as implicated as the rest."
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.) (CONT'D)",
+          "text": "It’s not how it’s supposed to be."
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "",
+          "text": "Don’t nobody care about s’posed to."
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "That’s what I’m telling you."
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "",
+          "text": "That shit barely works out there- what do you think it’s going to do in here?"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "You say that because there’s no one out there sticking up for you. I got my grandmother, I got a lawyer."
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "",
+          "text": "(deliberately hurtful)"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "Graduate."
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "",
+          "text": "Walk out of here. You think you can do that? Watch and think and plan?"
+        }
+      ],
+      "actionPreview": "76 76 SOUND of someone whistling, cheerful and fluttering. Elwood POV, still lying on his stomach, opens his eyes and sees an old wooden polio wheelchair with a boy in it get pushed clackety-clack past his bed by Nurse Scarlett. The boy’s whistling is interrupted by deep sighs and groans. Nurse Scar"
+    },
+    {
+      "number": 66,
+      "heading": "INT. NICKEL ACADEMY - STAIRWELL - 1966 - DAY (D44)",
+      "characters": [
+        "ELWOOD"
+      ],
+      "dialogues": [
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "I’m not scared of you."
+        }
+      ],
+      "actionPreview": "78 78 Elwood POV walking up the stairs at Nickel. He’s about eight steps from the landing and a turn to the next staircase when Griff appears coming down the stairs above, hugging close to the railing. He passes Elwood, moving through him- hard- with his huge shoulder. He body-checks Elwood, who is "
+    },
+    {
+      "number": 67,
+      "heading": "EXT. NICKEL ACADEMY - BEHIND A BUILDING - 1966 - DAY (D45)",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "79 79 Elwood POV, seated on the grass, leaning against a wall, legs splayed on the ground, left arm resting on his thigh, right hand weaving a gauze bandage around the fingers of his left hand, twisting them into a weird shape, then pulling it taut."
+    },
+    {
+      "number": 68,
+      "heading": "INT. NICKEL ACADEMY - SMALL GYMNASIUM - 1966 - DAY (D46)",
+      "characters": [
+        "GRIFF",
+        "TURNER"
+      ],
+      "dialogues": [
+        {
+          "character": "GRIFF",
+          "parenthetical": "",
+          "text": "You know you miss it."
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.)",
+          "text": "(shaking his head)"
+        }
+      ],
+      "actionPreview": "80 80 Turner POV looking up into the raised boxing ring from his position standing on the ground beside it. Two or three other boys also look on. Turner’s gaze is centered and absently focused on Griff sparring with Black Mike. He’s quick and lithe but he’s getting clobbered by Griff. Turner’s gaze "
+    },
+    {
+      "number": 69,
+      "heading": "EXT. NICKEL ACADEMY - GROUNDS - 1966 - DAY (D47)",
+      "characters": [
+        "BLAKELEY",
+        "TURNER",
+        "ELWOOD"
+      ],
+      "dialogues": [
+        {
+          "character": "BLAKELEY",
+          "parenthetical": "",
+          "text": "Boys, you gotta toughen up. Spider bite, busted ankle, what’s next?"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.)",
+          "text": "(calling out)"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(CONT'D)",
+          "text": "Elwood’s been reassigned."
+        },
+        {
+          "character": "BLAKELEY",
+          "parenthetical": "",
+          "text": "Reassigned by who?"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "",
+          "text": "Harper. Mr. Harper sir. We’re short of hands."
+        },
+        {
+          "character": "BLAKELEY",
+          "parenthetical": "",
+          "text": "Well we’re short of hands too, son."
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "",
+          "text": "Can we take him, sir ?"
+        },
+        {
+          "character": "BLAKELEY",
+          "parenthetical": "",
+          "text": "(sighing; to Elwood)"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "Yessir. CONTINUED: 80"
+        }
+      ],
+      "actionPreview": "81 81 Elwood POV waiting with a group of boys as the old tractor that will haul them out to the fields in the wooden trailer backs up toward them. Blakeley is lecturing them. The count’s been off. We can’t have those inspectors coming out here thinking that y’all are lazy or that I’m not working you"
+    },
+    {
+      "number": 70,
+      "heading": "INT. COMMUNITY SERVICE VAN - NICKEL ACADEMY - 1966 - DAY",
+      "characters": [
+        "HARPER",
+        "ELWOOD",
+        "TURNER"
+      ],
+      "dialogues": [
+        {
+          "character": "HARPER",
+          "parenthetical": "",
+          "text": "Turner here says you can keep your mouth shut, and that you’re not a math dummy."
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "What are we doing?"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "",
+          "text": "It’s taking things and making sure they end up where they’re supposed to end up in the end."
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "Uh-huh."
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "",
+          "text": "Sometimes the State gives us more than we strictly need. So we pass it on."
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "For a fee?"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "",
+          "text": "“Community Service”."
+        },
+        {
+          "character": "HARPER",
+          "parenthetical": "",
+          "text": "It used to be worse in the old days, from what my aunt says. But the State cracked down and now we only lay off the south campus stuff."
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "You mean the Negro students’ stuff."
+        },
+        {
+          "character": "HARPER",
+          "parenthetical": "",
+          "text": "We had this good ole boy who used to run Nickel, Roberts, who would’ve sold the air you breathe if he could’ve. Now that was a crook!"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "It had to end up somewhere."
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "",
+          "text": "Beats the fields. If you ask me."
+        },
+        {
+          "character": "HARPER",
+          "parenthetical": "",
+          "text": "Beats getting mangled in a machine."
+        }
+      ],
+      "actionPreview": "82 82 [CONTINUOUS] (D47) Elwood POV as they climb into the van’s front seat bench, Elwood beside the window, Turner in the middle, Harper at the wheel. Harper looks over at Elwood as he pulls out. Elwood looks over his shoulder at the back of the van: boxes of NOTEBOOKS, pencils, erasers, toothpaste"
+    },
+    {
+      "number": 71,
+      "heading": "EXT. NICKEL ACADEMY - INTAKE BUILDING - 1966 - DAY (D48)",
+      "characters": [
+        "SPENCER",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "SPENCER",
+          "parenthetical": "(O.S.)",
+          "text": "...you boys are in charge of everything. CONTINUED: 82"
+        },
+        {
+          "character": "SPENCER",
+          "parenthetical": "(O.S.) (CONT'D)",
+          "text": "(CONTINUED) 59."
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "84"
+        }
+      ],
+      "actionPreview": "83 83 Elwood POV walking down a paved walk, following an alligator at a distance as it takes and turn and lumbers toward the intake building. Elwood’s gaze is steady on the reptile, but he is also looking around for another witness as the alligator’s TAIL disappears inside the building. SPENCER’S VO"
+    },
+    {
+      "number": 72,
+      "heading": "INT. NICKEL ACADEMY - REC ROOM - 1966 - DAY (D49)",
+      "characters": [
+        "TURNER"
+      ],
+      "dialogues": [
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.)",
+          "text": "(sarcastic)"
+        }
+      ],
+      "actionPreview": "85 85 Elwood POV writing in a NOTEBOOK he got from the back of the Community Van. We get a glimpse of some dates, a list as Elwood’s gaze shifts to Black Mike crossing his field of vision toward Turner. CUT TO: Turner POV reading a dilapidated comic book. A shadow creeps over the page. He looks up t"
+    },
+    {
+      "number": 73,
+      "heading": "INT. NICKEL ACADEMY - DORMITORY -",
+      "characters": [
+        "SPENCER",
+        "TURNER",
+        "ELWOOD",
+        "JAIME",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "SPENCER",
+          "parenthetical": "(O.S.) (CONT'D)",
+          "text": "(CONTINUED) 59."
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "",
+          "text": "(mimicking Blakeley) “Keep your nose clean.”"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "I can smell it on him in the morning. Whoo..."
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "",
+          "text": "(in Spanish)"
+        },
+        {
+          "character": "JAIME",
+          "parenthetical": "",
+          "text": "(nodding)"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "",
+          "text": "You think he went here?"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "Huh?"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "",
+          "text": "They say his name’s in the sweatbox."
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "86"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "87"
+        }
+      ],
+      "actionPreview": "1966 - DAY (D49) 85A 85A Elwood POV from where he’s seated on a bed, of Turner walking a line of tiles on the dorm floor, trying to keep his balance like it’s a sobriety test. Jaime is also hanging out with them. CONTINUED: 83 83 CONTINUED: 85A 85A 60. Elwood and Jaime laugh. Turner adjusts an imagi"
+    },
+    {
+      "number": 74,
+      "heading": "INT. NICKEL ACADEMY - REC ROOM - 1966 - DAY (D49)",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "87A 87A Two boys are playing ping pong in the rec room when a small lizard suddenly runs across the table. The lizard crawls up the pants of a boy. CONTINUED: 85A 85A 60. (CONTINUED) 61."
+    },
+    {
+      "number": 75,
+      "heading": "EXT. NICKEL - GROUNDS - 1966 - LATE AFTERNOON (D50)",
+      "characters": [
+        "TURNER",
+        "ELWOOD",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.)",
+          "text": "My Aunt Mavis made sure I had nice clothes for school and three meals."
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "",
+          "text": "I guess I wouldn’t want them to visit, either. (pause) What about your real father?"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.)",
+          "text": "(shouting)"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(CONT'D)",
+          "text": "(completely freaking out)"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "89"
+        }
+      ],
+      "actionPreview": "88 88 Elwood POV sitting beside Turner on a lawn on the campus grounds. They’re just, sitting. SOUND of wind in the leaves. Birds. Sun dappling. A breath of peace. A guy at the Houston airport started seeing her. He taught me how to box. The day I put myself between Aunt Mavis and his fist, he took "
+    },
+    {
+      "number": 76,
+      "heading": "EXT. HARDEE HOUSE - PORCH - MARIANNA - 1966 - DAY (D51)",
+      "characters": [
+        "MRS. HARDEE",
+        "TURNER",
+        "ELWOOD"
+      ],
+      "dialogues": [
+        {
+          "character": "MRS. HARDEE",
+          "parenthetical": "",
+          "text": "(approaching)"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.)",
+          "text": "Thank you, Mrs. Hardee, don’t mind if I do."
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "",
+          "text": "Much obliged, ma’am."
+        },
+        {
+          "character": "MRS. HARDEE",
+          "parenthetical": "",
+          "text": "My great-grandfather built this place 106 years ago. My husband proposed to me right there. CONTINUED: 88"
+        },
+        {
+          "character": "MRS. HARDEE",
+          "parenthetical": "(CONT'D)",
+          "text": "You boys are so nice to help us out here."
+        },
+        {
+          "character": "MRS. HARDEE",
+          "parenthetical": "(CONT'D)",
+          "text": "Oh, almost forgot, I have a box of books to donate to the Nickel library."
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "",
+          "text": "We can help you with that."
+        },
+        {
+          "character": "MRS. HARDEE",
+          "parenthetical": "",
+          "text": "The box is in the garage-"
+        },
+        {
+          "character": "MRS. HARDEE",
+          "parenthetical": "(CONT'D)",
+          "text": "It’s Trollope and Austen and"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "",
+          "text": "My grandma once lent me out for ten cents to give Mrs. Lamont’s outhouse a new coat."
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.)",
+          "text": "Used to be worse around here. When you graduated you didn’t go back to your family, you had parole and they sold your monkey ass to people in the town. You had to work off your debt."
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "",
+          "text": "Debt from what? CUT TO:"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "",
+          "text": "I never thought about it that way. CONTINUED: 90"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "That ain’t no freedom. Director"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "",
+          "text": "All those guys on the school board have us do chores. Sometimes it’s favors, sometimes it’s for real money."
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "It’s against the law."
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "",
+          "text": "The law’s one thing. You can march and wave signs around and change a law if you convince enough white people. I saw the college kids in"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "My grandma got me that lawyer, man."
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "",
+          "text": "The courts play both the white and the black. They move us around when they ready. CONTINUED: (2) 90"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "We have to be knights. Checkmate."
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "",
+          "text": "How many people done that, El? Only four ways outta Nickel."
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(CONT'D)",
+          "text": "A hour late. Fly still open."
+        }
+      ],
+      "actionPreview": "90 90 Turner’s POV as he and Elwood paint the weathered, faded grey floorboards of a long porch than runs along the back of a big pink house with white trim and pillars. A sparkling blue swimming pool floats in a lush green lawn surrounded by banana trees, palms and a few pool umbrellas. An American"
+    },
+    {
+      "number": 77,
+      "heading": "INT. NICKEL - BARN - STALL/HIDING PLACE - 1966 - DAY (D52)",
+      "characters": [
+        "TURNER",
+        "ELWOOD",
+        "OMITTED",
+        "ARCHIVAL FOOTAGE"
+      ],
+      "dialogues": [
+        {
+          "character": "TURNER",
+          "parenthetical": "",
+          "text": "What’s it about?"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "A British mother is trying to marry off her oldest daughter to keep their estate and title."
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "",
+          "text": "No one wants to marry her? She ugly?"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "She’s described as having a handsome face."
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "",
+          "text": "Damn."
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(CONT'D)",
+          "text": "I know my mother loved me. She just loved liquor more."
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "92"
+        },
+        {
+          "character": "ARCHIVAL FOOTAGE",
+          "parenthetical": "",
+          "text": "92A"
+        }
+      ],
+      "actionPreview": "91 91 Faint SOUND of a ball game. Elwood’s POV, reading one of Mrs. Hardee’s donated books in Turner’s secret hiding place in a stall of the school’s dilapidated horse barn. Light streams down through the slats. Turner’s made a nest on the dirt floor among crates of industrial scrubbing powder, a pi"
+    },
+    {
+      "number": 78,
+      "heading": "EXT. HARDEE HOUSE - POOL - 1966 - DAY (D53)",
+      "characters": [
+        "MRS. HARDEE"
+      ],
+      "dialogues": [
+        {
+          "character": "MRS. HARDEE",
+          "parenthetical": "(O.S.)",
+          "text": "(very faintly audible)"
+        }
+      ],
+      "actionPreview": "93 93 Turner’s POV from underwater as he swims in the Hardee’s pool. Through the surface he sees Mrs. Hardee sitting in a chaise longue in a one-piece bathing suit, a floppy sun hat, and the Jackie sunglasses. She is cooling her neck with a paper fan. Elwood dips a foot in to check the temperature. "
+    },
+    {
+      "number": 79,
+      "heading": "INT. NICKEL ACADEMY - DORMITORY - 1966 - DAY (D54)",
+      "characters": [
+        "BLAKELEY",
+        "ELWOOD",
+        "TURNER",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "BLAKELEY",
+          "parenthetical": "",
+          "text": "(Army style)"
+        },
+        {
+          "character": "BLAKELEY",
+          "parenthetical": "(CONT'D)",
+          "text": "(alcohol on his breath)"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "",
+          "text": "Yes sir, Mr. Blakeley."
+        },
+        {
+          "character": "BLAKELEY",
+          "parenthetical": "",
+          "text": "(unexpectedly quotes Dr."
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.)",
+          "text": "(tentative; guilty)"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "",
+          "text": "She says she visited and they wouldn’t let her see me. (reading) “He’s sick and can’t have no visitors.” “What’s wrong with him?” “How the hell should I know, lady?” (freaking out completely) How can they do that! Sick?"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "95"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "95A"
+        }
+      ],
+      "actionPreview": "94 94 Turner’s POV as Blakeley, tipsy, enters the dorm room with the monthly mail call. The boys are sitting on their beds, trading Negro League baseball cards, playing rummy. Elwood’s writing in his notebook. Desmond! Chickie Pete! Elwood! Turner sees Elwood look up from his notebook and go to get "
+    },
+    {
+      "number": 80,
+      "heading": "EXT. NICKEL - BOOT HILL - 1966 - DAY (D55)",
+      "characters": [
+        "TURNER",
+        "ELWOOD"
+      ],
+      "dialogues": [
+        {
+          "character": "TURNER",
+          "parenthetical": "",
+          "text": "Bones’d break before they come loose."
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "They’ve grown into the heart of the wood."
+        }
+      ],
+      "actionPreview": "96 96 Elwood’s POV as Turner leads him to the iron rings used to restrain boys to two trees on Boot Hill. Elwood moves closer, drawn by some discernible movement on them. There are ANTS crawling in and around and on the iron. Beat."
+    },
+    {
+      "number": 81,
+      "heading": "INT. NICKEL - BARN - STALL/HIDING PLACE - 1966 - DAY (D56)",
+      "characters": [
+        "ELWOOD",
+        "TURNER",
+        "GRIFF",
+        "SPENCER"
+      ],
+      "dialogues": [
+        {
+          "character": "ELWOOD",
+          "parenthetical": "",
+          "text": "My mother’s watch."
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.)",
+          "text": "A deck of marked cards."
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "",
+          "text": "Percy’s purple heart. Well, he threw it away. Feels like I lost it, though."
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.)",
+          "text": "My big toenail."
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "",
+          "text": "That’s all you got?"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.)",
+          "text": "(joking)"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "",
+          "text": "Makes you one dangerous mothaf-"
+        },
+        {
+          "character": "GRIFF",
+          "parenthetical": "(O.S.)",
+          "text": "-Yes, sir. (confused) Sir?"
+        },
+        {
+          "character": "SPENCER",
+          "parenthetical": "(O.S.)",
+          "text": "...good sportsmanship means sometimes letting the other team win. CUT TO:"
+        },
+        {
+          "character": "SPENCER",
+          "parenthetical": "(CONT'D)",
+          "text": "Sometimes."
+        },
+        {
+          "character": "GRIFF",
+          "parenthetical": "",
+          "text": "(not getting it) I suppose that’s right, Mr."
+        },
+        {
+          "character": "SPENCER",
+          "parenthetical": "",
+          "text": "Griff, are you receiving me clearly?"
+        },
+        {
+          "character": "GRIFF",
+          "parenthetical": "",
+          "text": "You mean- throw the fight? Lose?"
+        },
+        {
+          "character": "SPENCER",
+          "parenthetical": "",
+          "text": "Third round. Am I getting through to you? You got that now?"
+        },
+        {
+          "character": "GRIFF",
+          "parenthetical": "",
+          "text": "Yessir, Mr. Spencer."
+        },
+        {
+          "character": "SPENCER",
+          "parenthetical": "",
+          "text": "All right then."
+        },
+        {
+          "character": "SPENCER",
+          "parenthetical": "(O.S.) (CONT'D)",
+          "text": "...spirit of the Season of Giving,"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "",
+          "text": "Ain’t that some shit?"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "Don’t people bet on this- CONTINUED: 97"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "",
+          "text": "(angry)"
+        }
+      ],
+      "actionPreview": "97 97 Turner POV. He and Elwood are hanging out in the secret hiding place in the stall of the old horse barn. Beat. Really got nothing left to lose, ha. They freeze. SOUND of people entering the barn, talking. (CONTINUED) 68. CONTINUED: 97 97 (CONTINUED) 69. Elwood POV as he and Turner look through"
+    },
+    {
+      "number": 82,
+      "heading": "INT. NICKEL ACADEMY - CLASSROOM - 1966 - DAY (D57)",
+      "characters": [
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "98A"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "98B"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "99"
+        }
+      ],
+      "actionPreview": "98 98 Elwood POV as he watches an ANT march along the window sill. He looks out the window, through the trees, to the campus statue that some kids are painting white, and beyond to the pristine buildings of the white boys’ side of campus. 98A 98B 99"
+    },
+    {
+      "number": 83,
+      "heading": "INT. NICKEL - SMALL GYMNASIUM - BOXING MATCH - 1966 -",
+      "characters": [
+        "ELWOOD",
+        "TURNER",
+        "CHICKIE PETE",
+        "BLACK MIKE",
+        "COREY",
+        "GRIFF",
+        "ADULT ELWOOD"
+      ],
+      "dialogues": [
+        {
+          "character": "ELWOOD",
+          "parenthetical": "",
+          "text": "Damn... (pause) look at Griff strut."
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.)",
+          "text": "If I got all this respect... when’s the next time fools who hate and fear you are going to treat you like Harry Belafonte? SOUND of thuds and thumps as gloves meet bodies, skin on sweating skin. CUT TO:"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "Do you think he’ll knock him down? CUT TO:"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.) (CONT'D)",
+          "text": "Turner, that’s a hundred dollar bill! CUT TO:"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.)",
+          "text": "Yep. Fat cats from all three counties. Stakes get higher every year. CUT TO:"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(CONT'D)",
+          "text": "Cracker looks like Frankenstein."
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.)",
+          "text": "Third round. This is it."
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "",
+          "text": "(O.S.)"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "",
+          "text": "This is it El. CUT TO:"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "Damn. You don’t think... Griff could knock out Big Chet by accident? CUT TO:"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "",
+          "text": "Jab! Jab! Roll that shoulder. Left, left hook, Griff!"
+        },
+        {
+          "character": "CHICKIE PETE",
+          "parenthetical": "",
+          "text": "Witchdoctor give him the whole bucket of aspirin and he’ll still have a headache! WHITE BOY 3 (O.S.)"
+        },
+        {
+          "character": "BLACK MIKE",
+          "parenthetical": "",
+          "text": "(screaming at Big Chet)"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "",
+          "text": "He’s making it look good for sure."
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.) (CONT'D)",
+          "text": "He’s putting a hurt on that white boy at least before he goes down, makes me feel all right."
+        },
+        {
+          "character": "COREY",
+          "parenthetical": "",
+          "text": "(stuttering) KKKkkk’s gonna be crying under their hoods all week!"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "",
+          "text": "(expecting Griff to throw)"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "",
+          "text": "(O.S.) (CONT'D)"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "... Turner-"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.) (CONT'D)",
+          "text": "...Turner!"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(CONT'D)",
+          "text": "(almost completely drowned out; lips moving)"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(CONT'D)",
+          "text": "(alarmed)"
+        },
+        {
+          "character": "GRIFF",
+          "parenthetical": "",
+          "text": "(screaming to Spencer) I thought it was still the second! I thought it was the second!"
+        },
+        {
+          "character": "ADULT ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "(humming only) I'm, I'm dream-ing, dreaming of a white, white Christmas. Just like the ones I used to know-wo..."
+        }
+      ],
+      "actionPreview": "100 100 NIGHT (N58) The roar of the crowd in the gym where the fight is already underway. SOUND of the bell ending round “1”. From where he’s seated in a row of chairs, Elwood’s POV of SPENCER across the ring on the other side as he stands up and points into the crowd. Elwood turns to look where Spe"
+    },
+    {
+      "number": 84,
+      "heading": "INT. RESTAURANT KITCHEN - HARLEM - 1968 - NIGHT (N-FF3)",
+      "characters": [
+        "ADULT ELWOOD"
+      ],
+      "dialogues": [
+        {
+          "character": "ADULT ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "(humming only) ...Honey, it's where the treetops, treetops glisten Little bitty, little bitty, little bitty children, they'll try to listen..."
+        },
+        {
+          "character": "ADULT ELWOOD",
+          "parenthetical": "(O.S.) (CONT'D)",
+          "text": "(humming only) ...To hear, hear for the sleigh bells that are ringing in the snow- wo-wo."
+        }
+      ],
+      "actionPreview": "101 101 ... continuing over into Adult Elwood’s (18) POV into the large industrial sink of a Harlem NY restaurant kitchen. One of his hands is underwater holding a plate up, and the other is washing it in a circular motion. The radio is on a shelf above him. Bustling restaurant kitchen SOUNDS all ar"
+    },
+    {
+      "number": 85,
+      "heading": "EXT. NICKEL ACADEMY - GROUNDS - 1966 - DUSK (D59)",
+      "characters": [
+        "OMITTED",
+        "ASTRONAUT"
+      ],
+      "dialogues": [
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "103"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "104"
+        },
+        {
+          "character": "ASTRONAUT",
+          "parenthetical": "(V.O.)",
+          "text": "(Apollo 8, December 24th 1968, orbiting the moon) I hope that all of you back on"
+        },
+        {
+          "character": "ASTRONAUT",
+          "parenthetical": "(V.O.) (CONT'D)",
+          "text": "(MORE) (CONTINUED) 79."
+        }
+      ],
+      "actionPreview": "102 102 Elwood POV watching some Black boys sitting on each other’s shoulders circling a tall tree, garlanding Christmas tinsel and colored lights around it, in a slow, impressive spiral moving down the widening girth of the tree. 103 104 ARCHIVAL FOOTAGE - 1960S 105 105 Color 8mm home movie footage"
+    },
+    {
+      "number": 86,
+      "heading": "INT. RESTAURANT KITCHEN - HARLEM - 1968 - NIGHT (N-FF3)",
+      "characters": [
+        "ASTRONAUTS",
+        "ASTRONAUT",
+        "WAITER",
+        "ADULT ELWOOD"
+      ],
+      "dialogues": [
+        {
+          "character": "ASTRONAUTS",
+          "parenthetical": "(O.S.)",
+          "text": "- In the beginning God created the heaven and the earth. And the earth was without form, and void; and darkness was upon the face of the deep. And the Spirit of God moved upon the face of the waters. And"
+        },
+        {
+          "character": "ASTRONAUT",
+          "parenthetical": "(V.O.) (CONT'D)",
+          "text": "(MORE) (CONTINUED) 79."
+        },
+        {
+          "character": "ASTRONAUTS",
+          "parenthetical": "(O.S.) (CONT'D)",
+          "text": "(CONTINUED) 80."
+        },
+        {
+          "character": "WAITER",
+          "parenthetical": "(O.S.)",
+          "text": "Saved 1968."
+        },
+        {
+          "character": "ADULT ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "Ain’t no saving 1968."
+        }
+      ],
+      "actionPreview": "106 106 ... and combines with the ever fainter background SOUNDS of a busy kitchen around Adult Elwood POV. His hands are underwater in a deep sink, watching one bubble in particular that has grown in size and stands above the others. He moves in a bit closer for a concentrated view of its curve. Th"
+    },
+    {
+      "number": 87,
+      "heading": "EXT. NICKEL ACADEMY - GROUNDS - 1966 - DAY (D60)",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "108 108 Turner’s POV from a distance, of the torso of an enormous red and white papier-mâché Santa Claus, with outstretched arms and mittened hands, lying at the foot of a large oak tree. Head nowhere in sight."
+    },
+    {
+      "number": 88,
+      "heading": "EXT. NICKEL ACADEMY - GROUNDS - 1966 - NIGHT (N60)",
+      "characters": [
+        "TURNER",
+        "ASTRONAUTS"
+      ],
+      "dialogues": [
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.)",
+          "text": "The first Christmas here is the hardest. CONTINUED: 107"
+        },
+        {
+          "character": "ASTRONAUTS",
+          "parenthetical": "(O.S.) (CONT'D)",
+          "text": "(CONTINUED) 80."
+        }
+      ],
+      "actionPreview": "109 109 Elwood POV standing near the base of a large tree waiting for something. He watches five boys walking in the darkness toward him down the large main drive of Nickel. In the background, three white boys equipped with flashlights are walking toward their side of campus. SOUND of distant voices"
+    },
+    {
+      "number": 89,
+      "heading": "EXT. NICKEL ACADEMY - GROUNDS - 1967 - DAY (D61)",
+      "characters": [
+        "ELWOOD",
+        "COREY",
+        "HATTIE"
+      ],
+      "dialogues": [
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "Nanna."
+        },
+        {
+          "character": "COREY",
+          "parenthetical": "(O.S.)",
+          "text": "(no stutter)"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "It’s been a long wait for some good news."
+        },
+        {
+          "character": "HATTIE",
+          "parenthetical": "",
+          "text": "Lyndon Johnson’s carrying on"
+        },
+        {
+          "character": "HATTIE",
+          "parenthetical": "(CONT'D)",
+          "text": "(MORE) (CONTINUED) 82."
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "Huh, yeah."
+        },
+        {
+          "character": "HATTIE",
+          "parenthetical": "",
+          "text": "I’m sure Melvin Briggs will have you. And those books you were reading ain’t gone nowhere."
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "Hmm."
+        },
+        {
+          "character": "HATTIE",
+          "parenthetical": "",
+          "text": "I’ve been taking less work and spending more time at the church."
+        },
+        {
+          "character": "COREY",
+          "parenthetical": "",
+          "text": "You look b-beautiful, mama."
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "Nanna, what is it? What’s wrong?"
+        },
+        {
+          "character": "HATTIE",
+          "parenthetical": "",
+          "text": "El, he’s gone. Mr. Andrews, you know, our lawyer who’s so optimistic about your appeal- I went downtown to see him, I took the bus. I had paid him $200 which wasn’t enough. CONTINUED: 110"
+        },
+        {
+          "character": "HATTIE",
+          "parenthetical": "(CONT'D)",
+          "text": "(MORE) (CONTINUED) 82."
+        },
+        {
+          "character": "HATTIE",
+          "parenthetical": "(CONT'D)",
+          "text": "(CONTINUED) 83."
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "You mean he’s gone... he didn’t... after all this time..."
+        },
+        {
+          "character": "HATTIE",
+          "parenthetical": "",
+          "text": "The landlord was showing the office to a dentist. When I asked for Mr."
+        },
+        {
+          "character": "HATTIE",
+          "parenthetical": "(CONT'D)",
+          "text": "He took that $300. And he"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "It’s okay, Nanna."
+        },
+        {
+          "character": "HATTIE",
+          "parenthetical": "(O.S.)",
+          "text": "I let you down, El."
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "I’m okay Nanna. I’m hanging in there."
+        },
+        {
+          "character": "HATTIE",
+          "parenthetical": "(O.S.)",
+          "text": "You got any friends? How about"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "(taken aback)"
+        },
+        {
+          "character": "HATTIE",
+          "parenthetical": "",
+          "text": "(oblivious) I didn’t know how I was gonna get you that package, that day-"
+        },
+        {
+          "character": "HATTIE",
+          "parenthetical": "(CONT'D)",
+          "text": "(CONTINUED) 83."
+        },
+        {
+          "character": "HATTIE",
+          "parenthetical": "(CONT'D)",
+          "text": "(oblivious) -and there he was. I like him, he’s polite, looked me in the eye. That was a real kindness..."
+        }
+      ],
+      "actionPreview": "110 110 Elwood POV from where he’s seated at an empty picnic table he’s staked out under a tree. Families are gathering at two or three other tables on this warm winter afternoon. It’s a visiting day. Elwood sees Hattie before she sees him. She looks years older, walking slowly toward the area. She’"
+    },
+    {
+      "number": 90,
+      "heading": "EXT. NICKEL ACADEMY - GROUNDS - 1967 - DAY (D61)",
+      "characters": [
+        "TURNER",
+        "ELWOOD"
+      ],
+      "dialogues": [
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.)",
+          "text": "I’m sorry, El. I don’t know why I didn’t give you that letter. I guess I was..."
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "",
+          "text": "It’s okay, Turner. Doesn’t matter now anyway."
+        }
+      ],
+      "actionPreview": "111 111 Turner POV standing near a seated Elwood, watching as Elwood twists an oak leaf and pulls the leafy parts off bit by bit. He contemplates what remains of the leaf, the skeleton and stem. Four sections torn away. A fifth section of leaf is still there clinging to the stem, in the deafening si"
+    },
+    {
+      "number": 91,
+      "heading": "INT. WIDOWER APARTMENT - NEW YORK - 1975 - DAY (D-FF4)",
+      "characters": [
+        "LARRY",
+        "ADULT ELWOOD",
+        "WIDOWER",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "LARRY",
+          "parenthetical": "",
+          "text": "Elwood this might be solid brass, man. (beat) I got dibs on this."
+        },
+        {
+          "character": "ADULT ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "(shushing him)"
+        },
+        {
+          "character": "LARRY",
+          "parenthetical": "",
+          "text": "In this bed?"
+        },
+        {
+          "character": "WIDOWER",
+          "parenthetical": "",
+          "text": "(softly; directly to Adult"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "113"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "114"
+        }
+      ],
+      "actionPreview": "112 112 Adult Elwood POV looking down through an empty bed frame at the faded ghostly outline of a leaf, formed from being pressed a very long time against the floor. The bed starts to rise, as if levitating. Adult Elwood looks up to see his colleague LARRY (20s, burly, Black) wearing a jumpsuit tha"
+    },
+    {
+      "number": 92,
+      "heading": "EXT. STREET [UNDER PORTICO] - MARIANNA - 1967 - DAY (D62)",
+      "characters": [
+        "ELWOOD",
+        "TURNER"
+      ],
+      "dialogues": [
+        {
+          "character": "ELWOOD",
+          "parenthetical": "",
+          "text": "We can walk around?"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "",
+          "text": "We don’t got to make a scene, but yeah."
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "",
+          "text": "It’s weird being out here."
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "",
+          "text": "Wait until you’re out-out."
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "",
+          "text": "How would you do it?"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "",
+          "text": "(understanding the question immediately) CONTINUED: 112"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(CONT'D)",
+          "text": "(CONTINUED) 86."
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "... so what"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "",
+          "text": "So I’d head out here into the free world, snatch clothes from a wash line. Head South, because they ain’t expecting it. Put as many miles between me and the dogs as I can, tire them out. The trick is not doing what they"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "Yeah, well why wouldn’t they know you trying not to do what they think you going to-"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "",
+          "text": "-and don’t take no one with you."
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "",
+          "text": "(smiling)"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "",
+          "text": "(smiling)"
+        }
+      ],
+      "actionPreview": "115 115 Elwood POV is under a portico, looking up at himself and Turner in the reflective surface of its underside. Don’t look scared. The white people of Marianna are eyeing them as they pass to and fro on the sidewalk, trying to account for the two unescorted Black boys in their state-issued unifo"
+    },
+    {
+      "number": 93,
+      "heading": "EXT. MAIN STREET SIDEWALK - MARIANNA - 1967 - DAY (D62)",
+      "characters": [
+        "TURNER",
+        "ELWOOD"
+      ],
+      "dialogues": [
+        {
+          "character": "TURNER",
+          "parenthetical": "(CONT'D)",
+          "text": "(CONTINUED) 86."
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.)",
+          "text": "(panicking)"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.) (CONT'D)",
+          "text": "What happened to not making a scene? You think Rev’rend King’s out here in Mariana opening supermarkets?"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "",
+          "text": "(O.S.) (CONT'D)"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "",
+          "text": "I’ve been writing everything down."
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.)",
+          "text": "Everything what?"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "",
+          "text": "Our ‘community service’ (beat) The deliveries, the pay-offs, the yard work, the chores. The names of everybody and the dates."
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.)",
+          "text": "Why would you do a thing like that?"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "",
+          "text": "You told me. No one else can get me out of here, just me. CONTINUED: 115A"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.)",
+          "text": "Nobody ever listens to me, why you got to start?"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "",
+          "text": "It’s not an obstacle course,"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "",
+          "text": "I get it, you mad and need to get it off your chest, that’s cool, but-"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "-I’m telling you. There’s a fifth way out: Get. Rid. Of. Nickel."
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "",
+          "text": "They put us in the goddamn ground!"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        }
+      ],
+      "actionPreview": "115A 115A Turner’s POV walking with Elwood, sees Elwood’s demeanor change as he suddenly notices something on the other side of the street. He darts into the road, moving through the traffic diagonally across the street. A car HONKS at him. CONTINUED: 115 115 CONTINUED: 115A 115A (CONTINUED) 87. Elw"
+    },
+    {
+      "number": 94,
+      "heading": "INT. NICKEL ACADEMY - REC ROOM - 1967 - DAY (D63)",
+      "characters": [
+        "ELWOOD"
+      ],
+      "dialogues": [
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "This, or this?"
+        }
+      ],
+      "actionPreview": "116 116 Turner’s POV, standing over a chessboard, as he holds out first one clenched fist then another to Turner. CONTINUED: (2) 115A 115A (CONTINUED) 88. CONTINUED: 116 116 (CONTINUED) 89. Turner tilts his head up, looks at Elwood, then looks back down at Elwood’s balled fists. Turner abruptly grab"
+    },
+    {
+      "number": 95,
+      "heading": "INT. LIVING AREA - TENEMENT APARTMENT - NYC - 1975 - DUSK",
+      "characters": [
+        "DENISE",
+        "ADULT ELWOOD",
+        "ARCHIVAL FOOTAGE",
+        "SIDNEY POITIER"
+      ],
+      "dialogues": [
+        {
+          "character": "DENISE",
+          "parenthetical": "(O.S.)",
+          "text": "(entering)"
+        },
+        {
+          "character": "ADULT ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "What?"
+        },
+        {
+          "character": "DENISE",
+          "parenthetical": "",
+          "text": "This rat ran across my feet and I screamed. That was me."
+        },
+        {
+          "character": "ADULT ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "Denise. Hathor. Scared of a little ole rodent."
+        },
+        {
+          "character": "DENISE",
+          "parenthetical": "",
+          "text": "Sh-, was big as a dog. (beat)"
+        },
+        {
+          "character": "ADULT ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "Maybe it was a dog. ADULT ELWOOD uncrinkles a flyer from a laundromat. CONTINUED: 116"
+        },
+        {
+          "character": "ADULT ELWOOD",
+          "parenthetical": "(O.S.) (CONT'D)",
+          "text": "Found one, a ‘67 Econoline. Needs a new finish, but the guys on 125th owe me one. I can supplement the"
+        },
+        {
+          "character": "DENISE",
+          "parenthetical": "",
+          "text": "You think you can really count on him?"
+        },
+        {
+          "character": "ADULT ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "Larry bellyaching about this child support is about as dependable as US Steel. If there is one thing he’ll do, it’s work."
+        },
+        {
+          "character": "DENISE",
+          "parenthetical": "",
+          "text": "That’s great El. It’s really happening. What’ll you call it?"
+        },
+        {
+          "character": "ADULT ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "Not sure yet, something easy to find in the Yellow Pages."
+        },
+        {
+          "character": "DENISE",
+          "parenthetical": "",
+          "text": "There’s some rum in that. I got us some sandwiches, too."
+        },
+        {
+          "character": "ADULT ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "Baby, I’ll get it."
+        },
+        {
+          "character": "DENISE",
+          "parenthetical": "",
+          "text": "But your back?"
+        },
+        {
+          "character": "ADULT ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "Just keep those hands ready."
+        },
+        {
+          "character": "ADULT ELWOOD",
+          "parenthetical": "(O.S.) (CONT'D)",
+          "text": "Whoever invented these deserves a"
+        },
+        {
+          "character": "DENISE",
+          "parenthetical": "",
+          "text": "Oh it already started."
+        },
+        {
+          "character": "ADULT ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "“You’re married to me, now - here’s the ring.”"
+        },
+        {
+          "character": "DENISE",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "ARCHIVAL FOOTAGE",
+          "parenthetical": "",
+          "text": "118"
+        },
+        {
+          "character": "SIDNEY POITIER",
+          "parenthetical": "",
+          "text": "(on the TV)"
+        },
+        {
+          "character": "DENISE",
+          "parenthetical": "(O.S.)",
+          "text": "You should watch what you say, El. (beat) I’d marry Sidney Poitier. ARCHIVAL FOOTAGE - 1970S 119"
+        }
+      ],
+      "actionPreview": "117 117 (D-FF5) Adult Elwood (25) POV of a TV screen in the living area of a tenement apartment. The local NYC station is playing the sequence of images of 1970s New York landmarks at night that opens the “Million Dollar Movie” of the week. SOUNDS of the big city outside. It’s a wintry day, the radi"
+    },
+    {
+      "number": 96,
+      "heading": "INT. COMMUNITY SERVICE VAN - GROUNDS - NICKEL - 1967 -",
+      "characters": [
+        "HARPER",
+        "ELWOOD"
+      ],
+      "dialogues": [
+        {
+          "character": "HARPER",
+          "parenthetical": "(O.S.)",
+          "text": "Where’s he going?"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "(calling after him)"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.) (CONT'D)",
+          "text": "Turner! (yelling) You have the key?"
+        },
+        {
+          "character": "HARPER",
+          "parenthetical": "",
+          "text": "(sharply)"
+        },
+        {
+          "character": "HARPER",
+          "parenthetical": "(CONT'D)",
+          "text": "(muttering in disbelief)"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "Give him a break."
+        },
+        {
+          "character": "HARPER",
+          "parenthetical": "",
+          "text": "(whipping his head around to him)"
+        }
+      ],
+      "actionPreview": "120 120 NIGHT (N64) Elwood’s POV from the front seat of the Community Service van as they drive along a gravel road through fog on the Nickel Grounds. Harper pulls up to a padlocked storehouse. Turner gets out and walks away. Turner!... CONTINUED: (2) 117 117 (CONTINUED) 91. CONTINUED: 120 120 (CONT"
+    },
+    {
+      "number": 97,
+      "heading": "INT. NICKEL ACADEMY - DORMITORY - 1967 - NIGHT (N65)",
+      "characters": [
+        "TURNER",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.)",
+          "text": "(shocked)"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.) (CONT'D)",
+          "text": "(afraid)"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "122"
+        }
+      ],
+      "actionPreview": "121 121 Turner POV awakening to the ROAR of the White House fan. He looks over to Elwood’s bed across the room, and it’s empty. He walks across the room, looks under the bed, catching a glimpse of the legs of someone who is sliding out and climbing up to the top on the other side. Turner steps back "
+    },
+    {
+      "number": 98,
+      "heading": "INT. BAR - NEW YORK - 1988 - DAY (D-FF6)",
+      "characters": [
+        "ADULT CHICKIE PETE",
+        "ADULT ELWOOD",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "ADULT CHICKIE PETE",
+          "parenthetical": "",
+          "text": "(surprised)"
+        },
+        {
+          "character": "ADULT CHICKIE PETE",
+          "parenthetical": "(CONT'D)",
+          "text": "(grinning)"
+        },
+        {
+          "character": "ADULT ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "(guarded; trying to place him)"
+        },
+        {
+          "character": "ADULT CHICKIE PETE",
+          "parenthetical": "",
+          "text": "It’s me, man, Pete Evans... Chickie"
+        },
+        {
+          "character": "ADULT ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "Chickie Pete. You look good."
+        },
+        {
+          "character": "ADULT CHICKIE PETE",
+          "parenthetical": "",
+          "text": "Damn. Shit man. Been ages! Beer? On me?"
+        },
+        {
+          "character": "ADULT ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "(shifting to stand) I got an early morning-"
+        },
+        {
+          "character": "ADULT CHICKIE PETE",
+          "parenthetical": "",
+          "text": "Naw naw man, you gotta let me buy you a beer."
+        },
+        {
+          "character": "ADULT CHICKIE PETE",
+          "parenthetical": "(CONT'D)",
+          "text": "...I mighta played professional, if things had been different."
+        },
+        {
+          "character": "ADULT ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "You think so? CONTINUED: 123"
+        },
+        {
+          "character": "ADULT CHICKIE PETE",
+          "parenthetical": "",
+          "text": "(smacks his lips)"
+        },
+        {
+          "character": "ADULT CHICKIE PETE",
+          "parenthetical": "(CONT'D)",
+          "text": "... I coulda been in a funk band, an orch-est-ra! Ha. Haydn, Bach"
+        },
+        {
+          "character": "ADULT ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "(fascinated)"
+        },
+        {
+          "character": "ADULT CHICKIE PETE",
+          "parenthetical": "",
+          "text": "It’s how I got started cooking."
+        },
+        {
+          "character": "ADULT CHICKIE PETE",
+          "parenthetical": "(CONT'D)",
+          "text": "I just spent 30 days drying out."
+        },
+        {
+          "character": "ADULT ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "Oh..."
+        },
+        {
+          "character": "ADULT CHICKIE PETE",
+          "parenthetical": "",
+          "text": "It’s okay I can handle it now. I always drank. Then it was like the more I tried to settle down, the more I got blotto every night."
+        },
+        {
+          "character": "ADULT CHICKIE PETE",
+          "parenthetical": "(CONT'D)",
+          "text": "(CONTINUED) 96."
+        },
+        {
+          "character": "ADULT ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "I got a moving company, trucks, employees."
+        },
+        {
+          "character": "ADULT CHICKIE PETE",
+          "parenthetical": "",
+          "text": "My man! Moving on up! You got a lady?"
+        },
+        {
+          "character": "ADULT ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "No. I mean, I did, but it didn’t work out. “Denise.” She said I had a lotta work to do on myself."
+        },
+        {
+          "character": "ADULT CHICKIE PETE",
+          "parenthetical": "",
+          "text": "I hear you, I hear you. Hard to find somebody who could understand."
+        },
+        {
+          "character": "ADULT ELWOOD",
+          "parenthetical": "",
+          "text": "Yeah, I’m still looking for the “one”. Maybe some day."
+        },
+        {
+          "character": "ADULT CHICKIE PETE",
+          "parenthetical": "",
+          "text": "You seen any of the guys? I’ve ran into some over the years. Black"
+        },
+        {
+          "character": "ADULT ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "(incredulous)"
+        },
+        {
+          "character": "ADULT CHICKIE PETE",
+          "parenthetical": "",
+          "text": "Remember what? CONTINUED: (3) 123"
+        },
+        {
+          "character": "ADULT CHICKIE PETE",
+          "parenthetical": "(CONT'D)",
+          "text": "(CONTINUED) 96."
+        },
+        {
+          "character": "ADULT ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "(sore now)"
+        },
+        {
+          "character": "ADULT CHICKIE PETE",
+          "parenthetical": "",
+          "text": "What? Shit, I remember what they did to Griff. Sshhitt. What they did to me. (beat) When they stuffed that kid in the big dryer. (dark chuckle to himself) And the one they made eat a lightbulb, ha. You know what I remember?! The effing ghost... man, slipping on skin, flesh, whatever the hell it was in the shower. Yeah. What else you want me to remember?"
+        },
+        {
+          "character": "ADULT ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "(gate firmly shut) -Nothing. Time served. And they kicked me out. (beat) I went up to"
+        },
+        {
+          "character": "ADULT CHICKIE PETE",
+          "parenthetical": "",
+          "text": "Yeah, that’s nice. Everybody’s welcomed here... what happened to that kid you used to hang around with all the time?"
+        },
+        {
+          "character": "ADULT ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "Which kid?"
+        },
+        {
+          "character": "ADULT CHICKIE PETE",
+          "parenthetical": "",
+          "text": "The kid, you know- y’all thought that hiding place was so secret."
+        },
+        {
+          "character": "ADULT ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "Hmm."
+        },
+        {
+          "character": "ADULT CHICKIE PETE",
+          "parenthetical": "",
+          "text": "Gotta take a leak, it’ll come back to me."
+        },
+        {
+          "character": "ADULT ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "I got to go, man."
+        },
+        {
+          "character": "ADULT CHICKIE PETE",
+          "parenthetical": "",
+          "text": "No no, I hear you, me too. (pause) I don’t want to ask. But if you’re looking for a hand, I could use the job. I’m sleeping on a couch."
+        },
+        {
+          "character": "ADULT ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "Right."
+        },
+        {
+          "character": "ADULT CHICKIE PETE",
+          "parenthetical": "",
+          "text": "You have a card?"
+        },
+        {
+          "character": "ADULT ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "Not on me."
+        },
+        {
+          "character": "ADULT CHICKIE PETE",
+          "parenthetical": "",
+          "text": "I can handle the work, is what I’m putting out there."
+        },
+        {
+          "character": "ADULT CHICKIE PETE",
+          "parenthetical": "(CONT'D)",
+          "text": "You ring me up- for the old days."
+        },
+        {
+          "character": "ADULT ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "I will."
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "124"
+        }
+      ],
+      "actionPreview": "123 123 Adult Elwood (38) POV seated on a stool watching a TV above the bar that’s showing the end of the NY Marathon. A steady stream of sinewy runners is finishing. TV camera crews in small vehicles trail them, white cops on motorcycles. The spectators lining the course are all types of people: Bl"
+    },
+    {
+      "number": 99,
+      "heading": "INT. NICKEL - INTAKE BUILDING - 1967 - DAY (D66)",
+      "characters": [
+        "BLAKELEY"
+      ],
+      "dialogues": [
+        {
+          "character": "BLAKELEY",
+          "parenthetical": "",
+          "text": "You boys mess up, it’s your ass."
+        },
+        {
+          "character": "BLAKELEY",
+          "parenthetical": "(CONT'D)",
+          "text": "They do this inspection shit, we counting on you. Spit-shine ‘em good."
+        }
+      ],
+      "actionPreview": "125 125 Turner POV of the boys lining up in the basement of the intake building, getting fresh uniforms from Nickel staff under the oversight of Blakeley, who is unusually sober. You know Mr. Spencer will have it in for you if he catches your shirt untucked or your dirty drawers hanging out of a foo"
+    },
+    {
+      "number": 100,
+      "heading": "EXT. NICKEL ACADEMY - GROUNDS - 1967 - DAY (D66)",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "126 126 Turner POV as he walks around the outside of a building that’s being painted. SOUND of a paint can falling from the scaffolding behind him, accompanied by boys’ voices. Still walking, he does a 180 degree turn to look behind him. Strangely there’s no one there. He turns back around and almos"
+    },
+    {
+      "number": 101,
+      "heading": "INT. ADULT ELWOOD’S APARTMENT - NY - 2018 - DAY (D-FF7)",
+      "characters": [
+        "ADULT ELWOOD",
+        "MILLIE"
+      ],
+      "dialogues": [
+        {
+          "character": "ADULT ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "They’re asking people to come forward. SOUND of a mouse click. CUT TO:"
+        },
+        {
+          "character": "MILLIE",
+          "parenthetical": "",
+          "text": "Babe, you found all this? SOUND of a mouse click. CUT TO:"
+        },
+        {
+          "character": "ADULT ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "They’re digging. I’m digging. SOUND of a mouse click. CUT TO:"
+        }
+      ],
+      "actionPreview": "127 127 Adult Elwood’s POV of an image on a computer screen: A color newspaper photograph in the local Marianna newspaper of a VERY OLD WHITE MAN, leaning on a cane on his porch. CONTINUED: (6) 123 123 (CONTINUED) 99. CONTINUED: 127 127 100. The headline reads: “Good Citizen of the Year”. The man is"
+    },
+    {
+      "number": 102,
+      "heading": "EXT. NICKEL ACADEMY - GROUNDS - 1967 - DAY (D66)",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "128 128 Turner’s POV as he hauls a bucket of tools out of the back of the Community Service van and brings them to Harper, who is snappily dressed and leaning against the side of the truck, striking a match and lighting a cigarette like he’s James Dean. Turner bends to set the bucket down beside Har"
+    },
+    {
+      "number": 103,
+      "heading": "INT. NICKEL ACADEMY - DINING HALL - 1967 - DAY (D66)",
+      "characters": [
+        "DESMOND",
+        "BLACK MIKE",
+        "BOYS",
+        "BLAKELEY",
+        "TURNER",
+        "ELWOOD"
+      ],
+      "dialogues": [
+        {
+          "character": "DESMOND",
+          "parenthetical": "",
+          "text": "(shoveling food)"
+        },
+        {
+          "character": "BLACK MIKE",
+          "parenthetical": "",
+          "text": "Nobody talking now. Eat."
+        },
+        {
+          "character": "BOYS",
+          "parenthetical": "",
+          "text": "(all at once) ICE CREAM!!!!!!!"
+        },
+        {
+          "character": "BLAKELEY",
+          "parenthetical": "",
+          "text": "Keep it down! You want them to think this is some kind of circus we’re running here? (muttering) Y’all act like you never had ice cream before."
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.)",
+          "text": "What you gonna do? (beat) Elwood..."
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.) (CONT'D)",
+          "text": "What you gonna do?"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.) (CONT'D)",
+          "text": "What you think they going to do?"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.) (CONT'D)",
+          "text": "You think anyone cares what’s going on at Nickel?"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.) (CONT'D)",
+          "text": "This is just one place. There are"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "",
+          "text": "How long we got to keep murdering ourselves?!"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(CONT'D)",
+          "text": "-It’s on me Turner. I got this. CONTINUED: 129"
+        }
+      ],
+      "actionPreview": "129 129 Turner’s POV seated at a table in the spick and span dining hall, newly decorated by placards with messages of inspiration and encouragement. The boys are looking smart with fresh haircuts, uniforms, belts and gleaming shoes, elated by the kind of meal they never get: fried chicken, yellow c"
+    },
+    {
+      "number": 104,
+      "heading": "EXT. NICKEL ACADEMY - GROUNDS - 1967 - DAY (D66)",
+      "characters": [
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "130A"
+        }
+      ],
+      "actionPreview": "130 130 Turner POV from a distance, of a wandering Black boy in ragged, soiled clothes stumbling down from Boot Hill. From the distance the figure is hard to make out. Turner turns and begins walking away but stops and looks back. The boy is standing still, looking straight up to the sky. 130A"
+    },
+    {
+      "number": 105,
+      "heading": "EXT. NICKEL - FIELD - BLEACHERS - 1967 - DAY (D66)",
+      "characters": [
+        "DESMOND",
+        "TURNER",
+        "HARPER",
+        "ELWOOD"
+      ],
+      "dialogues": [
+        {
+          "character": "DESMOND",
+          "parenthetical": "(O.S.)",
+          "text": "(sucking his teeth)"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.)",
+          "text": "(to himself)"
+        },
+        {
+          "character": "HARPER",
+          "parenthetical": "(O.S.)",
+          "text": "Hey Elwood."
+        },
+        {
+          "character": "HARPER",
+          "parenthetical": "(O.S.) (CONT'D)",
+          "text": "Elwood!"
+        },
+        {
+          "character": "HARPER",
+          "parenthetical": "(CONT'D)",
+          "text": "Hold on a minute, Elwood."
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "What is it Mr. Harper?"
+        },
+        {
+          "character": "HARPER",
+          "parenthetical": "",
+          "text": "I need you to head up to the farms and find Mr. Gladwell. Those men from the State aren’t heading up there today. They’re going to send some other experts for that. You find him and tell him he can relax."
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "",
+          "text": "(talking too fast) I like the bleacher repair. We still need to paint, too. Can one of the little kids go? CONTINUED: 131"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(CONT'D)",
+          "text": "(CONTINUED) 105. I don’t even know what Mr. Gladwell looks like, Mr. Harper, sir."
+        },
+        {
+          "character": "HARPER",
+          "parenthetical": "",
+          "text": "(pissed)"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.)",
+          "text": "I’ll do it."
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "(exasperated)"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "",
+          "text": "That notebook you got in your pocket. I’ll get it to them, I’ll do it. Look at you, you look sick."
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.) (CONT'D)",
+          "text": "I can slip it in their car window when they’re not looking. They won’t even see. CUT TO:"
+        }
+      ],
+      "actionPreview": "131 131 Elwood POV from up on a scaffold next to the bleachers on the field, which are turned upward on their side, repairing and painting planks with some of the other boys. He hammers down hard on a nail three times, forcing it flush against the new plank of wood. The contrast is sharp between it "
+    },
+    {
+      "number": 106,
+      "heading": "EXT. NICKEL ACADEMY - GROUNDS - 1967 - DAY (D66)",
+      "characters": [
+        "ELWOOD",
+        "TURNER"
+      ],
+      "dialogues": [
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(CONT'D)",
+          "text": "(CONTINUED) 105."
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.)",
+          "text": "(to himself)"
+        }
+      ],
+      "actionPreview": "132 132 Turner POV from inside the Nickel Community Service van, watching the three Inspectors and Hardee lean into each other now that the State inspection is complete- conversing, laughing, almost merging as they take their leave... JFK, who is holding his hat, flicks it so it rolls up on his arm "
+    },
+    {
+      "number": 107,
+      "heading": "EXT. CURTIS HOME - FRENCHTOWN - 1967 - DAY (D-FF8)",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "132A 132A Adult Elwood (17) POV as his hand KNOCKS on the front door. SOUND of footsteps within slowly approaching. Hattie cracks opens the door, peeks out through the gap where the door is chained. She quickly pulls the door shut. SOUND of her sliding the chain off. A beat. She opens the door wide "
+    },
+    {
+      "number": 108,
+      "heading": "EXT. NICKEL ACADEMY - BOOT HILL - 1967 - DAY (D66)",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "133 133 Elwood POV, walking, taking the long way back on the trail that circumnavigates Boot Hill. Then he steps off the path and walks through. Past the iron links embedded in the tree trunks. He is slow with his steps... Postponing the inevitable consequences ahead, he starts whistling the Gospel "
+    },
+    {
+      "number": 109,
+      "heading": "INT. NICKEL ACADEMY - SCHOOL HALLWAY - 1967 - DAY (D66)",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "134 134 Scene is B/W. Turner POV walking down a school hallway when he encounters the skinny, frail MULE. It stands there with a long piece of straw in its mouth. It looks at Turner, chewing the straw. Unsure it’s really there, Turner moves toward it and strokes the animal, then moves closer and gra"
+    },
+    {
+      "number": 110,
+      "heading": "INT. NICKEL ACADEMY - DORMITORY - 1967 - DUSK (D66)",
+      "characters": [
+        "JAIME",
+        "TURNER",
+        "BLACK MIKE",
+        "DESMOND"
+      ],
+      "dialogues": [
+        {
+          "character": "JAIME",
+          "parenthetical": "(O.S.)",
+          "text": "(arriving)"
+        },
+        {
+          "character": "JAIME",
+          "parenthetical": "(CONT'D)",
+          "text": "They will take him tonight."
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.)",
+          "text": "Who? Elwood? Shit! I told him this would happen!"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.) (CONT'D)",
+          "text": "(alarmed) I didn’t hear nobody out for ice cream? When did they get him?"
+        },
+        {
+          "character": "BLACK MIKE",
+          "parenthetical": "",
+          "text": "They got him right after lunch."
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.)",
+          "text": "Where is he?"
+        },
+        {
+          "character": "DESMOND",
+          "parenthetical": "",
+          "text": "Sweatbox."
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.)",
+          "text": "He’s been in there all day?"
+        }
+      ],
+      "actionPreview": "135 135 Turner POV, in the middle of a card game. Other boys are hanging out. Compas- Turner turns as Jaime enters, having run from the white side of campus. He springs to his feet and goes to Desmond and Mike. The other boys look at him, grim. Mike points upward. He also points upward. Turner slowl"
+    },
+    {
+      "number": 111,
+      "heading": "INT. NICKEL - ATTIC SWEAT BOX - 1967 - DUSK (D66)",
+      "characters": [
+        "OMITTED",
+        "ARCHIVAL FOOTAGE"
+      ],
+      "dialogues": [
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "137"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "137A"
+        },
+        {
+          "character": "ARCHIVAL FOOTAGE",
+          "parenthetical": "",
+          "text": "138"
+        }
+      ],
+      "actionPreview": "136 136 Elwood POV in darkness inside the sweatbox in the attic above the dorm. The vibration increases gradually with the SOUND of the human-engine SCREAM escalating and transforms into a deeper ROAR... like the SOUND of a passenger jet falling in a death spiral... keening and careening toward Eart"
+    },
+    {
+      "number": 112,
+      "heading": "INT. NICKEL ACADEMY - SWEAT BOX - 1967 - NIGHT (N66)",
+      "characters": [
+        "TURNER",
+        "ELWOOD"
+      ],
+      "dialogues": [
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.)",
+          "text": "(whispering)"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "",
+          "text": "Yeah."
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.)",
+          "text": "(whispering)"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "",
+          "text": "Blakeley."
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.)",
+          "text": "(whispering) C’mon."
+        }
+      ],
+      "actionPreview": "139 139 Elwood’s POV in the darkness of the sweat box, claustrophobic, roving along the walls. SOUND of the door to the stairwell in the attic scraping against the floor. Faint footsteps outside. A shadow on the wall moves as a figure outside blocks the little light coming into the space. Elwood shi"
+    },
+    {
+      "number": 113,
+      "heading": "INT. NICKEL - HALLWAY - 1967 - NIGHT (N66)",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "140 140 Turner’s POV watching Elwood painfully try to put his arm into the sleeve of the shirt that he arrived in Nickel at, his dehydrated body stiff and weak from the confinement."
+    },
+    {
+      "number": 114,
+      "heading": "INT. NICKEL - ANOTHER HALLWAY - 1967 - NIGHT (N66)",
+      "characters": [
+        "BLAKELEY",
+        "SPENCER",
+        "EARL",
+        "ELWOOD",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "BLAKELEY",
+          "parenthetical": "(V.O.)",
+          "text": "How you always know?"
+        },
+        {
+          "character": "SPENCER",
+          "parenthetical": "(V.O.)",
+          "text": "Well I don’t know, do I? You play the hand you’re dealt. It’s a lesson Blakeley. I learnt a long time ago."
+        },
+        {
+          "character": "BLAKELEY",
+          "parenthetical": "(V.O.)",
+          "text": "(suspicious)"
+        },
+        {
+          "character": "EARL",
+          "parenthetical": "(V.O.)",
+          "text": "They gonna shut us down?"
+        },
+        {
+          "character": "SPENCER",
+          "parenthetical": "(V.O.)",
+          "text": "I’ll be god-damned if Tallahassee tells me what to do. (to Earl) Open the window, it’s hot. SOUND of a chair being pushed back. Turner ducks down as"
+        },
+        {
+          "character": "BLAKELEY",
+          "parenthetical": "(V.O.)",
+          "text": "Move the button, let’s go."
+        },
+        {
+          "character": "EARL",
+          "parenthetical": "(V.O.)",
+          "text": "C’mon lady luck."
+        },
+        {
+          "character": "SPENCER",
+          "parenthetical": "(V.O.)",
+          "text": "Didn’t she leave you for another man?"
+        },
+        {
+          "character": "EARL",
+          "parenthetical": "(V.O.)",
+          "text": "Shit’s not funny guys, I ain’t seen my kids in six months."
+        },
+        {
+          "character": "BLAKELEY",
+          "parenthetical": "(V.O.)",
+          "text": "Sounds lucky to me."
+        },
+        {
+          "character": "SPENCER",
+          "parenthetical": "(V.O.)",
+          "text": "(resumes poker)"
+        },
+        {
+          "character": "BLAKELEY",
+          "parenthetical": "(V.O.)",
+          "text": "Call."
+        },
+        {
+          "character": "EARL",
+          "parenthetical": "(V.O.)",
+          "text": "Raise, ten."
+        },
+        {
+          "character": "SPENCER",
+          "parenthetical": "(V.O.)",
+          "text": "Call."
+        },
+        {
+          "character": "BLAKELEY",
+          "parenthetical": "",
+          "text": "Fold. (meaning the queen) And there she is. Careful Earl."
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(V.O.)",
+          "text": "(whispering; close)"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "142"
+        }
+      ],
+      "actionPreview": "141 141 Elwood’s POV of Turner creeping in front of him, also dressed in his regular clothes. Turner moves stealthily past a warm light coming through the glazed panels in the door of an office. The voices of Spencer, Blakeley, Earl are recognizable among others. An OS poker game is going on in ther"
+    },
+    {
+      "number": 115,
+      "heading": "EXT. HARDEE HOUSE - 1967 - NIGHT (N66)",
+      "characters": [
+        "TURNER",
+        "ELWOOD"
+      ],
+      "dialogues": [
+        {
+          "character": "TURNER",
+          "parenthetical": "(V.O.)",
+          "text": "(whispering)"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(V.O.)",
+          "text": "(whispering)"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(V.O.)",
+          "text": "(whispering)"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(V.O.)",
+          "text": "(whispering)"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(V.O.)",
+          "text": "(whispering)"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(V.O.)",
+          "text": "(whispering)"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(V.O.)",
+          "text": "(whispering)"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(V.O.)",
+          "text": "(whispering)"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(V.O.)",
+          "text": "(whispering)"
+        }
+      ],
+      "actionPreview": "143 143 Turner’s POV, moving swiftly along the edge of the swimming pool in the back yard of the Hardee house, glancing back at Elwood. Moonlight creates a silky reflection on the pool water. Shit- they been running around like bugs, all these lowlifes. Spencer. Hardee. Jaime heard them talking abou"
+    },
+    {
+      "number": 116,
+      "heading": "EXT. COUNTRY ROAD - NEAR MARIANNA - DAWN INTO DAY (D67)",
+      "characters": [
+        "ELWOOD",
+        "TURNER"
+      ],
+      "dialogues": [
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(V.O.)",
+          "text": "(whispering)"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(V.O.)",
+          "text": "(whispering)"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(V.O.)",
+          "text": "(whispering)"
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(V.O.)",
+          "text": "(whispering) I can do it."
+        },
+        {
+          "character": "ELWOOD",
+          "parenthetical": "(O.S.)",
+          "text": "(calling out)"
+        }
+      ],
+      "actionPreview": "144 144 Elwood’s POV as they ride, Turner’s ahead setting the pace. You got me out. Yup. Can you ride it? We got to get far by sun up. The sky is growing lighter in the East. The road is desolate until the SOUND of a vehicle comes up behind them fast. Car. They bike on. A red pick-up overtakes them "
+    },
+    {
+      "number": 117,
+      "heading": "EXT. DIRT ROAD - CANES FIELDS - MORNING (D67)",
+      "characters": [
+        "TURNER"
+      ],
+      "dialogues": [
+        {
+          "character": "TURNER",
+          "parenthetical": "",
+          "text": "(yelling)"
+        }
+      ],
+      "actionPreview": "144A 144A Elwood’s POV of Turner riding in front of him on a dirt road through the cane fields now, for awhile, this glorious sunny morning. Turner looks back smiling at Elwood, he laughs, joyful at the distance they’ve put between themselves and Nickel. Turner rides some more, glances back again, b"
+    },
+    {
+      "number": 118,
+      "heading": "EXT. FURROWED CANE FIELD - MORNING [CONTINUOUS] (D67)",
+      "characters": [
+        "TURNER",
+        "OMITTED",
+        "ARCHIVAL FOOTAGE"
+      ],
+      "dialogues": [
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.)",
+          "text": "Faster! We got it! Run zig zag El, run zig zag!"
+        },
+        {
+          "character": "TURNER",
+          "parenthetical": "(O.S.) (CONT'D)",
+          "text": "(anguished yell)"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "145"
+        },
+        {
+          "character": "ARCHIVAL FOOTAGE",
+          "parenthetical": "",
+          "text": "145A"
+        }
+      ],
+      "actionPreview": "144B 144B Turner’s POV running into a field of scorched cane, blackened earth furrows, looking back to see Elwood pull his bike to the side of the road, drop it and run as the Community Van bears down. One of the scars on his legs has re-opened and bled through his pants as the van pulls over to a r"
+    },
+    {
+      "number": 119,
+      "heading": "EXT. RURAL LANDSCAPE - FLORIDA - DUSK (D67)",
+      "characters": [
+        "ARCHIVAL FOOTAGE",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "ARCHIVAL FOOTAGE",
+          "parenthetical": "",
+          "text": "145C"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "146"
+        }
+      ],
+      "actionPreview": "145B 145B Turner POV as he runs through a grassy landscape at dusk. CONTINUED: 144B 144B (CONTINUED) 114. CONTINUED: 145B 145B 115. Various shots as he keeps running. 145C The prison escape chase scene continues... white men on horses galloping through wooded swampland, bloodhounds now onto a scent."
+    },
+    {
+      "number": 120,
+      "heading": "EXT. RURAL LANDSCAPE - FLORIDA - NIGHT (N67)",
+      "characters": [
+        "OMITTED",
+        "ARCHIVAL",
+        "CREATED ARCHIVAL FOOTAGE",
+        "ARCHIVAL FOOTAGE",
+        "ARCHIVAL STILL",
+        "CREATED STILL"
+      ],
+      "dialogues": [
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "148"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "149"
+        },
+        {
+          "character": "ARCHIVAL",
+          "parenthetical": "",
+          "text": "A150"
+        },
+        {
+          "character": "CREATED ARCHIVAL FOOTAGE",
+          "parenthetical": "",
+          "text": "B150"
+        },
+        {
+          "character": "ARCHIVAL FOOTAGE",
+          "parenthetical": "",
+          "text": "C150"
+        },
+        {
+          "character": "ARCHIVAL FOOTAGE",
+          "parenthetical": "",
+          "text": "D150"
+        },
+        {
+          "character": "ARCHIVAL FOOTAGE",
+          "parenthetical": "",
+          "text": "E150"
+        },
+        {
+          "character": "ARCHIVAL FOOTAGE",
+          "parenthetical": "",
+          "text": "F150"
+        },
+        {
+          "character": "ARCHIVAL FOOTAGE",
+          "parenthetical": "",
+          "text": "G150"
+        },
+        {
+          "character": "ARCHIVAL FOOTAGE",
+          "parenthetical": "",
+          "text": "H150"
+        },
+        {
+          "character": "ARCHIVAL FOOTAGE",
+          "parenthetical": "",
+          "text": "I150"
+        },
+        {
+          "character": "ARCHIVAL FOOTAGE",
+          "parenthetical": "",
+          "text": "J150"
+        },
+        {
+          "character": "ARCHIVAL FOOTAGE",
+          "parenthetical": "",
+          "text": "K150"
+        },
+        {
+          "character": "CREATED ARCHIVAL FOOTAGE",
+          "parenthetical": "",
+          "text": "L150"
+        },
+        {
+          "character": "ARCHIVAL FOOTAGE",
+          "parenthetical": "",
+          "text": "M150"
+        },
+        {
+          "character": "ARCHIVAL FOOTAGE",
+          "parenthetical": "",
+          "text": "N150"
+        },
+        {
+          "character": "CREATED ARCHIVAL FOOTAGE",
+          "parenthetical": "",
+          "text": "X150"
+        },
+        {
+          "character": "ARCHIVAL STILL",
+          "parenthetical": "",
+          "text": "O150"
+        },
+        {
+          "character": "ARCHIVAL FOOTAGE",
+          "parenthetical": "",
+          "text": "P150"
+        },
+        {
+          "character": "CREATED STILL",
+          "parenthetical": "",
+          "text": "Q150"
+        },
+        {
+          "character": "CREATED STILL",
+          "parenthetical": "",
+          "text": "R150"
+        },
+        {
+          "character": "CREATED STILL",
+          "parenthetical": "",
+          "text": "S150"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "T150"
+        },
+        {
+          "character": "CREATED STILL",
+          "parenthetical": "",
+          "text": "U150"
+        },
+        {
+          "character": "ARCHIVAL FOOTAGE",
+          "parenthetical": "",
+          "text": "V150"
+        }
+      ],
+      "actionPreview": "147 147 Turner POV running, through the darkness, through the night, slowing down then starting up again... running straight out of himself. 148 149 MONTAGE - TURNER’S STREAM OF CONSCIOUSNESS 150 150 A rapid series of (mainly) archival images (3 min duration): A150 NASA booster cameras of a space sh"
+    },
+    {
+      "number": 121,
+      "heading": "EXT. CURTIS HOME - FRENCHTOWN FL - 1967 -DAY (D-FF8)",
+      "characters": [
+        "ARCHIVAL FOOTAGE",
+        "CREATED ARCHIVAL",
+        "CREATED ARCHIVAL STILL",
+        "CREATED ARCHIVAL FOOTAGE"
+      ],
+      "dialogues": [
+        {
+          "character": "ARCHIVAL FOOTAGE",
+          "parenthetical": "",
+          "text": "Y150"
+        },
+        {
+          "character": "CREATED ARCHIVAL",
+          "parenthetical": "",
+          "text": "Z150"
+        },
+        {
+          "character": "CREATED ARCHIVAL STILL",
+          "parenthetical": "",
+          "text": "AA150"
+        },
+        {
+          "character": "CREATED ARCHIVAL FOOTAGE",
+          "parenthetical": "(VIGNETTES)",
+          "text": "BB150"
+        }
+      ],
+      "actionPreview": "W150 W150 [Continuation of Scene 132A.] Hattie has opened her front door, eyes welling, trembling, she backs slowly away, shaking her head, unravelling, fending off the news that is implied by the arrival of - we now realize, TURNER, at her front door... that Elwood is dead. Y150 Interior of a railw"
+    },
+    {
+      "number": 122,
+      "heading": "INT. ADULT ELWOOD’S APARTMENT - 2002 - NYC",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "POV through a camcorder of ADULT TURNER (52) sitting on a couch with a remote, flipping channels looking for a game. His wife Millie (OC) is looking through a new digital camcorder, trying it out."
+    },
+    {
+      "number": 123,
+      "heading": "INT. ADULT ELWOOD'S APARTMENT - 2002 - NYC",
+      "characters": [
+        "ADULT TURNER",
+        "MILLIE",
+        "ARCHIVAL FOOTAGE",
+        "CREATED ARCHIVAL STILL",
+        "ARCHIVAL STILL",
+        "ARCHIVAL STILLS",
+        "CREATED ARCHIVAL FOOTAGE",
+        "ARCHIVAL FOOTAGE OR STILLS",
+        "CREATED STILLS",
+        "OMITTED",
+        "GO TO BLACK."
+      ],
+      "dialogues": [
+        {
+          "character": "ADULT TURNER",
+          "parenthetical": "",
+          "text": "(laughing)"
+        },
+        {
+          "character": "MILLIE",
+          "parenthetical": "",
+          "text": "(laughing)"
+        },
+        {
+          "character": "ADULT TURNER",
+          "parenthetical": "",
+          "text": "I love you, Millie."
+        },
+        {
+          "character": "MILLIE",
+          "parenthetical": "",
+          "text": "(laughing)"
+        },
+        {
+          "character": "ARCHIVAL FOOTAGE",
+          "parenthetical": "",
+          "text": "CC150"
+        },
+        {
+          "character": "CREATED ARCHIVAL STILL",
+          "parenthetical": "",
+          "text": "DD150"
+        },
+        {
+          "character": "CREATED ARCHIVAL STILL",
+          "parenthetical": "",
+          "text": "EE150"
+        },
+        {
+          "character": "ARCHIVAL FOOTAGE",
+          "parenthetical": "",
+          "text": "FF150"
+        },
+        {
+          "character": "ARCHIVAL FOOTAGE",
+          "parenthetical": "",
+          "text": "GG150"
+        },
+        {
+          "character": "ARCHIVAL FOOTAGE",
+          "parenthetical": "",
+          "text": "HH150"
+        },
+        {
+          "character": "ARCHIVAL STILL",
+          "parenthetical": "",
+          "text": "II150"
+        },
+        {
+          "character": "ARCHIVAL STILLS",
+          "parenthetical": "",
+          "text": "JJ150"
+        },
+        {
+          "character": "CREATED ARCHIVAL FOOTAGE",
+          "parenthetical": "",
+          "text": "KK150"
+        },
+        {
+          "character": "CREATED ARCHIVAL FOOTAGE",
+          "parenthetical": "",
+          "text": "LL150"
+        },
+        {
+          "character": "ARCHIVAL FOOTAGE",
+          "parenthetical": "",
+          "text": "MM150"
+        },
+        {
+          "character": "ARCHIVAL FOOTAGE",
+          "parenthetical": "",
+          "text": "NN150"
+        },
+        {
+          "character": "CREATED ARCHIVAL STILL",
+          "parenthetical": "",
+          "text": "OO150"
+        },
+        {
+          "character": "ARCHIVAL STILL",
+          "parenthetical": "",
+          "text": "PP150"
+        },
+        {
+          "character": "ARCHIVAL FOOTAGE OR STILLS",
+          "parenthetical": "",
+          "text": "QQ150"
+        },
+        {
+          "character": "CREATED STILLS",
+          "parenthetical": "",
+          "text": "RR150"
+        },
+        {
+          "character": "ARCHIVAL FOOTAGE",
+          "parenthetical": "",
+          "text": "SS150"
+        },
+        {
+          "character": "ARCHIVAL FOOTAGE",
+          "parenthetical": "",
+          "text": "TT150"
+        },
+        {
+          "character": "ARCHIVAL FOOTAGE",
+          "parenthetical": "",
+          "text": "UU150"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "VV150"
+        },
+        {
+          "character": "ARCHIVAL FOOTAGE",
+          "parenthetical": "",
+          "text": "WW150"
+        },
+        {
+          "character": "MILLIE",
+          "parenthetical": "(V.O.)",
+          "text": "Turner, what are you going to do?"
+        }
+      ],
+      "actionPreview": "POV through a camcorder of ADULT TURNER (52) sleeping in bed. He awakens to find Millie filming him, she laughs. Adult Turner takes the camcorder and pulls her close, lovingly, as they look into the monitor at themselves. (CONTINUED) 118. CONTINUED: 119. What do you see? Two beautiful beings. Turner"
+    },
+    {
+      "number": 124,
+      "heading": "EXT. NICKEL GROUNDS - 1967 - DAY",
+      "characters": [
+        "GO TO BLACK."
+      ],
+      "dialogues": [
+        {
+          "character": "GO TO BLACK.",
+          "parenthetical": "",
+          "text": "Cue music:"
+        }
+      ],
+      "actionPreview": "YY150 YY150 Turner POV looking up at a beautiful canopy of trees in the morning sunlight. Elwood enters frame above him and peers down and laughs. He walks around the top of what’s clearly an open grave. He smiles and throws out his hand. Turner’s hand comes up to meet his, and he clasps it tight to"
+    }
+  ]
+}

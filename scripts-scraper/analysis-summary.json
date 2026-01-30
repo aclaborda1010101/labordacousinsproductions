@@ -1,0 +1,125 @@
+{
+  "totalScreenplays": 525,
+  "processedAt": "2026-01-29T20:15:32.854Z",
+  "avgMetrics": {
+    "avgScenes": 11,
+    "avgRuntime": 69,
+    "avgCharacters": 0,
+    "avgLocations": 9,
+    "avgDialogueActionRatio": 0,
+    "avgIntExtRatio": 0.63
+  },
+  "genreDistribution": {
+    "action": 250,
+    "drama": 115,
+    "romance": 34,
+    "comedy": 20,
+    "thriller": 76,
+    "horror": 17,
+    "scifi": 13
+  },
+  "formatDistribution": {
+    "film": 350,
+    "series": 175
+  },
+  "patterns": {
+    "avgAct1EndPercent": 0,
+    "avgMidpointPercent": 0,
+    "avgScenesPerAct": {
+      "act1": 0,
+      "act2": 0,
+      "act3": 0
+    }
+  },
+  "characterPatterns": {
+    "avgProtagonistLines": 0,
+    "avgSpeakingCharacters": 0
+  },
+  "wellStructuredExamples": [
+    {
+      "title": "22 July",
+      "slug": "22-july-2018",
+      "scenes": 31,
+      "runtime": 105,
+      "genre": "action",
+      "topCharacters": []
+    },
+    {
+      "title": "A Monster Calls",
+      "slug": "a-monster-calls-2016",
+      "scenes": 111,
+      "runtime": 97,
+      "genre": "horror",
+      "topCharacters": []
+    },
+    {
+      "title": "Alex Cross",
+      "slug": "alex-cross-2012",
+      "scenes": 24,
+      "runtime": 99,
+      "genre": "action",
+      "topCharacters": []
+    },
+    {
+      "title": "All Quiet On The Western Front",
+      "slug": "all-quiet-on-the-western-front-2022",
+      "scenes": 24,
+      "runtime": 107,
+      "genre": "thriller",
+      "topCharacters": []
+    },
+    {
+      "title": "American Animals",
+      "slug": "american-animals-2018",
+      "scenes": 45,
+      "runtime": 136,
+      "genre": "action",
+      "topCharacters": []
+    },
+    {
+      "title": "Argo",
+      "slug": "argo-2012",
+      "scenes": 33,
+      "runtime": 95,
+      "genre": "action",
+      "topCharacters": []
+    },
+    {
+      "title": "Boy Erased",
+      "slug": "boy-erased-2018",
+      "scenes": 22,
+      "runtime": 107,
+      "genre": "action",
+      "topCharacters": []
+    },
+    {
+      "title": "Breathe",
+      "slug": "breathe-2017",
+      "scenes": 28,
+      "runtime": 85,
+      "genre": "action",
+      "topCharacters": []
+    },
+    {
+      "title": "Conclave",
+      "slug": "conclave-2024",
+      "scenes": 154,
+      "runtime": 105,
+      "genre": "drama",
+      "topCharacters": [
+        "EXT. APARTMENT BLOCK - ROME - NIGHT",
+        "INT. APARTMENT - ROME - NIGHT",
+        "EXT. TUNNEL NEAR VATICAN - ROME - NIGHT"
+      ]
+    },
+    {
+      "title": "Da 5 Bloods",
+      "slug": "da-5-bloods-2020",
+      "scenes": 23,
+      "runtime": 98,
+      "genre": "thriller",
+      "topCharacters": []
+    }
+  ],
+  "errors": []
+}

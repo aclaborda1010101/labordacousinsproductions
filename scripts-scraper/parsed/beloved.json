@@ -1,0 +1,22 @@
+{
+  "slug": "beloved",
+  "title": "Beloved",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 36544,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                               BELOVED </b> Written by Richard LaGravenese Based on the Novel by Toni Morrison October 11, 1996 <b>     FADE IN... </b> <b>     EXT. 124 BLUESTONE ROAD - DAWN. </b> It is winter in Ohio. A house sits isolated beside a barren field. The field stretches beyond, until a line of distant woods stops it. Around the back of the house stands a rundown STORAGE SHED, a cold house, a privy and a water pump. A porch with a single door serves as the only entrance. Camera be",
+      "dialogue_count": 0,
+      "word_count": 36544
+    }
+  ]
+}

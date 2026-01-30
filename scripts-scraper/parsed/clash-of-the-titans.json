@@ -1,0 +1,30 @@
+{
+  "slug": "clash-of-the-titans",
+  "title": "Clash of the Titans",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 2,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 26781,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                            CLASH OF THE TITANS </b> Written bY John Glenn & Travis Wright Based on the 1981 movie \"Clash of the Titans\" Written by Beverly Cross May 28,   2008 <b>                         FADE IN: </b> <b>          EXT. ALLEYWAY (VILLAGE) - DUSK </b> Gloomy, last light. From out of the shadows comes            -- A DOG. A dog of war. Big, mangy, muscular, scary. As he moves down the alley, the way becomes increasingly choked with fallen structures. and signs of tumult. <b>",
+      "dialogue_count": 0,
+      "word_count": 14946
+    },
+    {
+      "scene_number": 2,
+      "slugline": "EXT. CLEON LEGION BIVOUAC - DAY                               r",
+      "characters": [],
+      "action_text": "<b>                         L </b>          Spyros comes out. <b>                         (CONTINUED) </b> <b>          67. </b> <b>                         CONTINUED: </b> <b>                         SPYROS </b>          Draco, tell me what this -- Everyone is standing perfectly still. DARK FIGURES surround them. The transformed Cleon Legion lurches INTO VIEW. The only resemblance to the soldiers they were is their armor.. Now they're monstrous creatures: LOTOPHAGI. <b>          CLOSE ON A DEFO",
+      "dialogue_count": 0,
+      "word_count": 11835
+    }
+  ]
+}

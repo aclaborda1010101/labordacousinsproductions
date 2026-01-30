@@ -1,0 +1,22 @@
+{
+  "slug": "air",
+  "title": "Air",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 20444,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                               AIR </b> by Alex Convery GRANDVIEW / Zac Frognowski / Faisal Kanaan UTA / Ramses IsHak / Michael Sheresky / Jordan Lonner ii. <b>INSERT - TV COMMERCIAL </b> The unmistakable smile of MAGIC JOHNSON - he's holding a CONVERSE SNEAKER and rapping along to a cheesy jingle. <b>                    MAGIC JOHNSON </b>          The Converse Weapon - that's the shoe that let Magic do what he was born to do! <b>ISAIH THOMAS. </b> <b>                    ISAIH THOMAS </b>",
+      "dialogue_count": 0,
+      "word_count": 20444
+    }
+  ]
+}

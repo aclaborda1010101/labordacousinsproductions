@@ -1,0 +1,22 @@
+{
+  "slug": "capote",
+  "title": "Capote",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 22762,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                          CAPOTE </b> Written by Dan Futterman Based on the book \"Capote: A Biography\" by Gerald Clarke <b> </b> TITLE UP:         \"Western Kansas, 1959\" <b>               EXT. FARMHOUSE - MORNING </b> The CAMERA follows a SIXTEEN YEAR OLD GIRL, long hair, pretty Sunday church dress, walking toward a peaceful farmhouse. At the door she lifts the knocker. The door opens slightly. The girl turns and looks past the camera at her MOTHER, sitting in an old Plymouth",
+      "dialogue_count": 0,
+      "word_count": 22762
+    }
+  ]
+}

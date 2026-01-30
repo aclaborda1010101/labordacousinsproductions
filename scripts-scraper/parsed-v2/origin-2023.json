@@ -1,0 +1,5166 @@
+{
+  "slug": "origin-2023",
+  "title": "Origin",
+  "parsedWith": "v2",
+  "parsedAt": "2026-01-29T22:09:15.949Z",
+  "stats": {
+    "scenes": 112,
+    "dialogues": 750,
+    "characters": 62
+  },
+  "characters": [
+    {
+      "name": "ISABEL",
+      "dialogueLines": 290,
+      "totalWords": 3450
+    },
+    {
+      "name": "MARION",
+      "dialogueLines": 60,
+      "totalWords": 610
+    },
+    {
+      "name": "BRETT",
+      "dialogueLines": 41,
+      "totalWords": 315
+    },
+    {
+      "name": "KATE",
+      "dialogueLines": 34,
+      "totalWords": 366
+    },
+    {
+      "name": "AMARI",
+      "dialogueLines": 30,
+      "totalWords": 266
+    },
+    {
+      "name": "RUBY",
+      "dialogueLines": 26,
+      "totalWords": 315
+    },
+    {
+      "name": "SURAJ",
+      "dialogueLines": 26,
+      "totalWords": 412
+    },
+    {
+      "name": "ALLISON",
+      "dialogueLines": 19,
+      "totalWords": 142
+    },
+    {
+      "name": "ELIZABETH",
+      "dialogueLines": 17,
+      "totalWords": 119
+    },
+    {
+      "name": "NIGELLA",
+      "dialogueLines": 16,
+      "totalWords": 230
+    },
+    {
+      "name": "MISS HALE",
+      "dialogueLines": 14,
+      "totalWords": 327
+    },
+    {
+      "name": "SABINE",
+      "dialogueLines": 13,
+      "totalWords": 160
+    },
+    {
+      "name": "PLUMBER",
+      "dialogueLines": 11,
+      "totalWords": 58
+    },
+    {
+      "name": "BINKY",
+      "dialogueLines": 10,
+      "totalWords": 89
+    },
+    {
+      "name": "IRMA",
+      "dialogueLines": 9,
+      "totalWords": 44
+    },
+    {
+      "name": "AUGUST",
+      "dialogueLines": 7,
+      "totalWords": 34
+    },
+    {
+      "name": "KASTNER",
+      "dialogueLines": 7,
+      "totalWords": 88
+    },
+    {
+      "name": "NATHAN",
+      "dialogueLines": 7,
+      "totalWords": 41
+    },
+    {
+      "name": "GINA",
+      "dialogueLines": 6,
+      "totalWords": 96
+    },
+    {
+      "name": "ARBORIST",
+      "dialogueLines": 6,
+      "totalWords": 81
+    },
+    {
+      "name": "JAJULA",
+      "dialogueLines": 6,
+      "totalWords": 99
+    },
+    {
+      "name": "NAZI STUDENT ORGANIZER",
+      "dialogueLines": 5,
+      "totalWords": 48
+    },
+    {
+      "name": "COACH",
+      "dialogueLines": 5,
+      "totalWords": 44
+    },
+    {
+      "name": "TSA BROTHER",
+      "dialogueLines": 4,
+      "totalWords": 21
+    },
+    {
+      "name": "MALE VOICE",
+      "dialogueLines": 4,
+      "totalWords": 47
+    },
+    {
+      "name": "LIBRARIAN",
+      "dialogueLines": 4,
+      "totalWords": 19
+    },
+    {
+      "name": "ULRICH",
+      "dialogueLines": 4,
+      "totalWords": 25
+    },
+    {
+      "name": "GRAU",
+      "dialogueLines": 4,
+      "totalWords": 86
+    },
+    {
+      "name": "MARY",
+      "dialogueLines": 4,
+      "totalWords": 54
+    },
+    {
+      "name": "TEENAGE BOY",
+      "dialogueLines": 3,
+      "totalWords": 23
+    },
+    {
+      "name": "GIRLFRIEND",
+      "dialogueLines": 3,
+      "totalWords": 17
+    },
+    {
+      "name": "TRAYVON",
+      "dialogueLines": 3,
+      "totalWords": 40
+    },
+    {
+      "name": "MRS. COPELAND",
+      "dialogueLines": 3,
+      "totalWords": 50
+    },
+    {
+      "name": "PEST CONTROL",
+      "dialogueLines": 3,
+      "totalWords": 41
+    },
+    {
+      "name": "PATRICE",
+      "dialogueLines": 3,
+      "totalWords": 52
+    },
+    {
+      "name": "SEVEN",
+      "dialogueLines": 3,
+      "totalWords": 26
+    },
+    {
+      "name": "INDIAN WOMAN DOCENT",
+      "dialogueLines": 3,
+      "totalWords": 56
+    },
+    {
+      "name": "TEDDY",
+      "dialogueLines": 3,
+      "totalWords": 19
+    },
+    {
+      "name": "BURLEIGH",
+      "dialogueLines": 3,
+      "totalWords": 65
+    },
+    {
+      "name": "GOEBBELS",
+      "dialogueLines": 2,
+      "totalWords": 21
+    },
+    {
+      "name": "GERCKE",
+      "dialogueLines": 2,
+      "totalWords": 40
+    },
+    {
+      "name": "LADIES",
+      "dialogueLines": 2,
+      "totalWords": 12
+    },
+    {
+      "name": "ANDRE",
+      "dialogueLines": 2,
+      "totalWords": 14
+    },
+    {
+      "name": "RAM",
+      "dialogueLines": 2,
+      "totalWords": 18
+    },
+    {
+      "name": "AL BRIGHT",
+      "dialogueLines": 2,
+      "totalWords": 2
+    },
+    {
+      "name": "PARK WORKER",
+      "dialogueLines": 2,
+      "totalWords": 15
+    },
+    {
+      "name": "LIFEGUARD",
+      "dialogueLines": 2,
+      "totalWords": 8
+    },
+    {
+      "name": "OMITTED",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "PASTOR",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "KOHLRAUSCH",
+      "dialogueLines": 1,
+      "totalWords": 26
+    }
+  ],
+  "scenes": [
+    {
+      "number": 1,
+      "heading": "INT/EXT. CONVENIENCE STORE - NIGHT",
+      "characters": [
+        "TEENAGE BOY",
+        "GIRLFRIEND",
+        "ORIGIN"
+      ],
+      "dialogues": [
+        {
+          "character": "TEENAGE BOY",
+          "parenthetical": "",
+          "text": "(laughing) I know you wanna say it. Go ‘head."
+        },
+        {
+          "character": "GIRLFRIEND",
+          "parenthetical": "(O.S.)",
+          "text": "(giggling) I ain’t gotta say it."
+        },
+        {
+          "character": "TEENAGE BOY",
+          "parenthetical": "",
+          "text": "But you wanna. I know. Go ‘head."
+        },
+        {
+          "character": "GIRLFRIEND",
+          "parenthetical": "",
+          "text": "I told you so."
+        },
+        {
+          "character": "TEENAGE BOY",
+          "parenthetical": "",
+          "text": "Always with the ‘I told you so.’"
+        }
+      ],
+      "actionPreview": "We glide above a city on the edge of sleep. Amidst the treetops, a streetlamp invades the darkness. We drop through the lace of branches to land at a simple convenience store. A fresh-faced TEENAGE BOY strolls by. He’s Black with close- cropped hair and a bright smile. He flashes it while talking on"
+    },
+    {
+      "number": 2,
+      "heading": "EXT. RUBY’S HOUSE - AFTERNOON",
+      "characters": [
+        "ISABEL",
+        "BRETT"
+      ],
+      "dialogues": [
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Not up yet."
+        },
+        {
+          "character": "BRETT",
+          "parenthetical": "",
+          "text": "Later than last week."
+        }
+      ],
+      "actionPreview": "The radio is tuned to NPR as Isabel balances a PINK BAKERY BOX on her lap in the car. Next to her is BRETT HAMILTON, white, handsome and attentive. He pulls into the driveway of a well-loved home. The curtains of the house are closed. A hint of worry on both of their faces. They exit the car. Brett "
+    },
+    {
+      "number": 3,
+      "heading": "INT. RUBY'S HOUSE - CONTINUOUS",
+      "characters": [
+        "ISABEL",
+        "RUBY"
+      ],
+      "dialogues": [
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Afternoon... Mama?"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(CONT’D)",
+          "text": "Are you really sleeping or kinda?"
+        },
+        {
+          "character": "RUBY",
+          "parenthetical": "",
+          "text": "(beat)"
+        },
+        {
+          "character": "RUBY",
+          "parenthetical": "(CONT’D)",
+          "text": "Sweetie with you?"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "He’s bringing the trash round back."
+        },
+        {
+          "character": "RUBY",
+          "parenthetical": "",
+          "text": "Ah, yeah. Garbage day. Everything in its right place. (regarding the laundry)"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "No, ma’am. Of course not."
+        },
+        {
+          "character": "RUBY",
+          "parenthetical": "",
+          "text": "Where you off to this time? 2."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Birmingham tomorrow."
+        },
+        {
+          "character": "RUBY",
+          "parenthetical": "",
+          "text": "England or Alabama?"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Alabama. A quick turnaround trip."
+        },
+        {
+          "character": "RUBY",
+          "parenthetical": "",
+          "text": "Can’t keep track. Stay careful."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Thanks. After this, I’m taking it easy on work trips for a while."
+        },
+        {
+          "character": "RUBY",
+          "parenthetical": "",
+          "text": "I think that’s silly."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "I know you do."
+        },
+        {
+          "character": "RUBY",
+          "parenthetical": "",
+          "text": "What’ll your book people say? I don’t want them to let you go."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "They’re not letting me go, Mama."
+        },
+        {
+          "character": "RUBY",
+          "parenthetical": "",
+          "text": "You don’t know that. All you control is you. Those folks’ll do what they want, how they want."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "I’ve been on tour for ten months."
+        },
+        {
+          "character": "RUBY",
+          "parenthetical": "",
+          "text": "You don’t have to though."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "I want to. I want to control my calendar, my time. I want to."
+        },
+        {
+          "character": "RUBY",
+          "parenthetical": "",
+          "text": "You know, your Father and I used to wonder how we got a child who was so bad at lies. Really, Isabel. (chuckling now) (MORE) 3."
+        }
+      ],
+      "actionPreview": "Isabel makes her way through the place by heart. In the kitchen, she places the bakery box on the counter and starts a pot of coffee. In the laundry room, she unloads the dryer. Finally, she comes to her intended destination with a basket of clothes under her arm. She listens at the door, then taps "
+    },
+    {
+      "number": 4,
+      "heading": "INT. RUBY'S HOUSE/KITCHEN - CONTINUOUS",
+      "characters": [
+        "BRETT",
+        "RUBY"
+      ],
+      "dialogues": [
+        {
+          "character": "BRETT",
+          "parenthetical": "",
+          "text": "Why not let me do that?"
+        },
+        {
+          "character": "RUBY",
+          "parenthetical": "",
+          "text": "‘Cause I can still do it."
+        },
+        {
+          "character": "BRETT",
+          "parenthetical": "",
+          "text": "(charming her) I know you"
+        },
+        {
+          "character": "BRETT",
+          "parenthetical": "(CONT’D)",
+          "text": "(quiet, looking up to her)"
+        },
+        {
+          "character": "RUBY",
+          "parenthetical": "",
+          "text": "Not really, Sweetie."
+        },
+        {
+          "character": "BRETT",
+          "parenthetical": "",
+          "text": "You’re gonna be okay. Promise."
+        }
+      ],
+      "actionPreview": "Isabel carefully arranges the donuts and preps the coffee. In the living room, Ruby attempts to slip on her shoes. Brett rolls her WHEELCHAIR over, then kneels at her feet to help. can do it. I do. But you don’t have to when we’re around. A beat. She relents, nods and watches him tenderly place her "
+    },
+    {
+      "number": 5,
+      "heading": "INT. ASSISTED SENIOR LIVING APARTMENTS - LATER THAT DAY",
+      "characters": [
+        "RUBY",
+        "ISABEL"
+      ],
+      "dialogues": [
+        {
+          "character": "RUBY",
+          "parenthetical": "",
+          "text": "My husband was a Tuskegee Airman."
+        },
+        {
+          "character": "RUBY",
+          "parenthetical": "(CONT'D)",
+          "text": "4."
+        },
+        {
+          "character": "RUBY",
+          "parenthetical": "(CONT’D)",
+          "text": "At least there’s good light."
+        },
+        {
+          "character": "RUBY",
+          "parenthetical": "(CONT’D)",
+          "text": "Look at that cloud. I see a swimming pool with boys jumping in."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Where do you see boys...?"
+        },
+        {
+          "character": "RUBY",
+          "parenthetical": "",
+          "text": "There. Look. There’s their arms."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Oh, yeah. I see it!"
+        },
+        {
+          "character": "RUBY",
+          "parenthetical": "",
+          "text": "They’re a little league team. Just won the big game. Celebrating and having a ball. See the splashes?"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Little league team? What splashes!?"
+        }
+      ],
+      "actionPreview": "Isabel’s hand rests on Brett’s as he wheels Ruby through the complex. A SALES EXECUTIVE gives the tour. Dining hall. Game room. Gym. Ruby chats up the exec, who feigns interest. Fought for America in World War II. The door of the unit opens. It is less than half the size of Ruby’s home. Isabel, Bret"
+    },
+    {
+      "number": 6,
+      "heading": "INT. ISABEL AND BRETT’S BATHROOM - SAME NIGHT",
+      "characters": [
+        "ISABEL",
+        "BRETT"
+      ],
+      "dialogues": [
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Being in her own place is better."
+        },
+        {
+          "character": "BRETT",
+          "parenthetical": "",
+          "text": "It’s her idea, Belle. Her decision."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Because she’s lonely. I need to be around more. 5."
+        },
+        {
+          "character": "BRETT",
+          "parenthetical": "",
+          "text": "We go by three, four times a week."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "She doesn’t want to be a burden. I know what to do. It’ll be okay."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(CONT’D)",
+          "text": "Can you get that li..."
+        }
+      ],
+      "actionPreview": "Isabel is in the bathtub. Brett brushes his teeth. With her furniture, her own things. Whenever she calls, you’re there. My office is ten minutes away. I’m there. She’s not alone. She wants something for herself. He finishes, kisses her on the forehead and heads out. He has already turned it off, le"
+    },
+    {
+      "number": 7,
+      "heading": "EXT. AIRPORT - NEXT DAY",
+      "characters": [
+        "BRETT",
+        "ISABEL"
+      ],
+      "dialogues": [
+        {
+          "character": "BRETT",
+          "parenthetical": "",
+          "text": "Got your boarding pass?"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "I knew you had it."
+        }
+      ],
+      "actionPreview": "Ruby and Brett pull up to the curb. He gets out to gather her overnight bag from the trunk. Isabel exits, puts on her coat. She pats her pockets, unsure. He takes the pass out of his pocket with a sly smile. They share a quick peck before she enters the terminal. She turns to wave at him. He waves b"
+    },
+    {
+      "number": 8,
+      "heading": "INT. AIRPORT SECURITY/LARGE AIRPORT - DAY",
+      "characters": [
+        "TSA BROTHER",
+        "SURAJ",
+        "ISABEL",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "TSA BROTHER",
+          "parenthetical": "",
+          "text": "Who’s the owner of this bag? 6."
+        },
+        {
+          "character": "SURAJ",
+          "parenthetical": "",
+          "text": "I am, sir. TSA BROTHER turns the box upside down, looks underneath."
+        },
+        {
+          "character": "TSA BROTHER",
+          "parenthetical": "",
+          "text": "I’ll have to swipe it again."
+        },
+        {
+          "character": "SURAJ",
+          "parenthetical": "",
+          "text": "It’s an award. I apologize."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "It’s no problem."
+        },
+        {
+          "character": "TSA BROTHER",
+          "parenthetical": "",
+          "text": "Permission to open the box?"
+        },
+        {
+          "character": "SURAJ",
+          "parenthetical": "",
+          "text": "Yes, sir. Of course."
+        },
+        {
+          "character": "TSA BROTHER",
+          "parenthetical": "",
+          "text": "Who is this?"
+        },
+        {
+          "character": "SURAJ",
+          "parenthetical": "",
+          "text": "Um... he was the Dr. King of India. TSA BROTHER looks to Isabel, the nearest Black person. They eye each other, intrigued and impressed. He rewraps the bust, then places it in the box as if it were King himself."
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "7."
+        }
+      ],
+      "actionPreview": "Isabel navigates through the TSA lines. But at the scanning machines, the bag of the traveler in front of her is flagged for inspection. He’s an Indian man in his 30s with a wild bun of the coolest, unruly hair. His skin is a hue that could easily be mistaken for African-American. He is SURAJ YENGDE"
+    },
+    {
+      "number": 9,
+      "heading": "EXT. GERMAN SHIPYARD FACTORY - 1936 - MORNING",
+      "characters": [
+        "ISABEL"
+      ],
+      "dialogues": [
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "Shipyard workers at Blohm and Voss gather for a ceremony celebrating the company’s new 295-foot vessel."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "Adopted by the Nazis, a heil salute was mandatory for German citizens."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "His name is believed to be August"
+        }
+      ],
+      "actionPreview": "A sea of flannel jackets and wool coats lurches forward under gray skies. But though clouds obscure the sun, an eager energy moves among the WHITE MEN who lean against the cold. The hundred or so men settle in. Listening intently. And then, all at once, they RAISE their right arms rigidly. But if yo"
+    },
+    {
+      "number": 10,
+      "heading": "EXT. WORKING CLASS STREET - 1934 - DAY",
+      "characters": [
+        "ISABEL",
+        "IRMA",
+        "AUGUST"
+      ],
+      "dialogues": [
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "Irma Eckler. A Jewish woman. IRMA rounds the corner with a shopping bag. Her eyes sparkle with intelligence and integrity. She spots him, beams. He smiles back, adoringly. He goes to her. Both speak German."
+        },
+        {
+          "character": "IRMA",
+          "parenthetical": "",
+          "text": "An unexpected treat. You’re early."
+        },
+        {
+          "character": "AUGUST",
+          "parenthetical": "",
+          "text": "I’m a surprise."
+        },
+        {
+          "character": "IRMA",
+          "parenthetical": "",
+          "text": "That you are. A handsome one."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "Although a member of the dominant class, August saw in Irma what others like him chose not to see."
+        }
+      ],
+      "actionPreview": "Leaning on a light post, AUGUST’s face is lined with worry. He takes the bag from her. She touches his face, unaware of the storm in his mind. He leans down and kisses her sweetly. 8. Her humanity. Her beauty. Her love."
+    },
+    {
+      "number": 11,
+      "heading": "EXT. HAMBURG, GERMANY - MORNING",
+      "characters": [
+        "ISABEL"
+      ],
+      "dialogues": [
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "So, on this day, he folded his arms rather than salute a regime that deemed that love illegal. On this day, he was brave."
+        }
+      ],
+      "actionPreview": "Back at the shipyard. CLOSE on August, defiant. August, unintimidated, stands on his conviction. The camera PULLS BACK to find that the shipyard scene is -"
+    },
+    {
+      "number": 12,
+      "heading": "INT. MASSIVE LECTURE HALL - 2012 - NIGHT",
+      "characters": [
+        "ISABEL"
+      ],
+      "dialogues": [
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "He couldn’t have been the only one who felt that something tragic was happening. So, why was he the only one among those men who didn’t go along that day? How would history have changed if more had resisted?"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(CONT’D)",
+          "text": "Perhaps we can reflect on what it would mean to be him today. How can we too be brave? Right now. Today. I leave you with that. Thank you."
+        }
+      ],
+      "actionPreview": "- an image projected on a LARGE SCREEN in a full auditorium. In a perfectly tailored dress, Isabel is centerstage at the podium. She speaks with conviction and control, exuding both humility and authority all at once. From her cadence and manner, it’s clear that she’s made this speech many times. Ye"
+    },
+    {
+      "number": 13,
+      "heading": "INT. BACKSTAGE/GREEN ROOM - MOMENTS LATER",
+      "characters": [
+        "ISABEL",
+        "AMARI"
+      ],
+      "dialogues": [
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "You’re speaking? I didn’t know."
+        },
+        {
+          "character": "AMARI",
+          "parenthetical": "",
+          "text": "One of our reporters is. I’m cheerleading. You were solid up there. Nice work."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "You know I write better than I lecture."
+        },
+        {
+          "character": "AMARI",
+          "parenthetical": "",
+          "text": "You write better than most people do anything."
+        },
+        {
+          "character": "AMARI",
+          "parenthetical": "(CONT’D)",
+          "text": "I thought about reaching out on something. I’ll take seeing you as a sign."
+        },
+        {
+          "character": "AMARI",
+          "parenthetical": "(CONT’D)",
+          "text": "This Trayvon Martin case is..."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "I know."
+        },
+        {
+          "character": "AMARI",
+          "parenthetical": "",
+          "text": "Have you heard the tapes?"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "No. Of what? Not the murder?"
+        },
+        {
+          "character": "AMARI",
+          "parenthetical": "",
+          "text": "Yep. 911 calls. The killer called 911 before he did it. Tapes from people who heard the kid screaming too and called the police. 10."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Is that all public?"
+        },
+        {
+          "character": "AMARI",
+          "parenthetical": "",
+          "text": "It’s being slowly released. We have them. Interested in listening? To consider writing something for us."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "You’ve got a stable of writers."
+        },
+        {
+          "character": "AMARI",
+          "parenthetical": "",
+          "text": "They don’t have Pulitzer Prizes."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Some actually do."
+        },
+        {
+          "character": "AMARI",
+          "parenthetical": "",
+          "text": "Well, they aren’t as brilliant as you on things like this."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "You know what I do now, Amari."
+        },
+        {
+          "character": "AMARI",
+          "parenthetical": "",
+          "text": "Yeah. And I know what you"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "I write books now."
+        },
+        {
+          "character": "AMARI",
+          "parenthetical": "",
+          "text": "That one book took way too damn long. It was a masterpiece and what not. But, too long if you ask me."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "I can’t do assignments anymore. I want to be inside the story. All the way in. That takes time."
+        },
+        {
+          "character": "AMARI",
+          "parenthetical": "",
+          "text": "Maybe after you hear the tapes..."
+        },
+        {
+          "character": "AMARI",
+          "parenthetical": "(CONT’D)",
+          "text": "(as he heads off)"
+        }
+      ],
+      "actionPreview": "Isabel makes her way through other SPEAKERS, SCHOLARS and CONFERENCE PERSONNEL backstage. She passes AMARI SELVAN, a dashing Black newspaper editor, who she knows well. Surprised, they greet one another warmly. Amari signals to WAITING COLLEAGUES that he’ll join in a few. Amari glances arounds quick"
+    },
+    {
+      "number": 14,
+      "heading": "INT. CUSTOMER SERVICE CUBICLE - DAY",
+      "characters": [
+        "MARION"
+      ],
+      "dialogues": [
+        {
+          "character": "MARION",
+          "parenthetical": "",
+          "text": "I know keeping our elders at home is supposed to be the noble thing and all. But there’s something to her being independent while she can be. Doing things her own way, in her own time, for as long as she can. That’s important. It is."
+        }
+      ],
+      "actionPreview": "A quartet of cubicles. Inside of one is MARION WILKERSON, a bright-eyed woman in the midst of a spirited conversation."
+    },
+    {
+      "number": 15,
+      "heading": "INT. ISABEL’S HOUSE - DAY",
+      "characters": [
+        "ISABEL",
+        "MARION",
+        "BRETT"
+      ],
+      "dialogues": [
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "I agree with that. (beat)"
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "(V.O.)",
+          "text": "And, she’s got a dining hall for socializing with other folks her age. Not sitting up in the house withering away so you can say: ‘I kept Momma at home.’"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "She’s the only Black person there. INTERCUT ISABEL/MARION as Isabel searches for her keys."
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "",
+          "text": "Aunt Ruby’s been around white folks all her life. If anybody knows how to maneuver, it’s your Mom. “My husband was a Tuskegee Airman.” She knows what to do. Your Daddy was like that, too. Talk to anybody."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "It’s how she taught me. And how her mother taught her. 12."
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "",
+          "text": "You know, make sure to put all those pictures of your parents and the grands in archival paper before you lock everything up at her place. It preserves it better."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Good thought. I’ll do that."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(CONT’D)",
+          "text": "(to Brett, relieved)"
+        },
+        {
+          "character": "BRETT",
+          "parenthetical": "",
+          "text": "Next to the lamp. Under a scarf."
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "",
+          "text": "Is that Mr. Brett?"
+        },
+        {
+          "character": "BRETT",
+          "parenthetical": "",
+          "text": "Ms. Marion! You good? How’s Teddy?"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "You two can have your little catch- up another time. We gotta get the babies out before dark."
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "",
+          "text": "Brett. She’s just jealous of our relationship. Teddy is too. It’s okay though. We know."
+        },
+        {
+          "character": "BRETT",
+          "parenthetical": "",
+          "text": "What we have is special."
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "",
+          "text": "That’s right!"
+        }
+      ],
+      "actionPreview": "Isabel talks to her cousin on SPEAKERPHONE as she calls to her dogs, Chi-Chi and Sophie, then attaches their leashes. Where are my keys? Shoot. Boy, they were a sight to see, weren’t they? Best dressed in the family. Always dressed to the nines. You get that from them. Brett enters the room, her los"
+    },
+    {
+      "number": 16,
+      "heading": "INT. ISABEL BEDROOM/OFFICE - SAME NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "We pan across their bed to find Brett, sleeping restlessly. Lost in thought, Isabel rises and walks through their home, knowing the path in the dark. Into her office. 13. She sits at her desk, only the screen illuminates her face. She reluctantly clicks on an audio file entitled “Martin 911 Dispatch"
+    },
+    {
+      "number": 17,
+      "heading": "EXT. STREETS - NIGHT",
+      "characters": [
+        "MALE VOICE",
+        "TRAYVON",
+        "GIRLFRIEND"
+      ],
+      "dialogues": [
+        {
+          "character": "MALE VOICE",
+          "parenthetical": "(V.O.)",
+          "text": "We’ve had some break-ins in my neighborhood, and there’s a real suspicious guy just walking around."
+        },
+        {
+          "character": "TRAYVON",
+          "parenthetical": "",
+          "text": "I think this guy’s following me."
+        },
+        {
+          "character": "MALE VOICE",
+          "parenthetical": "(V.O.)",
+          "text": "He’s just walking around the area, looking at all the houses."
+        },
+        {
+          "character": "MALE VOICE",
+          "parenthetical": "(V.O.)",
+          "text": "Now, he’s just staring at me. He’s got his hand on his waistband. He’s a Black male."
+        },
+        {
+          "character": "GIRLFRIEND",
+          "parenthetical": "(O.S.)",
+          "text": "Just get home. Run home real quick."
+        },
+        {
+          "character": "MALE VOICE",
+          "parenthetical": "(V.O.)",
+          "text": "Shit, he’s running."
+        },
+        {
+          "character": "TRAYVON",
+          "parenthetical": "",
+          "text": "What you following me for? ROUND-FACED gets out of the car. We are CLOSE on Trayvon as the man walks up to him, a SEMI-AUTOMATIC 9mm in his hand."
+        },
+        {
+          "character": "TRAYVON",
+          "parenthetical": "(CONT’D)",
+          "text": "Get off me! Get off!"
+        }
+      ],
+      "actionPreview": "Seventeen year old TRAYVON MARTIN grins as he continues on his cell to his girlfriend. He strides down one residential street, then another, minding his business. He pops Skittles as a CAR PASSES HIM SLOWLY. He doesn’t pay any mind, crossing the street, closer to his destination. We watch Trayvon, b"
+    },
+    {
+      "number": 18,
+      "heading": "INT. ISABEL’S OFFICE/KITCHEN - NIGHT",
+      "characters": [
+        "BRETT",
+        "ISABEL"
+      ],
+      "dialogues": [
+        {
+          "character": "BRETT",
+          "parenthetical": "",
+          "text": "Honey or sugar?"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "I’m going to Mama’s early. Pottery class."
+        }
+      ],
+      "actionPreview": "Isabel stands at her desk, head bowed as if in prayer, as the GUNSHOT rings out. The sound of Trayvon’s fate echoes in the room as if it’s happening in the moment. Then, SILENCE. She opens the desk drawer and takes out a file. She’s been keeping articles about the murder. She moves her fingertips ac"
+    },
+    {
+      "number": 19,
+      "heading": "INT. NEW YORK PUBLIC LIBRARY - NIGHT",
+      "characters": [
+        "BINKY",
+        "KATE",
+        "BRETT",
+        "ISABEL",
+        "AMARI",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "BINKY",
+          "parenthetical": "",
+          "text": "Looking gorgeous, dear. And he’s wearing that tux"
+        },
+        {
+          "character": "KATE",
+          "parenthetical": "",
+          "text": "He can hear you."
+        },
+        {
+          "character": "BRETT",
+          "parenthetical": "",
+          "text": "He agrees and thanks you."
+        },
+        {
+          "character": "KATE",
+          "parenthetical": "",
+          "text": "(to Isabel)"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "He’s made that clear."
+        },
+        {
+          "character": "KATE",
+          "parenthetical": "",
+          "text": "You interested? We can time it to the audiobook. Get a lift."
+        },
+        {
+          "character": "BINKY",
+          "parenthetical": "",
+          "text": "She doesn’t want to do that. Do you, dear? I’ll handle him."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "I’ll talk to him. It’s okay."
+        },
+        {
+          "character": "AMARI",
+          "parenthetical": "",
+          "text": "You listen? (off her nod)"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "A lot of ideas came to mind, but... longer form stuff. Questions that I don’t have answers to."
+        },
+        {
+          "character": "AMARI",
+          "parenthetical": "",
+          "text": "Ask them in a piece."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "I don’t write questions. I write answers."
+        },
+        {
+          "character": "AMARI",
+          "parenthetical": "",
+          "text": "Questions like what?"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Like, why does a Latino guy deputize himself to stalk a Black kid so he can “protect” a mostly white community? What is that? 17."
+        },
+        {
+          "character": "AMARI",
+          "parenthetical": "",
+          "text": "The racist bias I want to explore."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "We call everything racism. What does it mean anymore? It’s the default. When’d that start?"
+        },
+        {
+          "character": "AMARI",
+          "parenthetical": "",
+          "text": "Brett."
+        },
+        {
+          "character": "BRETT",
+          "parenthetical": "",
+          "text": "Hi, Amari."
+        },
+        {
+          "character": "AMARI",
+          "parenthetical": "",
+          "text": "You’re saying the man isn’t racist?"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Not that"
+        },
+        {
+          "character": "AMARI",
+          "parenthetical": "",
+          "text": "This feels like a set-up."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "(beat, then she dives in)"
+        },
+        {
+          "character": "AMARI",
+          "parenthetical": "",
+          "text": "Yes. Absolutely."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Okay. Home ownership. Covenants written into land deeds barring"
+        },
+        {
+          "character": "AMARI",
+          "parenthetical": "",
+          "text": "And still we rise."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Amen."
+        },
+        {
+          "character": "AMARI",
+          "parenthetical": "",
+          "text": "Black family, black love, I tell you, it’s our mighty underestimated weapon. They tried, but it can’t be destroyed. By law or anything else."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "That’s right. (they nod as Brett looks on)"
+        },
+        {
+          "character": "AMARI",
+          "parenthetical": "",
+          "text": "Systemic racism. Yes. Same."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "You’re sure? If it’s the same, why give it different categories to hold all the meaning we’ve placed on it? The subtle kind. The systemic kind. What does it mean?"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(CONT’D)",
+          "text": "Murders of Black people by police."
+        },
+        {
+          "character": "AMARI",
+          "parenthetical": "",
+          "text": "I get it. Being followed at a department store and being lynched shouldn’t be called the same thing."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Racism, as our primary language to understand"
+        },
+        {
+          "character": "AMARI",
+          "parenthetical": "",
+          "text": "Good. I need a piece delving into what the Martin case means. (MORE) 19."
+        },
+        {
+          "character": "AMARI",
+          "parenthetical": "(CONT’D)",
+          "text": "We’ll make it splashy. Prime placement. Sunday. Maybe a cover."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "There’s something to it, but... I’m on hiatus."
+        },
+        {
+          "character": "AMARI",
+          "parenthetical": "",
+          "text": "Isabel, c’mon."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "I am. Family responsibilities."
+        },
+        {
+          "character": "AMARI",
+          "parenthetical": "",
+          "text": "Listen, good for you for taking time. We’ll talk again. Take care you two."
+        }
+      ],
+      "actionPreview": "A lavish black-tie affair. Luxury oozes from every corner. Isabel and Brett enter hand in hand. She’s a knock-out. He is in a tux and the most handsome we’ve seen him. Isabel’s editor, KATE MEDINA, early 50s, genuine and grounded, and her agent, BINKY URBAN, 60s, a spirited mix of sass and class, ap"
+    },
+    {
+      "number": 20,
+      "heading": "INT. RUBY’S SENIOR APARTMENT - NIGHT",
+      "characters": [
+        "RUBY",
+        "AMARI",
+        "ISABEL",
+        "BRETT"
+      ],
+      "dialogues": [
+        {
+          "character": "RUBY",
+          "parenthetical": "",
+          "text": "I want you to go on over to the house and check on my yard. That big ol’ tree sheds this time of year. I don’t want the neighbors getting the wrong idea. ISABEL/BRETT"
+        },
+        {
+          "character": "AMARI",
+          "parenthetical": "(CONT'D)",
+          "text": "20."
+        },
+        {
+          "character": "RUBY",
+          "parenthetical": "",
+          "text": "That poor child’s mother. Wish he’d answered the man right."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "What was that, Mama?"
+        },
+        {
+          "character": "RUBY",
+          "parenthetical": "",
+          "text": "I wish he’d have answered the man when he asked him why he was there in the neighborhood. Maybe he would still be with us."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "You’re saying it’s the boy’s fault?"
+        },
+        {
+          "character": "RUBY",
+          "parenthetical": "",
+          "text": "No, of course not. Don’t be silly. I’m saying there’s a way to act that keeps you safe. He was too young to know it. Like Emmett. They think it’s fair. Think they’re the same. Got hurt before they learned."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "They are the same. And he shouldn’t have to had to answer to anyone."
+        },
+        {
+          "character": "RUBY",
+          "parenthetical": "",
+          "text": "Should’ve and real life are two different things, darling. You know that. You can’t be walking around at night on a white street and not expect trouble. That’s intimidating to most whites. (to Brett)"
+        },
+        {
+          "character": "BRETT",
+          "parenthetical": "",
+          "text": "Unfortunately, yes. But you can’t live your life based on what other people are intimidated by."
+        },
+        {
+          "character": "RUBY",
+          "parenthetical": "",
+          "text": "Sure you can, Sweetie. 21."
+        }
+      ],
+      "actionPreview": "The TV in the now fully furnished unit is tuned to JEOPARDY. They all watch, shouting answers to questions. Then - Yes, ma’am. Jeopardy ends. Brett turns the channel to cable news. A story about President Obama speaking about the Trayvon Martin case. They watch, flooded with equal measures of sadnes"
+    },
+    {
+      "number": 21,
+      "heading": "INT/EXT. RUBY’S SENIOR APARTMENT COMPLEX - CONTINUOUS",
+      "characters": [
+        "ISABEL",
+        "BRETT"
+      ],
+      "dialogues": [
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "What’s wrong?"
+        },
+        {
+          "character": "BRETT",
+          "parenthetical": "",
+          "text": "She asked me that... like I was a stranger. Not her son. (beat)"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "That’s not true, baby. She loves you."
+        },
+        {
+          "character": "BRETT",
+          "parenthetical": "",
+          "text": "I know she loves me. That’s not what I’m saying."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "She’s from a different time. She was just trying to sort through her feelings about..."
+        },
+        {
+          "character": "BRETT",
+          "parenthetical": "",
+          "text": "You’re on a hiatus?"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Huh?"
+        },
+        {
+          "character": "BRETT",
+          "parenthetical": "",
+          "text": "You told Amari you’re on a hiatus. (beat)"
+        },
+        {
+          "character": "BRETT",
+          "parenthetical": "(CONT’D)",
+          "text": "You never told me you weren’t going to write at all."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "I said I want to focus on her. 22."
+        },
+        {
+          "character": "BRETT",
+          "parenthetical": "",
+          "text": "What’s that got to do with writing?"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "She shouldn’t be at that place. She should be home. She moved because she was lonely. I should have spent more time. Daddy would want me to fix this."
+        },
+        {
+          "character": "BRETT",
+          "parenthetical": "",
+          "text": "Your father wanted you both happy."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "(beat)"
+        },
+        {
+          "character": "BRETT",
+          "parenthetical": "",
+          "text": "And you’re mine. (beat)"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "I’m taking care of someone I love."
+        },
+        {
+          "character": "BRETT",
+          "parenthetical": "",
+          "text": "This was her choice. Dammit,"
+        },
+        {
+          "character": "BRETT",
+          "parenthetical": "(CONT’D)",
+          "text": "Let the woman make her own decisions! You’re hiding. And I don’t get it."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Hiding from what?! I’m not hiding."
+        }
+      ],
+      "actionPreview": "Isabel and Brett cross the parking lot. A quiet tension builds. No words as they walk together - but apart. They climb in the car and drive. She finally looks to him. He drives on, wrestling with his feelings. She waits. She doesn’t think of me like I think of her. You told me you were going to trav"
+    },
+    {
+      "number": 22,
+      "heading": "INT. ISABEL'S HOUSE - A SHORT TIME LATER",
+      "characters": [
+        "BRETT",
+        "ISABEL"
+      ],
+      "dialogues": [
+        {
+          "character": "BRETT",
+          "parenthetical": "",
+          "text": "I’m gonna have some of that pasta."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Yes, please. Save me some."
+        }
+      ],
+      "actionPreview": "They enter their home. Separate in all of their movements. Unusual. Want some? He heads into the kitchen. She heads to the bedroom."
+    },
+    {
+      "number": 23,
+      "heading": "INT. ISABEL'S BATHROOM - MOMENTS LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Isabel ties up her hair, exhausted. She runs hot water, adds bath salts. She reclines in the tub, a table of books nearby. A moment to think, process. She opens a small BIOGRAPHY on BHIMRAO AMBEDKAR and begins to read to unwind."
+    },
+    {
+      "number": 24,
+      "heading": "INT. TRAIN STATION - 1913 - NIGHT",
+      "characters": [
+        "SURAJ",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "SURAJ",
+          "parenthetical": "(V.O.)",
+          "text": "In the early 1900s, a young Indian graduate student found himself in"
+        }
+      ],
+      "actionPreview": "From inside of a train car, Black passengers with luggage in hand trail behind white passengers who have disembarked and are headed for the exit. Proud Black men known as Pullman Porters cater to the whims of the white customers. The voice of Suraj Yengde, the author, narrates the scenes. New York C"
+    },
+    {
+      "number": 25,
+      "heading": "EXT. NEW YORK STREETS - 1913 - DAY",
+      "characters": [
+        "SURAJ"
+      ],
+      "dialogues": [
+        {
+          "character": "SURAJ",
+          "parenthetical": "(V.O.)",
+          "text": "Bhimrao Ambedkar’s presence in the"
+        }
+      ],
+      "actionPreview": "A 24-year old Indian man, BHIMRAO AMBEDKAR, walks down the Harlem street transfixed by his surroundings. All curiosity and wonder. Observing Black joy and community. 24. United States was a highly unusual endeavor, for a Dalit is also known by some as a so-called Untouchable. Not the lowest caste in"
+    },
+    {
+      "number": 26,
+      "heading": "INT. AMBEDKAR HOUSE - 1918 - LONDON - DAY",
+      "characters": [
+        "SURAJ"
+      ],
+      "dialogues": [
+        {
+          "character": "SURAJ",
+          "parenthetical": "(V.O.)",
+          "text": "He then studied in London earning two PhDs and passing the bar before returning to India as a heralded scholar to help draft India’s new constitution."
+        }
+      ],
+      "actionPreview": "In a cozy library room, Ambedkar reads with intensity."
+    },
+    {
+      "number": 27,
+      "heading": "EXT. INDIA SEASIDE - 1925 - DAY",
+      "characters": [
+        "SURAJ"
+      ],
+      "dialogues": [
+        {
+          "character": "SURAJ",
+          "parenthetical": "(V.O.)",
+          "text": "Ambedkar wielded his pen for his people like a weapon against injustice. He said: “The emancipation of the mind and the soul is a necessary preliminary for the political expansion of the people. Education all must have."
+        }
+      ],
+      "actionPreview": "Dr. Ambedkar is cheered by Dalit workers upon arrival. Means of defense all must have. These are paramount requirements for self-preservation.”"
+    },
+    {
+      "number": 28,
+      "heading": "INT. ISABEL’S BATHROOM - CONTINUOUS",
+      "characters": [
+        "SURAJ"
+      ],
+      "dialogues": [
+        {
+          "character": "SURAJ",
+          "parenthetical": "(V.O.)",
+          "text": "“Religion, social status and property are all sources of power and authority, which one man has, to control the liberty of another.” 25."
+        },
+        {
+          "character": "SURAJ",
+          "parenthetical": "(V.O.)",
+          "text": "“The strength of a society depends upon the presence of points of contact, possibilities of interaction between different groups which exist in it. Caste in"
+        }
+      ],
+      "actionPreview": "Isabel drinks in every word. Her eyes jumping from line to line, reacting with nods and murmurs of agreement. She reads a line and sits up. She looks around for a pen, something to mark the passage. India divides groups into fixed units that cannot be moved. The destruction of caste does not mean de"
+    },
+    {
+      "number": 29,
+      "heading": "INT. ISABEL AND BRETT’S BATHROOM/BEDROOM - LATER",
+      "characters": [
+        "ISABEL"
+      ],
+      "dialogues": [
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Brett."
+        }
+      ],
+      "actionPreview": "She closes the book, eager to share her excitement with Brett. She emerges from the bathroom in her robe, applying lotion to her hands, WHEN SHE SEES HIM. From the other side of the bed, only his legs are in view. Brett is on the floor. Face down. Still. She tries to compute the image. Then, she cal"
+    },
+    {
+      "number": 30,
+      "heading": "INT. FUNERAL - DAY",
+      "characters": [
+        "PASTOR"
+      ],
+      "dialogues": [
+        {
+          "character": "PASTOR",
+          "parenthetical": "",
+          "text": "By"
+        }
+      ],
+      "actionPreview": "In the front row is Isabel, Ruby, Brett’s parents and children. Then, rows of friends and loved ones. Marion is behind Isabel with her partner, TEDDY. Most are crying. trade , Brett Hamilton was a mathematician, a financial analyst. By heart , he was a passionate champion of those he loved deeply. W"
+    },
+    {
+      "number": 31,
+      "heading": "INT. ISABEL AND BRETT’S BEDROOM - DREAM",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Surrounded by darkness, Isabel lies in a LARGE PILE OF LEAVES with her eyes closed. She opens them slowly to find herself facing Brett. His eyes are closed. So, she closes hers again."
+    },
+    {
+      "number": 32,
+      "heading": "EXT. ISABEL'S FOYER - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Mrs. Copeland is in the foyer in tears, baked goods in hand. Marion receives the package."
+    },
+    {
+      "number": 33,
+      "heading": "INT. RUBY’S SENIOR APARTMENT - DAY",
+      "characters": [
+        "RUBY"
+      ],
+      "dialogues": [
+        {
+          "character": "RUBY",
+          "parenthetical": "",
+          "text": "Your father was supposed to be here too. They’re supposed to be here."
+        }
+      ],
+      "actionPreview": "The TV flickers in Ruby’s dark apartment, making shapes across Isabel’s expressionless face. She is on the couch next to her mother, both covered in a crocheted blanket as Donald Trump demands to see President Obama’s birth certificate. Ruby looks to Isabel, recognizing her daughter’s pain. Teary, s"
+    },
+    {
+      "number": 34,
+      "heading": "INT. ISABEL'S OFFICE - DAY",
+      "characters": [
+        "MARION",
+        "KATE"
+      ],
+      "dialogues": [
+        {
+          "character": "MARION",
+          "parenthetical": "",
+          "text": "Isabel Wilkerson’s office."
+        },
+        {
+          "character": "KATE",
+          "parenthetical": "",
+          "text": "Hello. Hi. This is Kate. I’m"
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "",
+          "text": "I know your name. Hi, Kate. This is her cousin. Marion."
+        },
+        {
+          "character": "KATE",
+          "parenthetical": "",
+          "text": "Marion, hi. My condolences for your family’s losses. I don’t have the words. Unfathomable. Unthinkable. 27."
+        }
+      ],
+      "actionPreview": "INTERCUT CALL with Isabel’s editor, Kate, in her office. Isabel’s editor and I..."
+    },
+    {
+      "number": 35,
+      "heading": "INT. ISABEL AND BRETT’S BEDROOM - DREAM",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Eyes closed, Isabel is still in the leaves in her bedroom. She opens her eyes to find Brett still there, eyes closed. And now, her mother Ruby in front of him, with closed eyes."
+    },
+    {
+      "number": 36,
+      "heading": "INT. HOSPICE UNIT - DAY",
+      "characters": [
+        "KATE"
+      ],
+      "dialogues": [
+        {
+          "character": "KATE",
+          "parenthetical": "(V.O.)",
+          "text": "Who can withstand this? The two closest people to you in a year?"
+        }
+      ],
+      "actionPreview": "Ruby is bedridden, on oxygen, under a crocheted blanket. Isabel sits on the side of the bed, applying lotion to her mother’s hands. Lip balm to her lips. Ruby doesn’t respond. It’s just... I don’t know how she’s managing. How is she?"
+    },
+    {
+      "number": 37,
+      "heading": "INT. ISABEL'S BEDROOM - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The blinds are drawn. It’s dark. Marion looks through the door to find Isabel in bed, wrapped in Ruby’s crocheted blanket. Huddled into herself in the fetal position, Isabel’s hand is over her face, shutting out the world. Tears brim Marion’s eyes. She carefully climbs onto the bed, settling herself"
+    },
+    {
+      "number": 38,
+      "heading": "INT. ISABEL AND BRETT’S BEDROOM - DREAM",
+      "characters": [
+        "BRETT"
+      ],
+      "dialogues": [
+        {
+          "character": "BRETT",
+          "parenthetical": "",
+          "text": "Breathe, Belle."
+        }
+      ],
+      "actionPreview": "In her mind, Isabel is still on the floor in the leaves. Eyes closed. She opens them to find Ruby and Brett, both looking back at her now. She gazes upon them, not wanting to blink. Not wanting to lose them. Ruby reaches out, placing her hand on her daughter’s face. Isabel touches her hand. Brett lo"
+    },
+    {
+      "number": 39,
+      "heading": "INT/EXT. ISABEL'S HOUSE - DAY",
+      "characters": [
+        "MRS. COPELAND",
+        "ISABEL"
+      ],
+      "dialogues": [
+        {
+          "character": "MRS. COPELAND",
+          "parenthetical": "",
+          "text": "Isabel. Hi. I haven’t seen you out."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "I’m okay. Thanks for asking."
+        },
+        {
+          "character": "MRS. COPELAND",
+          "parenthetical": "",
+          "text": "I brought a basket over when I heard. I hope you got it."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "I did. Thank you."
+        },
+        {
+          "character": "MRS. COPELAND",
+          "parenthetical": "",
+          "text": "He was a wonderful man. And you two made the loveliest couple. Both so attractive and accomplished. A beautiful, unlikely pair. May his memory be a blessing. I’m so sorry."
+        }
+      ],
+      "actionPreview": "Isabel sits on the couch, still. She carefully places Brett’s watch on her wrist and her mother’s wedding band on her finger. Near the front door, Isabel puts on a sweater. She calls to her dogs, puts on leashes and takes her KEYS off of a hook with a sign that reads: “Keys.” She ventures outside fo"
+    },
+    {
+      "number": 40,
+      "heading": "EXT. RUBY'S HOUSE - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Isabel turns into the driveway under the canopy of trees. She exits the car to find green landscape bins at the curb. It’s her job now. She goes to retrieve them. 29."
+    },
+    {
+      "number": 41,
+      "heading": "INT. RUBY’S HOUSE/PHARMACY - DAY",
+      "characters": [
+        "INTERCUT.",
+        "MARION",
+        "ISABEL"
+      ],
+      "dialogues": [
+        {
+          "character": "MARION",
+          "parenthetical": "",
+          "text": "Hey. You made it in okay?"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Yep. I’m here. How’re you?"
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "",
+          "text": "(gently)"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "I’m here, Marion. That’s all I am. (softening) I walked the babies."
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "",
+          "text": "Good! Good. How’d that feel?"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "I had a meltdown after."
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "",
+          "text": "You went the way you two’d walk."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "There’s no other way."
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "",
+          "text": "Right. 30."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "I ran into my neighbor. She said something so disrespectful."
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "",
+          "text": "Girl, what?"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "She called us an unlikely couple."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(CONT’D)",
+          "text": "Me and Brett."
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "",
+          "text": "(um...)"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Hell yeah, it did."
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "",
+          "text": "Why?"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "To say that we were improbable? “Unlikely” as in unbelievable."
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "",
+          "text": "She was just being nice, I think."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "She meant that we didn’t match. But somehow we ended up together. Like it’s this unbelievable phenomenon."
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "",
+          "text": "You two were from different places, backgrounds. It’s kind of a miracle your paths crossed like they did, that you got together. Isn’t it?"
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "(CONT’D)",
+          "text": "Listen, no one knows what goes on inside a relationship. And we shouldn’t talk about things we don’t know. My mistake. 31."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "I’ve got to go and get this done."
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "",
+          "text": "You don’t have to pack everything up now. I can come next weekend and help. Take it slow."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "I’ve got to get this house packed before I start back to work."
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "",
+          "text": "You’re starting back working?"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Of course. What am I supposed to do? How am I supposed to live?"
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "",
+          "text": "You’ve got money saved. Why not..."
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "(CONT’D)",
+          "text": "... What are you working on? When do you have to start?"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "I’m already behind on things I should be doing. I gotta go, okay?"
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "",
+          "text": "Okay."
+        }
+      ],
+      "actionPreview": "In her mother’s living room, she opens drapery, allowing the sun in. The reflection of a tree outside duplicates itself on the living room wall as if it’s growing there. In the dining room, she removes a package from her shoulder bag. A bundle of archival paper like Marion instructed. JUMP CUTS as s"
+    },
+    {
+      "number": 42,
+      "heading": "EXT. AIRPORT - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The same spot where Brett dropped Isabel off and kissed her goodbye. Now, she’s alone, dropped by a TOWNCAR DRIVER. She grabs her bag, tips, then looks up to the sky. CLOSE on a clear, cloudless sky. No shapes. No Little Leaguers in pools. Clearly thinking of her mother, she enters the terminal. We "
+    },
+    {
+      "number": 43,
+      "heading": "INT. NEW YORK PUBLIC LIBRARY - NIGHT",
+      "characters": [
+        "KATE",
+        "ISABEL",
+        "BINKY"
+      ],
+      "dialogues": [
+        {
+          "character": "KATE",
+          "parenthetical": "",
+          "text": "You came."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "I’m here."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(CONT’D)",
+          "text": "(teasing) I thought I’d get a couple rounds in before having to talk business."
+        },
+        {
+          "character": "BINKY",
+          "parenthetical": "",
+          "text": "Darling, we don’t have to talk about anything you don’t want to."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "(to Kate) I take it you don’t agree."
+        },
+        {
+          "character": "KATE",
+          "parenthetical": "",
+          "text": "I agree that you should move at your own pace. I also know what writing does for you. And maybe, you need that feeling right now."
+        },
+        {
+          "character": "BINKY",
+          "parenthetical": "",
+          "text": "She has to want to, Kate."
+        },
+        {
+          "character": "KATE",
+          "parenthetical": "",
+          "text": "You’re right. 33."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Well, I have an idea."
+        },
+        {
+          "character": "BINKY",
+          "parenthetical": "",
+          "text": "Yes. I knew that’s why you came."
+        },
+        {
+          "character": "KATE",
+          "parenthetical": "",
+          "text": "Tell us, Isabel. CLOSE on Isabel. A deep breath and then she goes for it."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "I never really explored the Trayvon"
+        },
+        {
+          "character": "BINKY",
+          "parenthetical": "",
+          "text": "Yes, the neo-Nazi..."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Yes, drove into a crowd at a protest for Black lives. Killed a white woman. Heather Heyer. All those idiots with tiki torches."
+        },
+        {
+          "character": "BINKY",
+          "parenthetical": "",
+          "text": "Sorry, what’s a Dalit professor?"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "He’s Dalit and he’s a professor."
+        },
+        {
+          "character": "BINKY",
+          "parenthetical": "",
+          "text": "Ah, yes, I see. 34."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "He won an award. I saw the bust of"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(CONT’D)",
+          "text": "Me neither. Why?"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(CONT’D)",
+          "text": "There’s connective tissue I could find to build a thesis about... about how this is all linked."
+        },
+        {
+          "character": "KATE",
+          "parenthetical": "",
+          "text": "This is the writer’s journey."
+        },
+        {
+          "character": "BINKY",
+          "parenthetical": "",
+          "text": "I agree, dear. Wholeheartedly."
+        },
+        {
+          "character": "KATE",
+          "parenthetical": "",
+          "text": "Like I said, writing will do you good. Maybe a research trip? Get out of the country. Read books, relax, find the way to say what you want to say."
+        },
+        {
+          "character": "BINKY",
+          "parenthetical": "",
+          "text": "Keyword there is relax. Let me set up a trip for you to somewhere beautiful and tropical. Massages, blue water. The agency’ll arrange it all for you."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "I feel like..."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(CONT’D)",
+          "text": "Okay, I’ll get back to you."
+        }
+      ],
+      "actionPreview": "Another year. Another gala. But, this night is different. Isabel enters alone, alongside tuxedoed and gowned guests. 32. She is a known entity. And a popular one. Her nature as an introvert is challenged as she’s stopped every few steps. Smiles here. Hugs there. She’s uncomfortable without Brett to "
+    },
+    {
+      "number": 44,
+      "heading": "INT. NEW YORK PUBLIC LIBRARY - A SHORT TIME LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Isabel has wandered away from the party. To get her bearings. To breathe. She walks up the stacks, looking for something. She finds it and relaxes when she tenderly pulls a book from the grand shelf. It is “DEEP SOUTH.” We’ve seen the book before in her office. The cover picture features three Black"
+    },
+    {
+      "number": 45,
+      "heading": "INT. BERLIN UNIVERSITY LIBRARY - 1933 - DAY",
+      "characters": [
+        "ALLISON",
+        "ELIZABETH"
+      ],
+      "dialogues": [
+        {
+          "character": "ALLISON",
+          "parenthetical": "",
+          "text": "I don’t see it, Lizzy. Do you?"
+        },
+        {
+          "character": "ELIZABETH",
+          "parenthetical": "",
+          "text": "Maybe it’s checked out."
+        },
+        {
+          "character": "ALLISON",
+          "parenthetical": "",
+          "text": "There are no books here at all by him. Odd, don’t you think?"
+        },
+        {
+          "character": "ELIZABETH",
+          "parenthetical": "",
+          "text": "At the premiere library in the city. The country."
+        },
+        {
+          "character": "ALLISON",
+          "parenthetical": "",
+          "text": "Beautiful library though. 36."
+        },
+        {
+          "character": "ELIZABETH",
+          "parenthetical": "",
+          "text": "I could get lost in these books forever. All these ideas."
+        },
+        {
+          "character": "ALLISON",
+          "parenthetical": "",
+          "text": "Let’s build a little tent over there and read and grow all day."
+        },
+        {
+          "character": "ELIZABETH",
+          "parenthetical": "",
+          "text": "You’ve never said anything more romantic to me."
+        }
+      ],
+      "actionPreview": "A movie-star handsome man with a thin mustache, ALLISON DAVIS, peers at book shelves alongside his wife, ELIZABETH DAVIS, a refined beauty of a woman. They are a stunning couple. Both extremely light-skinned African-Americans who could pass for white on first glance. Elizabeth bends to search a bott"
+    },
+    {
+      "number": 46,
+      "heading": "INT. BERLIN UNIVERSITY LIBRARIAN’S DESK - CONTINUOUS",
+      "characters": [
+        "LIBRARIAN",
+        "ALLISON",
+        "ELIZABETH"
+      ],
+      "dialogues": [
+        {
+          "character": "LIBRARIAN",
+          "parenthetical": "",
+          "text": "Your card."
+        },
+        {
+          "character": "ALLISON",
+          "parenthetical": "",
+          "text": "Good afternoon. Of course."
+        },
+        {
+          "character": "ALLISON",
+          "parenthetical": "(CONT’D)",
+          "text": "Can you tell us when Erich"
+        },
+        {
+          "character": "LIBRARIAN",
+          "parenthetical": "",
+          "text": "From the United States."
+        },
+        {
+          "character": "ALLISON",
+          "parenthetical": "",
+          "text": "That’s correct."
+        },
+        {
+          "character": "LIBRARIAN",
+          "parenthetical": "",
+          "text": "What are you doing this far from home?"
+        },
+        {
+          "character": "ALLISON",
+          "parenthetical": "",
+          "text": "My wife and I are studying here."
+        },
+        {
+          "character": "LIBRARIAN",
+          "parenthetical": "",
+          "text": "What are you studying? 37."
+        },
+        {
+          "character": "ELIZABETH",
+          "parenthetical": "",
+          "text": "We work with Dr. Diedrich"
+        }
+      ],
+      "actionPreview": "The couple waits in line with a few books in hand. The LIBRARIAN, a white man, waves them over, nods in begrudging acknowledgment as he checks them out. They all speak German . Allison hands his library card with his passport. Elizabeth has hers in hand too. Remarque’s ‘All Quiet on the Western Fron"
+    },
+    {
+      "number": 47,
+      "heading": "EXT. BERLIN UNIVERSITY - MOMENTS LATER",
+      "characters": [
+        "KASTNER",
+        "ELIZABETH",
+        "ALLISON"
+      ],
+      "dialogues": [
+        {
+          "character": "KASTNER",
+          "parenthetical": "",
+          "text": "Excuse me. I heard you inquire about Remarque, but couldn’t hear the librarian’s answer. Would you mind sharing what he told you?"
+        },
+        {
+          "character": "ELIZABETH",
+          "parenthetical": "",
+          "text": "He actually didn’t answer. He began asking why we were in Germany."
+        },
+        {
+          "character": "KASTNER",
+          "parenthetical": "",
+          "text": "I’m Kastner. I’m from here. I’m not asking in the same way that he did. I’m asking for a different reason."
+        },
+        {
+          "character": "ALLISON",
+          "parenthetical": "",
+          "text": "About five weeks. We’re anthropologists studying..."
+        },
+        {
+          "character": "KASTNER",
+          "parenthetical": "",
+          "text": "You have no idea what’s happening."
+        },
+        {
+          "character": "ELIZABETH",
+          "parenthetical": "",
+          "text": "Pardon me."
+        },
+        {
+          "character": "ALLISON",
+          "parenthetical": "",
+          "text": "I’m sorry, I didn’t catch that."
+        },
+        {
+          "character": "KASTNER",
+          "parenthetical": "",
+          "text": "You have no idea what’s happening here. Everything is being torn apart."
+        }
+      ],
+      "actionPreview": "Kaster catches the couple as they cross the pristine campus. Nazi Party flags wave on the buildings. English is spoken. Alarm flashes across Kastner’s face. The Davises aren’t sure what to make of it. How long have you been in Berlin? Kastner seems distressed. A pause, then he looks them directly in"
+    },
+    {
+      "number": 48,
+      "heading": "EXT. THE BEBELPLATZ - NIGHT",
+      "characters": [
+        "NAZI STUDENT ORGANIZER",
+        "KASTNER",
+        "ALLISON",
+        "ELIZABETH",
+        "GOEBBELS"
+      ],
+      "dialogues": [
+        {
+          "character": "NAZI STUDENT ORGANIZER",
+          "parenthetical": "",
+          "text": "Sigmund Freud! For falsifying our history and degrading our heroes!"
+        },
+        {
+          "character": "NAZI STUDENT ORGANIZER",
+          "parenthetical": "(CONT’D)",
+          "text": "Erich Remarque! For degrading the"
+        },
+        {
+          "character": "NAZI STUDENT ORGANIZER",
+          "parenthetical": "(CONT’D)",
+          "text": "Georg Bernhard! His Jewish kind of journalism is alien to this nation!"
+        },
+        {
+          "character": "NAZI STUDENT ORGANIZER",
+          "parenthetical": "(CONT’D)",
+          "text": "Against decadence and moral decency and custom, I deliver to the flames the works of Heinrich Mann, Ernst"
+        },
+        {
+          "character": "KASTNER",
+          "parenthetical": "",
+          "text": "I must go. I must go now."
+        },
+        {
+          "character": "ALLISON",
+          "parenthetical": "",
+          "text": "We’ll help you."
+        },
+        {
+          "character": "KASTNER",
+          "parenthetical": "",
+          "text": "No. I’ll walk one way. Wait a few minutes, then go to your lodging."
+        },
+        {
+          "character": "ELIZABETH",
+          "parenthetical": "",
+          "text": "We’ll be right behind you."
+        },
+        {
+          "character": "KASTNER",
+          "parenthetical": "",
+          "text": "No, my friends. Leave here. Leave"
+        },
+        {
+          "character": "NAZI STUDENT ORGANIZER",
+          "parenthetical": "",
+          "text": "Salute Joseph Goebbels!"
+        },
+        {
+          "character": "GOEBBELS",
+          "parenthetical": "",
+          "text": "Comrades! The period of exaggerated"
+        },
+        {
+          "character": "GOEBBELS",
+          "parenthetical": "(CONT’D)",
+          "text": "No to decadence and moral corruption! Yes, to decency and morality in family and state! 40."
+        }
+      ],
+      "actionPreview": "A light DRIZZLE falls in the central city square as about forty thousand people gather in a heightened frenzy. STUDENTS, PROFESSORS in their academic robes and the HITLER YOUTH paramilitary organizations, carrying torches and Nazi banners, walk beside OPEN-BED TRUCKS through Brandenburg Gate. The tr"
+    },
+    {
+      "number": 49,
+      "heading": "EXT. THE BEBELPLATZ - PRESENT/NIGHT",
+      "characters": [
+        "NIGELLA"
+      ],
+      "dialogues": [
+        {
+          "character": "NIGELLA",
+          "parenthetical": "",
+          "text": "‘Where you burn books, you end up burning men.’ A quote by Heinrich"
+        },
+        {
+          "character": "NIGELLA",
+          "parenthetical": "(CONT’D)",
+          "text": "The bookshelves stand empty to bear witness. Over 20,000 books filled with ideas and imagination and history were lost that night."
+        },
+        {
+          "character": "NIGELLA",
+          "parenthetical": "(CONT’D)",
+          "text": "In Germany, they have a memorial to everyone victimized by the Nazis. A memorial to homosexuals who perished. Memorials for women, for children. Everyone is remembered."
+        }
+      ],
+      "actionPreview": "Isabel walks across the now EMPTY PLAZA towards a GLOWING WHITE SQUARE cut into the cobblestones. The carved opening emits a surreal light, slicing the shadows of the grand buildings on the perimeter. Behind Isabel is NIGELLA, a white British woman with ivory hair. As they approach the light, Nigell"
+    },
+    {
+      "number": 50,
+      "heading": "EXT. HOLOCAUST MUSEUM AND MEMORIAL - DAY",
+      "characters": [
+        "NIGELLA"
+      ],
+      "dialogues": [
+        {
+          "character": "NIGELLA",
+          "parenthetical": "(V.O.)",
+          "text": "No entry gate. No sign. It’s open both day and night, in all weather."
+        }
+      ],
+      "actionPreview": "Isabel stands amidst a concrete maze the size of three football fields with over 2,700 coffin-shaped rectangles. 41. Just standing. To bear witness. Isabel enters, weaving among the stones with reverence."
+    },
+    {
+      "number": 51,
+      "heading": "INT. HOLOCAUST MUSEUM AND MEMORIAL - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Inside the museum, she reads the last words of Holocaust victims. She stops in her tracks as she reads one message in particular: “What is my life worth even if I remain alive. Whom to return to in my hometown of Warsaw? For what and for whom do I carry on this whole pursuit of life? Enduring. Holdi"
+    },
+    {
+      "number": 52,
+      "heading": "INT. KOSTLIN TOWNHOME - NIGHT",
+      "characters": [
+        "SABINE",
+        "NATHAN",
+        "ULRICH",
+        "ISABEL",
+        "NIGELLA"
+      ],
+      "dialogues": [
+        {
+          "character": "SABINE",
+          "parenthetical": "",
+          "text": "It’s the American way!"
+        },
+        {
+          "character": "NATHAN",
+          "parenthetical": "",
+          "text": "We know! We know! It’s ridiculous!"
+        },
+        {
+          "character": "SABINE",
+          "parenthetical": "",
+          "text": "Well, that’s what I’m looking at with the article. You have 900 shootings a week it seems and keep giving people guns."
+        },
+        {
+          "character": "ULRICH",
+          "parenthetical": "",
+          "text": "I don’t understand it. 42."
+        },
+        {
+          "character": "NATHAN",
+          "parenthetical": "",
+          "text": "Dear, we don’t even understand ourselves."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "It’s true. There’s so much that makes no sense. I read that here displaying the swastika is a crime."
+        },
+        {
+          "character": "NIGELLA",
+          "parenthetical": "",
+          "text": "That’s true. It’s not tolerated."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "In America, the Confederate flag, which is like your Nazi flag, the flag of murderers and traitors, it’s"
+        },
+        {
+          "character": "SABINE",
+          "parenthetical": "",
+          "text": "Madness. It’s not perfect, but"
+        },
+        {
+          "character": "ULRICH",
+          "parenthetical": "",
+          "text": "All the sites we’ve either made a memorial or paved over."
+        },
+        {
+          "character": "NIGELLA",
+          "parenthetical": "",
+          "text": "Everything Hitler is gone. They paved right over it all. And built new things."
+        },
+        {
+          "character": "SABINE",
+          "parenthetical": "",
+          "text": "You can literally walk right over"
+        },
+        {
+          "character": "NATHAN",
+          "parenthetical": "",
+          "text": "And the bunker."
+        },
+        {
+          "character": "ULRICH",
+          "parenthetical": "",
+          "text": "Yes, the bunker. Long gone. 43."
+        },
+        {
+          "character": "NIGELLA",
+          "parenthetical": "",
+          "text": "Isabel, we passed it on the way."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "We did?"
+        },
+        {
+          "character": "NIGELLA",
+          "parenthetical": "",
+          "text": "You’d never know. It looks like nothing. It was 30 feet underground and protected by reinforced concrete. Now it has a Volkswagen or something parked on top of it at any given time of day."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "A very different approach than in the States."
+        },
+        {
+          "character": "SABINE",
+          "parenthetical": "",
+          "text": "Well, I think there are many differences between here and there. I mean, we are talking about the systematic murder of 11 million"
+        },
+        {
+          "character": "NATHAN",
+          "parenthetical": "",
+          "text": "What are you saying is different?"
+        },
+        {
+          "character": "SABINE",
+          "parenthetical": "",
+          "text": "All of it. This was deliberate extermination. Over many years."
+        },
+        {
+          "character": "NATHAN",
+          "parenthetical": "",
+          "text": "Wasn’t slavery for, like,"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Slavery lasted for 246 years. That is thirteen generations of people. (beat)"
+        },
+        {
+          "character": "SABINE",
+          "parenthetical": "",
+          "text": "It’s, of course, horrific. I’m not downplaying any of it. 44."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "There were so many hundreds of millions of Black lives lost between the Middle Passage and the legal end of segregation that it’s beyond"
+        },
+        {
+          "character": "NATHAN",
+          "parenthetical": "",
+          "text": "I didn’t know that."
+        },
+        {
+          "character": "NIGELLA",
+          "parenthetical": "",
+          "text": "Stunning."
+        },
+        {
+          "character": "SABINE",
+          "parenthetical": "",
+          "text": "It is. And I understand that you want to find a way to make American racism make sense. It’s noble. But your thesis to link it with caste in Germany and India is flawed."
+        },
+        {
+          "character": "ULRICH",
+          "parenthetical": "",
+          "text": "Maybe it’s not"
+        },
+        {
+          "character": "SABINE",
+          "parenthetical": "",
+          "text": "A framework is not enough for a book, my friends. She is trying to connect Germany and India with the"
+        },
+        {
+          "character": "NIGELLA",
+          "parenthetical": "",
+          "text": "I’ve read books with a lot less to go on, Sabine. Honestly, darling..."
+        },
+        {
+          "character": "SABINE",
+          "parenthetical": "",
+          "text": "Not good ones. And don’t we want"
+        },
+        {
+          "character": "NATHAN",
+          "parenthetical": "",
+          "text": "She’s a Pulitzer Prize winner. I think her book’ll be just fine."
+        },
+        {
+          "character": "SABINE",
+          "parenthetical": "",
+          "text": "Of course it will be. (to Isabel) (MORE) 45."
+        },
+        {
+          "character": "SABINE",
+          "parenthetical": "(CONT’D)",
+          "text": "I hope you aren’t offended by honest critique."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "I appreciate your candor."
+        }
+      ],
+      "actionPreview": "Voices spill from an architectural gem of a modern townhome. Five stories. Walls drenched with CONTEMPORARY ART in an airy interior illuminated by massive bespoke windows. This is the home of ULRICH, white, German, mid-60s, with the polish of someone whose been wealthy for a while. He shares it with"
+    },
+    {
+      "number": 53,
+      "heading": "EXT. GERMAN CANALS/MARION’S RECLINER - NEXT DAY",
+      "characters": [
+        "ISABEL",
+        "MARION",
+        "SABINE"
+      ],
+      "dialogues": [
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "She’s not wrong. Not right either."
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "",
+          "text": "I say leave the Jewish folks alone."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "I"
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "",
+          "text": "See? You’re better than me. I would’ve had words. She was rude."
+        },
+        {
+          "character": "SABINE",
+          "parenthetical": "(CONT'D)",
+          "text": "46."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "She was being what she’s been taught to be. And I said words. I said a lot of words."
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "",
+          "text": "Yeah, but none of them were: ‘I’m the right one on the wrong day.’"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "I’m my mother’s daughter. You’ll never hear that from me."
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "",
+          "text": "That’s why you could never bag back. Not since we were kids."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "If Brett were there last night..."
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "",
+          "text": "Oh Lord. Poor lady."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "We’d still be there confronting."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(CONT’D)",
+          "text": "We were having conversations we didn’t get to finish."
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "",
+          "text": "I know. WIDE on Marion, full of sympathy. We see now that the lounger she sits in is hooked to a DIALYSIS MACHINE. A TECH tends to the process. The cousins are quiet together, worlds away."
+        }
+      ],
+      "actionPreview": "Isabel walks the canals in mid-conversation with Marion by phone, who reclines in a lounger. INTERCUT. They’re fine. They don’t need you. Black folk need you to do what you do. That’s why the first book hit. It was about us. Write about us. am writing about us. The parts they hid. What was taken, ch"
+    },
+    {
+      "number": 54,
+      "heading": "INT. BERLIN MUSEUM - LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "An austere open-air space punctuated with smooth surfaces. Weaving her way through tourists and students, Isabel overhears a teacher explain that the structure they are standing in is built on top of the former SS headquarters. She continues into a VIEWING ROOM, where vintage black and white IMAGES "
+    },
+    {
+      "number": 55,
+      "heading": "INT. MEETING ROOM - JUNE 5, 1934 - DAY",
+      "characters": [
+        "GRAU",
+        "GERCKE"
+      ],
+      "dialogues": [
+        {
+          "character": "GRAU",
+          "parenthetical": "",
+          "text": "The American model is useful. The notion that race mixing in marriage is illegal is ingrained in their public opinion. Quite stunning. LÖSENER"
+        },
+        {
+          "character": "GERCKE",
+          "parenthetical": "",
+          "text": "American segregation might provide a possible approach. More recent."
+        },
+        {
+          "character": "GRAU",
+          "parenthetical": "",
+          "text": "Segregation isn’t suitable to our circumstance. German Jews are too arrogant and too wealthy. Our problem is different."
+        }
+      ],
+      "actionPreview": "The man staring right into the camera is ACHIM GERCKE, dressed in an official top coat with Nazi insignia that states his rank. Gercke sits at a long table with the 16 OTHER MEN. All white Germans. All feel like slightly different versions of one person. In this room, they will decide the fate of mi"
+    },
+    {
+      "number": 56,
+      "heading": "EXT. ULRICH AND NATHAN’S TOWNHOME COURTYARD - PRESENT DAY",
+      "characters": [
+        "NIGELLA",
+        "ISABEL"
+      ],
+      "dialogues": [
+        {
+          "character": "NIGELLA",
+          "parenthetical": "",
+          "text": "(reading in English) ‘Our problem is different. Their problem is Negroes with nothing to build upon. A problem that plays no role for us in Germany. Our problem is the Jews, who must be kept enduringly apart... ’"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "It’s a transcript of a meeting I saw a picture of. A meeting where"
+        }
+      ],
+      "actionPreview": "Nigel and Isabel lean over a LARGE BOOK as he translates the German text. She is eager and excited. 48. (shocked) What is this? Nazi lawyers study and debate American laws and customs to figure out how to pull off the Holocaust."
+    },
+    {
+      "number": 57,
+      "heading": "INT. MEETING ROOM - JUNE 5, 1934 - CONTINUOUS",
+      "characters": [
+        "GRAU",
+        "GERCKE"
+      ],
+      "dialogues": [
+        {
+          "character": "GRAU",
+          "parenthetical": "",
+          "text": "Our problem is the Jews, who must be kept enduringly apart since there is no doubt that they represent a foreign body in the"
+        },
+        {
+          "character": "GERCKE",
+          "parenthetical": "",
+          "text": "As long as they have the most beautiful automobiles, the most beautiful motorboats. As long as they play a prominent role in pleasure spots and resorts, and everywhere that costs money."
+        },
+        {
+          "character": "GRAU",
+          "parenthetical": "",
+          "text": "This can only be achieved through measures that forbid sexual mixing of a Jew with a German and imposes criminal punishment."
+        }
+      ],
+      "actionPreview": "Various men debate. Now in translated English. Volk. Segregation will never achieve the goal, as long as the Jews have economic power in our German Fatherland as they do now."
+    },
+    {
+      "number": 58,
+      "heading": "INT. GERMAN NIGHTCLUB - 1934 - NIGHT",
+      "characters": [
+        "IRMA",
+        "AUGUST"
+      ],
+      "dialogues": [
+        {
+          "character": "IRMA",
+          "parenthetical": "",
+          "text": "Our rehearsing has paid off."
+        },
+        {
+          "character": "AUGUST",
+          "parenthetical": "",
+          "text": "Has it really? I can’t tell."
+        },
+        {
+          "character": "IRMA",
+          "parenthetical": "",
+          "text": "You’ve become quite decent."
+        },
+        {
+          "character": "AUGUST",
+          "parenthetical": "",
+          "text": "It’s only taken six months to get that twirl down."
+        },
+        {
+          "character": "IRMA",
+          "parenthetical": "",
+          "text": "Give or take. Mostly give."
+        },
+        {
+          "character": "AUGUST",
+          "parenthetical": "",
+          "text": "Has it been more than six?"
+        },
+        {
+          "character": "IRMA",
+          "parenthetical": "",
+          "text": "A little over a year. But, completely worthwhile!"
+        },
+        {
+          "character": "AUGUST",
+          "parenthetical": "",
+          "text": "Let’s go again."
+        },
+        {
+          "character": "IRMA",
+          "parenthetical": "",
+          "text": "Yes! Let me powder my nose first."
+        }
+      ],
+      "actionPreview": "August and Irma Landmesser are in love. Dressed up. Dancing. Twirling. Dipping. Laughing. Kissing. All to the popular music of the day being played by a LIVE BAND. 49. As she heads across the crowded club to the POWDER ROOM, August notices GESTAPO OFFICERS on the sidelines of the dance floor. Scanni"
+    },
+    {
+      "number": 59,
+      "heading": "INT. NIGHTCLUB BATHROOM - CONTINUOUS",
+      "characters": [
+        "LADIES"
+      ],
+      "dialogues": [
+        {
+          "character": "LADIES",
+          "parenthetical": "",
+          "text": "Did you see them?/I heard they’ll just ask for names/And addresses/"
+        }
+      ],
+      "actionPreview": "Irma stands in front of the mirror next to SEVERAL OTHER WOMEN, pinning her hair back in place with a smile as the ladies banter on. Their words spilling on top of each other. They won’t/They’re looking for artists/ And people who listen to jazz/I don’t believe it/It’s all blown out of proportion/No"
+    },
+    {
+      "number": 60,
+      "heading": "INT. GERMAN NIGHTCLUB - CONTINUOUS",
+      "characters": [
+        "AUGUST"
+      ],
+      "dialogues": [
+        {
+          "character": "AUGUST",
+          "parenthetical": "",
+          "text": "Laugh, dear. Laugh right now."
+        }
+      ],
+      "actionPreview": "August waits directly outside the restroom door. Irma stops short when she sees him. They exchange a look. To Irma, August appears enraged. To August, Irma appears afraid. Expressions that they don’t recognize in each other. He holds out his hand. She takes it. She does. He does too. Then, he hugs h"
+    },
+    {
+      "number": 61,
+      "heading": "INT. MEETING ROOM - JUNE 5, 1934 - DAY",
+      "characters": [
+        "KOHLRAUSCH",
+        "KLEE",
+        "LADIES",
+        "FREISLER"
+      ],
+      "dialogues": [
+        {
+          "character": "KOHLRAUSCH",
+          "parenthetical": "",
+          "text": "The American material gives us a path to an answer. America has succeeded here. Their legislation does not base itself on the idea of mere racial"
+        },
+        {
+          "character": "KLEE",
+          "parenthetical": "",
+          "text": "Germans are already convinced the"
+        },
+        {
+          "character": "LADIES",
+          "parenthetical": "(CONT'D)",
+          "text": "51."
+        },
+        {
+          "character": "FREISLER",
+          "parenthetical": "",
+          "text": "Precisely, I am of the opinion that we can proceed with the same primitivity as the American states."
+        }
+      ],
+      "actionPreview": "The heated deliberation continues in the wood-paneled room. LÖSENER We must answer the question here today as to whether laws that the Reich will institute should declare only the separation of races. Or if it should declare the superiority of one and inferiority of others. difference , but, to the "
+    },
+    {
+      "number": 62,
+      "heading": "EXT. ULRICH AND NATHAN'S TOWNHOME COURTYARD - DAY",
+      "characters": [
+        "ISABEL",
+        "NIGELLA"
+      ],
+      "dialogues": [
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "(energized)"
+        },
+        {
+          "character": "NIGELLA",
+          "parenthetical": "",
+          "text": "America taught the Nazis. That’s what this is saying. It is... it is jaw-dropping."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Yes. So, if the Holocaust is one of the prime examples of caste... and if America was the blueprint, then..."
+        },
+        {
+          "character": "NIGELLA",
+          "parenthetical": "",
+          "text": "Then, America"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Caste functions in America, India and Germany in the same way. The"
+        },
+        {
+          "character": "NIGELLA",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "And the Hindu caste system in"
+        },
+        {
+          "character": "NIGELLA",
+          "parenthetical": "",
+          "text": "You’ll find it. You’ll put it in your book. But promise me one thing?"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "What’s that?"
+        },
+        {
+          "character": "NIGELLA",
+          "parenthetical": "",
+          "text": "Promise me you’ll send your first copy to Sabine. That’d be perfection."
+        }
+      ],
+      "actionPreview": "Nigella and Isabel huddle over the document. He stops his translation, comes up for air taking a much needed swig from his wine glass. The Nazi blueprint for the extermination of millions of human beings was patterned directly on America’s enslavement and segregation of Black people. does fit. He ma"
+    },
+    {
+      "number": 63,
+      "heading": "INT. MIDTOWN RESTAURANT - NIGHT",
+      "characters": [
+        "KATE",
+        "ISABEL",
+        "SERVER"
+      ],
+      "dialogues": [
+        {
+          "character": "KATE",
+          "parenthetical": "",
+          "text": "There’s work on this... (refers to her notes)"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "“Hilter’s American Model.” It’s great."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(CONT’D)",
+          "text": "I’m building on his legal angle to prove that the origins in different eras, different parts of the globe, have the same roots. India’s next."
+        },
+        {
+          "character": "KATE",
+          "parenthetical": "",
+          "text": "Where is this guy? We’ve been sitting here for what... twenty minutes? No bread. No water."
+        },
+        {
+          "character": "KATE",
+          "parenthetical": "(CONT’D)",
+          "text": "I think what you’ve got is enough."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(CONT'D)",
+          "text": "(MORE) 53."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "I’m not arguing anything actually."
+        },
+        {
+          "character": "KATE",
+          "parenthetical": "",
+          "text": "How Nazis creating the Nuremberg laws works in our own lives? It’s heady, Isabel. Let’s maybe consider focusing the thesis more. So people have a shot at understanding what you’re getting at. You know? (beat)"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "KATE",
+          "parenthetical": "",
+          "text": "I mean the actual writing."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "I’m not ready yet. You know the process."
+        },
+        {
+          "character": "KATE",
+          "parenthetical": "",
+          "text": "I know"
+        },
+        {
+          "character": "KATE",
+          "parenthetical": "(CONT’D)",
+          "text": "(to the server)"
+        },
+        {
+          "character": "KATE",
+          "parenthetical": "(CONT’D)",
+          "text": "54."
+        },
+        {
+          "character": "SERVER",
+          "parenthetical": "",
+          "text": "No, ma’am. Not at all. I apologize. I’ll look into the order right now."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "You done?"
+        },
+        {
+          "character": "KATE",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "(moving on) I want those dates."
+        },
+        {
+          "character": "KATE",
+          "parenthetical": "",
+          "text": "I can’t hold dates and personnel for something that’s not on track to be finished in time."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "I’ll hit the date."
+        },
+        {
+          "character": "KATE",
+          "parenthetical": "",
+          "text": "How? It’s 14 months away. You know we need six months, minimum, with the completed material and..."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "I’ll get it done."
+        },
+        {
+          "character": "KATE",
+          "parenthetical": "",
+          "text": "Why are you rushing this?"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "I’m not rushing. I’m pushing myself."
+        },
+        {
+          "character": "KATE",
+          "parenthetical": "",
+          "text": "Why? Take your time. That’s your style. What’s the rush?"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Please hold the date, Kate."
+        },
+        {
+          "character": "KATE",
+          "parenthetical": "",
+          "text": "(long, skeptical beat)"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "I won’t miss it."
+        }
+      ],
+      "actionPreview": "Dinner with Kate, her editor, takes place in a swanky eatery. James Whitman... Kate is listening while looking around for a waiter. She sees a server filling the glasses at another table. She waves and mouths “bread please.” The server nods, but continues in the other direction. The Black and Jewish"
+    },
+    {
+      "number": 64,
+      "heading": "EXT. MIDTOWN RESTAURANT - A SHORT TIME LATER",
+      "characters": [
+        "KATE",
+        "ISABEL"
+      ],
+      "dialogues": [
+        {
+          "character": "KATE",
+          "parenthetical": "",
+          "text": "I’m not great at this kind of thing, so forgive me if I’m clumsy here. But, how are you holding up? (beat) I don’t want you to leave thinking: “She didn’t ask.” “She doesn’t care.” Because I think of you so often. More than you know. But then by asking, maybe I’m bringing it up and you were having a good day and I messed that up."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "I’m glad you asked."
+        },
+        {
+          "character": "KATE",
+          "parenthetical": "",
+          "text": "Yeah?"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Yeah. There’s no day I don’t think about them. Mom crossed my mind just now. She loved when men would hold doors for women. She’d be offended if the door wasn’t held."
+        },
+        {
+          "character": "KATE",
+          "parenthetical": "",
+          "text": "I’m with her."
+        }
+      ],
+      "actionPreview": "The women head out of the restaurant onto the street, pulling their coats on. A MAN holds the door open for them. Old-school. Kate tightens her arm around Isabel. They walk on."
+    },
+    {
+      "number": 65,
+      "heading": "INT. RUBY'S BEDROOM - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Isabel sits on her mother’s bed. In the empty house. She runs her hand across the pillow. Takes a moment to feel the space. She picks up the pillow and puts it in a packing box. She doesn’t want to do this. Her eyes happen upon a crack on the wall. She follows it with her eyes up to the ceiling."
+    },
+    {
+      "number": 66,
+      "heading": "INT. RUBY'S HOUSE - LATER THAT DAY",
+      "characters": [
+        "GINA",
+        "ISABEL"
+      ],
+      "dialogues": [
+        {
+          "character": "GINA",
+          "parenthetical": "",
+          "text": "Roomy. Fantastic light. Will you update it or sell as original?"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "I’m thinking a fresh coat of paint."
+        },
+        {
+          "character": "GINA",
+          "parenthetical": "",
+          "text": "Vintage it is."
+        },
+        {
+          "character": "GINA",
+          "parenthetical": "(CONT’D)",
+          "text": "There might be water damage there."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "With everything going on, I basically locked the house up. I have to deal with it."
+        },
+        {
+          "character": "GINA",
+          "parenthetical": "",
+          "text": "It’s a process. Isn’t everything?"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "What’s the price difference between fixing it up and selling as is?"
+        },
+        {
+          "character": "GINA",
+          "parenthetical": "",
+          "text": "As is? You’re basically giving this little jewel away. The area is hot right now with hipsters. These older homes, when they’re fixed up, sometimes double in value. If you can put in couple hundred or so to fix it up, you’d have a competitive situation with multiple bidders. (off Isabel’s shock)"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "One book. Working on another. But books don’t pay like people think."
+        },
+        {
+          "character": "GINA",
+          "parenthetical": "",
+          "text": "I get it. Sell as a fixer and don’t worry about it. Let someone else do the work. 57."
+        }
+      ],
+      "actionPreview": "A confident Latina realtor, GINA, explores as Isabel follows. 56. Gina points to peeling wallpaper in a spare bedroom. Gina enters the kitchen, turns on the water. No pressure. Two or three droplets drip out in a sad, little stream. You write books, right?"
+    },
+    {
+      "number": 67,
+      "heading": "EXT. RUBY'S HOUSE - DAY",
+      "characters": [
+        "ARBORIST",
+        "ISABEL"
+      ],
+      "dialogues": [
+        {
+          "character": "ARBORIST",
+          "parenthetical": "",
+          "text": "The heartwood’s infected, but it ain’t spread. I’d take it down now, if I was you."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "If it hasn’t spread, then it can be saved, right?"
+        },
+        {
+          "character": "ARBORIST",
+          "parenthetical": "",
+          "text": "I ain’t a roof guy, but yours ain’t safe. Got water coming in. If water’s getting in, other things get in. Termites. Mold. What not."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Yes. Of course."
+        },
+        {
+          "character": "ARBORIST",
+          "parenthetical": "",
+          "text": "It’s bad up there. Exposed holes to the insulation, whole nine. My guys can fix it with the tree removal."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Oh, but... I’m not sure yet. My mother loved that tree. I don’t want to cut it down."
+        },
+        {
+          "character": "ARBORIST",
+          "parenthetical": "",
+          "text": "You need it done. (impatient beat)"
+        }
+      ],
+      "actionPreview": "Neighbors on their lawn peer with curiosity. A jogger snoops mid-stride. Dogs bark in protest. Isabel speaks with an ARBORIST beneath the magnificent oak tree that has adorned Ruby’s house with beauty for ten decades. Lady, I can fix this or I can leave. What do you want? Isabel freezes. He’s trying"
+    },
+    {
+      "number": 68,
+      "heading": "EXT. ISABEL'S HOUSE - EARLY EVENING - FLASHBACK",
+      "characters": [
+        "BRETT",
+        "ISABEL",
+        "PEST CONTROL"
+      ],
+      "dialogues": [
+        {
+          "character": "BRETT",
+          "parenthetical": "",
+          "text": "Mornin’. 58."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Hi. Good morning."
+        },
+        {
+          "character": "BRETT",
+          "parenthetical": "",
+          "text": "Looks like they decided to move in."
+        },
+        {
+          "character": "PEST CONTROL",
+          "parenthetical": "",
+          "text": "Puttin’ it in the backyard to empty out. Have your gardener get rid of it in a day or two."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Wait, sir. Sir? I... I’d rather not have it in the yard. I have dogs."
+        },
+        {
+          "character": "PEST CONTROL",
+          "parenthetical": "",
+          "text": "It’s fine. It won’t hurt ‘em."
+        },
+        {
+          "character": "BRETT",
+          "parenthetical": "",
+          "text": "(quietly to her)"
+        },
+        {
+          "character": "BRETT",
+          "parenthetical": "(CONT’D)",
+          "text": "Hey. She said she doesn’t want it back there. You didn’t hear her?"
+        },
+        {
+          "character": "PEST CONTROL",
+          "parenthetical": "",
+          "text": "I heard her, but I can’t take it with me today. My bins are full."
+        },
+        {
+          "character": "BRETT",
+          "parenthetical": "",
+          "text": "You gotta figure something out then, don’t you? Or did you just remove that for free? If it’s your treat, then you can drop it right there. If you wanna get paid, buddy, you gotta finish the job. 59."
+        },
+        {
+          "character": "BRETT",
+          "parenthetical": "(CONT’D)",
+          "text": "Did I just mansplain?"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "You asked for permission. If you hadn’t..."
+        },
+        {
+          "character": "BRETT",
+          "parenthetical": "",
+          "text": "I’d be in white savior mode."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "(surprised)"
+        },
+        {
+          "character": "BRETT",
+          "parenthetical": "",
+          "text": "I try to break bad habits."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "(beat)"
+        },
+        {
+          "character": "BRETT",
+          "parenthetical": "",
+          "text": "They’re slowing down. Talking about moving to Florida. But, they’re okay. Hanging in, ya know?"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "The same with my mother. I get it."
+        },
+        {
+          "character": "BRETT",
+          "parenthetical": "",
+          "text": "My Mom made me promise to come by."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Wait? Is today your birthday?"
+        },
+        {
+          "character": "BRETT",
+          "parenthetical": "",
+          "text": "(nodding)"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Cause you’re still her baby. It’s sweet. Happy birthday... 60."
+        },
+        {
+          "character": "BRETT",
+          "parenthetical": "",
+          "text": "Brett."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Happy birthday, Brett. Isabel. (shaking his hand)"
+        },
+        {
+          "character": "BRETT",
+          "parenthetical": "",
+          "text": "They are?"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "They should be."
+        },
+        {
+          "character": "BRETT",
+          "parenthetical": "",
+          "text": "Why not come over and grab a slice of cake? Mom’d love it. You could help me make it a big deal. I have no idea how to do that."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "I haven’t seen your folks in a while. Sure, I’ll come and say hi."
+        }
+      ],
+      "actionPreview": "Brett waves to her from across the street. He observes a PEST CONTROL WORKER working on a BUG NEST under the eaves of her house. Even built their own guesthouse. They both squint at the bad joke. The pest man climbs down from a ladder with the DRIPPING HORNET’S NEST in his gloved hands, heading to t"
+    },
+    {
+      "number": 69,
+      "heading": "EXT. RUBY'S HOUSE - DAY",
+      "characters": [
+        "ARBORIST",
+        "ISABEL"
+      ],
+      "dialogues": [
+        {
+          "character": "ARBORIST",
+          "parenthetical": "",
+          "text": "Lady, I can fix this or I can leave. What do you want?"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "My mother loved this tree. If there’s a solution that doesn’t involve cutting it down, I’m happy to consider it. If not, I’ll pay the service fee and we can call it a day. No hard feelings."
+        },
+        {
+          "character": "ARBORIST",
+          "parenthetical": "",
+          "text": "(sigh)"
+        }
+      ],
+      "actionPreview": "Isabel allows her memory to guide her now. Let me take another look. Isabel nods with no satisfaction. 61."
+    },
+    {
+      "number": 70,
+      "heading": "EXT. CITY PARK - UNITED STATES - DAY",
+      "characters": [
+        "MARION",
+        "ISABEL",
+        "ANDRE",
+        "PATRICE"
+      ],
+      "dialogues": [
+        {
+          "character": "MARION",
+          "parenthetical": "",
+          "text": "An arborist? What the hell is that?"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "It’s a tree doctor."
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "",
+          "text": "Is it that serious? Lord. What’s it all costing?"
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "(CONT’D)",
+          "text": "What?"
+        },
+        {
+          "character": "ANDRE",
+          "parenthetical": "",
+          "text": "Respectfully, we - and everybody - are wondering about an ETA?"
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "",
+          "text": "The ETA is when I say it’s ready."
+        },
+        {
+          "character": "ANDRE",
+          "parenthetical": "",
+          "text": "Yes, ma’am. (then)"
+        },
+        {
+          "character": "PATRICE",
+          "parenthetical": "",
+          "text": "Yeah, how are you holding up?"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "All’s well. You both good? 62."
+        },
+        {
+          "character": "PATRICE",
+          "parenthetical": "",
+          "text": "Oh yeah. Everything’s good. I was going to ask if you knew one of my professors. Dr. Montgomery. I think he studies the things you do."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Doesn’t ring a bell, but I haven’t been keeping up like I used to."
+        },
+        {
+          "character": "PATRICE",
+          "parenthetical": "",
+          "text": "Of course. Yeah. Well, he’s a smart man. A nice older gentleman. I thought you might like to meet him."
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "",
+          "text": "Here, take this to the Uno table."
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "(CONT’D)",
+          "text": "They mean well."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Brett always looked forward to these. Only you and Mama really let him in."
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "",
+          "text": "People weren’t mean."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "No, but there was always"
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "",
+          "text": "About interracial relationships? 63."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "No. I’m looking at caste, the phenomenon of setting one group of people over another and the consequences to the victims and presumed beneficiaries."
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "",
+          "text": "Can you repeat that in English?"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Of course, I can."
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "",
+          "text": "Then do it. Please. Make it plain."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "(thinking, then new idea)"
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "",
+          "text": "Yes. Hell, yeah, it was."
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "(CONT’D)",
+          "text": "Yes, it was."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "They made it up, Marion. Race is not real. It’s pseudoscientific nonsense that they used in their quest for supremacy. They made it all up. Toni Morrison said, you don’t give your children to be nursed and raised by people you feel aren’t human. Who are animals."
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "",
+          "text": "Yes, Toni. 64."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "They knew that was a lie. They knew we weren’t inferior. All of it was lies. But they magnified those myths and codified them - set them in stone - inside systems. In our laws, our medical care, where we live, how we learn, what work we do, even our food."
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "",
+          "text": "Racism at its finest."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Caste."
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "",
+          "text": "Everything you said is racist."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Then what do you call the same thing happening in India? They’re all brown. All Indian. They have a whole system with generations of people forced to clean sewers"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(CONT’D)",
+          "text": "(on a roll)"
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "",
+          "text": "Definitely."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Okay, the majority are and the same thing happened to them during the"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(CONT’D)",
+          "text": "We’ve got to consider oppression without always centralizing race."
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "",
+          "text": "(a long, smiling beat)"
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "(CONT’D)",
+          "text": "Figure out how to say more of what you just said. Make it plain. Talk to real people. Like you just did to me. Real people. Real things."
+        }
+      ],
+      "actionPreview": "If you’ve never been to a Black family reunion, feast your eyes on the food, the fun and the festivities. FRANKIE BEVERLY AND MAZE’s “Happy Feelings” plays on a large speaker that shimmies with sound. Old folks and young-uns and everyone in between dance and take delight in each other. Several BBQs "
+    },
+    {
+      "number": 71,
+      "heading": "INT. HOME OF MISS HALE/LIVING ROOM - DAY",
+      "characters": [
+        "MISS HALE",
+        "ISABEL",
+        "SEVEN"
+      ],
+      "dialogues": [
+        {
+          "character": "MISS HALE",
+          "parenthetical": "",
+          "text": "(to the kids)"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(CONT'D)",
+          "text": "66."
+        },
+        {
+          "character": "SEVEN",
+          "parenthetical": "",
+          "text": "Mommie made your favorite."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "She did!?"
+        },
+        {
+          "character": "SEVEN",
+          "parenthetical": "",
+          "text": "Yep. It’s my favorite, too. It’s so good, Ms. Isabel. She only makes it when you come because you love it."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "I do love it. It’s the sauce that’s my favorite part."
+        },
+        {
+          "character": "MISS HALE",
+          "parenthetical": "",
+          "text": "(from the other room) I’m missing a child in here please!"
+        },
+        {
+          "character": "SEVEN",
+          "parenthetical": "",
+          "text": "(whisper)"
+        },
+        {
+          "character": "MISS HALE",
+          "parenthetical": "",
+          "text": "Isabel!"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "(caught, laughing) I’m sorry, it’s just..."
+        },
+        {
+          "character": "MISS HALE",
+          "parenthetical": "",
+          "text": "You’re just as bad as these kids!"
+        }
+      ],
+      "actionPreview": "FIVE ADORABLE SMALL CHILDREN of varying ages run towards Isabel. She kneels down and opens her arms wide to receive a gaggle of hugs and giggles. Their mother, MISS HALE, the picture of energetic motherhood, enters with a smile. She wipes her hands with a dishcloth. You have 30 minutes of reading ti"
+    },
+    {
+      "number": 72,
+      "heading": "INT. MISS HALE/DINING ROOM TO KITCHEN - DAY",
+      "characters": [
+        "KIDS",
+        "JAMES",
+        "MISS HALE",
+        "ISABEL"
+      ],
+      "dialogues": [
+        {
+          "character": "KIDS",
+          "parenthetical": "",
+          "text": "Good night, Ms. Isabel./See you next time./Night, night!"
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "Isabel, come by more often, will ya? We seem to only get the lasagna when you’re around."
+        },
+        {
+          "character": "MISS HALE",
+          "parenthetical": "",
+          "text": "I can’t believe you want to interview me of all people."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Of course, I do. You’re a dynamo. (beat)"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(CONT’D)",
+          "text": "I’m okay. Promise."
+        }
+      ],
+      "actionPreview": "The homemade lasagna has been enthusiastically eaten and the kids are getting put to bed by Miss Hale’s husband, JAMES. Before they leave, they all bid her a good night. Hugs and good vibes. Clearing the table commences. 67. Your kids are perfect. Your husband is a sweetheart. I mean... Isabel smile"
+    },
+    {
+      "number": 73,
+      "heading": "EXT. MISS HALE'S BACKYARD PATIO - A SHORT TIME LATER",
+      "characters": [
+        "MISS HALE",
+        "ISABEL"
+      ],
+      "dialogues": [
+        {
+          "character": "MISS HALE",
+          "parenthetical": "",
+          "text": "Growing up, he watched white folk - complete strangers, children even - call his mother and grandmother by their first names. Teenagers had the nerve to call out ‘Pearlie’ to his mother instead of ‘Mrs. Hale.’"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "This is in Alabama, right?"
+        },
+        {
+          "character": "MISS HALE",
+          "parenthetical": "",
+          "text": "Selma. The family house is a few blocks from the Bridge. He marched the day the bridge was attacked."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Wow. I didn’t know that."
+        },
+        {
+          "character": "MISS HALE",
+          "parenthetical": "",
+          "text": "He was a kid. Was way in the back of the group. He didn’t get hurt, but what he saw never left him. So, he decided if there was one thing he would do, he’d make them respect the next generation in his line."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "That’s direct defiance of caste."
+        },
+        {
+          "character": "MISS HALE",
+          "parenthetical": "",
+          "text": "I think one of the happiest times I ever saw him was when this name payed off exactly the way he always dreamed it."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "I need all the details."
+        },
+        {
+          "character": "MISS HALE",
+          "parenthetical": "",
+          "text": "You sound like Dad. The day I came home from school and told him what happened, he needed every detail. ‘What’d they say? And then what’d you say? And what after that?’"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "That’s me right now."
+        },
+        {
+          "character": "MISS HALE",
+          "parenthetical": "",
+          "text": "Okay! So I was in tenth grade and we’d just moved to Texas. My friend and I had these walkie-talkies we’d use between classes to talk or whatever. Pre-cell phones, of course. This is the late 80s. One day, the principal calls me into his office, all suspicious, wanting to know why these people were gathered around my locker. So I showed him the walkie-talkie. He asked my name. ‘Miss Hale,’ I said. ‘What’s your first name?’ ‘It’s"
+        },
+        {
+          "character": "MISS HALE",
+          "parenthetical": "(CONT'D)",
+          "text": "69."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Your father tore a loophole in the hierarchy. It’s brilliant."
+        },
+        {
+          "character": "MISS HALE",
+          "parenthetical": "",
+          "text": "So, the principal is furious. Tells the secretary to check my records."
+        },
+        {
+          "character": "MISS HALE",
+          "parenthetical": "(CONT’D)",
+          "text": "My Daddy’d told me again and again to live up to my name. He’d say: ‘They don’t have the corner on humanity. They don’t have the corner on femininity. They don’t have the corner on what it means to be a whole, noble, honorable person.’ Quite the opposite."
+        }
+      ],
+      "actionPreview": "Miss sits in the backyard on a deck chair across from Isabel who has her PORTABLE TAPE RECORDER going and her notebook out. We catch the women in mid-conversation. He hated that disrespect. Imagine a young Black man plotting to force respect from white folks. (MORE) 68. Decided he’d name his firstbo"
+    },
+    {
+      "number": 74,
+      "heading": "INT. ISABEL'S LIVING ROOM - DAY",
+      "characters": [
+        "INDIAN WOMAN"
+      ],
+      "dialogues": [
+        {
+          "character": "INDIAN WOMAN",
+          "parenthetical": "",
+          "text": "We proudly bestow this Ambedkar"
+        }
+      ],
+      "actionPreview": "Isabel is curled up on her couch watching a video on her laptop of an academic conference. ON THE VIDEO: An ornate room with a small group of prominent academics, a mix of Indian-Americans and Indian nationals. An INDIAN-AMERICAN WOMAN, a conference leader, speaks. A man shifts in his seat uncomfort"
+    },
+    {
+      "number": 75,
+      "heading": "EXT. AMHERST CONFERENCE - ANOTHER DAY",
+      "characters": [
+        "SURAJ",
+        "ISABEL"
+      ],
+      "dialogues": [
+        {
+          "character": "SURAJ",
+          "parenthetical": "",
+          "text": "It was the people in the room."
+        },
+        {
+          "character": "SURAJ",
+          "parenthetical": "(CONT’D)",
+          "text": "(confiding) I can’t look them in the eye. In"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "I guess I assumed the caste system in India didn’t follow people here."
+        },
+        {
+          "character": "SURAJ",
+          "parenthetical": "",
+          "text": "These shoes I bought back home are not my size. They’re too big for me. I did not have the confidence to ask for my size. I bought them because I could not trouble the salesman. I bought what he gave me."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "What would he have done if you asked for your size?"
+        },
+        {
+          "character": "SURAJ",
+          "parenthetical": "",
+          "text": "Thrown me out. Called the police."
+        },
+        {
+          "character": "SURAJ",
+          "parenthetical": "(CONT’D)",
+          "text": "We have a feeling of danger with them. Even in that room that day."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "I’ve read your work on Dr."
+        },
+        {
+          "character": "SURAJ",
+          "parenthetical": "",
+          "text": "We call him Babasaheb. It means ‘Respected Father.’ He wrote and spoke extensively about people in the so-called upper caste, and it’s the same as what’s happening here to your people."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "There’s something to that correlation, don’t you think?"
+        },
+        {
+          "character": "SURAJ",
+          "parenthetical": "",
+          "text": "Indigenous. Palestinian. Yes."
+        }
+      ],
+      "actionPreview": "Isabel sits on a bench on campus with Suraj. Their last names. Names have little meaning in America, but they signify rank in India. And the last names in that room? Some of the most revered back home. Isabel nods, trying to understand. India, they would not speak to me. In the modern day. Naive of "
+    },
+    {
+      "number": 76,
+      "heading": "INT. MARION’S HOME - DAY",
+      "characters": [
+        "MARION",
+        "ISABEL"
+      ],
+      "dialogues": [
+        {
+          "character": "MARION",
+          "parenthetical": "",
+          "text": "How much is it?"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "All four estimates came in over 10,000 dollars."
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "",
+          "text": "You have a picture of Uncle Irving at all? I can’t find one of him alone. Only with the cousins."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "I’ll look."
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "",
+          "text": "Well, you can’t sell a roofless house."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "It’ll have to wait ‘til I’m back."
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "",
+          "text": "You leave when again?"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Next month. I have so much research to do here and I have to start a draft soon."
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "",
+          "text": "Been saying that for six months."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "I’m not ready yet."
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "",
+          "text": "And saying"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "That’s the point of traveling."
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "",
+          "text": "Traveling to places where you’re warmly welcomed by familiar faces is underrated. 73."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "I’ve been emailing with a professor who might help me navigate."
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "",
+          "text": "Might?"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "You know, I could stay for a bit."
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "",
+          "text": "Go, so when you get home, you can finally start writing this thing."
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "(CONT’D)",
+          "text": "I don’t have my arms all the way around it, but I was thinking about those containers, with the labels."
+        },
+        {
+          "character": "MARION",
+          "parenthetical": "(CONT’D)",
+          "text": "Most people would look at him and never know what was inside. He loved Beethoven and the Beatles made the best peach cheesecake you ever tasted and loved Twilight"
+        }
+      ],
+      "actionPreview": "A much thinner Marion sits in her bed covered in a quilt, working on a family photo album as Isabel looks through pictures in an album of her own. 72. Each time, we’ve seen Marion, we’ve seen her at a pharmacy or with a cane. This time there is no doubt. She’s not well. But, her spirit is still live"
+    },
+    {
+      "number": 77,
+      "heading": "INT. ISABEL’S HOUSE - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Isabel nuzzles her dogs and goes to grab her purse. Then, she looks to the hook marked KEYS and they aren’t there. She freezes as she looks at the empty hook. 74. QUICK FLASHBACKS: Brett finding keys in the laundry room, Ruby finding keys behind the blender another day, Brett finding keys still in t"
+    },
+    {
+      "number": 78,
+      "heading": "EXT. DELHI STREETS - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "She sits in the back seat of the TUK-TUK, a open air three- wheel motorized cart. He skillfully drives within a crush of cars, mopeds, pedestrians and other vehicles on the road, speeding into the unmarked lanes like the rest. She sends an email with the subject header “Marion” on her Blackberry to "
+    },
+    {
+      "number": 79,
+      "heading": "EXT. DELHI BOUTIQUE INN - LATER THAT NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Throngs of people, even in the middle of the night. The Tuk- Tuk pulls up to one of many boutique hotels. 75. Isabel exits with her roller bag. She pays the driver, asking him if it’s enough. He nods and actually gives her a couple of coins back. She hands them back to him. Neither speaks each other"
+    },
+    {
+      "number": 80,
+      "heading": "INT. BOUTIQUE INN - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The INNKEEPER opens the door and Isabel walks into a clean stark room. The overhead fan causes the CLOSED BRIGHT GOLD CURTAINS to dance on the far wall. She turns to thank the woman, who closes the door with a nod. Her email pings. There’s a reply from Teddy. It reads: “She’s comfortable. Not able t"
+    },
+    {
+      "number": 81,
+      "heading": "EXT. DELHI STREETS - DAY",
+      "characters": [
+        "SURAJ",
+        "ISABEL",
+        "RAM",
+        "INDIAN WOMAN DOCENT"
+      ],
+      "dialogues": [
+        {
+          "character": "SURAJ",
+          "parenthetical": "",
+          "text": "Isabel!"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Suraj!"
+        },
+        {
+          "character": "SURAJ",
+          "parenthetical": "",
+          "text": "Allow me to introduce my colleague,"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Hello, Professor. It’s a pleasure. 76."
+        },
+        {
+          "character": "RAM",
+          "parenthetical": "",
+          "text": "Please call me Ram. And the pleasure is mine. CUT TO:"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "For my cousin."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(CONT’D)",
+          "text": "Why is the statue caged?"
+        },
+        {
+          "character": "RAM",
+          "parenthetical": "",
+          "text": "Ah. Observant. Babasaheb. Leader of the Dalits."
+        },
+        {
+          "character": "SURAJ",
+          "parenthetical": "",
+          "text": "Isabel. It’s Dr. Ambedkar."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Oh wow. He looks different here."
+        },
+        {
+          "character": "SURAJ",
+          "parenthetical": "",
+          "text": "This is an image from when he converted to Buddhism."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Ah, I see. (drawn in)"
+        },
+        {
+          "character": "SURAJ",
+          "parenthetical": "",
+          "text": "He is those things to many of us."
+        },
+        {
+          "character": "SURAJ",
+          "parenthetical": "",
+          "text": "The site of Dr. Ambedkar’s original home is now a museum. Quite magnificent. The building is shaped like an open book to commemorate the Indian Constitution that he helped draft."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Hello, Sir. (beat)"
+        },
+        {
+          "character": "INDIAN WOMAN DOCENT",
+          "parenthetical": "",
+          "text": "As a boy, Dr. Ambedkar walked to the schoolhouse carrying a gunny. EXT./INT. INDIA SCHOOLHOUSE - 1900 - DAY"
+        },
+        {
+          "character": "INDIAN WOMAN DOCENT",
+          "parenthetical": "(V.O.)",
+          "text": "He was separated from kids of high caste, so as not to pollute them."
+        },
+        {
+          "character": "INDIAN WOMAN DOCENT",
+          "parenthetical": "(V.O.)",
+          "text": "He was not allowed to touch things his classmates would touch. Desk included. He was not allowed to even touch the school’s water."
+        }
+      ],
+      "actionPreview": "Isabel stands on the edge of the roadside. With a fanny pack strapped around her waist, she considers how to cross the busiest street she’s ever seen. No lanes. No speed limits. No rules. Just a wide open stretch of asphalt with cars, mopeds, bikes and vans hurtling in every direction. She’ll never "
+    },
+    {
+      "number": 82,
+      "heading": "EXT. CAMPUS COURTYARD - LATER",
+      "characters": [
+        "SURAJ",
+        "JAJULA",
+        "ISABEL",
+        "INT.",
+        "DR. KING"
+      ],
+      "dialogues": [
+        {
+          "character": "SURAJ",
+          "parenthetical": "",
+          "text": "Are you a vegetarian or a pure vegetarian? Not a question you would expect on an application for a new flat in 2023. But, it is a legal way to determine if we are"
+        },
+        {
+          "character": "JAJULA",
+          "parenthetical": "",
+          "text": "My thesis centered on Dr. King’s visit to India. He saw many of these things first-hand while he and Mrs. King toured the country."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Wow. What was the specific focus on your work?"
+        },
+        {
+          "character": "JAJULA",
+          "parenthetical": "",
+          "text": "I explored his own analysis of his visit."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "He wrote about India in Ebony?"
+        },
+        {
+          "character": "JAJULA",
+          "parenthetical": "",
+          "text": "Yes! July 1959. It is quite extraordinary. He goes into great detail about the five weeks that they visited. They toured the whole country. Delhi, Bombay, Calcutta."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "He used the word ‘caste’?"
+        },
+        {
+          "character": "JAJULA",
+          "parenthetical": "",
+          "text": "Several times. He’s explaining it to the readers of ‘Ebony.’ Those are African-American readers, correct?"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Yes! Yes, they are. (beat)"
+        },
+        {
+          "character": "JAJULA",
+          "parenthetical": "",
+          "text": "He believed that the custom of only marrying within one’s social group and barring marriages between different types of people was the culprit."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Endogamy. Preventing intermarriage."
+        },
+        {
+          "character": "SURAJ",
+          "parenthetical": "",
+          "text": "Yes. He called caste the artificial chopping up of the population into fixed and definite units. For"
+        },
+        {
+          "character": "JAJULA",
+          "parenthetical": "(CONT'D)",
+          "text": "(MORE) 80."
+        },
+        {
+          "character": "INT.",
+          "parenthetical": "",
+          "text": "SHUTTLE - DAY"
+        },
+        {
+          "character": "DR. KING",
+          "parenthetical": "(V.O.)",
+          "text": "In contrast to those in poverty, there are Indians who are rich, have luxurious estates, land, fine clothes. And then there is the problem of segregation. We call it race in America. They call it caste in India. In both places, it means that some are considered inferior, treated as though they deserve less. The bourgeoisie behaves the same the world over."
+        }
+      ],
+      "actionPreview": "Isabel records Suraj, Ram and Dalit intellectuals on an L- shaped sofa, including JAJULA, a Dalit woman scholar. Dalits. Brahmins are mostly vegetarians. Most Dalits aren’t pure vegetarian. So landlords will ask that. And our answer is a basis for denial of an apartment without them technically brea"
+    },
+    {
+      "number": 83,
+      "heading": "EXT. SAFDARJANG’S TOMB - A FEW MOMENTS LATER",
+      "characters": [
+        "SURAJ"
+      ],
+      "dialogues": [
+        {
+          "character": "SURAJ",
+          "parenthetical": "(CONT'D)",
+          "text": "81."
+        }
+      ],
+      "actionPreview": "Isabel holds the phone close to her ear, not clocking where she is as she walks through a long shadowed TUNNEL."
+    },
+    {
+      "number": 84,
+      "heading": "INT. MARION’S HOUSE - SAME TIME",
+      "characters": [
+        "TEDDY",
+        "ISABEL"
+      ],
+      "dialogues": [
+        {
+          "character": "TEDDY",
+          "parenthetical": "",
+          "text": "(into the phone) I’ll hold up the phone."
+        },
+        {
+          "character": "TEDDY",
+          "parenthetical": "(CONT’D)",
+          "text": "(to Marion)"
+        },
+        {
+          "character": "TEDDY",
+          "parenthetical": "(CONT’D)",
+          "text": "You’re on speaker. She’s... she’s not responding to folks."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "I understand. CLOSE on Isabel. Trying to get her bearings. Control her emotions, which are overflowing. She emerges from the tunnel into the stunning architectural surroundings."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(CONT’D)",
+          "text": "(then, softly)"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(CONT’D)",
+          "text": "I want you to know that you have meant so much to me. I will never forget our talks. I've remembered everything you said. Everything."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(CONT’D)",
+          "text": "My father and your father were so close. They loved each other so much, didn’t they? They passed it on to us. We were so lucky. Watch out for me please. Cover me, okay?"
+        }
+      ],
+      "actionPreview": "Teddy stands at the window on the phone with Isabel. Then, walks to the bed revealing Marion. Her state is alarming. Completely still, eyes closed, on a breathing machine. INTERCUT ISABEL IN INDIA and MARION’S HOME. He touches Marion’s shoulder gently. Baby. She doesn’t rouse. Just labored breathing"
+    },
+    {
+      "number": 85,
+      "heading": "INT. ISABEL'S HOUSE - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The door opens to reveal Isabel with her luggage. She steps inside, sets down her bags. Then, she stands there. Still. There will be no hug from Brett. There will be no visit to Ruby. There will be no call from Marion. We feel their absence as we watch her. But something has changed, she has a resol"
+    },
+    {
+      "number": 86,
+      "heading": "INT. ISABEL'S OFFICE - MULTIPLE DAYS",
+      "characters": [
+        "ISABEL"
+      ],
+      "dialogues": [
+        {
+          "character": "ISABEL",
+          "parenthetical": "(CONT’D)",
+          "text": "83."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "Dr. Ambedkar wrote: Caste is an artificial chopping up of the population into fixed units."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "Each unit is prevented from fusing into another through the custom called endogamy. In showing how endogamy is maintained, we can prove the genesis and mechanism of caste. FRAMED PHOTOGRAPHS. We jump across images of HER PARENTS in a loving embrace and of her and Brett, hugging and smiling."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "Endogamy is defined as restricting marriage to people within the same caste."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "This is an ironclad foundation of any caste system - from ancient"
+        }
+      ],
+      "actionPreview": "Isabel rolls a suitcase into the room and kneels to open it. She unzips the suitcase to reveal a BEVY of BOOKS. She removes them like treasures, stopping at one by Ambedkar. Over a montage, we hear her voice in her head. Writing. Isabel reaches for a marker and makes notes on a LARGE WHITEBOARD near"
+    },
+    {
+      "number": 87,
+      "heading": "INT. GERMANY/DENMARK BORDER 1937 - NIGHT",
+      "characters": [
+        "ISABEL",
+        "IRMA",
+        "AUGUST"
+      ],
+      "dialogues": [
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "Endogamy enforces caste boundaries by forbidding marriage, sexual relations or even the appearance of romantic interest across caste lines. It builds a firewall between certain people."
+        },
+        {
+          "character": "IRMA",
+          "parenthetical": "",
+          "text": "(whispers)"
+        },
+        {
+          "character": "AUGUST",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "IRMA",
+          "parenthetical": "",
+          "text": "Oh my God."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "By closing off legal family connection, endogamy purposely blocks a sense of empathy and shared destiny between people."
+        }
+      ],
+      "actionPreview": "August and Irma drive down a dusty road in a truck through the grasslands, holding hands. Worried, but determined. Then, the couple’s expressions become wrought with fear. Up ahead, is a BLOCKADE of law enforcement. 84. August. He looks to her and kisses her hand. It’s all he can do. They exit the c"
+    },
+    {
+      "number": 88,
+      "heading": "INT. RUBY’S HOUSE - PRESENT DAY",
+      "characters": [
+        "ISABEL"
+      ],
+      "dialogues": [
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "One of the foremost scholars of caste in America once wrote: ‘Tied to what one looked like, membership in either the upper or the lowest caste is immutable, primordial, fixed from birth to death, inescapable. One may neither earn nor wed their way out.’"
+        }
+      ],
+      "actionPreview": "A CABINET REFURBISHER walks through with a drill one minute. Passing back with cabinets doors and hinges the next. In the dining room, Isabel is buried in a book. She writes on a WHITEBOARD in Ruby’s dining room: Pillar #5: “ Occupational Hierarchy.” 85."
+    },
+    {
+      "number": 89,
+      "heading": "EXT. MISSISSIPPI DELTA COTTON FIELD - DAY",
+      "characters": [
+        "ISABEL",
+        "ALLISON",
+        "MARY",
+        "ELIZABETH",
+        "BURLEIGH",
+        "ESSIE"
+      ],
+      "dialogues": [
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "That scholar was Dr. Allison Davis. (beat)"
+        },
+        {
+          "character": "ALLISON",
+          "parenthetical": "",
+          "text": "(to Burleigh and Mary)"
+        },
+        {
+          "character": "MARY",
+          "parenthetical": "",
+          "text": "You sure? There’s no telling what this town’ll do if they find out."
+        },
+        {
+          "character": "ELIZABETH",
+          "parenthetical": "",
+          "text": "We all know what they’d do."
+        },
+        {
+          "character": "ALLISON",
+          "parenthetical": "",
+          "text": "Let’s stay on topic. There’s nothing we can do about it now. And we have quite a bit to review."
+        },
+        {
+          "character": "ELIZABETH",
+          "parenthetical": "",
+          "text": "Well, we finally got proof that that one land owner, Bailey, has been whipping sharecroppers. (MORE) 86."
+        },
+        {
+          "character": "MARY",
+          "parenthetical": "",
+          "text": "Bailey’s wife told me... (reading from her notes) ‘That’s the way to manage ‘em when they get"
+        },
+        {
+          "character": "BURLEIGH",
+          "parenthetical": "",
+          "text": "We heard about a tenant farmer next county over who was beaten so badly by a store merchant, he can’t bring in a crop. We’re heading over there tomorrow to the store."
+        },
+        {
+          "character": "ALLISON",
+          "parenthetical": "",
+          "text": "Do we know what sparked that?"
+        },
+        {
+          "character": "MARY",
+          "parenthetical": "",
+          "text": "The Negro MAN asked for a receipt."
+        },
+        {
+          "character": "BURLEIGH",
+          "parenthetical": "",
+          "text": "Beat him right there in the store."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "In the fall of 1933, Alison Davis and his wife Elizabeth cut short their advanced studies at the"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "Davis was a young anthropologist with two degrees from Harvard"
+        },
+        {
+          "character": "ELIZABETH",
+          "parenthetical": "(CONT'D)",
+          "text": "(MORE) 87."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "And this was exactly what they were doing in Natchez, Mississippi: breaching the social order to study the social hierarchy of the South."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "... a white couple named Burleigh and Mary Gardner, also Harvard anthropologists. Less experienced, but passionate about the topic. The mission was quietly revolutionary."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "But coming from the North, neither couple fully knew what they were getting themselves into. EXT/INT. NATCHEZ, MISSISSIPPI - VARIOUS LOCATIONS"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.) (CONT'D)",
+          "text": "88."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "Out in public, they had to remain in character at all times, with the"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "Davis was the leader of the team, but they couldn’t let the locals know that. They had to keep to their own caste performance."
+        },
+        {
+          "character": "MARY",
+          "parenthetical": "",
+          "text": "I don’t see how we stay much longer. Our neighbor practically invited us to a lynching yesterday."
+        },
+        {
+          "character": "BURLEIGH",
+          "parenthetical": "",
+          "text": "And Allison, there’ve been some unkind things said about you. I can’t be sure some of these folks don’t get a mind to do something. 89."
+        },
+        {
+          "character": "ELIZABETH",
+          "parenthetical": "",
+          "text": "(rattled)"
+        },
+        {
+          "character": "ALLISON",
+          "parenthetical": "",
+          "text": "(rallying)"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "The two couples kept on the move."
+        },
+        {
+          "character": "ELIZABETH",
+          "parenthetical": "",
+          "text": "The most striking tenant of their embrace of supremacy is deference."
+        },
+        {
+          "character": "ALLISON",
+          "parenthetical": "",
+          "text": "Maybe you’re right. Deference goes beyond mere observance of certain formalities - we call them “sir” and they call us “boy” and “gal.”"
+        },
+        {
+          "character": "ELIZABETH",
+          "parenthetical": "",
+          "text": "Exactly. Never contradicting whites. Never correcting them."
+        },
+        {
+          "character": "ALLISON",
+          "parenthetical": "",
+          "text": "Yes, Lizzy. Good. Not only having to"
+        },
+        {
+          "character": "ELIZABETH",
+          "parenthetical": "",
+          "text": "It’s not enough to conform reluctantly."
+        },
+        {
+          "character": "ALLISON",
+          "parenthetical": "",
+          "text": "Right. Conform willingly."
+        },
+        {
+          "character": "ESSIE",
+          "parenthetical": "",
+          "text": "Evenin’. Ya’ll eat? Been out he’ readin’ and writin’ fah hours."
+        },
+        {
+          "character": "ALLISON",
+          "parenthetical": "",
+          "text": "Hey nah! Ain’t gotta tell me twice!"
+        },
+        {
+          "character": "ELIZABETH",
+          "parenthetical": "",
+          "text": "We comin’. We ready. Thank ya."
+        },
+        {
+          "character": "ELIZABETH",
+          "parenthetical": "(CONT’D)",
+          "text": "We barely made it out of Germany,"
+        }
+      ],
+      "actionPreview": "The scene depicted on the cover of a book that she took from her home office shelf long ago: Three Black people in a 1930s pick-up truck. The TRUCK zooms by as the three people in the truck watch a conversation happening on the side of the dirt road. Those having the conversation seem uneasy with be"
+    },
+    {
+      "number": 90,
+      "heading": "INT. RUBY'S HOUSE - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "It’s RAINING. WORKMEN carry plaster and hoses to the back of the house, leaving muddy footprints on the hardwood floors. Isabel clocks it, but goes back to reading a book. It’s the same one that she took off of her shelf long ago when she attempted to write about Trayvon Martin. The same one she hel"
+    },
+    {
+      "number": 91,
+      "heading": "INT. EAST COAST PORTRAIT STUDIO - DAY",
+      "characters": [
+        "ISABEL"
+      ],
+      "dialogues": [
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "In 1941, the Davis and Gardner team emerged with perhaps the most comprehensive study, to this day, of the American caste system. Their ethnographic fieldwork was a choice to risk their lives to document the structure of human division. The"
+        }
+      ],
+      "actionPreview": "Both couples pose for a picture being taken in a portrait studio. They fuss over their ties and smooth their hair, patting their skirts, raising their posture. Davises and The Gardners remained lifelong friends. They look quite serious. Then, at the photographer’s urging, they all smile as the FLASH"
+    },
+    {
+      "number": 92,
+      "heading": "EXT. RUBY'S HOUSE - ANOTHER DAY",
+      "characters": [
+        "ISABEL"
+      ],
+      "dialogues": [
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "Their book “Deep South” is a quietly revolutionary, landmark experiment in interracial scholarship. A brilliant, compassionate, rigorous testimony of a long ago era."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "With each passing year, it becomes an even more valuable gift to those who seek to understand the divisions of caste."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "Dr. Allison Davis became the first"
+        }
+      ],
+      "actionPreview": "The Arborist from before is working in the yard as Isabel writes on her laptop on the porch. A POSTAL WORKER approaches with mail and a warm greeting. 92. Isabel puts down the computer to receive the package. She opens it with care. Then, removes a sheet of stamps. Black tenured professor at a major"
+    },
+    {
+      "number": 93,
+      "heading": "INT. NEW YORK PUBLISHING OFFICE - DAY",
+      "characters": [
+        "KATE",
+        "ISABEL"
+      ],
+      "dialogues": [
+        {
+          "character": "KATE",
+          "parenthetical": "",
+          "text": "The pillars are working. They give it shape. How many do you think there’ll be?"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Six or seven, I think. I’m close to finalizing it."
+        },
+        {
+          "character": "KATE",
+          "parenthetical": "",
+          "text": "You’re going to make this deadline. 93."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "I am going to make this deadline."
+        },
+        {
+          "character": "KATE",
+          "parenthetical": "",
+          "text": "This self-imposed deadline."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "There’s no one to push me anymore. I have to push myself."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(CONT’D)",
+          "text": "(pivoting)"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(CONT’D)",
+          "text": "This one is fascinating. Horrifying and fascinating."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(CONT’D)",
+          "text": "In India, generally one’s social rank is passed down by the father."
+        },
+        {
+          "character": "KATE",
+          "parenthetical": "",
+          "text": "Right. But why?"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "(a twinkle in her eye)"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(CONT’D)",
+          "text": "White men put it into a law so they could claim the children that came from their rapes of Black women as property."
+        },
+        {
+          "character": "KATE",
+          "parenthetical": "",
+          "text": "(dawning on her)"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "They protected their “property” and their profit. But they also protected so-called “whiteness.”"
+        }
+      ],
+      "actionPreview": "A swanky Manhattan office with chic decor. Isabel is escorted past the open work spaces into the office of her editor, Kate, who greets her with genuine warmth. CUT TO: Both women sit in Swedish designer chairs with their laptops. This stops Kate, finally understanding. Pillar five. Heritability. Wh"
+    },
+    {
+      "number": 94,
+      "heading": "INT. MONTGOMERY AIRPORT - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Isabel walks through the small terminal, passing historical exhibits that highlight the city’s civil rights movement. Dr. King, Rosa Parks, the Montgomery bus boycott."
+    },
+    {
+      "number": 95,
+      "heading": "INT/EXT. THE LEGACY MUSEUM - DAY",
+      "characters": [
+        "ISABEL"
+      ],
+      "dialogues": [
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "It was the caste system - through the practice of endogamy which essentially regulated people’s romantic choices over the course of centuries — that created and reinforced the idea of “races,” by permitting only those with similar physical traits to legally mate."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(CONT'D)",
+          "text": "95."
+        }
+      ],
+      "actionPreview": "She enters the dazzling museum dedicated to tracing American history from enslavement to mass incarceration. The exhibits are dynamic and emotional. She browses, notebook in use. Isabel comes to a double height wall with laws written on squared panels to illustrate the injustice of the American lega"
+    },
+    {
+      "number": 96,
+      "heading": "EXT. NATIONAL MEMORIAL FOR PEACE AND JUSTICE - DAY",
+      "characters": [
+        "ISABEL"
+      ],
+      "dialogues": [
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "An unknowable number of lives were lost due to endogamy, the defining pillar of caste. It triggered the most publicized cases of lynchings in America. A protocol strictly enforced against Black men and white women. While white men kept full and flagrant access to Black women, whatever their age or marital status. In this way, the dominant gender of the dominant caste, in addition to controlling the livelihood and lives of everyone “beneath” them, also eliminated the competition for its own women"
+        }
+      ],
+      "actionPreview": "Isabel stands amidst a majestic memorial which outlines the crimes for which Black people were lynched. Arthur St. Clair, a minister, was lynched in Hernando County, Florida, in 1877 for performing the wedding of a black man and white woman. David Walker, his wife, and their four children were lynch"
+    },
+    {
+      "number": 97,
+      "heading": "INT. RUBY'S HOUSE - ANOTHER DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Books and files are scattered across the dining room table. A white board with various pillars of caste listed, crossed through and circled, commands the middle of the living room. Isabel is typing intensely when there is a KNOCK at the door. 96. She opens it to find a PLUMBER in uniform. A plumber "
+    },
+    {
+      "number": 98,
+      "heading": "INT. RUBY’S BASEMENT - CONTINUOUS",
+      "characters": [
+        "ISABEL",
+        "PLUMBER"
+      ],
+      "dialogues": [
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "(to the plumber)"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(CONT’D)",
+          "text": "I hardly ever come into the basement. We had that drought, so I didn’t think about water in the basement. My husband was the one who came down here. He was the one who checked the filter on the furnace, checked the fuse box. He died last year."
+        },
+        {
+          "character": "PLUMBER",
+          "parenthetical": "",
+          "text": "Uh-huh."
+        },
+        {
+          "character": "PLUMBER",
+          "parenthetical": "(CONT’D)",
+          "text": "That’s where the water’s coming in."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "(with subtle disagreement)"
+        },
+        {
+          "character": "PLUMBER",
+          "parenthetical": "",
+          "text": "Probably the pump needs clearing out. I’ll write an estimate."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "My mother just died a few months ago. Is your mother still alive?"
+        },
+        {
+          "character": "PLUMBER",
+          "parenthetical": "",
+          "text": "(caught off-guard)"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Goodness. That’s not old at all."
+        },
+        {
+          "character": "PLUMBER",
+          "parenthetical": "",
+          "text": "(with regret)"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "You’re lucky to still have him."
+        },
+        {
+          "character": "PLUMBER",
+          "parenthetical": "",
+          "text": "Well, he’s mean as they come."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "You miss them when they’re gone no matter what they were like."
+        },
+        {
+          "character": "PLUMBER",
+          "parenthetical": "",
+          "text": "(nods)"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Your father’s side is long-lived. 98."
+        },
+        {
+          "character": "PLUMBER",
+          "parenthetical": "",
+          "text": "(a small smile to himself)"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "It is harder to dehumanize a single person standing in front of you."
+        },
+        {
+          "character": "PLUMBER",
+          "parenthetical": "",
+          "text": "If you get one end, we can move this and see if there’s a drain."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "Which is why people and groups who seek power and division don’t bother with dehumanizing an"
+        },
+        {
+          "character": "PLUMBER",
+          "parenthetical": "",
+          "text": "I found it. Found the problem."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "What was it?"
+        },
+        {
+          "character": "PLUMBER",
+          "parenthetical": "",
+          "text": "Water heater’s gone bad."
+        }
+      ],
+      "actionPreview": "They descend the stairs to the basement. She leads. They both step into about two inches of water. She goes to move things and make room for him to inspect the problem. Her mother’s portable wheelchair. A lampshade. Stacks of her father’s engineering books. An old bucket. There had been three or fou"
+    },
+    {
+      "number": 99,
+      "heading": "EXT. RUBY'S PORCH - A SHORT TIME LATER",
+      "characters": [
+        "ISABEL"
+      ],
+      "dialogues": [
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "Nazi Germany, the United States and"
+        }
+      ],
+      "actionPreview": "The plumber completes her receipt on his clipboard and hands it to her. His hat is in his hand. Not on his head. He nods, then heads to his pickup. India all reduced Jews, African- Americans and Dalits to an undifferentiated mass of nameless, faceless scapegoats. 99. She’s relieved he’s gone and tha"
+    },
+    {
+      "number": 100,
+      "heading": "INT. RUBY'S HOUSE - CONTINUOUS",
+      "characters": [
+        "ISABEL"
+      ],
+      "dialogues": [
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "Millennia ago, Dalits were called the Untouchables of India and forced into the degrading work of manual scavenging, the practice of cleaning excrement from toilets and open drains by hand in exchange for leftover food. This persists to this day. To refuse is to invite severe punishment or death. QUICK CUTS: Close of the women loading the waste with their hands into cane baskets and carrying it on their heads for disposal. This isn’t feudal India. It is now. A CAR passes."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "Indian activists explain that the manual scavenger is not a form of employment, but an injustice akin to slavery. It is one of the most prominent forms of discrimination against Dalits, and it is central to the violation of their human rights. To their dehumanization. QUICK CUTS: Black people stacked horizontally, naked, gasping for air, chained together, starving."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "More than sixty million human beings were tortured to death and thrown overboard on slave ships during the Middle Passage. Sixty million. Sixty. Million. Souls. The trade and sale of African people demolished communities, obliterated families and tore flesh from spirit."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "Their bodies did not belong to them, but to the dominating caste to do with however it wished. QUICK CUTS: Close on their faces now. An unspeakable anguish."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "A piece of property to be possessed with complete disregard for human dignity. To be worked until dead."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "Upon their arrival at the concentration camps, Jews were stripped of the clothing of their former lives. Their heads were shaved, distinguishing features, like sideburns or red hair, were deleted from them. They were no longer personalities to engage with. They became a single mass, purposely easier for SS officers to distance themselves from."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "Loving mothers, headstrong nephews, dedicated bakers and watchmakers all merged into a single mass of undifferentiated bodies. No longer seen as humans deserving empathy, but"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.) (CONT'D)",
+          "text": "101."
+        }
+      ],
+      "actionPreview": "She immediately goes to the whiteboard and writes furiously, sparked by a new idea. She writes: Pillar #7: Dehumanization. QUICK CUTS: DALIT WOMEN knee deep in HUMAN EXCREMENT, cleaning a large latrine BY HAND. (MORE) 100. Through violent storms at sea, starvation, mutilation and rape, Black people "
+    },
+    {
+      "number": 101,
+      "heading": "INT. VARIOUS PLACES - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "We see FLASHES of IMAGES toppling onto one another, the culmination of Isabel’s research now cascading into words that will be the foundation of her book. - Isabel reads passages in the office to Kate. - Isabel researches in a LIBRARY. - She writes “Terror and Cruelty” on the whiteboard at home. - Q"
+    },
+    {
+      "number": 102,
+      "heading": "EXT. LITTLE LEAGUE GAME - YOUNGSTOWN, OHIO - 1951",
+      "characters": [
+        "TEAM MEMBERS"
+      ],
+      "dialogues": [
+        {
+          "character": "TEAM MEMBERS",
+          "parenthetical": "",
+          "text": "City! Champs! City! Champs!"
+        }
+      ],
+      "actionPreview": "A chubby-cheeked sweetheart of an 8-year-old boy, AL BRIGHT, is on second base of a Little League baseball field. He watches wide-eyed as his white teammate slams the bat, sending the ball far into the outfield. As the opposing side scrambles to recover, Al yelps in excitement and takes off to the n"
+    },
+    {
+      "number": 103,
+      "heading": "INT. SCHOOL BUS - NEXT DAY",
+      "characters": [
+        "COACH"
+      ],
+      "dialogues": [
+        {
+          "character": "COACH",
+          "parenthetical": "",
+          "text": "(stern)"
+        },
+        {
+          "character": "COACH",
+          "parenthetical": "(CONT’D)",
+          "text": "But the biggest thing I want... (switches to joyful) I want you to enjoy! You earned it!"
+        },
+        {
+          "character": "COACH",
+          "parenthetical": "(CONT’D)",
+          "text": "We’ll have the championship picnic on the lawn right after we swim a little. How’s that sound?!"
+        }
+      ],
+      "actionPreview": "Al is on the school bus with his teammates. All the boys are happy and eagerly anticipating their destination. As the bus pulls in front of the municipal pool, the COACH, a sturdy white man in a baseball cap, makes a few announcements. Boys. I want you to behave yourselves in here. The boys nod sole"
+    },
+    {
+      "number": 104,
+      "heading": "EXT. MUNICIPAL PARK - PRESENT DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Isabel walks into the park to meet an ELDERLY WHITE MAN. She shakes his hand as he rises from the picnic table to shake hers. He begins to tell a story as she records and writes. 103."
+    },
+    {
+      "number": 105,
+      "heading": "EXT. MUNICIPAL PARK - 1951",
+      "characters": [
+        "WHITE PARK WORKER",
+        "AL BRIGHT",
+        "PARK WORKER",
+        "COACH",
+        "ISABEL"
+      ],
+      "dialogues": [
+        {
+          "character": "WHITE PARK WORKER",
+          "parenthetical": "",
+          "text": "Hey, boy."
+        },
+        {
+          "character": "AL BRIGHT",
+          "parenthetical": "",
+          "text": "Yessir?"
+        },
+        {
+          "character": "PARK WORKER",
+          "parenthetical": "",
+          "text": "You can’t be in here right now. You know better."
+        },
+        {
+          "character": "COACH",
+          "parenthetical": "",
+          "text": "Everything okay here?"
+        },
+        {
+          "character": "PARK WORKER",
+          "parenthetical": "",
+          "text": "This boy with your team?"
+        },
+        {
+          "character": "COACH",
+          "parenthetical": "",
+          "text": "Yes. He’s one of my players."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "The coach hadn’t calculated for Al in that setting as the only Black player. He tried to bargain."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "They tried to persuade the pool officials to let Al in, but the park people weren’t budging. (MORE) 104."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "From time to time, one or another of the players or adults came out and sat with him before returning to join the others. QUICK CUTS: A WHITE MOTHER bringing a paper bowl of potato salad. TWO TEAMMATES wandering over to talk with him through the fence. Al rises to talk with them, then sits down again when they head back."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "It took an hour or so to finally convince the lifeguards that they should at least allow Al into the pool for just a few minutes. The supervisor agreed to let him in, but only..."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "...if everyone - teammates, parents, all the white people in the pool - got out of the water."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.) (CONT'D)",
+          "text": "105."
+        }
+      ],
+      "actionPreview": "The boys eagerly stream through the gates of the park with coaches and some parents. Al happily enters with his friends when a WHITE PARK WORKER approaches. All the boys turn, but they know immediately which one is being spoken to. And Al does too. The tone made it clear. Al steps forward tentativel"
+    },
+    {
+      "number": 106,
+      "heading": "EXT. POOL - MOMENTS LATER",
+      "characters": [
+        "LIFEGUARD",
+        "AL BRIGHT",
+        "ISABEL"
+      ],
+      "dialogues": [
+        {
+          "character": "LIFEGUARD",
+          "parenthetical": "",
+          "text": "You cannot touch that water, boy."
+        },
+        {
+          "character": "AL BRIGHT",
+          "parenthetical": "",
+          "text": "(quietly)"
+        },
+        {
+          "character": "LIFEGUARD",
+          "parenthetical": "",
+          "text": "(to Al)"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "After the few minutes that it took to complete the lap, Al was taken back to his assigned spot on the other side of the fence."
+        }
+      ],
+      "actionPreview": "Al walks past his friends and classmates led by a LIFEGUARD who places a SMALL BRIGHT YELLOW RUBBER RAFT in the pool and waits for him to climb in. He struggles to do it alone, with no one touching or helping him and with the mandate that... Hear me? Yessir. Once Al is in, the Lifeguard gets into th"
+    },
+    {
+      "number": 107,
+      "heading": "EXT. MUNICIPAL PARK - MOMENTS LATER",
+      "characters": [
+        "ISABEL",
+        "END MONTAGE"
+      ],
+      "dialogues": [
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "The lifeguard had managed to keep the"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "Al Bright went on to become an artist and educator. (MORE) 106."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "I missed talking to him for the book by a matter of months. He passed away at age 82. But a part of him died that afternoon in 1951. I’m told he was never the same."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "(to Al)"
+        }
+      ],
+      "actionPreview": "The little boy lays on his blanket alone again. This time, not watching the poolside activity. But playing with a blade of grass in his beautiful, brown hands. water pure, untainted by Black skin, for all the white patrons. PRESENT DAY ISABEL approaches Al. He looks up at her. He was the first full-"
+    },
+    {
+      "number": 108,
+      "heading": "INT. ISABEL’S BEDROOM - DAWN",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The first rays of the day stream into her bedroom. Isabel sits on the floor at the foot of her bed. She’s clearly been up all night, but she’s in the zone. Her energy is serene and powerful. She strokes Sophie’s fur, deep in thought. Deep in gratitude. Then, takes a deep breath and types with great "
+    },
+    {
+      "number": 109,
+      "heading": "EXT. ISABEL'S HOUSE - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "She walks onto the lawn, every inch covered by leaves. And with a rake in hand, begins to move them into tidy piles."
+    },
+    {
+      "number": 110,
+      "heading": "INT/EXT. RUBY’S HOUSE - DAY",
+      "characters": [
+        "ISABEL"
+      ],
+      "dialogues": [
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.) (CONT'D)",
+          "text": "107."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "When you live in an old house, you may not want to go into the basement after a storm to see what the rains have brought. But, choose not to look at your own peril."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "We’re all like homeowners who’ve inherited a house on a piece of land that’s beautiful on the outside, but the soil is unstable."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "We are the heirs to whatever is right or wrong with it. We didn’t erect the uneven pillars, but they are ours to deal with now. The cracks won’t fix themselves. Any more deterioration is on our watch."
+        }
+      ],
+      "actionPreview": "A completely refurbished house. The home is empty, clear and pristine. The doorknobs are polished. The paint is fresh and new. Isabel takes stock as she says goodbye. She moves down the hallway, taking a last look in each room. She enters the living room and takes stock. People say, ‘I had nothing t"
+    },
+    {
+      "number": 111,
+      "heading": "EXT. RUBY'S HOUSE - CONTINUOUS",
+      "characters": [
+        "ISABEL"
+      ],
+      "dialogues": [
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "Caste is not hatred. It is the worn grooves of routine and expectation."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "Caste is everywhere, yet invisible."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "Freedom to go wherever you want to go."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "Freedom to love whoever you want to love."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "Freedom to express yourself however you want to express yourself."
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(V.O.)",
+          "text": "Freedom to resist and fight for your human right to do so."
+        }
+      ],
+      "actionPreview": "WIDE on the house from the street as Isabel closes the door. Patterns of a social order that have been in place so long it looks natural - when it isn’t. 108. She starts down the path to the curb. As she walks away from the home, there are PEOPLE ON THE LAWN. She doesn’t see them, but they see her. "
+    },
+    {
+      "number": 112,
+      "heading": "INT. AUDITORIUM - DAY",
+      "characters": [
+        "ISABEL",
+        "FADE TO BLACK."
+      ],
+      "dialogues": [
+        {
+          "character": "ISABEL",
+          "parenthetical": "",
+          "text": "The tragedy of caste is that we are judged on the"
+        },
+        {
+          "character": "FADE TO BLACK.",
+          "parenthetical": "",
+          "text": "END CARD:"
+        },
+        {
+          "character": "ISABEL",
+          "parenthetical": "(CONT'D)",
+          "text": "110."
+        }
+      ],
+      "actionPreview": "Isabel speaks with confidence and candor to a standing room only crowd. She speaks without notecards. The cover of her new book CASTE is projected behind her. very things we cannot change: the signposts on our body of gender and ancestry. (MORE) 109. Superficial differences that have nothing to do w"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "slug": "bookworm",
+  "title": "Bookworm",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 20327,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                        BOOKWORM </b> Written by Toby Harvard <b>EXT. SUBURBAN BACK YARD -- NIGHT </b> A crackly LP plays on a turntable somewhere. Items in a tomboy's lair as CREDITS roll -- maps on the walls, stacks and stacks of books, folk LP's, framed photos of New Zealand's wilderness, a bonsai tree, well-loved toys... MILDRED (11, red-cheeked, bespectacled) at the window, looks through binoculars, into the backyard: Where a chunk of raw beef glistens under a BEER-CRATE TRAP, held up by",
+      "dialogue_count": 0,
+      "word_count": 20327
+    }
+  ]
+}

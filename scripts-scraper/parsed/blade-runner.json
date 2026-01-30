@@ -1,0 +1,22 @@
+{
+  "slug": "blade-runner",
+  "title": "Blade Runner",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 25537,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<html> <head> <script> <b><!-- </b>if (window!= top) top.location.href=location.href <b>// --> </b></script> <title>Blade Runner - By Hampton Fancher</title> </head> <pre> <b> </b><b>                                BLADE RUNNER </b> Screenplay by <b>                              HAMPTON FANCHER </b> July 24, 1980                    Brighton Productions Inc. 1420 No. Beachwood Drive Hollywood, Calif. 90028 <b>                                **************** </b> <b>        INT. TYRELL CORPORATION",
+      "dialogue_count": 0,
+      "word_count": 25537
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "slug": "belle",
+  "title": "Belle",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 23307,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                    BELLE </b> Written by Misan Sagay An intricate piano piece - GEORGE FREDERICK HANDEL... <b>    INTERCUT WHITE ON BLACK CREDITS WITH BELOW... </b> <b>1   INT. RUSTIC STUDIO OF AN ARTISAN. DAY 1                         1   * </b> A series of shots. Blue sky through shabby windows. Run down walls. A paint splashed pine floor.    Tens of paint brushes soaking in stained jars. An artisan's hands - weather-worn, swirling a paint brush in dirty water that sways at",
+      "dialogue_count": 0,
+      "word_count": 23307
+    }
+  ]
+}

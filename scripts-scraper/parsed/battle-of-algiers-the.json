@@ -1,0 +1,22 @@
+{
+  "slug": "battle-of-algiers-the",
+  "title": "Battle of Algiers, The",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 35991,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b><HTML><HEAD> </b><script> <b><!-- </b>if (window!= top) top.location.href=location.href <b>// --> </b></script> <TITLE>The Battle of Algiers</TITLE> <b><BODY> </b><b><PRE> </b>The Battle of Algiers <b>1\tVILLA HEADQUARTERS. INSIDE. NIGHT. </b> Inside a three-story villa, just built, with whitewashed walls. An elevator shaft is empty, the large cables dangle. On every landing two apartments. The front doors are wide open. Whitewash on the floor of the halls, swirls of whitewash on the windowpan",
+      "dialogue_count": 0,
+      "word_count": 35991
+    }
+  ]
+}

@@ -1,0 +1,4763 @@
+{
+  "slug": "asteroid-city-2023",
+  "title": "Asteroid City",
+  "parsedWith": "v2",
+  "parsedAt": "2026-01-29T22:09:03.030Z",
+  "stats": {
+    "scenes": 48,
+    "dialogues": 786,
+    "characters": 43
+  },
+  "characters": [
+    {
+      "name": "AUGIE",
+      "dialogueLines": 127,
+      "totalWords": 737
+    },
+    {
+      "name": "MIDGE",
+      "dialogueLines": 77,
+      "totalWords": 582
+    },
+    {
+      "name": "WOODROW",
+      "dialogueLines": 59,
+      "totalWords": 367
+    },
+    {
+      "name": "STANLEY",
+      "dialogueLines": 59,
+      "totalWords": 548
+    },
+    {
+      "name": "GENERAL GIBSON",
+      "dialogueLines": 47,
+      "totalWords": 668
+    },
+    {
+      "name": "PLAYWRIGHT",
+      "dialogueLines": 38,
+      "totalWords": 427
+    },
+    {
+      "name": "DR. HICKENLOOPER",
+      "dialogueLines": 36,
+      "totalWords": 479
+    },
+    {
+      "name": "DINAH",
+      "dialogueLines": 32,
+      "totalWords": 233
+    },
+    {
+      "name": "CLIFFORD",
+      "dialogueLines": 29,
+      "totalWords": 188
+    },
+    {
+      "name": "MOTEL MANAGER",
+      "dialogueLines": 28,
+      "totalWords": 201
+    },
+    {
+      "name": "DIRECTOR",
+      "dialogueLines": 28,
+      "totalWords": 247
+    },
+    {
+      "name": "HOST",
+      "dialogueLines": 26,
+      "totalWords": 440
+    },
+    {
+      "name": "RICKY",
+      "dialogueLines": 25,
+      "totalWords": 160
+    },
+    {
+      "name": "JUNE",
+      "dialogueLines": 23,
+      "totalWords": 301
+    },
+    {
+      "name": "SHELLY",
+      "dialogueLines": 19,
+      "totalWords": 119
+    },
+    {
+      "name": "MONTANA",
+      "dialogueLines": 14,
+      "totalWords": 113
+    },
+    {
+      "name": "SANDY",
+      "dialogueLines": 12,
+      "totalWords": 67
+    },
+    {
+      "name": "TEACHER",
+      "dialogueLines": 11,
+      "totalWords": 81
+    },
+    {
+      "name": "ROGER",
+      "dialogueLines": 10,
+      "totalWords": 68
+    },
+    {
+      "name": "POLLY",
+      "dialogueLines": 10,
+      "totalWords": 93
+    },
+    {
+      "name": "ANDROMEDA",
+      "dialogueLines": 9,
+      "totalWords": 51
+    },
+    {
+      "name": "FRECKLED BOY",
+      "dialogueLines": 8,
+      "totalWords": 135
+    },
+    {
+      "name": "PANDORA",
+      "dialogueLines": 7,
+      "totalWords": 43
+    },
+    {
+      "name": "MECHANIC",
+      "dialogueLines": 7,
+      "totalWords": 163
+    },
+    {
+      "name": "CASSIOPEIA",
+      "dialogueLines": 6,
+      "totalWords": 36
+    },
+    {
+      "name": "EXECUTIVE",
+      "dialogueLines": 6,
+      "totalWords": 60
+    },
+    {
+      "name": "GUARD",
+      "dialogueLines": 5,
+      "totalWords": 75
+    },
+    {
+      "name": "WAITRESS",
+      "dialogueLines": 4,
+      "totalWords": 34
+    },
+    {
+      "name": "HOUSEBOY",
+      "dialogueLines": 4,
+      "totalWords": 15
+    },
+    {
+      "name": "BOY WITH COWLICK",
+      "dialogueLines": 3,
+      "totalWords": 41
+    },
+    {
+      "name": "MOTHER",
+      "dialogueLines": 3,
+      "totalWords": 7
+    },
+    {
+      "name": "CASHIER",
+      "dialogueLines": 2,
+      "totalWords": 5
+    },
+    {
+      "name": "SECRETARY",
+      "dialogueLines": 2,
+      "totalWords": 9
+    },
+    {
+      "name": "RAMP CLOSED INDEFINITELY",
+      "dialogueLines": 1,
+      "totalWords": 5
+    },
+    {
+      "name": "BUS DRIVER",
+      "dialogueLines": 1,
+      "totalWords": 5
+    },
+    {
+      "name": "ASSISTANT",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "OTHERS",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "STAGEHAND",
+      "dialogueLines": 1,
+      "totalWords": 2
+    },
+    {
+      "name": "SLEEPY BOY",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "NEWSBOY",
+      "dialogueLines": 1,
+      "totalWords": 5
+    },
+    {
+      "name": "CHORUS",
+      "dialogueLines": 1,
+      "totalWords": 4
+    },
+    {
+      "name": "OK.",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "LIFTED",
+      "dialogueLines": 1,
+      "totalWords": 7
+    }
+  ],
+  "scenes": [
+    {
+      "number": 1,
+      "heading": "INT. TELEVISION STUDIO. EVENING",
+      "characters": [
+        "HOST",
+        "PLAYWRIGHT"
+      ],
+      "dialogues": [
+        {
+          "character": "HOST",
+          "parenthetical": "",
+          "text": "Tonight’s program takes us backstage to witness first-hand the creation, start to finish, of a new play mounted on the"
+        },
+        {
+          "character": "HOST",
+          "parenthetical": "",
+          "text": "“Asteroid City” does not exist. It is an imaginary drama created expressly for this broadcast. The characters are fictional, the text hypothetical, the events an apocryphal fabrication -- but together they present an authentic account of the inner-workings of a modern theatrical production."
+        },
+        {
+          "character": "HOST",
+          "parenthetical": "",
+          "text": "Our story begins, of course, with an ink ribbon."
+        },
+        {
+          "character": "HOST",
+          "parenthetical": "",
+          "text": "Conrad Earp, playwright, native of upper"
+        },
+        {
+          "character": "HOST",
+          "parenthetical": "",
+          "text": "There is little amusement to be had, however, in watching a man type. Skip (more)"
+        },
+        {
+          "character": "HOST",
+          "parenthetical": "(cont'd)",
+          "text": "2."
+        },
+        {
+          "character": "HOST",
+          "parenthetical": "",
+          "text": "-- and join our company as they take the stage for their first read-through rehearsal. Location: the Tarkington"
+        },
+        {
+          "character": "PLAYWRIGHT",
+          "parenthetical": "",
+          "text": "Curtain rises on a desert bus-stop halfway between Parched Gulch and Arid"
+        },
+        {
+          "character": "PLAYWRIGHT",
+          "parenthetical": "",
+          "text": "Main scenography includes: a twelve-stool luncheonette, a one-pump filling station, and a ten-cabin motor-court hotel."
+        },
+        {
+          "character": "PLAYWRIGHT",
+          "parenthetical": "",
+          "text": "Up-stage left: the Tomahawk Mountains (highest peak: 11,000 feet). Up-stage right: an unfinished highway overpass which vaults up twenty feet then chops off mid-air behind a permanent road- block. Down-front: an impact crater a hundred feet in depth and diameter encircled by a low Little League-variety chainlink fence. Off-stage, distant: a 650-car freight train which click-clacks by at five miles an hour. Note to chief electrician:"
+        },
+        {
+          "character": "HOST",
+          "parenthetical": "(cont'd)",
+          "text": "2."
+        },
+        {
+          "character": "PLAYWRIGHT",
+          "parenthetical": "",
+          "text": "The light of the desert sun is neither warm nor cool, but always clean -- and, above all: unforgiving."
+        },
+        {
+          "character": "PLAYWRIGHT",
+          "parenthetical": "",
+          "text": "Cast: Augie Steenbeck, war photographer, early forties. His son, Woodrow, fourteen (also known as “Brainiac”)."
+        },
+        {
+          "character": "PLAYWRIGHT",
+          "parenthetical": "",
+          "text": "Midge Campbell, late-thirties, film actress. Her daughter, Dinah, fifteen."
+        },
+        {
+          "character": "PLAYWRIGHT",
+          "parenthetical": "",
+          "text": "June Douglas, schoolteacher. Grif Gibson, five-star-general."
+        },
+        {
+          "character": "PLAYWRIGHT",
+          "parenthetical": "",
+          "text": "J.J. Kellogg, Roger Cho, Sandy Borden;"
+        },
+        {
+          "character": "PLAYWRIGHT",
+          "parenthetical": "",
+          "text": "Stanley Zak, sixty-five, retired."
+        },
+        {
+          "character": "PLAYWRIGHT",
+          "parenthetical": "",
+          "text": "The action of the play takes place in"
+        }
+      ],
+      "actionPreview": "Black and white. A 1950’s-era broadcast soundstage. Cameras on pneumatic pedestals. Microphones on telescoping booms. A team of technicians encircling the studio floor. The lights come up on our host, Brylcreemed in a dark suit and necktie. He addresses the audience: American stage. The lights chang"
+    },
+    {
+      "number": 2,
+      "heading": "EXT. HIGHWAY. DAY",
+      "characters": [
+        "RAMP CLOSED INDEFINITELY"
+      ],
+      "dialogues": [
+        {
+          "character": "RAMP CLOSED INDEFINITELY",
+          "parenthetical": "",
+          "text": "Department of Roads and Rails"
+        }
+      ],
+      "actionPreview": "A warning bell rings at a railroad crossing. The train slowly rattles over a blacktop interstate which descends, sidewinding, from a distant plateau down to a concise desert town circumvented by towering cactus, yucca, and sagebrush. Dry winds blow red dust and tangled scrub. A roadrunner darts and "
+    },
+    {
+      "number": 3,
+      "heading": "EXT. AUTO GARAGE. DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The filling station. A hanging sign gently creaks. “Ice, Tires, Service.” The roadrunner trots to the center of the road and sniffs at a sun-dried (dead) snake. A hazy speck shimmers-up over a rise down the highway. The bird watches, then jolts back into the brush. The speck, as it approaches, takes"
+    },
+    {
+      "number": 4,
+      "heading": "INT. LUNCHEONETTE. DAY",
+      "characters": [
+        "AUGIE",
+        "WOODROW",
+        "WAITRESS",
+        "ANDROMEDA",
+        "CASSIOPEIA",
+        "PANDORA",
+        "CASHIER"
+      ],
+      "dialogues": [
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "Five orders of flapjacks and a black coffee."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "Who needs to pee?"
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "Our average speed is eighty-three feet per second. Poor fuel efficiency due to excess wind resistance. (Probably the luggage rack.) Based on data before the loss of power, obviously."
+        },
+        {
+          "character": "WAITRESS",
+          "parenthetical": "",
+          "text": "What do you little princesses want to drink?"
+        },
+        {
+          "character": "ANDROMEDA",
+          "parenthetical": "",
+          "text": "We’re not princesses."
+        },
+        {
+          "character": "CASSIOPEIA",
+          "parenthetical": "",
+          "text": "I’m a vampire."
+        },
+        {
+          "character": "PANDORA",
+          "parenthetical": "",
+          "text": "I’m a mummy in Egypt who got buried alive and came back to life with his head chopped off."
+        },
+        {
+          "character": "CASSIOPEIA",
+          "parenthetical": "",
+          "text": "I suck people’s blood."
+        },
+        {
+          "character": "ANDROMEDA",
+          "parenthetical": "",
+          "text": "I’m a fairy."
+        },
+        {
+          "character": "WAITRESS",
+          "parenthetical": "",
+          "text": "How about a glass of strawberry milk?"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "What was that?"
+        },
+        {
+          "character": "CASHIER",
+          "parenthetical": "",
+          "text": "(inevitably)"
+        }
+      ],
+      "actionPreview": "A narrow, checkered-tile, chrome-and-bakelite café with soda fountain, chalkboard specials, and a short-order window communicating to the kitchen. Slatted blinds paint light/shadow stripes over the long counter. Country music plays on the jukebox. A chime jingles as Augie, Woodrow, and the three gir"
+    },
+    {
+      "number": 5,
+      "heading": "INT. AUTO GARAGE. DAY",
+      "characters": [
+        "MECHANIC",
+        "AUGIE"
+      ],
+      "dialogues": [
+        {
+          "character": "MECHANIC",
+          "parenthetical": "",
+          "text": "I’ve seen this combination of symptoms twice before in the ‘52 Estate Model. In one case, it was a quick fix of a 75 cent part. In the other case, it was a difficult, costly, time-consuming disassembly and remantling of the entire drivetrain and lubrication mechanism which didn’t work. The motor exploded itself, and the body was stripped and sold for scrap. (There it is.)"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "Which one’ve we got?"
+        },
+        {
+          "character": "MECHANIC",
+          "parenthetical": "",
+          "text": "We’re about to find out."
+        },
+        {
+          "character": "MECHANIC",
+          "parenthetical": "",
+          "text": "You got the first one."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "(relieved)"
+        },
+        {
+          "character": "MECHANIC",
+          "parenthetical": "",
+          "text": "Nothing. Ten dollars for the tow."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "What’s that?"
+        },
+        {
+          "character": "MECHANIC",
+          "parenthetical": "",
+          "text": "I don’t know."
+        },
+        {
+          "character": "MECHANIC",
+          "parenthetical": "",
+          "text": "I think you got a third problem we’ve never seen before."
+        }
+      ],
+      "actionPreview": "The station wagon is now hoisted up on a hydraulic repair-lift. The mechanic, Augie, Woodrow, and the three girls look up from below the vehicle into the grease-and-dirt-coated agglomeration of pipes, shafts, wires, and widgets. The mechanic explains: The mechanic points to the corroded remains of a"
+    },
+    {
+      "number": 6,
+      "heading": "EXT. HIGHWAY. DAY",
+      "characters": [
+        "HOUSEBOY",
+        "AUGIE",
+        "STANLEY",
+        "OK.",
+        "WOODROW"
+      ],
+      "dialogues": [
+        {
+          "character": "HOUSEBOY",
+          "parenthetical": "",
+          "text": "Zak residence."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "Romulus, this is Augie Steenbeck."
+        },
+        {
+          "character": "HOUSEBOY",
+          "parenthetical": "",
+          "text": "Good morning, Mr. Augie. The gate is open."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "We’re not there."
+        },
+        {
+          "character": "HOUSEBOY",
+          "parenthetical": "",
+          "text": "(mildly surprised)"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "May I speak to Mr. Zak?"
+        },
+        {
+          "character": "HOUSEBOY",
+          "parenthetical": "",
+          "text": "Yes, Mr. Augie."
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "You’re not here?"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "We’re not there. The car exploded. Come get the girls."
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "(surprised)"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "Parts of the car. Exploded itself, yes."
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "(stiffening) I’m not the chauffeur. I’m the grandfather. Where are you?"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "Asteroid City. Farm-route Six, mile 75."
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "(perplexed)"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "(irritated)"
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "Hm."
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "How’d they take it?"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "(reluctant)"
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "(puzzled)"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "(in disbelief)"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "You didn’t tell them. Still."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "I still didn’t tell them."
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "(frustrated)"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "I know."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "The time is never right."
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "The time is always wrong."
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "Are you OK?"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "(lightly)"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "You never liked me, did you?"
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "(more precisely) I never loved you."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "You always thought I wasn’t good enough for her."
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "I always thought she could’ve done better."
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "(pleased)"
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "Gas up the Cadillac. Tell the kids."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "I will."
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "I’ll be there when I get there."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "It’s the end of that car."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "Andromeda: check under the floor mats."
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "I think it’s kind of sad."
+        }
+      ],
+      "actionPreview": "A free-standing telephone booth next to a fence-post in the corner of a vacant plot between the gas station and the motel entrance. Bits of rubble and bottle-caps litter the dry, cracked earth. A single wire extends diagonally up from the top of the booth to an overhead line. Augie waits with the re"
+    },
+    {
+      "number": 7,
+      "heading": "EXT. LUNCHEONETTE/MOTEL. DAY",
+      "characters": [
+        "BUS DRIVER",
+        "JUNE",
+        "FRECKLED BOY",
+        "MIDGE",
+        "DINAH",
+        "CLIFFORD",
+        "SHELLY",
+        "SANDY",
+        "MOTEL MANAGER",
+        "ROGER",
+        "MONTANA",
+        "AUGIE",
+        "WOODROW",
+        "ANDROMEDA",
+        "PANDORA"
+      ],
+      "dialogues": [
+        {
+          "character": "BUS DRIVER",
+          "parenthetical": "",
+          "text": "Rest stop! (checking his watch)"
+        },
+        {
+          "character": "JUNE",
+          "parenthetical": "",
+          "text": "Head count! Boys and girls?"
+        },
+        {
+          "character": "JUNE",
+          "parenthetical": "",
+          "text": "Plus Libby, Margie, and me. All present."
+        },
+        {
+          "character": "FRECKLED BOY",
+          "parenthetical": "",
+          "text": "Dear Heavenly Father, We thank Thee kindly for a terrific bus ride. I ate three boxes of Crackerjacks and got a dog- whistle and a miniature map of the original thirteen colonies. Also: we saw a coyote get run over by a fourteen- wheeler, and it left him flat as a pancake. Boy, oh, boy! What else? The bus driver had to stop twice because Bernice couldn’t hold it."
+        },
+        {
+          "character": "JUNE",
+          "parenthetical": "",
+          "text": "(loudly)"
+        },
+        {
+          "character": "JUNE",
+          "parenthetical": "",
+          "text": "Lunchtime! Line up single-file. (NOTE: an increasing traffic of criss-crossing people appear in the foreground and background of this scene, welcoming arriving parties, preparing accommodations, rushing.)"
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "My word! It’s hot."
+        },
+        {
+          "character": "DINAH",
+          "parenthetical": "",
+          "text": "(shrugs)"
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "Well, I don’t know if I expected one thing or another -- but I’m wilting like a cut petunia."
+        },
+        {
+          "character": "CLIFFORD",
+          "parenthetical": "",
+          "text": "You dare me? J.J. (absently)"
+        },
+        {
+          "character": "CLIFFORD",
+          "parenthetical": "",
+          "text": "(brightly)"
+        },
+        {
+          "character": "SHELLY",
+          "parenthetical": "",
+          "text": "Holy Toledo. That’s Midge Campbell."
+        },
+        {
+          "character": "SANDY",
+          "parenthetical": "",
+          "text": "(alerted)"
+        },
+        {
+          "character": "SHELLY",
+          "parenthetical": "",
+          "text": "Right smack in back of you. Don’t look."
+        },
+        {
+          "character": "MOTEL MANAGER",
+          "parenthetical": "",
+          "text": "Mr. Cho? You’re in cabin seven. Well, tent seven. Here’s the key, but there’s no door (just a flap). Ha-ha."
+        },
+        {
+          "character": "ROGER",
+          "parenthetical": "",
+          "text": "Tent?"
+        },
+        {
+          "character": "MOTEL MANAGER",
+          "parenthetical": "",
+          "text": "(regretfully) I know."
+        },
+        {
+          "character": "MOTEL MANAGER",
+          "parenthetical": "",
+          "text": "I upgraded the electrical system Tuesday morning. Better lighting, power for the ice-machine, and a wall-mounted bug- zapper. Unfortunately, a mistake got made, and cabin seven burned to the ground. It’s a tent now."
+        },
+        {
+          "character": "ROGER",
+          "parenthetical": "",
+          "text": "(in disbelief)"
+        },
+        {
+          "character": "MOTEL MANAGER",
+          "parenthetical": "",
+          "text": "(soothing)"
+        },
+        {
+          "character": "MOTEL MANAGER",
+          "parenthetical": "",
+          "text": "Of course, I understand. (to Roger)"
+        },
+        {
+          "character": "MOTEL MANAGER",
+          "parenthetical": "",
+          "text": "Excuse me, sir?"
+        },
+        {
+          "character": "MONTANA",
+          "parenthetical": "",
+          "text": "(frustrated)"
+        },
+        {
+          "character": "MOTEL MANAGER",
+          "parenthetical": "",
+          "text": "(apologetic) I beg your pardon."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "And, to put it bluntly, after all the surgeries, therapies, and interventions, after two years of struggling and suffering: she succumbed to her illnesses."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "I’m sorry. I didn’t know how to tell you then. I couldn’t figure out how to tell you later. I didn’t know what to do. The time was never right."
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "You’re saying our mother died three weeks ago?"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "ANDROMEDA",
+          "parenthetical": "",
+          "text": "When is she coming back?"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "(excruciatingly)"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "Did you know? Already."
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "I think so."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "She’d been away so long. (pause)"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "Yes. She’s in the Tupperware."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "Cremated."
+        },
+        {
+          "character": "PANDORA",
+          "parenthetical": "",
+          "text": "Are we orphans now?"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "(pause)"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "When my father died, my mother told me, “He’s in the stars.” I told her, “The closest star other than that one --” (pointing to the sun) “-- is four and half light years away with a surface temperature over 5000 degrees centigrade. He’s not in the stars,” I said. “He’s in the ground.” She thought it would comfort me. (She was an atheist.) The other thing she said which is incorrect: “Time heals all wounds.”"
+        },
+        {
+          "character": "PANDORA",
+          "parenthetical": "",
+          "text": "(whimpering)"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "Exactly. That’s not your fault. I definitely handled this wrong, by the way -- but handling it right wouldn’t’ve helped, either."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "If you could have anything in the world to eat right now: what would it be?"
+        }
+      ],
+      "actionPreview": "The door of the bus flings open. The driver, burly, in cap and uniform, descends first and shouts: Thirteen minutes. The bus driver ambles around to the nose of the bus, withdraws a wax paper-wrapped ham sandwich from his pocket, and takes a bite. Assorted passengers without baggage (a traveling sal"
+    },
+    {
+      "number": 8,
+      "heading": "INT. LUNCHEONETTE. DAY",
+      "characters": [
+        "MIDGE",
+        "AUGIE",
+        "DINAH",
+        "WOODROW"
+      ],
+      "dialogues": [
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "You took a picture of me."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "Uh-huh."
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "Why?"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "(shrugs) I’m a photographer."
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "You didn’t ask permission."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "I never ask permission."
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "Why not?"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "Because I work in trenches, battlefields, and combat zones."
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "(surprised)"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "Uh-huh."
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "(intrigued)"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "(vaguely)"
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "What are you going to do with it? That picture."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "If it’s any good, I guess I’ll try to sell it to a magazine, now that you mention it. “Midge Campbell Eating a"
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "Make me a print first. To approve."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "Uh-huh."
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "This is Dinah."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "(pause)"
+        },
+        {
+          "character": "DINAH",
+          "parenthetical": "",
+          "text": "I have a question."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "(pause)"
+        },
+        {
+          "character": "DINAH",
+          "parenthetical": "",
+          "text": "Have you ever been shot? With bullets."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "Once or twice. Just grazed."
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "He got shrapneled in the back of the head, too. (to Augie)"
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "I don’t say I forgive you yet, by the way."
+        }
+      ],
+      "actionPreview": "The three sisters sit at the counter eating banana splits, eyes red from crying. Woodrow sips a vanilla milkshake with a striped straw. Augie sadly tamps his pipe. In the background, outside the window: the posse of cowboys and ranch hands rush into view and hurriedly grab up baggage left behind for"
+    },
+    {
+      "number": 9,
+      "heading": "EXT. METEOR CRATER. DAY",
+      "characters": [
+        "GENERAL GIBSON",
+        "DINAH",
+        "SHELLY",
+        "WOODROW"
+      ],
+      "dialogues": [
+        {
+          "character": "GENERAL GIBSON",
+          "parenthetical": "",
+          "text": "Welcome! From the United States Military- science Research and Experimentation"
+        },
+        {
+          "character": "GENERAL GIBSON",
+          "parenthetical": "",
+          "text": "Each year we celebrate “Asteroid Day,” commemorating September 23, 3007 B.C. when the Arid Plains meteorite made earth- impact."
+        },
+        {
+          "character": "GENERAL GIBSON",
+          "parenthetical": "",
+          "text": "The itinerary for this three-day celebration includes a tour of the newly refurbished observatory with Dr."
+        },
+        {
+          "character": "GENERAL GIBSON",
+          "parenthetical": "",
+          "text": "-- a picnic supper of chili and frankfurters with evening fireworks display --"
+        },
+        {
+          "character": "GENERAL GIBSON",
+          "parenthetical": "",
+          "text": "-- the viewing of the Astronomical"
+        },
+        {
+          "character": "GENERAL GIBSON",
+          "parenthetical": "",
+          "text": "-- and finally, the awarding of the annual Hickenlooper Scholarship after"
+        },
+        {
+          "character": "GENERAL GIBSON",
+          "parenthetical": "",
+          "text": "I’ll start by presenting the commemorative medals -- but, first, I’ll do my speech, first (which you’ll also receive in a folio edition as a souvenir)."
+        },
+        {
+          "character": "GENERAL GIBSON",
+          "parenthetical": "",
+          "text": "“Chapter one: I walked to school eighteen miles each morning, milked the goats, plucked the chickens, played hooky, caught fireflies, went skinny-dipping in the watering hole, said my prayers every night, and got whipped with a maple switch twice a week. That was life."
+        },
+        {
+          "character": "GENERAL GIBSON",
+          "parenthetical": "",
+          "text": "“-- we watch, transfixed, as you enter into uncharted territories of the brains and spirit. If you wanted to live a nice, quiet, peaceful life: you picked the (more)"
+        },
+        {
+          "character": "GENERAL GIBSON",
+          "parenthetical": "(cont'd)",
+          "text": "25."
+        },
+        {
+          "character": "GENERAL GIBSON",
+          "parenthetical": "",
+          "text": "Be notified: you are each the guardian of your own safety. Maintain alert caution throughout the following demonstrations. MONTAGE:"
+        },
+        {
+          "character": "GENERAL GIBSON",
+          "parenthetical": "(V.O.)",
+          "text": "To Ricky Cho, for his work in the field of Aeronautical Induction:"
+        },
+        {
+          "character": "GENERAL GIBSON",
+          "parenthetical": "",
+          "text": "“The Collapsing Star Ribbon of Success.”"
+        },
+        {
+          "character": "GENERAL GIBSON",
+          "parenthetical": "(V.O.)",
+          "text": "To Clifford Kellogg, for his work in the study of Particle Disintegration:"
+        },
+        {
+          "character": "GENERAL GIBSON",
+          "parenthetical": "",
+          "text": "“The Black Hole Badge of Triumph.”"
+        },
+        {
+          "character": "GENERAL GIBSON",
+          "parenthetical": "(V.O.)",
+          "text": "To Dinah Campbell, for her work in the area of Botanical Acceleration:"
+        },
+        {
+          "character": "GENERAL GIBSON",
+          "parenthetical": "(cont'd)",
+          "text": "25."
+        },
+        {
+          "character": "DINAH",
+          "parenthetical": "",
+          "text": "It’s fueled by cosmic radiation instead of sunlight. Unfortunately, it makes vegetables toxic."
+        },
+        {
+          "character": "GENERAL GIBSON",
+          "parenthetical": "(V.O.)",
+          "text": "“The Red Giant Sash of Honor.”"
+        },
+        {
+          "character": "GENERAL GIBSON",
+          "parenthetical": "(V.O.)",
+          "text": "To Shelly Borden, for her work in the realm of Mineral Fabrication:"
+        },
+        {
+          "character": "SHELLY",
+          "parenthetical": "",
+          "text": "I synthesized an extraterrestrial element. It’s going to be added to the periodic table next year."
+        },
+        {
+          "character": "GENERAL GIBSON",
+          "parenthetical": "",
+          "text": "“The Distant Nebula Laurel Crown.”"
+        },
+        {
+          "character": "GENERAL GIBSON",
+          "parenthetical": "(V.O.)",
+          "text": "To Woodrow Steenbeck, for his work in the sphere of Astronomical Imaging:"
+        },
+        {
+          "character": "GENERAL GIBSON",
+          "parenthetical": "",
+          "text": "“The White Dwarf Medal of Achievement.”"
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "It may have applications in the development of interstellar advertising."
+        }
+      ],
+      "actionPreview": "A congregation has assembled at the bottom/center of the impact crater below the observatory. The audience of parents, guardians, schoolchildren, and military personnel sits in folding chairs in front of a make-shift stage and dais. A banner decorated with stars, comets, and rockets reads: ASTEROID "
+    },
+    {
+      "number": 10,
+      "heading": "INT. OBSERVATORY. DAY",
+      "characters": [
+        "DR. HICKENLOOPER",
+        "WOODROW",
+        "ASSISTANT"
+      ],
+      "dialogues": [
+        {
+          "character": "DR. HICKENLOOPER",
+          "parenthetical": "",
+          "text": "Our little tour ends here. Thank you for your attention -- and thank you to the"
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "What do those pulses indicate?"
+        },
+        {
+          "character": "DR. HICKENLOOPER",
+          "parenthetical": "",
+          "text": "(zipping her handbag)"
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "(pause)"
+        },
+        {
+          "character": "DR. HICKENLOOPER",
+          "parenthetical": "",
+          "text": "Not to my knowledge."
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "It’s a date. Maybe."
+        },
+        {
+          "character": "DR. HICKENLOOPER",
+          "parenthetical": "",
+          "text": "It’s a date? Maybe."
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "On the galactic calendar."
+        },
+        {
+          "character": "DR. HICKENLOOPER",
+          "parenthetical": "",
+          "text": "(hollering)"
+        },
+        {
+          "character": "DR. HICKENLOOPER",
+          "parenthetical": "",
+          "text": "We think it’s a date on the galactic calendar."
+        },
+        {
+          "character": "ASSISTANT",
+          "parenthetical": "",
+          "text": "(surprised)"
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "Is it always today?"
+        }
+      ],
+      "actionPreview": "A classroom separated by glass-partition-walls from the adjacent laboratory offices and dormitory chambers. Children/teenagers sit in school desks. Adults (parents, teachers, military) stand crowded around the edges of the room. Outside: the field of spinning radio telescopes. Dr. Hickenlooper, at a"
+    },
+    {
+      "number": 11,
+      "heading": "EXT. MOTEL GARDEN. EVENING",
+      "characters": [
+        "FRECKLED BOY",
+        "JUNE",
+        "ROGER",
+        "SANDY",
+        "MOTEL MANAGER",
+        "AUGIE",
+        "MIDGE",
+        "EXECUTIVE",
+        "GENERAL GIBSON",
+        "CLIFFORD",
+        "DINAH",
+        "WOODROW",
+        "RICKY",
+        "SHELLY"
+      ],
+      "dialogues": [
+        {
+          "character": "FRECKLED BOY",
+          "parenthetical": "",
+          "text": "We thank Thee for the ketchup, and we thank Thee for the mustard. We thank Thee for the relish, and we thank Thee for the onions. We thank Thee for the --"
+        },
+        {
+          "character": "JUNE",
+          "parenthetical": "",
+          "text": "(suddenly)"
+        },
+        {
+          "character": "JUNE",
+          "parenthetical": "",
+          "text": "Where’s Dwight?"
+        },
+        {
+          "character": "ROGER",
+          "parenthetical": "",
+          "text": "I assertively disagree."
+        },
+        {
+          "character": "SANDY",
+          "parenthetical": "",
+          "text": "So do I. It’s not a scientific fact."
+        },
+        {
+          "character": "ROGER",
+          "parenthetical": "",
+          "text": "It’s not even a number."
+        },
+        {
+          "character": "SANDY",
+          "parenthetical": "",
+          "text": "Pass the pickles, please."
+        },
+        {
+          "character": "MOTEL MANAGER",
+          "parenthetical": "",
+          "text": "How’s the chili? J.J. (without looking up)"
+        },
+        {
+          "character": "MOTEL MANAGER",
+          "parenthetical": "",
+          "text": "Thank you."
+        },
+        {
+          "character": "ROGER",
+          "parenthetical": "",
+          "text": "(passing the pickles)"
+        },
+        {
+          "character": "MOTEL MANAGER",
+          "parenthetical": "",
+          "text": "The cantina machine."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "Can you see anything? With those on your face."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "Gadzooks. What’d you do to deserve that?"
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "Nothing."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "Who hit you?"
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "Nobody."
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "It’s greasepaint. To feel like my character. It’s there on purpose."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "(intrigued/confused)"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "How does she get a black eye? In the story."
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "She doesn’t. In the story. It’s on the inside."
+        },
+        {
+          "character": "EXECUTIVE",
+          "parenthetical": "",
+          "text": "The Larkings Foundation claims permanent, incontestable rights to all patents or inventions derived from any and every submission, without exception."
+        },
+        {
+          "character": "GENERAL GIBSON",
+          "parenthetical": "",
+          "text": "Not for teenagers. (Read the fine print.)"
+        },
+        {
+          "character": "CLIFFORD",
+          "parenthetical": "",
+          "text": "I call it: “Triple Orbit and Return without Burning up in the Atmosphere.\""
+        },
+        {
+          "character": "DINAH",
+          "parenthetical": "",
+          "text": "Why are you sitting there all by yourself?"
+        },
+        {
+          "character": "DINAH",
+          "parenthetical": "",
+          "text": "Are you shy?"
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "(long pause) I’m a late bloomer. So I’ve been told (by my parents)."
+        },
+        {
+          "character": "CLIFFORD",
+          "parenthetical": "",
+          "text": "(bluntly)"
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "(short pause)"
+        },
+        {
+          "character": "CLIFFORD",
+          "parenthetical": "",
+          "text": "Let’s do a personality test. (What’s your name, again?)"
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "(hesitates)"
+        },
+        {
+          "character": "RICKY",
+          "parenthetical": "",
+          "text": "What’s the “L” for?"
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "Lindbergh."
+        },
+        {
+          "character": "CLIFFORD",
+          "parenthetical": "",
+          "text": "Everybody: look at Woodrow."
+        },
+        {
+          "character": "CLIFFORD",
+          "parenthetical": "",
+          "text": "I agree: shy, but not intimidated."
+        },
+        {
+          "character": "RICKY",
+          "parenthetical": "",
+          "text": "Move over here, Woodrow."
+        },
+        {
+          "character": "DINAH",
+          "parenthetical": "",
+          "text": "“Brainiac.” It sort of goes without saying, doesn’t it? Everybody already knows we’re abnormally intelligent."
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "(hesitates)"
+        },
+        {
+          "character": "DINAH",
+          "parenthetical": "",
+          "text": "How come?"
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "Because she was alive then. Now she’s dead."
+        },
+        {
+          "character": "DINAH",
+          "parenthetical": "",
+          "text": "Oh."
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "(oddly)"
+        },
+        {
+          "character": "DINAH",
+          "parenthetical": "",
+          "text": "What was she like?"
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "Like this. INSERT:"
+        },
+        {
+          "character": "DINAH",
+          "parenthetical": "",
+          "text": "When’d you lose her?"
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "(hesitates)"
+        },
+        {
+          "character": "CLIFFORD",
+          "parenthetical": "(O.S.)",
+          "text": "Howdy!"
+        },
+        {
+          "character": "SHELLY",
+          "parenthetical": "",
+          "text": "What are you doing up there?"
+        },
+        {
+          "character": "CLIFFORD",
+          "parenthetical": "",
+          "text": "(shrugs)"
+        },
+        {
+          "character": "CLIFFORD",
+          "parenthetical": "",
+          "text": "You dare me?"
+        },
+        {
+          "character": "SHELLY",
+          "parenthetical": "",
+          "text": "(blankly)"
+        },
+        {
+          "character": "CLIFFORD",
+          "parenthetical": "",
+          "text": "To jump off this bungalow. It’s an experiment."
+        },
+        {
+          "character": "RICKY",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "I love gravity. It might be my favorite law of physics, at the moment. INSERT:"
+        }
+      ],
+      "actionPreview": "Strung lights in the shapes of little planets festoon the palm trees. The juke box (now outdoors) plays a lush/romantic orchestral tune. The luncheonette waitress and cook serve from pots and trays (chili, hot dogs, potato chips and potato salad, pickles, stacks of white bread) at a buffet on the ed"
+    },
+    {
+      "number": 12,
+      "heading": "EXT. MOTEL OFFICE. EVENING",
+      "characters": [
+        "SANDY",
+        "MOTEL MANAGER",
+        "ROGER"
+      ],
+      "dialogues": [
+        {
+          "character": "SANDY",
+          "parenthetical": "",
+          "text": "It’s not Silly-Putty."
+        },
+        {
+          "character": "SANDY",
+          "parenthetical": "",
+          "text": "It’s called S’morestozium. J.J. clinks Sandy’s glass and takes a sip. He is impressed. J.J."
+        },
+        {
+          "character": "MOTEL MANAGER",
+          "parenthetical": "",
+          "text": "(modest but proud)"
+        },
+        {
+          "character": "SANDY",
+          "parenthetical": "",
+          "text": "What the devil do you know about"
+        },
+        {
+          "character": "MOTEL MANAGER",
+          "parenthetical": "",
+          "text": "I just maintain the workings."
+        },
+        {
+          "character": "SANDY",
+          "parenthetical": "",
+          "text": "Shelly’s thesis is supported by --"
+        },
+        {
+          "character": "ROGER",
+          "parenthetical": "",
+          "text": "(interrupting) “Flimsy, outdated evidence.”"
+        },
+        {
+          "character": "SANDY",
+          "parenthetical": "",
+          "text": "(slightly taken aback) I beg your pardon?"
+        },
+        {
+          "character": "ROGER",
+          "parenthetical": "",
+          "text": "Not in my opinion. I liked the Silly-"
+        },
+        {
+          "character": "SANDY",
+          "parenthetical": "",
+          "text": "(gently icy)"
+        },
+        {
+          "character": "SANDY",
+          "parenthetical": "",
+          "text": "(twizzling her drink)"
+        },
+        {
+          "character": "ROGER",
+          "parenthetical": "",
+          "text": "The jet propulsion belt is eminently safe. I’d allow an eight-year-old boy to operate it. In fact, I did (Ricky’s cousin Chip), and he broke the solo- flight altitude record."
+        },
+        {
+          "character": "MOTEL MANAGER",
+          "parenthetical": "",
+          "text": "(pause)"
+        }
+      ],
+      "actionPreview": "The motel manager passes the martini to J.J., who is just finishing a previous cup. Roger’s and Sandy’s are half-full/half- empty. J.J. Be that as it may, I strongly question whether your daughter’s Silly-Putty resembles anything from outer space. J.J. I’m sorry, but I doubt it. This is excellent. T"
+    },
+    {
+      "number": 13,
+      "heading": "EXT. MOTEL CABIN #7. EVENING",
+      "characters": [
+        "DINAH",
+        "RICKY",
+        "SHELLY",
+        "CLIFFORD",
+        "WOODROW",
+        "OTHERS"
+      ],
+      "dialogues": [
+        {
+          "character": "DINAH",
+          "parenthetical": "",
+          "text": "After that, the second person says the name the first one said and adds another; then the third person says both plus a new name; then the next person keeps going and so on in a circle. It’s a memory game. Get it?"
+        },
+        {
+          "character": "RICKY",
+          "parenthetical": "",
+          "text": "I think so."
+        },
+        {
+          "character": "DINAH",
+          "parenthetical": "",
+          "text": "I’ll start. Cleopatra."
+        },
+        {
+          "character": "RICKY",
+          "parenthetical": "",
+          "text": "(pause)"
+        },
+        {
+          "character": "SHELLY",
+          "parenthetical": "",
+          "text": "Cleopatra, Jagadish Chandra Bose, Antonie van Leeuwenhoek."
+        },
+        {
+          "character": "CLIFFORD",
+          "parenthetical": "",
+          "text": "(eagerly)"
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "Cleopatra, Jagadish Chandra Bose, Antonie van Leeuwenhoek,"
+        },
+        {
+          "character": "DINAH",
+          "parenthetical": "",
+          "text": "Cleopatra, Jagadish Chandra Bose, Antonie van Leeuwenhoek, Paracelsus, Kurt Gödel -- (pause)"
+        },
+        {
+          "character": "CLIFFORD",
+          "parenthetical": "",
+          "text": "Which one?"
+        },
+        {
+          "character": "RICKY",
+          "parenthetical": "",
+          "text": "There’s two."
+        },
+        {
+          "character": "DINAH",
+          "parenthetical": "",
+          "text": "William Henry Bragg."
+        },
+        {
+          "character": "RICKY",
+          "parenthetical": "",
+          "text": "Cleopatra, Jagadish Chandra Bose, Antonie van --"
+        },
+        {
+          "character": "RICKY",
+          "parenthetical": "",
+          "text": "Leeuwenhoek."
+        },
+        {
+          "character": "OTHERS",
+          "parenthetical": "",
+          "text": "Leeuwenhoek."
+        },
+        {
+          "character": "RICKY",
+          "parenthetical": "",
+          "text": "(continuing)"
+        },
+        {
+          "character": "RICKY",
+          "parenthetical": "",
+          "text": "Lord Kelvin."
+        },
+        {
+          "character": "DINAH",
+          "parenthetical": "",
+          "text": "Add the new one."
+        },
+        {
+          "character": "SHELLY",
+          "parenthetical": "",
+          "text": "(immediately)"
+        },
+        {
+          "character": "SHELLY",
+          "parenthetical": "",
+          "text": "-- Midge Campbell. (Can I say her?)"
+        },
+        {
+          "character": "DINAH",
+          "parenthetical": "",
+          "text": "(impassive)"
+        },
+        {
+          "character": "CLIFFORD",
+          "parenthetical": "",
+          "text": "Cleopatra, Jagadish Chandra Bose --"
+        },
+        {
+          "character": "DINAH",
+          "parenthetical": "",
+          "text": "Including my mother."
+        },
+        {
+          "character": "SHELLY",
+          "parenthetical": "",
+          "text": "She’s my idol."
+        },
+        {
+          "character": "CLIFFORD",
+          "parenthetical": "",
+          "text": "(bristling)"
+        },
+        {
+          "character": "RICKY",
+          "parenthetical": "",
+          "text": "I don’t know if this game works with us."
+        },
+        {
+          "character": "SHELLY",
+          "parenthetical": "",
+          "text": "I don’t mind. In my school, nobody’d play this game with me in a million years -- plus the names’d be too obvious."
+        },
+        {
+          "character": "CLIFFORD",
+          "parenthetical": "",
+          "text": "I know my next one. Diophantus."
+        },
+        {
+          "character": "DINAH",
+          "parenthetical": "",
+          "text": "Try it backwards, Brainiac. Say the new one first."
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "H ō j ō"
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "Konstantin Tsiolkovsky, Midge Campbell,"
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "(cont'd)",
+          "text": "39."
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "Cleopatra."
+        }
+      ],
+      "actionPreview": "Between the burned ruin and the canvas tent: the five teenagers sit together in a circle on the ground (under a pink oleander, near a humming air conditioning unit). Dinah rapidly explains the rules of a game: Cleopatra, Jagadish Chandra Bose. Like that? Dinah nods. The five teenagers adjust and re-"
+    },
+    {
+      "number": 14,
+      "heading": "EXT. DESERT. EVENING",
+      "characters": [
+        "JUNE",
+        "MONTANA",
+        "WOODROW"
+      ],
+      "dialogues": [
+        {
+          "character": "JUNE",
+          "parenthetical": "",
+          "text": "Put out that cigarette, Dwight."
+        },
+        {
+          "character": "JUNE",
+          "parenthetical": "",
+          "text": "You men should be ashamed of yourselves."
+        },
+        {
+          "character": "JUNE",
+          "parenthetical": "",
+          "text": "Are you?"
+        },
+        {
+          "character": "MONTANA",
+          "parenthetical": "",
+          "text": "Yes, ma’am. We didn’t give him that."
+        },
+        {
+          "character": "MONTANA",
+          "parenthetical": "",
+          "text": "(clarifying)"
+        },
+        {
+          "character": "JUNE",
+          "parenthetical": "",
+          "text": "(coolly)"
+        },
+        {
+          "character": "MONTANA",
+          "parenthetical": "",
+          "text": "No, ma’am. He just must’ve got it his own self."
+        },
+        {
+          "character": "JUNE",
+          "parenthetical": "",
+          "text": "I almost believe you. (to the boy)"
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "(cont'd)",
+          "text": "39."
+        }
+      ],
+      "actionPreview": "Outside the fence at the rear the motel: the posse of cowboys and ranch hands have pitched camp for the night (an open fire, a circle of sleeping bags, saddles and tack, a strummed banjo) fifty yards into the desert. They perch on rocks and rucksacks, smoking cigarettes and sipping at bottles of bee"
+    },
+    {
+      "number": 15,
+      "heading": "INT. MOTEL CABINS #9/10. EVENING",
+      "characters": [
+        "MIDGE",
+        "AUGIE"
+      ],
+      "dialogues": [
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "“Was I ever there? Was I ever there? Was I ever there? Did you actually -- ”"
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "Memorizing my lines."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "Uh-huh."
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "Approved."
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "I do a nude scene. Want to see it?"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "Did I say, “Yes?”"
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "You didn’t say anything."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "I meant, “Yes.” My mouth didn’t speak."
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "It’s a monologue. It starts when I turn off the shower."
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "“When you first picked me out of the secretarial pool, I had a hundred and eleven dollars in my bank account. I lived alone with a cat and a parakeet in a one-room dishwater flat. I sold the"
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "Let’s get divorced.”"
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "It’ll be done tastefully, of course. We cut to the back of my legs when the towel falls down."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "(pause)"
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "(undecided)"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "Oh. Can I take another picture? Not for publication."
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "(long pause) I thought you never ask permission."
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "I prefer to play abused, tragic alcoholics, and one day I’ll probably be discovered lifeless in an overflowing bathtub with an empty bottle of sleeping pills spilled all over the floor -- but the sad thing is: I’m actually a very gifted comedienne."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "(genuinely)"
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "Are you married?"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "I’m a widower -- but don’t tell my kids."
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "Why not? I mean: I wasn’t going to. I’m sorry."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "Thank you. They do know, by the way -- but just barely."
+        }
+      ],
+      "actionPreview": "Cabin #9: Midge paces back and forth in the open window of her bathroom while she reads aloud from a screenplay, rehearsing herself (half off-book): Cabin #10: a roller-blind zings open in another bathroom window (directly opposite, just across a narrow driveway). Inside, Augie has set up a darkroom"
+    },
+    {
+      "number": 16,
+      "heading": "EXT. MOTEL CABIN #10. EVENING",
+      "characters": [
+        "PANDORA",
+        "CASSIOPEIA",
+        "ANDROMEDA",
+        "STANLEY"
+      ],
+      "dialogues": [
+        {
+          "character": "PANDORA",
+          "parenthetical": "",
+          "text": "Put the potion in it."
+        },
+        {
+          "character": "CASSIOPEIA",
+          "parenthetical": "",
+          "text": "Friskity, triskity, briskity, boo; knickerty, knockerty, tockerty, too! And with this spell: Mama comes back -- alive!"
+        },
+        {
+          "character": "ANDROMEDA",
+          "parenthetical": "",
+          "text": "God save these bones."
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "What’s in the Tupperware?"
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "He finally told you."
+        },
+        {
+          "character": "PANDORA",
+          "parenthetical": "",
+          "text": "Who’s this old man?"
+        },
+        {
+          "character": "CASSIOPEIA",
+          "parenthetical": "",
+          "text": "Poppy, I think."
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "(deeply offended)"
+        },
+        {
+          "character": "ANDROMEDA",
+          "parenthetical": "",
+          "text": "I remember his smell."
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "We’re not going to abandon my daughter at a motel in the middle of the desert buried next to the communal showers."
+        },
+        {
+          "character": "CASSIOPEIA",
+          "parenthetical": "",
+          "text": "You’re ruining the funeral!"
+        },
+        {
+          "character": "PANDORA",
+          "parenthetical": "",
+          "text": "He’s making her go to hell!"
+        },
+        {
+          "character": "ANDROMEDA",
+          "parenthetical": "",
+          "text": "If you torture us, we’ll sacrifice you."
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "I understand. Thank you for your -- clarity. I’ll tell you what: we’ll leave her alone in the ground until tomorrow morning. Then we’ll exhume the"
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "Let’s hope a coyote doesn’t dig her up in the meantime. Nothing we can do about it, anyway. Look at that."
+        }
+      ],
+      "actionPreview": "In an alley behind the cabin: Andromeda, Pandora, and Cassiopeia crouch on their knees as they dig a small hole in the ground with a fork, a spoon, and a popsicle stick. The Tupperware salad bowl waits beside them. In the background: a mint-green Cadillac Eldorado convertible curls from the highway,"
+    },
+    {
+      "number": 17,
+      "heading": "EXT. MOTEL OFFICE. EVENING",
+      "characters": [
+        "MONTANA",
+        "MOTEL MANAGER"
+      ],
+      "dialogues": [
+        {
+          "character": "MONTANA",
+          "parenthetical": "",
+          "text": "What do you swap for out a’this pertickler jukebox, mister?"
+        },
+        {
+          "character": "MOTEL MANAGER",
+          "parenthetical": "",
+          "text": "Of course, I understand. This machine: sells land."
+        },
+        {
+          "character": "MONTANA",
+          "parenthetical": "",
+          "text": "Land, you say?"
+        },
+        {
+          "character": "MOTEL MANAGER",
+          "parenthetical": "",
+          "text": "Yes, indeed. The properties just beyond these cottages, in fact."
+        },
+        {
+          "character": "MONTANA",
+          "parenthetical": "",
+          "text": "Out a’ this here soder-pop machine?"
+        },
+        {
+          "character": "MOTEL MANAGER",
+          "parenthetical": "",
+          "text": "Yes, indeed."
+        },
+        {
+          "character": "MONTANA",
+          "parenthetical": "",
+          "text": "Well, now, I ain’t callin’ you a liar to your face, but that sounds to me like some kind a’ toadswindle."
+        },
+        {
+          "character": "MOTEL MANAGER",
+          "parenthetical": "",
+          "text": "(slightly defensive)"
+        },
+        {
+          "character": "MONTANA",
+          "parenthetical": "",
+          "text": "(skeptical)"
+        },
+        {
+          "character": "MOTEL MANAGER",
+          "parenthetical": "",
+          "text": "For $10 in quarters: approximately half a tennis court."
+        }
+      ],
+      "actionPreview": "As the fireworks continue to pop: Montana retrieves a toothbrush from the toiletries vending machine, then pauses to study another machine which advertises “Deeds.” He asks the motel manager, curious/suspicious: 44. 45. The motel manager motions toward a desolate, cactus-studded flat in the near dis"
+    },
+    {
+      "number": 18,
+      "heading": "EXT. METEOR CRATER. NIGHT",
+      "characters": [
+        "DR. HICKENLOOPER",
+        "WOODROW",
+        "FRECKLED BOY",
+        "MIDGE",
+        "SHELLY",
+        "AUGIE"
+      ],
+      "dialogues": [
+        {
+          "character": "DR. HICKENLOOPER",
+          "parenthetical": "",
+          "text": "Tonight you’re in for a real treat. I don’t know how many of you ever observed an Astronomical Ellipses before. Can we get a show-of-hands?"
+        },
+        {
+          "character": "DR. HICKENLOOPER",
+          "parenthetical": "",
+          "text": "Nobody! Wow. OK, well, what you’re going to see is a very simple, “dot, dot, dot”: three pin-points of light inside your refracting-box, which may not sound very exciting, at first -- until you consider how those dots managed to transmit themselves across a thousand billion miles of space onto that little scrap of black cardboard. Twice every fifty-seven years, when the earth, the sun, the moon, and the galactic plane of the Milky Way all combobulate along the same angle of orbital interest, the"
+        },
+        {
+          "character": "DR. HICKENLOOPER",
+          "parenthetical": "",
+          "text": "Remember: if you look directly at the ellipses rather than through your refracting-box, not only will you not actually see the effect -- but you’ll burn the dots straight into your retina, probably permanently. I know that for a fact, because they're still burned into mine from when I was eleven-going-on- twelve. That’s when I realized I wanted to be an astronomer, which is another story. (urgently)"
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "There it is."
+        },
+        {
+          "character": "DR. HICKENLOOPER",
+          "parenthetical": "",
+          "text": "These are just marvelously luminous colors, aren’t they? Very exciting! Who doesn’t see it?"
+        },
+        {
+          "character": "FRECKLED BOY",
+          "parenthetical": "",
+          "text": "(airily) I don’t! I just see a staple."
+        },
+        {
+          "character": "FRECKLED BOY",
+          "parenthetical": "",
+          "text": "Yipe! It works."
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "Are you Shelly?"
+        },
+        {
+          "character": "SHELLY",
+          "parenthetical": "",
+          "text": "(startled)"
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "I’m your idol. What’s your rank?"
+        },
+        {
+          "character": "SHELLY",
+          "parenthetical": "",
+          "text": "Commanding-secretary."
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "I was a Cookie Trooper, myself."
+        },
+        {
+          "character": "SHELLY",
+          "parenthetical": "",
+          "text": "Really? Wow! What’ll they say in Squad 75?"
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "Hm?"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "The alien stole the asteroid."
+        }
+      ],
+      "actionPreview": "The congregation has re-assembled, this time seated on picnic blankets. They sip and crunch a midnight snack of root beer and peanuts. Dr. Hickenlooper stands at the lectern (flanked by her assistant on one side of the dais and General Gibson on the other), uplit by a reading lamp. She begins enthus"
+    },
+    {
+      "number": 19,
+      "heading": "INT. TELEVISION STUDIO. EVENING",
+      "characters": [
+        "HOST",
+        "PLAYWRIGHT",
+        "SECRETARY"
+      ],
+      "dialogues": [
+        {
+          "character": "HOST",
+          "parenthetical": "",
+          "text": "The character of Augie Steenbeck in the imaginary tale of our production was to become famously and indelibly connected to the actor who “created” the role -- a former carpenter discovered in a bit part by the play’s director, Schubert Green."
+        },
+        {
+          "character": "PLAYWRIGHT",
+          "parenthetical": "",
+          "text": "I’ve finished my correspondence,"
+        },
+        {
+          "character": "SECRETARY",
+          "parenthetical": "",
+          "text": "(correction)"
+        },
+        {
+          "character": "PLAYWRIGHT",
+          "parenthetical": "",
+          "text": "(horrified)"
+        },
+        {
+          "character": "SECRETARY",
+          "parenthetical": "",
+          "text": "-- referred by Mr. Green. Has arrived --"
+        },
+        {
+          "character": "PLAYWRIGHT",
+          "parenthetical": "",
+          "text": "(determined)"
+        },
+        {
+          "character": "HOST",
+          "parenthetical": "",
+          "text": "The occasion of the first meeting between playwright and player is now (in our fanciful telling) a matter of theatrical lore and legend. Setting: late autumn, (more)"
+        },
+        {
+          "character": "HOST",
+          "parenthetical": "(cont'd)",
+          "text": "51."
+        },
+        {
+          "character": "PLAYWRIGHT",
+          "parenthetical": "",
+          "text": "Oh, no, again. I beg your pardon. I’m sorry: did Miss Watson not inform you? I’m indisposed. ACTOR/AUGIE I know, but the ice cream would’ve melted."
+        },
+        {
+          "character": "PLAYWRIGHT",
+          "parenthetical": "",
+          "text": "What’s this? ACTOR/AUGIE (hacking/chopping) I think it’s the one you like. Gooseberry"
+        },
+        {
+          "character": "PLAYWRIGHT",
+          "parenthetical": "",
+          "text": "You shouldn’t waste your spending money on an old fool like me. ACTOR/AUGIE (shrugs)"
+        },
+        {
+          "character": "HOST",
+          "parenthetical": "(cont'd)",
+          "text": "51."
+        },
+        {
+          "character": "PLAYWRIGHT",
+          "parenthetical": "",
+          "text": "Cool and delicious."
+        },
+        {
+          "character": "PLAYWRIGHT",
+          "parenthetical": "",
+          "text": "How long have you been in the service? ACTOR/AUGIE (frowns)"
+        },
+        {
+          "character": "PLAYWRIGHT",
+          "parenthetical": "",
+          "text": "(stiffening)"
+        },
+        {
+          "character": "PLAYWRIGHT",
+          "parenthetical": "",
+          "text": "(intrigued) I see. Property of the wardrobe department. ACTOR/AUGIE (pause)"
+        },
+        {
+          "character": "PLAYWRIGHT",
+          "parenthetical": "",
+          "text": "How was it, by the way? ACTOR/AUGIE (distracted)"
+        },
+        {
+          "character": "PLAYWRIGHT",
+          "parenthetical": "",
+          "text": "Not at all. It’s sweltering, isn’t it?"
+        },
+        {
+          "character": "PLAYWRIGHT",
+          "parenthetical": "",
+          "text": "Even the daisies and buttercups are drooping in the -- (suddenly)"
+        },
+        {
+          "character": "PLAYWRIGHT",
+          "parenthetical": "",
+          "text": "(long pause)"
+        },
+        {
+          "character": "PLAYWRIGHT",
+          "parenthetical": "",
+          "text": "(enchanted)"
+        },
+        {
+          "character": "PLAYWRIGHT",
+          "parenthetical": "",
+          "text": "I suppose not. Not necessary."
+        },
+        {
+          "character": "PLAYWRIGHT",
+          "parenthetical": "",
+          "text": "Normally, I’d offer my advice and suggestions, but your interpretation is so perceptive and precise -- anything you do is bound to be dramatically true."
+        },
+        {
+          "character": "HOST",
+          "parenthetical": "",
+          "text": "Often, it is the unexpected human connections which lead to the surprises of artistic discovery."
+        }
+      ],
+      "actionPreview": "Black and white. The host resumes his narration, spotlit in the dark, as the lights slowly come up on a new set: a writer’s study in a shingled beach house. It contains a typewriter stand; a braided 49. (more) 50. rug; a pine table; wicker chairs; neatly over-stuffed bookcases; faintly homoerotic pa"
+    },
+    {
+      "number": 20,
+      "heading": "INT. SLEEPING COMPARTMENT",
+      "characters": [
+        "HOST"
+      ],
+      "dialogues": [
+        {
+          "character": "HOST",
+          "parenthetical": "",
+          "text": "Players of the stage, a tribe of troubadours and non-conformists; they lead unconventional, sometimes dangerous, lives which nourish and elevate their artistic aspirations -- and illuminate the human condition. Next: ten weeks later, the eve of “Asteroid City’s” first public preview, a drawing room onboard the Apache Plainsliner bound for the"
+        },
+        {
+          "character": "HOST",
+          "parenthetical": "",
+          "text": "They continued through the night as far as Ohio, then disembarked and caught the return flight arriving two hours prior to curtain. (The talented understudy immediately replaced the original “Woodrow.”)"
+        },
+        {
+          "character": "HOST",
+          "parenthetical": "",
+          "text": "Schubert Green, born Shylock"
+        }
+      ],
+      "actionPreview": "A sleeping compartment (with sitting room and bed already made up) on an overnight passenger train. The actress who plays Midge, dressed in a silvery skirt suit and matching hat, surrounded by small suitcases, hand baggage, folded fur coat, sits with her legs tucked under her as a porter serves a bo"
+    },
+    {
+      "number": 21,
+      "heading": "INT. THEATRE PROSCENIUM",
+      "characters": [
+        "HOST",
+        "DIRECTOR",
+        "STAGEHAND",
+        "POLLY"
+      ],
+      "dialogues": [
+        {
+          "character": "HOST",
+          "parenthetical": "",
+          "text": "Actor, immigrant, former student of the great theatrical guru Saltzburg Keitel."
+        },
+        {
+          "character": "HOST",
+          "parenthetical": "",
+          "text": "Known for his limitless energy, his voracious enthusiasms (a well-known actress described him, sexually, as: “an animal -- specifically a rabbit”), and his long, deep, and intimate relationship with success."
+        },
+        {
+          "character": "DIRECTOR",
+          "parenthetical": "",
+          "text": "What do you think, Lunky?"
+        },
+        {
+          "character": "STAGEHAND",
+          "parenthetical": "",
+          "text": "(deepest basso)"
+        },
+        {
+          "character": "POLLY",
+          "parenthetical": "(O.S.)",
+          "text": "I’m not going to ask what the hell’s going on here."
+        },
+        {
+          "character": "HOST",
+          "parenthetical": "",
+          "text": "His wife, Polly, left him for an All Star second baseman during the first week of rehearsals."
+        },
+        {
+          "character": "DIRECTOR",
+          "parenthetical": "",
+          "text": "My living quarters."
+        },
+        {
+          "character": "POLLY",
+          "parenthetical": "",
+          "text": "Sign this."
+        },
+        {
+          "character": "DIRECTOR",
+          "parenthetical": "",
+          "text": "It’s Clark’s report card."
+        },
+        {
+          "character": "POLLY",
+          "parenthetical": "",
+          "text": "Uh-huh. What’d you think it was?"
+        },
+        {
+          "character": "DIRECTOR",
+          "parenthetical": "",
+          "text": "I thought maybe we were already divorced."
+        },
+        {
+          "character": "POLLY",
+          "parenthetical": "",
+          "text": "Oh. Not yet -- but eventually."
+        },
+        {
+          "character": "DIRECTOR",
+          "parenthetical": "",
+          "text": "He made the honor roll again."
+        },
+        {
+          "character": "POLLY",
+          "parenthetical": "",
+          "text": "I’m staying at Diego’s penthouse; Clark’s at my mother’s; the apartment’s empty."
+        },
+        {
+          "character": "DIRECTOR",
+          "parenthetical": "",
+          "text": "(simply) I don’t think I should be alone in a building with real windows."
+        },
+        {
+          "character": "DIRECTOR",
+          "parenthetical": "",
+          "text": "Props makes my lunches and dinners. Make- up cuts my hair and shaves me. Costumes washes my dungarees. This is where I belong. For now."
+        },
+        {
+          "character": "POLLY",
+          "parenthetical": "",
+          "text": "Much better. Did you do the green?"
+        },
+        {
+          "character": "POLLY",
+          "parenthetical": "",
+          "text": "It’s been a great ten years, Schubert. I don’t regret a second of it. Clark still loves you. I still love you."
+        },
+        {
+          "character": "DIRECTOR",
+          "parenthetical": "",
+          "text": "(pause)"
+        },
+        {
+          "character": "POLLY",
+          "parenthetical": "",
+          "text": "(pause)"
+        },
+        {
+          "character": "HOST",
+          "parenthetical": "",
+          "text": "Schubert Green lived in the scenic bay of the Tarkington Theatre for all 785 performances of “Asteroid City.” Dark nights, he stayed in the Governor’s Suite of the Nebraska Hotel."
+        },
+        {
+          "character": "POLLY",
+          "parenthetical": "",
+          "text": "One last note: when Midge makes her exit in Act 3, Scene V -- try having her say the line after she closes the door."
+        },
+        {
+          "character": "DIRECTOR",
+          "parenthetical": "",
+          "text": "I will."
+        },
+        {
+          "character": "POLLY",
+          "parenthetical": "",
+          "text": "Goodbye."
+        }
+      ],
+      "actionPreview": "Behind the host, the lights come up on the theatre proscenium set -- turned around to face the audience, with painted backdrop depicting the empty house: seats, boxes, balconies. A wiry, intense, shirtless man works onstage repainting a backdrop. He is the director. YOUNG MAN/WOODROW (cont'd) 58. 59"
+    },
+    {
+      "number": 22,
+      "heading": "EXT. HIGHWAY. DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Widescreen/color. 61. (more) 62. A reinforced military barricade encircles and isolates the entire town. Signs on roadblocks read: Strict Quarantine! Do Not Enter (or Exit) by order of the United States Military-science Research and Experimentation Division Armed guards occupy security-posts on low "
+    },
+    {
+      "number": 23,
+      "heading": "INT. OBSERVATORY. DAY",
+      "characters": [
+        "GENERAL GIBSON",
+        "EXECUTIVE"
+      ],
+      "dialogues": [
+        {
+          "character": "GENERAL GIBSON",
+          "parenthetical": "",
+          "text": "I’ve just informed the president. He authorized me to read and implement the provisions of National Security Emergency"
+        },
+        {
+          "character": "GENERAL GIBSON",
+          "parenthetical": "",
+          "text": "“The following Top Secret directive was mandated into law on July first, 1950.”"
+        },
+        {
+          "character": "GENERAL GIBSON",
+          "parenthetical": "",
+          "text": "“In the event of unforeseen engagement with intelligent life-form or -forms from any planet not specifically defined as our ‘earth’, be advised to initiate the following protocols: (flipping to next card) (more)"
+        },
+        {
+          "character": "GENERAL GIBSON",
+          "parenthetical": "(cont'd)",
+          "text": "63."
+        },
+        {
+          "character": "GENERAL GIBSON",
+          "parenthetical": "",
+          "text": "(flipping to next card) “Two. Confirm the life-form does not intend to annex, colonize, vaporize, or expropriate the resources of the sovereign territories of the United"
+        },
+        {
+          "character": "GENERAL GIBSON",
+          "parenthetical": "",
+          "text": "(flipping to next card) “Three. Identify and detain all possible witnesses and place them under group arrest for a period of no less than one week (defined as seven calendar days), during which time they be subjected to a prescribed battery of medical and psychological examinations and cross- examinations.” AIDE-DE-CAMP"
+        },
+        {
+          "character": "GENERAL GIBSON",
+          "parenthetical": "",
+          "text": "(flipping to next card) “Four. Secure the site; cease the dissemination of information; collect and transport the totality of evidence to a hermetically-enclosed/deep-underground secret storage facility; and publicly deny all aspects of the event including its existence for a period of no less than 100 years (defined as 36,500 days).”"
+        },
+        {
+          "character": "GENERAL GIBSON",
+          "parenthetical": "",
+          "text": "(unsurprised)"
+        },
+        {
+          "character": "GENERAL GIBSON",
+          "parenthetical": "(cont'd)",
+          "text": "63."
+        },
+        {
+          "character": "EXECUTIVE",
+          "parenthetical": "",
+          "text": "What do we tell them?"
+        },
+        {
+          "character": "GENERAL GIBSON",
+          "parenthetical": "",
+          "text": "Who?"
+        },
+        {
+          "character": "EXECUTIVE",
+          "parenthetical": "",
+          "text": "The Junior Stargazers. The Space Cadets."
+        },
+        {
+          "character": "GENERAL GIBSON",
+          "parenthetical": "",
+          "text": "Tell them -- it didn’t happen?"
+        },
+        {
+          "character": "GENERAL GIBSON",
+          "parenthetical": "",
+          "text": "No, obviously, we’ll need to formulate a suitable cover story."
+        }
+      ],
+      "actionPreview": "The classroom. The school desks now seat military officers, technicians, and scientific advisors (including the business executive). Soldiers stand in the corners with rifles shouldered/sidearms holstered. A door opens. General Gibson strides into the room followed by his aide-de-camp (handcuffed to"
+    },
+    {
+      "number": 24,
+      "heading": "INT. LUNCHEONETTE. DAY",
+      "characters": [
+        "CLIFFORD",
+        "SHELLY",
+        "RICKY"
+      ],
+      "dialogues": [
+        {
+          "character": "CLIFFORD",
+          "parenthetical": "",
+          "text": "You dare me? To press that button. J.J."
+        },
+        {
+          "character": "CLIFFORD",
+          "parenthetical": "",
+          "text": "It’s an experiment."
+        },
+        {
+          "character": "SHELLY",
+          "parenthetical": "",
+          "text": "That’s an alien doing jumping jacks."
+        },
+        {
+          "character": "RICKY",
+          "parenthetical": "",
+          "text": "(frustrated) I told you fifty times. The alien picked up the asteroid -- DETECTIVE #2 (correction)"
+        },
+        {
+          "character": "RICKY",
+          "parenthetical": "",
+          "text": "(exploding) I know what I saw! DETECTIVE #1"
+        },
+        {
+          "character": "RICKY",
+          "parenthetical": "",
+          "text": "An extraterrestrial being. DETECTIVE #2 (holding up a tiny canister)"
+        },
+        {
+          "character": "RICKY",
+          "parenthetical": "",
+          "text": "(steely) I was in the sixth grade -- DETECTIVE #2 (angry)"
+        },
+        {
+          "character": "RICKY",
+          "parenthetical": "",
+          "text": "(enraged) -- and I will not name names!"
+        }
+      ],
+      "actionPreview": "The café has been converted into a temporary triage/evaluation unit with dividing screens and curtains on racks and rails. The rivet trailer is parked in front, linked to the front door by a transparent plastic corridor (which ripples in the breeze). Guards outside, scientists inside. “Station #1: M"
+    },
+    {
+      "number": 25,
+      "heading": "INT. SILO. DAY",
+      "characters": [
+        "DINAH",
+        "DR. HICKENLOOPER",
+        "WOODROW"
+      ],
+      "dialogues": [
+        {
+          "character": "DINAH",
+          "parenthetical": "",
+          "text": "Which way did he go?"
+        },
+        {
+          "character": "DR. HICKENLOOPER",
+          "parenthetical": "",
+          "text": "He went from here. To here. To here. (quietly/entranced)"
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "My mother couldn’t remember which was which, so she made up her own constellations. (pointing)"
+        },
+        {
+          "character": "DINAH",
+          "parenthetical": "",
+          "text": "(pensive)"
+        },
+        {
+          "character": "DR. HICKENLOOPER",
+          "parenthetical": "",
+          "text": "What’s it called?"
+        },
+        {
+          "character": "DINAH",
+          "parenthetical": "",
+          "text": "Midge Campbell X-9 Major."
+        },
+        {
+          "character": "DR. HICKENLOOPER",
+          "parenthetical": "",
+          "text": "I’ll look it up."
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "(loudly again)"
+        },
+        {
+          "character": "DINAH",
+          "parenthetical": "",
+          "text": "Not exactly. She’s interested in stardom. I don’t mean that as a criticism, by the way. It’s her job. (To be famous.)"
+        },
+        {
+          "character": "DR. HICKENLOOPER",
+          "parenthetical": "",
+          "text": "(still studying her book) I never had children. Sometimes I wonder if I wish I should’ve. (I discovered a hypothetical star myself, by the way.)"
+        },
+        {
+          "character": "DINAH",
+          "parenthetical": "",
+          "text": "Which one?"
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "Where is it?"
+        },
+        {
+          "character": "DR. HICKENLOOPER",
+          "parenthetical": "",
+          "text": "(pointing)"
+        },
+        {
+          "character": "DR. HICKENLOOPER",
+          "parenthetical": "",
+          "text": "Don’t spin it around! I had it how I want it. What’s happening?"
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "After you."
+        },
+        {
+          "character": "DINAH",
+          "parenthetical": "",
+          "text": "Sometimes, I think, mentally: I feel more at home outside the earth’s atmosphere."
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "(enchanted)"
+        }
+      ],
+      "actionPreview": "A scaffold perch at the top of a metallic staircase. Woodrow stares through a massive telescope out the open bay of the silver dome. He looks up from the eyepiece and squints at the sky, intense and determined. He adjusts focus. On a platform one flight below: Dinah stands next to Dr. Hickenlooper i"
+    },
+    {
+      "number": 26,
+      "heading": "INT. MOTEL CABINS #9/10. DAY",
+      "characters": [
+        "MIDGE",
+        "AUGIE",
+        "STANLEY"
+      ],
+      "dialogues": [
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "Did it come out?"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "(abruptly)"
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "I mean the other one."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "Oh."
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "You feel different?"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "(pause) I don’t feel anything at all."
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "Me, neither."
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "I’m not a good mother."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "(hesitates)"
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "I love my daughter, but I’m not a good mother, because (unfortunately for her): she’s not my first priority. On account of there’s always already the thing I plan to do next. I love my daughter, by the way."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "Of course. You said."
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "I love all my children."
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "We have a magical time when we’re together. I have another girl and a boy."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "Uh-huh."
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "He rarely sees them, either."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "Uh-huh."
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "I wish, at least, I felt guilty -- but I don’t experience that emotion (if I understand it correctly). I’ve played it, of course."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "(surprised only mildly)"
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "Not to my knowledge. I think because of my history with violent men (which began with my father, brother, and uncles)."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "Uh-huh. There’s always already the thing I plan to do next, too. Usually, it’s a war. Nobody can compete with that. Can they?"
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "(pause)"
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "I think I see how I see us."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "Hm?"
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "I mean, I think I know now what I realize we are: two catastrophically wounded people who don’t express the depths of their pain -- because we don’t want to."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "(long pause)"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "Let’s change the subject."
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "It’s open."
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "(O.S.)",
+          "text": "Hello?"
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "In here."
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "Hello! I’m just your neighbor. Stanley"
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "Thank you. I think so."
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "What a strange experience this is, isn’t it? I went to law school with your former agent, by the way."
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "Mort?"
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "Mort."
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "Yes. Mort. Oh --"
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "That came out."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "(abruptly again)"
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "Anyway, as I say, we’re just across the driveway, as my son-in-law seems to have established. Send my best wishes to Mort."
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "I will."
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "And his family."
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "If and when we’re permitted contact with the outside world -- though I don’t speak to him, to tell you the truth."
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "I love your hairdo like that."
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "Thank you."
+        }
+      ],
+      "actionPreview": "Cabin #10: Augie’s roller-blind zings open. He is working in his darkroom again, wiggling and fanning another damp print. Cabin #9: Midge, memorizing lines in her own window, watches from across the narrow driveway. Pause. All my pictures come out. Augie reverses the photograph to show: the alien ho"
+    },
+    {
+      "number": 27,
+      "heading": "EXT. MOTEL GARDEN. DAY",
+      "characters": [
+        "JUNE",
+        "FRECKLED BOY",
+        "BOY WITH COWLICK",
+        "MONTANA"
+      ],
+      "dialogues": [
+        {
+          "character": "JUNE",
+          "parenthetical": "",
+          "text": "I’m going to attempt to proceed with the lesson plan I originally prepared. Just to keep orderliness under the circumstances. I expect some of our information about outer space may no longer be completely accurate; but, anyway, there’s still only nine planets in the solar system, as far as we know. (reluctantly)"
+        },
+        {
+          "character": "FRECKLED BOY",
+          "parenthetical": "",
+          "text": "Except now there’s a’ alien!"
+        },
+        {
+          "character": "JUNE",
+          "parenthetical": "",
+          "text": "(calmly)"
+        },
+        {
+          "character": "JUNE",
+          "parenthetical": "",
+          "text": "(calmly)"
+        },
+        {
+          "character": "BOY WITH COWLICK",
+          "parenthetical": "",
+          "text": "At first, I thought the alien was kind of sneaky, but now I think he was probably nervous to go to earth. He’s never been here before, I betch’a."
+        },
+        {
+          "character": "FRECKLED BOY",
+          "parenthetical": "",
+          "text": "(debating)"
+        },
+        {
+          "character": "JUNE",
+          "parenthetical": "",
+          "text": "(calmly)"
+        },
+        {
+          "character": "FRECKLED BOY",
+          "parenthetical": "",
+          "text": "The alien!"
+        },
+        {
+          "character": "JUNE",
+          "parenthetical": "",
+          "text": "The alien, yes. Neptune: named after the god of the sea, of course -- and, by the way, I’m not trying to evade your questions. I want to emphasize: you’re safe. We all are. (Here on earth.) Your parents have been notified of, at least, something. America remains at peace. (surprised)"
+        },
+        {
+          "character": "MONTANA",
+          "parenthetical": "",
+          "text": "I’d like to parley a notion, myself, if I could, June."
+        },
+        {
+          "character": "MONTANA",
+          "parenthetical": "",
+          "text": "I figger this here alien come from a tribe we don’t know nothin’ ‘bout, do we?"
+        },
+        {
+          "character": "MONTANA",
+          "parenthetical": "(cont'd)",
+          "text": "74."
+        },
+        {
+          "character": "JUNE",
+          "parenthetical": "",
+          "text": "I agree with Montana. Now: Neptune."
+        }
+      ],
+      "actionPreview": "The schoolchildren (notebooks and pencil-cases laid out in front of them) occupy one of the picnic tables. June (a bit frazzled) stands next to a blackboard illustrated with a brightly colorful rendering of the solar system in multiple chalk colors. The two chaperones stand by, uneasy. June begins: "
+    },
+    {
+      "number": 28,
+      "heading": "EXT. DESERT. DAY",
+      "characters": [
+        "MOTEL MANAGER",
+        "MONTANA",
+        "CLIFFORD"
+      ],
+      "dialogues": [
+        {
+          "character": "MOTEL MANAGER",
+          "parenthetical": "",
+          "text": "You see that wonderful crackly-patch right out there between the dead cactuses and the dried-up riverbed? J.J. I think so."
+        },
+        {
+          "character": "MOTEL MANAGER",
+          "parenthetical": "",
+          "text": "That’s your parcel."
+        },
+        {
+          "character": "MOTEL MANAGER",
+          "parenthetical": "",
+          "text": "Well, it’s actually an interesting financial mechanism. You don’t technically own anything outright. You own stock in the town. In the form of a loan. With a fifty year maturity rate."
+        },
+        {
+          "character": "MONTANA",
+          "parenthetical": "(cont'd)",
+          "text": "74."
+        },
+        {
+          "character": "CLIFFORD",
+          "parenthetical": "",
+          "text": "You dare me? J.J. ignores the question. He continues the real-estate discussion: J.J."
+        },
+        {
+          "character": "MOTEL MANAGER",
+          "parenthetical": "",
+          "text": "(hesitates)"
+        },
+        {
+          "character": "CLIFFORD",
+          "parenthetical": "",
+          "text": "You dare me?"
+        },
+        {
+          "character": "CLIFFORD",
+          "parenthetical": "",
+          "text": "It’s an experiment. J.J. (interrupting) I don’t care anymore. I dare you, or I don’t dare you. It doesn’t matter. Do what you wish. I give up."
+        },
+        {
+          "character": "CLIFFORD",
+          "parenthetical": "",
+          "text": "(long pause) I don’t know. Maybe it's because I’m afraid, otherwise, nobody'll -- notice -- my existence -- in the universe?"
+        },
+        {
+          "character": "MOTEL MANAGER",
+          "parenthetical": "",
+          "text": "Dare you what?"
+        },
+        {
+          "character": "CLIFFORD",
+          "parenthetical": "",
+          "text": "(sadly)"
+        },
+        {
+          "character": "MOTEL MANAGER",
+          "parenthetical": "",
+          "text": "(worried)"
+        }
+      ],
+      "actionPreview": "Outside the fence at the rear the motel: the motel manager explains the terms of a sale to J.J. as Clifford stands beside them doing tricks with his yo-yo. J.J. clutches a paper from the vending machine: “Deed of Sale.” The motel manager sweeps his arm slowly toward the barren nothingness, marveling"
+    },
+    {
+      "number": 29,
+      "heading": "EXT. HIGHWAY. DAY",
+      "characters": [
+        "AUGIE",
+        "STANLEY",
+        "WOODROW",
+        "ANDROMEDA"
+      ],
+      "dialogues": [
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "If I sleep on a cot instead of the sofa- bed that might leave room for me to set up a darkroom in the pool house. Is that possible? As a compromise."
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "Depends on the measurements. I can actually carpool the girls to school by golf-cart, you know. If I cut across the fourteenth tee."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "(surprised)"
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "(in disbelief)"
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "What happens next? Nobody knows! Will he visit us again? Will he speak to us? What will he say? Why did he steal our asteroid? Was it ours in the first place?"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "That’s true."
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "(re: the universe)"
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "I hope you’re still Episcopalian."
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "You took his picture, Dad!"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "You really want us, Stanley?"
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "(bluntly)"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "(long pause)"
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "Who says she didn’t? I’ve been on my own for twelve years, after all (and, remember: my wife drank herself to death)."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "(pause) I don’t know what that means."
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "In my loneliness (or, perhaps, because of it), I’ve learned not to judge people; to take people as I find them, not as others find them; and, most of all, to give complete and unquestioning faith to the people I love. That doesn’t include you, but it included my daughter -- and your four children -- and you’re welcome to stay with me as long as you wish, whether I like it or not (which I don’t, by the way)."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "Stop helping us. We’re in grief!"
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "Me, too!"
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "Are you planning to abandon us?"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "I was (as a temporary measure) --"
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "(stunned)"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "-- but I decided against it."
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "I knew it. I sensed it."
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "I didn’t!"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "I would’ve hired a babysitter."
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "I’m the grandfather. I’m not the wet nurse."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "I’m not planning to abandon you. Anymore."
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "I forgive you for considering it."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "What about you?"
+        },
+        {
+          "character": "ANDROMEDA",
+          "parenthetical": "",
+          "text": "We’re going to sleep under the floor of the house in a secret prison powered by electricity from an erupting volcano."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "OK. Who needs to pee? Let’s go inside and order some chili."
+        }
+      ],
+      "actionPreview": "Augie and Stanley flank Woodrow (in a mystified reverie) as they walk down the center of the roadblocked highway through the little town. The three girls trail behind them, stalking a dragonfly with a butterfly net. Further in the background: troops drill patrol along the barricades. It’s that close"
+    },
+    {
+      "number": 30,
+      "heading": "EXT. METEOR CRATER. EVENING",
+      "characters": [
+        "GENERAL GIBSON",
+        "DR. HICKENLOOPER",
+        "MECHANIC",
+        "EXECUTIVE"
+      ],
+      "dialogues": [
+        {
+          "character": "GENERAL GIBSON",
+          "parenthetical": "",
+          "text": "For the official Military-science"
+        },
+        {
+          "character": "GENERAL GIBSON",
+          "parenthetical": "",
+          "text": "Dr. Hickenlooper, would you like to repeat the remarks you said yesterday? To the best of your recollection."
+        },
+        {
+          "character": "DR. HICKENLOOPER",
+          "parenthetical": "",
+          "text": "Well, I began by describing various properties of the Astronomical Ellipses. (suddenly)"
+        },
+        {
+          "character": "DR. HICKENLOOPER",
+          "parenthetical": "",
+          "text": "(frowning)"
+        },
+        {
+          "character": "DR. HICKENLOOPER",
+          "parenthetical": "",
+          "text": "Then give it."
+        },
+        {
+          "character": "DR. HICKENLOOPER",
+          "parenthetical": "",
+          "text": "Twice every fifty-seven years, when the earth, the sun, the moon, and the galactic plane of the Milky Way -- AIDE-DE-CAMP (suddenly)"
+        },
+        {
+          "character": "MECHANIC",
+          "parenthetical": "",
+          "text": "I've never seen an assembly of this kind on any American make or model (nor foreign, actually) in all my experience. I thought maybe it might be some kind of hot rod power-booster (unusual for a station wagon); but, then, after what occurred and so on, I figured it's my duty to bring it to the attention of the proper authorities. In case it comes from outer space."
+        },
+        {
+          "character": "GENERAL GIBSON",
+          "parenthetical": "",
+          "text": "It might be from space, or it might be from earth. Impossible to tell. (to the executive)"
+        },
+        {
+          "character": "EXECUTIVE",
+          "parenthetical": "",
+          "text": "No idea."
+        },
+        {
+          "character": "GENERAL GIBSON",
+          "parenthetical": "",
+          "text": "(to the aide-de-camp)"
+        },
+        {
+          "character": "DR. HICKENLOOPER",
+          "parenthetical": "",
+          "text": "After that, I said something like, “Boy, aren’t these just luminously marvelous colors?” Then I warned everybody not to look right at it."
+        }
+      ],
+      "actionPreview": "The crater floor remains decorated exactly as last seen during the alien’s brief visit (including picnic blankets, root beer, peanuts, viewing devices); but hundreds of tags and markers stuck in the dirt now indicate names, times, distances, and other statistical information. An empty divot where th"
+    },
+    {
+      "number": 31,
+      "heading": "EXT. HIGHWAY. NIGHT",
+      "characters": [
+        "CLIFFORD",
+        "GUARD",
+        "DINAH",
+        "WOODROW",
+        "RICKY",
+        "MOTHER",
+        "SHELLY",
+        "SLEEPY BOY"
+      ],
+      "dialogues": [
+        {
+          "character": "CLIFFORD",
+          "parenthetical": "",
+          "text": "Evening, Chief."
+        },
+        {
+          "character": "CLIFFORD",
+          "parenthetical": "",
+          "text": "Can I ask you to stick this dime in the payphone for me, please?"
+        },
+        {
+          "character": "GUARD",
+          "parenthetical": "",
+          "text": "All public telephone service has been suspended until further notice."
+        },
+        {
+          "character": "CLIFFORD",
+          "parenthetical": "",
+          "text": "I know it. The thing is: right before the hubbub yesterday, I made a trunk call to my cousin (long distance), and the (more)"
+        },
+        {
+          "character": "CLIFFORD",
+          "parenthetical": "(cont'd)",
+          "text": "82."
+        },
+        {
+          "character": "DINAH",
+          "parenthetical": "",
+          "text": "Although it might convey a different meaning on his planet."
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "That’s true -- if he even has a planet, by the way! He might be nomadic?"
+        },
+        {
+          "character": "RICKY",
+          "parenthetical": "",
+          "text": "Operator? Kismet-nine, seven-seven-oh."
+        },
+        {
+          "character": "MOTHER",
+          "parenthetical": "",
+          "text": "Hello? Who’s calling?"
+        },
+        {
+          "character": "CLIFFORD",
+          "parenthetical": "(cont'd)",
+          "text": "82."
+        },
+        {
+          "character": "RICKY",
+          "parenthetical": "",
+          "text": "Good evening, Mrs. Weatherford. It’s"
+        },
+        {
+          "character": "MOTHER",
+          "parenthetical": "",
+          "text": "(checking her watch)"
+        },
+        {
+          "character": "RICKY",
+          "parenthetical": "",
+          "text": "(unfortunately) I’m afraid not, Mrs. Weatherford. I wouldn’t disturb you if it weren’t of the utmost importance to the"
+        },
+        {
+          "character": "MOTHER",
+          "parenthetical": "",
+          "text": "(pause)"
+        },
+        {
+          "character": "SHELLY",
+          "parenthetical": "",
+          "text": "Some kind of romance between the two of you?"
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "Who?"
+        },
+        {
+          "character": "SHELLY",
+          "parenthetical": "",
+          "text": "Who. You."
+        },
+        {
+          "character": "DINAH",
+          "parenthetical": "",
+          "text": "(coolly)"
+        },
+        {
+          "character": "SHELLY",
+          "parenthetical": "",
+          "text": "(louder)"
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "(flustered)"
+        },
+        {
+          "character": "DINAH",
+          "parenthetical": "",
+          "text": "(evenly)"
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "(mortified) I feel she doesn’t like me in that way."
+        },
+        {
+          "character": "SHELLY",
+          "parenthetical": "",
+          "text": "Uh-huh. Well, I think you’re pretty smart, but I think you’re pretty dumb."
+        },
+        {
+          "character": "SLEEPY BOY",
+          "parenthetical": "",
+          "text": "Hello?"
+        },
+        {
+          "character": "RICKY",
+          "parenthetical": "",
+          "text": "(to the others:)"
+        }
+      ],
+      "actionPreview": "After dark. The middle of the town, quiet and empty. A guard sits in a chair in front of the telephone booth. A sign on a barricade behind him reads: Public Telephone Service Suspended Official Use Only by order of the United States Military-science Research and Experimentation Division The night wi"
+    },
+    {
+      "number": 32,
+      "heading": "INT. TELEVISION STUDIO. DAY",
+      "characters": [
+        "HOST",
+        "TEACHER",
+        "PLAYWRIGHT",
+        "DIRECTOR"
+      ],
+      "dialogues": [
+        {
+          "character": "HOST",
+          "parenthetical": "",
+          "text": "The first hints of the future existence of “Asteroid City” were revealed during a special seminar scheduled at the playwright’s request."
+        },
+        {
+          "character": "TEACHER",
+          "parenthetical": "",
+          "text": "Conrad Earp: how can we help you?"
+        },
+        {
+          "character": "PLAYWRIGHT",
+          "parenthetical": "",
+          "text": "Well, the thing is, Saltzie: I’d like to make a scene where all my characters are each gently/privately seduced into the (more)"
+        },
+        {
+          "character": "PLAYWRIGHT",
+          "parenthetical": "(cont'd)",
+          "text": "85."
+        },
+        {
+          "character": "TEACHER",
+          "parenthetical": "",
+          "text": "(interrupting)"
+        },
+        {
+          "character": "PLAYWRIGHT",
+          "parenthetical": "",
+          "text": "(reluctantly clarifying)"
+        },
+        {
+          "character": "TEACHER",
+          "parenthetical": "",
+          "text": "Yet."
+        },
+        {
+          "character": "PLAYWRIGHT",
+          "parenthetical": "",
+          "text": "Yet. I thought, perhaps, if you and your wonderfully talented pupils just improvise? Something might reveal itself."
+        },
+        {
+          "character": "HOST",
+          "parenthetical": "",
+          "text": "Who wasn’t going to be famous? On any given day: roll-call in Saltzburg"
+        },
+        {
+          "character": "HOST",
+          "parenthetical": "",
+          "text": "Linus Mao, Lucretia Shaver, Walter"
+        },
+        {
+          "character": "PLAYWRIGHT",
+          "parenthetical": "",
+          "text": "(pause)"
+        },
+        {
+          "character": "PLAYWRIGHT",
+          "parenthetical": "(cont'd)",
+          "text": "85."
+        },
+        {
+          "character": "PLAYWRIGHT",
+          "parenthetical": "",
+          "text": "I’m torn. Perhaps: “The Cosmic"
+        },
+        {
+          "character": "PLAYWRIGHT",
+          "parenthetical": "",
+          "text": "It’s the name of the small town on the"
+        },
+        {
+          "character": "TEACHER",
+          "parenthetical": "",
+          "text": "Who here has fallen asleep ever onstage during a live performance? In front of a paying audience."
+        },
+        {
+          "character": "DIRECTOR",
+          "parenthetical": "(O.S.)",
+          "text": "Me."
+        },
+        {
+          "character": "DIRECTOR",
+          "parenthetical": "",
+          "text": "I spent the first three-quarters of Act II of “The Welterweight” on a massage table with no lines until the last minute and a half. One night, I nodded off."
+        },
+        {
+          "character": "TEACHER",
+          "parenthetical": "",
+          "text": "On purpose? You did this."
+        },
+        {
+          "character": "DIRECTOR",
+          "parenthetical": "",
+          "text": "(absolutely not)"
+        },
+        {
+          "character": "TEACHER",
+          "parenthetical": "",
+          "text": "Did you miss your cue?"
+        },
+        {
+          "character": "DIRECTOR",
+          "parenthetical": "",
+          "text": "Almost. I heard it, and I woke up (very scared) -- but I knew my lines."
+        },
+        {
+          "character": "TEACHER",
+          "parenthetical": "",
+          "text": "Good morning, Schubert."
+        },
+        {
+          "character": "DIRECTOR",
+          "parenthetical": "",
+          "text": "Good morning, Saltzie."
+        },
+        {
+          "character": "TEACHER",
+          "parenthetical": "",
+          "text": "What brings you here today? Haven’t seen you in six weeks."
+        },
+        {
+          "character": "DIRECTOR",
+          "parenthetical": "",
+          "text": "“Lavender and Lemons” opened last night (to very good, I might say, raves, by the way). I’m available."
+        },
+        {
+          "character": "DIRECTOR",
+          "parenthetical": "",
+          "text": "Hello, Connie."
+        },
+        {
+          "character": "HOST",
+          "parenthetical": "",
+          "text": "What did he teach? Example:"
+        },
+        {
+          "character": "TEACHER",
+          "parenthetical": "",
+          "text": "Sleep: is not death. The body keeps busy (breathing air, pumping blood, thinking)."
+        },
+        {
+          "character": "TEACHER",
+          "parenthetical": "",
+          "text": "Where are we, Connie? And when. Talk to us!"
+        },
+        {
+          "character": "PLAYWRIGHT",
+          "parenthetical": "",
+          "text": "(startled)"
+        },
+        {
+          "character": "PLAYWRIGHT",
+          "parenthetical": "",
+          "text": "One week later. Our cast of characters’ already tenuous grasp of reality has further slipped in quarantine, and the group begins to occupy a space of the most peculiar emotional dimensions."
+        }
+      ],
+      "actionPreview": "Black and white. The lights come up on another set: a rehearsal space in a converted cast-iron building (formerly a garment factory). Sprung wooden floor, low platform stage, pressed tin ceiling. One wall of expansive windows looks out at a painted theatrical background depicting an elevated train s"
+    },
+    {
+      "number": 33,
+      "heading": "EXT. HIGHWAY. DAY",
+      "characters": [
+        "NEWSBOY"
+      ],
+      "dialogues": [
+        {
+          "character": "NEWSBOY",
+          "parenthetical": "",
+          "text": "Extra! Extra! Late Edition! INSERT:"
+        }
+      ],
+      "actionPreview": "Widescreen/color. In all directions encircling the town: an ambush of press and public (beyond/outside the military barricades). Television crews; radio reporters; newspapermen and women; visitors by the dozen with picnic baskets and transistor radios; vendors selling popcorn, toy meteorites, and po"
+    },
+    {
+      "number": 34,
+      "heading": "INT. OBSERVATORY. DAY",
+      "characters": [
+        "GENERAL GIBSON",
+        "RICKY",
+        "ROGER",
+        "EXECUTIVE"
+      ],
+      "dialogues": [
+        {
+          "character": "GENERAL GIBSON",
+          "parenthetical": "",
+          "text": "I hope you’re aware: you and your accomplices may still face felony prosecution. Possibly, even, a treason charge."
+        },
+        {
+          "character": "RICKY",
+          "parenthetical": "",
+          "text": "(unfazed) I’ll fight it all the way to the Supreme"
+        },
+        {
+          "character": "GENERAL GIBSON",
+          "parenthetical": "",
+          "text": "He’s furious. Thanks, Ricky."
+        },
+        {
+          "character": "ROGER",
+          "parenthetical": "",
+          "text": "(sympathetic) I don’t know what to say, General Gibson. I’m sorry."
+        },
+        {
+          "character": "RICKY",
+          "parenthetical": "",
+          "text": "Don’t apologize, Dad. The public has a right to the truth."
+        },
+        {
+          "character": "ROGER",
+          "parenthetical": "",
+          "text": "(gently)"
+        },
+        {
+          "character": "RICKY",
+          "parenthetical": "",
+          "text": "(shouting)"
+        },
+        {
+          "character": "EXECUTIVE",
+          "parenthetical": "",
+          "text": "What about Steenbeck? Who took the photograph. It’s on the front page of every newspaper on the planet. Can’t we arrest him, as well?"
+        },
+        {
+          "character": "GENERAL GIBSON",
+          "parenthetical": "",
+          "text": "Unfortunately, no. He dropped a print in the mail (to his photo-agency) first thing Tuesday morning, and the postman got it before we did. He’s innocent."
+        }
+      ],
+      "actionPreview": "The classroom. General Gibson sits, as before, at the table in front. Ricky, in a school desk, faces him. Also present: Roger, 88. 89. the business executive, two guards. (Tacked to the wall: numerous photographs of the alien’s footprints.) General Gibson is offended, disappointed, angry: Court, if "
+    },
+    {
+      "number": 35,
+      "heading": "EXT. DESERT. DAY",
+      "characters": [
+        "SANDY",
+        "STANLEY",
+        "GUARD"
+      ],
+      "dialogues": [
+        {
+          "character": "SANDY",
+          "parenthetical": "",
+          "text": "How long can they keep us in Asteroid"
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "(pleasantly)"
+        },
+        {
+          "character": "SANDY",
+          "parenthetical": "",
+          "text": "(taking the death-ray)"
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "I’m in no hurry. I like the desert. I like aliens. J.J. places another beer bottle into the launcher and catapults it. Sandy aims the death-ray -- but an off-screen voice interrupts brusquely:"
+        },
+        {
+          "character": "GUARD",
+          "parenthetical": "(O.S.)",
+          "text": "How’d you get that back? J.J., Sandy, and Stanley turn suddenly, startled. (The bottle falls to the ground, unzapped, and shatters.) The telephone booth guard (still armed for target practice) stands behind the group. J.J. retrieves the death-ray from Sandy, possessive."
+        },
+        {
+          "character": "GUARD",
+          "parenthetical": "",
+          "text": "The projects remain under secure lockdown. No Stargazer is permitted personal access without the express permission -- J.J. (righteous)"
+        },
+        {
+          "character": "GUARD",
+          "parenthetical": "",
+          "text": "(hesitates)"
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "(concerned/bemused)"
+        },
+        {
+          "character": "GUARD",
+          "parenthetical": "",
+          "text": "You stole your projects!"
+        }
+      ],
+      "actionPreview": "An improvised shooting range behind the luncheonette. A barrage of machine-gun bullets rips into a row of paper targets (adapted from Augie’s alien photograph) pinned to a bank of hay bales, shredding them. A dozen soldiers, flat on the ground in a row, quickly reload. One of them (the guard from th"
+    },
+    {
+      "number": 36,
+      "heading": "INT. MOTEL CABINS #9/10. DAY",
+      "characters": [
+        "AUGIE",
+        "MIDGE"
+      ],
+      "dialogues": [
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "This was on an old roll I forgot to develop in the glove box."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "“Self-portrait with Shrapnel.”"
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "Do page forty-five."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "“What’ve you done? How could you?”"
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "It says, “shouting and crying.”"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "Uh-huh."
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "So shout and cry."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "(shouting/crying) “How could you!"
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "(evenly)"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "(stupefied)"
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "That’s what I’m asking."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "(wounded)"
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "(opening her eyes)"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "(out of character)"
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "So smash everything off the --"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "“Such a sickening waste. Think of the people. Think of the places. Think of the --”"
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "(directing)"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "(stiffening)"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "“Such a sickening waste. Think of the people. Think of the places. Think of the world you could’ve seen, Dolores."
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "(inevitably) I’ve already seen it.”"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "(out of character)"
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "It’s not clear."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "(skimming/paraphrasing)"
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "My daughter saw us."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "(alarmed)"
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "Dinah saw us. Through this window. In your bedroom yesterday."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "(resourceful)"
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "(regretful) I didn’t think of that. I should’ve. Now it’s too late, because I admitted everything."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "(short pause, uneasy)"
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "Hard to say. She can keep a secret. I don’t know if she will."
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "This isn’t the beginning of something,"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "(pause)"
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "(surprised)"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "(resigned)"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "(hopeful/desperate)"
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "(hopeful/affectionate)"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "I don’t like the way that guy looked at us."
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "(not following)"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "The alien."
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "(surprised)"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "(interrupting)"
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "What’d you just do?"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "(frozen) I burned my hand on the Quicky-Griddle."
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "(confused)"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "It’s not clear."
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "(deeply perplexed)"
+        },
+        {
+          "character": "MIDGE",
+          "parenthetical": "",
+          "text": "You really did it! That actually happened."
+        }
+      ],
+      "actionPreview": "Cabin #10: Augie’s roller-blind zings open once again as he wiggles/fans another damp print. (Hanging from clothespins behind him: a print of the Steenbeck family station wagon on blocks.) He says loudly without looking: Augie reverses the photograph to show: himself in a smoky/misty jungle, hair ma"
+    },
+    {
+      "number": 37,
+      "heading": "EXT. MOTEL GARDEN. DAY",
+      "characters": [
+        "JUNE",
+        "FRECKLED BOY",
+        "BOY WITH COWLICK",
+        "MONTANA",
+        "CHORUS"
+      ],
+      "dialogues": [
+        {
+          "character": "JUNE",
+          "parenthetical": "",
+          "text": "As you know, boys and girls, your parents arrived late last night by military helicopter. They’ve been sequestered in that metal hut over there --"
+        },
+        {
+          "character": "JUNE",
+          "parenthetical": "",
+          "text": "-- for the past several hours while the government scientists explain the situation to them (although everything’s already in the newspapers). It’s my understanding they’re about to go onto this closed-circuit television set? At any moment. GARDENER/HANDYMAN"
+        },
+        {
+          "character": "JUNE",
+          "parenthetical": "",
+          "text": "Let’s carry on with the lesson plan, then. Jupiter: (reluctantly)"
+        },
+        {
+          "character": "FRECKLED BOY",
+          "parenthetical": "",
+          "text": "I did the alien’s flying saucer with a hubcap and a chicken pot pie tin."
+        },
+        {
+          "character": "JUNE",
+          "parenthetical": "",
+          "text": "Good work. Very accurate. Fifth planet from the sun, largest in our solar system, Jupiter -- (reluctantly)"
+        },
+        {
+          "character": "JUNE",
+          "parenthetical": "",
+          "text": "Well done. How wonderful. Due to extreme atmospheric conditions, an anticyclonic storm has raged on Jupiter’s surface for over -- (reluctantly)"
+        },
+        {
+          "character": "BOY WITH COWLICK",
+          "parenthetical": "",
+          "text": "I wrote a song about him."
+        },
+        {
+          "character": "JUNE",
+          "parenthetical": "",
+          "text": "Oh. Um. This may not be the time for a musical performance. Let’s -- (surprised)"
+        },
+        {
+          "character": "MONTANA",
+          "parenthetical": "",
+          "text": "Pardon th’ interuption, June. The boys and I heard ol’ Dwight was scribblin’ up a little warble, so we learned ourselves to play it."
+        },
+        {
+          "character": "BOY WITH COWLICK",
+          "parenthetical": "",
+          "text": "Dear alien, who art in heaven,"
+        },
+        {
+          "character": "CHORUS",
+          "parenthetical": "",
+          "text": "Hop on one foot,"
+        }
+      ],
+      "actionPreview": "The schoolchildren sit, once again, at their picnic table. June (now wearing slightly more make-up than usual, with one extra blouse button unbuttoned and her hair looser, in waves) stands next to her blackboard which is still illustrated with the colorful solar system and now includes numerous moon"
+    },
+    {
+      "number": 38,
+      "heading": "EXT. MOTEL CABIN #7. DAY",
+      "characters": [
+        "DINAH",
+        "DR. HICKENLOOPER",
+        "WOODROW",
+        "RICKY",
+        "SHELLY",
+        "CLIFFORD",
+        "OK."
+      ],
+      "dialogues": [
+        {
+          "character": "DINAH",
+          "parenthetical": "",
+          "text": "-- Tab Hunter, Doris Day, out, Jack the"
+        },
+        {
+          "character": "DINAH",
+          "parenthetical": "",
+          "text": "-- Betty Grable, Ella Fitzgerald, out, out, Rock Hudson, out, Jerry Lewis, out, out --"
+        },
+        {
+          "character": "DR. HICKENLOOPER",
+          "parenthetical": "",
+          "text": "(interrupting)"
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "We’re trying to contact the alien."
+        },
+        {
+          "character": "DR. HICKENLOOPER",
+          "parenthetical": "",
+          "text": "I appreciate that -- but what about Dr."
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "DR. HICKENLOOPER",
+          "parenthetical": "",
+          "text": "The squiggle control is disabled, by the way."
+        },
+        {
+          "character": "RICKY",
+          "parenthetical": "",
+          "text": "(speculating)"
+        },
+        {
+          "character": "DR. HICKENLOOPER",
+          "parenthetical": "",
+          "text": "(pause) I doubt it. If you want to borrow my stuff, ask first. What’s all this?"
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "I put the American flag just to be patriotic. Now we need to really mean something. A universal message. Not only to earthlings."
+        },
+        {
+          "character": "RICKY",
+          "parenthetical": "",
+          "text": "We already thought of everything we could think of: a cross, a star, a four-leaf- clover; letters, numbers, hieroglyphics."
+        },
+        {
+          "character": "DR. HICKENLOOPER",
+          "parenthetical": "",
+          "text": "(pause)"
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "Exactly."
+        },
+        {
+          "character": "DR. HICKENLOOPER",
+          "parenthetical": "",
+          "text": "I ask that sincerely."
+        },
+        {
+          "character": "SHELLY",
+          "parenthetical": "",
+          "text": "(hopeful)"
+        },
+        {
+          "character": "DINAH",
+          "parenthetical": "",
+          "text": "They know that."
+        },
+        {
+          "character": "CLIFFORD",
+          "parenthetical": "",
+          "text": "It’s too easy."
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "This is our chance to be actually -- worthwhile. In our lifetimes."
+        },
+        {
+          "character": "DR. HICKENLOOPER",
+          "parenthetical": "",
+          "text": "(long pause) I see what you mean. Whose turn was it?"
+        },
+        {
+          "character": "DINAH",
+          "parenthetical": "",
+          "text": "The middle of mine. I better start over."
+        },
+        {
+          "character": "DR. HICKENLOOPER",
+          "parenthetical": "",
+          "text": "A word, Woodrow. About the settings on the spectrograph. Note: the warning label indicates --"
+        },
+        {
+          "character": "DR. HICKENLOOPER",
+          "parenthetical": "",
+          "text": "-- the risk of electrocution is sharply increased when --"
+        },
+        {
+          "character": "DR. HICKENLOOPER",
+          "parenthetical": "",
+          "text": "It’s all worthwhile. In your lifetime."
+        },
+        {
+          "character": "DR. HICKENLOOPER",
+          "parenthetical": "",
+          "text": "Your curiosity is your most important asset. Trust it."
+        },
+        {
+          "character": "DR. HICKENLOOPER",
+          "parenthetical": "",
+          "text": "Trust your curiosity."
+        },
+        {
+          "character": "DR. HICKENLOOPER",
+          "parenthetical": "",
+          "text": "The resources of my lab will always be available to you. After this thing is over, I mean. You can sort of be my protégé, if you like."
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "(pause)"
+        },
+        {
+          "character": "DR. HICKENLOOPER",
+          "parenthetical": "",
+          "text": "(touched)"
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "(squinting) I think I see the dots. From space."
+        },
+        {
+          "character": "DR. HICKENLOOPER",
+          "parenthetical": "",
+          "text": "I’m sorry about your mother. I miss mine, too. She died forty-six years ago."
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "(blankly)"
+        }
+      ],
+      "actionPreview": "The five teenagers sit together (once again) in a circle on the ground between the burned ruins and the canvas tent. One of the radio telescopes from the field outside the observatory has been relocated into the immediate background. It spins quietly in its familiar manner. As Dinah lists names (per"
+    },
+    {
+      "number": 39,
+      "heading": "EXT. MOTEL OFFICE. EVENING",
+      "characters": [
+        "MOTEL MANAGER"
+      ],
+      "dialogues": [
+        {
+          "character": "MOTEL MANAGER",
+          "parenthetical": "",
+          "text": "I’ve already petitioned the State"
+        }
+      ],
+      "actionPreview": "The motel manager stands at the “Deeds” vending machine and makes his pitch to an off-screen customer: Assembly to change the name of the town from “Asteroid City” to “Alien Landing, U.S.A.” This municipality might end up being the center of a vast community of -- Stargazers and Space Cadets. It’s a"
+    },
+    {
+      "number": 40,
+      "heading": "EXT. METEOR CRATER. EVENING",
+      "characters": [
+        "GENERAL GIBSON",
+        "WOODROW",
+        "AUGIE",
+        "EXECUTIVE"
+      ],
+      "dialogues": [
+        {
+          "character": "GENERAL GIBSON",
+          "parenthetical": "",
+          "text": "As you know, the “Asteroid Day” itinerary had to be suspended last week due to the factual reality of -- our circumstances."
+        },
+        {
+          "character": "GENERAL GIBSON",
+          "parenthetical": "",
+          "text": "I’d like to take this opportunity -- and, by the way, all of this year’s projects (setting aside my own differences of opinion with Ricky Cho) --"
+        },
+        {
+          "character": "GENERAL GIBSON",
+          "parenthetical": "",
+          "text": "-- were of the very highest calibre, without exception -- to formally declare and congratulate the winner of the 1955"
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "It’s today again."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "I think he only borrowed the asteroid. INSERT:"
+        },
+        {
+          "character": "GENERAL GIBSON",
+          "parenthetical": "",
+          "text": "It’s been inventoried."
+        },
+        {
+          "character": "EXECUTIVE",
+          "parenthetical": "",
+          "text": "Re-confiscate the projects."
+        },
+        {
+          "character": "GENERAL GIBSON",
+          "parenthetical": "",
+          "text": "Under the provisions of National Security"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "Why does Augie burn his hand on the"
+        }
+      ],
+      "actionPreview": "The entire congregation has re-assembled once more at the bottom/center of the impact crater. Folding chairs. American flag. Cameraman filming. “Asteroid Day” banner (a bit crumpled). The five Junior Stargazers’ projects on display. The mechanic stands off to the side holding a small, cardboard box "
+    },
+    {
+      "number": 41,
+      "heading": "INT. TELEVISION STUDIO. EVENING",
+      "characters": [
+        "HOST",
+        "DIRECTOR",
+        "OK."
+      ],
+      "dialogues": [
+        {
+          "character": "HOST",
+          "parenthetical": "",
+          "text": "Where you going? ACTOR/AUGIE (pause) I’ll be right back."
+        },
+        {
+          "character": "DIRECTOR",
+          "parenthetical": "",
+          "text": "Huh? Yes! What’s wrong? (checks his watch)"
+        },
+        {
+          "character": "DIRECTOR",
+          "parenthetical": "",
+          "text": "(pause)"
+        },
+        {
+          "character": "OK.",
+          "parenthetical": "",
+          "text": "ACTOR/AUGIE"
+        },
+        {
+          "character": "DIRECTOR",
+          "parenthetical": "",
+          "text": "Well, I told you before: there’s too much business. With the pipe, with the lighter, with the camera, with the eyebrow; but, aside from that, on the whole, in answer to your question --"
+        },
+        {
+          "character": "DIRECTOR",
+          "parenthetical": "",
+          "text": "-- you’re doing him just right. In fact, in my opinion, you didn’t just become"
+        },
+        {
+          "character": "DIRECTOR",
+          "parenthetical": "",
+          "text": "Good! ACTOR/AUGIE I still don’t understand the play."
+        },
+        {
+          "character": "DIRECTOR",
+          "parenthetical": "",
+          "text": "Good! ACTOR/AUGIE"
+        },
+        {
+          "character": "DIRECTOR",
+          "parenthetical": "",
+          "text": "Good! ACTOR/AUGIE"
+        },
+        {
+          "character": "DIRECTOR",
+          "parenthetical": "",
+          "text": "Yes! ACTOR/AUGIE"
+        },
+        {
+          "character": "DIRECTOR",
+          "parenthetical": "",
+          "text": "Yes! ACTOR/AUGIE"
+        },
+        {
+          "character": "DIRECTOR",
+          "parenthetical": "",
+          "text": "“Maybe there is one!” ACTOR/AUGIE"
+        },
+        {
+          "character": "DIRECTOR",
+          "parenthetical": "",
+          "text": "It doesn’t matter. Just keep telling the story. You’re doing him right. ACTOR/AUGIE (pause) I need a breath of fresh air."
+        },
+        {
+          "character": "DIRECTOR",
+          "parenthetical": "",
+          "text": "(checks his watch) OK: but you won’t find one."
+        }
+      ],
+      "actionPreview": "Black and white. The host stands on the theatre proscenium set (now seen from backstage, behind plywood flats mounted on two-by-four joist- frames). A door opens (unfinished plywood on one side, painted crater/mountains/sky on the other) to reveal the actor playing Augie (with bandage-wrapped hand)."
+    },
+    {
+      "number": 42,
+      "heading": "EXT. ALLEY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Outside in an alley between the docks of two adjacent theatres. (Half-seen marquees read: “Asteroid City” and “Fruit of a Withering Vine.”) A delicate snowfall dusts the air. Whizzing taxis zip through the background. The actor closes the stage door and stands on a fire escape a short ladder’s fligh"
+    },
+    {
+      "number": 43,
+      "heading": "INT. PLAYWRIGHT’S DESK",
+      "characters": [
+        "HOST",
+        "PLAYWRIGHT",
+        "TEACHER"
+      ],
+      "dialogues": [
+        {
+          "character": "HOST",
+          "parenthetical": "",
+          "text": "Six months into the run, the company received the news: a catastrophic automobile accident. Conrad Earp,"
+        },
+        {
+          "character": "PLAYWRIGHT",
+          "parenthetical": "",
+          "text": "I’d like to make a scene where all my characters are each gently/privately seduced into the deepest, dreamiest slumber of their lives as a result of their shared experience of a bewildering and bedazzling celestial mystery..."
+        },
+        {
+          "character": "TEACHER",
+          "parenthetical": "",
+          "text": "You can’t wake up if you don’t fall asleep!"
+        }
+      ],
+      "actionPreview": "Seated at his little desk, clacking at his typewriter, spotlit in the darkness: the playwright. The host, also spotlit, explains: American playwright unequaled in passion and imagination, dead at fifty. The playwright stops typing and looks to camera. Lights/sound slowly fade from him as he speaks -"
+    },
+    {
+      "number": 44,
+      "heading": "EXT. HIGHWAY. DAY",
+      "characters": [
+        "LIFTED"
+      ],
+      "dialogues": [
+        {
+          "character": "LIFTED",
+          "parenthetical": "",
+          "text": "by order of the United States Military-science"
+        }
+      ],
+      "actionPreview": "Widescreen/color. The town: deserted. No barricades. No roadblocks. No guards, cars, jeeps. No press. No public. No vendors, vans, campers. No “Asteroid City Alien Special” passenger train. Only: fluttering 112. 113. litter, empty bottles, and hundreds of tire tracks cross- hatching the barren outsk"
+    },
+    {
+      "number": 45,
+      "heading": "INT. MOTEL CABINS #9/10. DAY",
+      "characters": [
+        "AUGIE",
+        "MOTEL MANAGER"
+      ],
+      "dialogues": [
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "Where’d they go?"
+        },
+        {
+          "character": "MOTEL MANAGER",
+          "parenthetical": "",
+          "text": "Good morning, Mr. Steenbeck! Juice preference? Apple, orange, or tomato."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "(looking left/right)"
+        },
+        {
+          "character": "MOTEL MANAGER",
+          "parenthetical": "",
+          "text": "(hesitates)"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "Tomato."
+        },
+        {
+          "character": "MOTEL MANAGER",
+          "parenthetical": "",
+          "text": "Right away!"
+        }
+      ],
+      "actionPreview": "Cabin #10: the roller-blind zings open once again on Augie’s makeshift darkroom. Augie, dressed in pajamas, lights his pipe and looks across/into the bathroom window of Cabin #9. The motel manager (reviewing a clipboard check-list) inspects for dust while a maid (off-screen) runs a vacuum cleaner. T"
+    },
+    {
+      "number": 46,
+      "heading": "EXT. MOTEL CABIN #10. DAY",
+      "characters": [
+        "STANLEY",
+        "AUGIE",
+        "CASSIOPEIA",
+        "PANDORA",
+        "ANDROMEDA",
+        "WOODROW"
+      ],
+      "dialogues": [
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "The plan was to shovel it up and take her with us. Like I said: we’ll exhume the"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "(interjecting) I would question whether it even is a plot."
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "(sharply)"
+        },
+        {
+          "character": "CASSIOPEIA",
+          "parenthetical": "",
+          "text": "Don’t murder my mother’s body!"
+        },
+        {
+          "character": "PANDORA",
+          "parenthetical": "",
+          "text": "He’s killing her ashes!"
+        },
+        {
+          "character": "ANDROMEDA",
+          "parenthetical": "",
+          "text": "Let us pray."
+        },
+        {
+          "character": "ANDROMEDA",
+          "parenthetical": "",
+          "text": "Poppy!"
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "Ugh. Dear Heavenly Father, we thank Thee for the life of this magnificent woman, who was once just a little girl like these three -- witches? In-training."
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "Like these three witches, at one time. We had no intention of permanently burying her next to this unmarked cactus, but I no longer have the strength to fight for her dignity, nor/neither does Augie. (Do you?)"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "So we’ll defer to the wishes of her stubborn daughters. Woodrow? Any final farewell."
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "I don’t believe in God anymore."
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "Fair enough. Amen. “Amens” all around. The three sisters avidly re-bury the"
+        }
+      ],
+      "actionPreview": "In the alley behind the cabin: Stanley, also in pajamas, crouching on his knees, attempts to dig in the ground with a gardener’s trowel while Andromeda, Pandora, and Cassiopeia, in nightgowns, gasp and shriek, blocking him. The partially unearthed Tupperware salad bowl pokes up from the dirt. Stanle"
+    },
+    {
+      "number": 47,
+      "heading": "INT. LUNCHEONETTE. DAY",
+      "characters": [
+        "AUGIE",
+        "WAITRESS",
+        "STANLEY",
+        "WOODROW",
+        "CASHIER"
+      ],
+      "dialogues": [
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "Five orders of flapjacks and two black coffees."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "Who needs to pee?"
+        },
+        {
+          "character": "WAITRESS",
+          "parenthetical": "",
+          "text": "How about a glass of strawberry milk?"
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "Did somebody win? That scholarship."
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "(without looking up) I did."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "(surprised)"
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "Last night. General Gibson slipped it to me in line at the communal showers. I think he just wanted to get it over with."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "Congratulations, Woodrow. That’s stupendous!"
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "(deeply impressed)"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "I agree."
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "(rephrasing it)"
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "Has it got any strings attached to it?"
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "Probably spend it on my girlfriend."
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "What do you write? In that little book."
+        },
+        {
+          "character": "WOODROW",
+          "parenthetical": "",
+          "text": "Next year’s project. Confidentially."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "Wow. Is that possible?"
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "Gee whiz. Look at that."
+        },
+        {
+          "character": "WAITRESS",
+          "parenthetical": "",
+          "text": "Midge Campbell left you her address. (It’s just a post office box.)"
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "That’s none of your business, Stanley."
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "",
+          "text": "I know. Of course, it isn’t. (I only ask because Woodrow told me Dinah told him.) (more)"
+        },
+        {
+          "character": "STANLEY",
+          "parenthetical": "(cont'd)",
+          "text": "118."
+        },
+        {
+          "character": "AUGIE",
+          "parenthetical": "",
+          "text": "That’s true."
+        },
+        {
+          "character": "CASHIER",
+          "parenthetical": "",
+          "text": "Another atom bomb test."
+        }
+      ],
+      "actionPreview": "The chime jingles as Augie, Stanley, Woodrow, and the three sisters enter. Augie says to the waitress: 115. 116. The waitress nods and scribbles. The cook snatches down the order-slip. The family sits. The girls respond with their unconvincing chorus: “Not me.” “I don’t.” “Nobody needs to pee.” The "
+    },
+    {
+      "number": 48,
+      "heading": "EXT. HIGHWAY. DAY",
+      "characters": [
+        "STANLEY"
+      ],
+      "dialogues": [
+        {
+          "character": "STANLEY",
+          "parenthetical": "(cont'd)",
+          "text": "118."
+        }
+      ],
+      "actionPreview": "The blacktop interstate. At the meteor crater: the radio telescopes continue their perpetual spinning. At the filling station: there are now two station wagons on blocks in the adjacent small junkyard. At the chopped-off elevated highway- spur: the sounds of approaching sirens, motors, gunshots; the"
+    }
+  ]
+}

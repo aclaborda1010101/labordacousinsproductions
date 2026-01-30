@@ -1,0 +1,5811 @@
+{
+  "slug": "the-color-purple-2023",
+  "title": "The Color Purple",
+  "parsedWith": "v2",
+  "parsedAt": "2026-01-29T22:09:20.622Z",
+  "stats": {
+    "scenes": 175,
+    "dialogues": 756,
+    "characters": 59
+  },
+  "characters": [
+    {
+      "name": "CELIE",
+      "dialogueLines": 178,
+      "totalWords": 1303
+    },
+    {
+      "name": "MISTER",
+      "dialogueLines": 93,
+      "totalWords": 793
+    },
+    {
+      "name": "SHUG",
+      "dialogueLines": 93,
+      "totalWords": 814
+    },
+    {
+      "name": "SOFIA",
+      "dialogueLines": 71,
+      "totalWords": 506
+    },
+    {
+      "name": "NETTIE",
+      "dialogueLines": 64,
+      "totalWords": 646
+    },
+    {
+      "name": "HARPO",
+      "dialogueLines": 50,
+      "totalWords": 389
+    },
+    {
+      "name": "ALFONSO",
+      "dialogueLines": 18,
+      "totalWords": 160
+    },
+    {
+      "name": "FIRST LADY",
+      "dialogueLines": 17,
+      "totalWords": 88
+    },
+    {
+      "name": "ENSEMBLE",
+      "dialogueLines": 17,
+      "totalWords": 76
+    },
+    {
+      "name": "REVEREND AVERY",
+      "dialogueLines": 17,
+      "totalWords": 192
+    },
+    {
+      "name": "OL MISTER",
+      "dialogueLines": 17,
+      "totalWords": 154
+    },
+    {
+      "name": "ASHANTI TRIBE",
+      "dialogueLines": 14,
+      "totalWords": 51
+    },
+    {
+      "name": "SQUEAK",
+      "dialogueLines": 12,
+      "totalWords": 69
+    },
+    {
+      "name": "MALE ENSEMBLE",
+      "dialogueLines": 9,
+      "totalWords": 65
+    },
+    {
+      "name": "SISTERS",
+      "dialogueLines": 7,
+      "totalWords": 22
+    },
+    {
+      "name": "FEMALE ENSEMBLE",
+      "dialogueLines": 7,
+      "totalWords": 64
+    },
+    {
+      "name": "MISS MILLIE",
+      "dialogueLines": 6,
+      "totalWords": 84
+    },
+    {
+      "name": "MARY ELLEN",
+      "dialogueLines": 5,
+      "totalWords": 56
+    },
+    {
+      "name": "POSTMAN",
+      "dialogueLines": 4,
+      "totalWords": 16
+    },
+    {
+      "name": "HENRY",
+      "dialogueLines": 4,
+      "totalWords": 23
+    },
+    {
+      "name": "EVERYONE",
+      "dialogueLines": 4,
+      "totalWords": 19
+    },
+    {
+      "name": "MAMA",
+      "dialogueLines": 3,
+      "totalWords": 27
+    },
+    {
+      "name": "GRADY",
+      "dialogueLines": 3,
+      "totalWords": 34
+    },
+    {
+      "name": "IMMIGRATION OFFICER",
+      "dialogueLines": 3,
+      "totalWords": 34
+    },
+    {
+      "name": "DEACONESS",
+      "dialogueLines": 2,
+      "totalWords": 9
+    },
+    {
+      "name": "MIDWIFE",
+      "dialogueLines": 2,
+      "totalWords": 10
+    },
+    {
+      "name": "CE LIE",
+      "dialogueLines": 2,
+      "totalWords": 8
+    },
+    {
+      "name": "DEPUTY",
+      "dialogueLines": 2,
+      "totalWords": 7
+    },
+    {
+      "name": "SEAMSTRESSES",
+      "dialogueLines": 2,
+      "totalWords": 20
+    },
+    {
+      "name": "IT LOOKS REAL YET MAGICAL.",
+      "dialogueLines": 1,
+      "totalWords": 11
+    },
+    {
+      "name": "OHHH",
+      "dialogueLines": 1,
+      "totalWords": 5
+    },
+    {
+      "name": "CORRINE",
+      "dialogueLines": 1,
+      "totalWords": 2
+    },
+    {
+      "name": "CEL IE",
+      "dialogueLines": 1,
+      "totalWords": 13
+    },
+    {
+      "name": "UP SEEING CELIE",
+      "dialogueLines": 1,
+      "totalWords": 6
+    },
+    {
+      "name": "ALL THE CHILDREN",
+      "dialogueLines": 1,
+      "totalWords": 2
+    },
+    {
+      "name": "AS WE PUSH INTO",
+      "dialogueLines": 1,
+      "totalWords": 18
+    },
+    {
+      "name": "CELIE IS BACK TO REALITY.",
+      "dialogueLines": 1,
+      "totalWords": 11
+    },
+    {
+      "name": "NET TIE",
+      "dialogueLines": 1,
+      "totalWords": 6
+    },
+    {
+      "name": "BIG SLIM",
+      "dialogueLines": 1,
+      "totalWords": 8
+    },
+    {
+      "name": "SOFIA AND SISTERS",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "THIS IS",
+      "dialogueLines": 1,
+      "totalWords": 11
+    },
+    {
+      "name": "S OFIA",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "MUSIC PLAYS.",
+      "dialogueLines": 1,
+      "totalWords": 10
+    },
+    {
+      "name": "BUSTER",
+      "dialogueLines": 1,
+      "totalWords": 6
+    },
+    {
+      "name": "A LARGE TRUNK.",
+      "dialogueLines": 1,
+      "totalWords": 14
+    },
+    {
+      "name": "TRIBE",
+      "dialogueLines": 1,
+      "totalWords": 18
+    },
+    {
+      "name": "THE MAYOR",
+      "dialogueLines": 1,
+      "totalWords": 7
+    },
+    {
+      "name": "MISS MILLE",
+      "dialogueLines": 1,
+      "totalWords": 4
+    },
+    {
+      "name": "OL MISTE R",
+      "dialogueLines": 1,
+      "totalWords": 14
+    },
+    {
+      "name": "SQU EAK",
+      "dialogueLines": 1,
+      "totalWords": 8
+    }
+  ],
+  "scenes": [
+    {
+      "number": 1,
+      "heading": "EXT. DIRT ROAD - DAY",
+      "characters": [
+        "CELIE",
+        "NETTIE"
+      ],
+      "dialogues": [
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Hey, sista, whatcha gon' do?"
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "",
+          "text": "Goin' down by the river, gonna play with you!"
+        }
+      ],
+      "actionPreview": "MISTER (a handsome indigo farmer) rides his horse. A Stetson hat is cocked low, COVERING HIS FACE. The trot of his horse against the dirt inspires a melody and he plucks the banjo in his lap to the beat. This will set the tone for an exhilarating percussive score that will loom large in the film. H "
+    },
+    {
+      "number": 2,
+      "heading": "EXT. THE GREAT ANGEL OAK - DAY",
+      "characters": [
+        "CELIE",
+        "NETTIE"
+      ],
+      "dialogues": [
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Papa don't like no screamin' 'round here."
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "",
+          "text": "No lip from the woman when they chug that beer."
+        }
+      ],
+      "actionPreview": "CAMERA MOVES through the tree’s draping bush revealing CELIE, 14, pregnant, with a smile that could melt butter, and her sister NETTIE, 12, breathtakingly beautiful and studious. Wearing white dresses, the girls sit on a branch covered in moss. THEY PLAY A POLYRHYTHM IC VERSION OF PATTY CAKE with ha"
+    },
+    {
+      "number": 3,
+      "heading": "EXT. DEADWOOD BEACH - DAY",
+      "characters": [
+        "IT LOOKS REAL YET MAGICAL."
+      ],
+      "dialogues": [
+        {
+          "character": "IT LOOKS REAL YET MAGICAL.",
+          "parenthetical": "",
+          "text": "The girls open their arms to its warmth. CELIE & NETTIE"
+        }
+      ],
+      "actionPreview": "They watch a butter-orange sun climb up from the ocean. The sun wears a crown of light. Sho nuff moon gon' rise like a huckleberry pie in the middle of the sky. Gon' be alright. Gon' be alright. PRE-LAP: A ROOSTER CROWS! The sun spreads its light over the vast Georgia Coast. MATCH CUT TO:"
+    },
+    {
+      "number": 4,
+      "heading": "EXT. BA CK ROAD (MAIN DRAG, BLACK PART OF TOWN) - DAY",
+      "characters": [
+        "FIRST LADY",
+        "ENSEMBLE"
+      ],
+      "dialogues": [
+        {
+          "character": "FIRST LADY",
+          "parenthetical": "",
+          "text": "It's Sunday morning!"
+        },
+        {
+          "character": "FIRST LADY",
+          "parenthetical": "",
+          "text": "When the King threw Daniel in the lion's den."
+        },
+        {
+          "character": "ENSEMBLE",
+          "parenthetical": "",
+          "text": "The Good Lord works in mysterious ways."
+        },
+        {
+          "character": "FIRST LADY",
+          "parenthetical": "",
+          "text": "God sent a mighty angel brought him out again."
+        },
+        {
+          "character": "ENSEMBLE",
+          "parenthetical": "",
+          "text": "The Good Lord works in mysterious ways."
+        },
+        {
+          "character": "FIRST LADY",
+          "parenthetical": "",
+          "text": "When God saw the wicked he knew what to do."
+        },
+        {
+          "character": "FIRST LADY",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ENSEMBLE",
+          "parenthetical": "",
+          "text": "Oh"
+        },
+        {
+          "character": "FIRST LADY",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ENSEMBLE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "A YELLOW CHURCH HAT RESEMBLING THE SUN is placed on the head of FIRST LADY. She is a statuesque beauty who’s convinced God made her tall so she could look down on folks. She walks outside singing 02.“MYSTERIOUS WAYS.” Her female neighbors (CHURCH MOTHER, MISSIONARY, USHERETTE, PIANIST, DEACONESS, an"
+    },
+    {
+      "number": 5,
+      "heading": "EXT. FURTHER DOWN MAIN DRAG, BLACK PART OF TOWN - DAY",
+      "characters": [
+        "FIRST LADY"
+      ],
+      "dialogues": [
+        {
+          "character": "FIRST LADY",
+          "parenthetical": "",
+          "text": "Yes, He works"
+        },
+        {
+          "character": "FIRST LADY",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "Oh, He works ENSEMBLE 1 & 2 Yes, He works. (Oh He works!) I know He works! The Good Lord works in mysterious ways."
+    },
+    {
+      "number": 6,
+      "heading": "EXT. END OF MAIN DRAG, BLACK PART OF TOWN - DAY",
+      "characters": [
+        "FIRST LADY",
+        "ENSEMBLE"
+      ],
+      "dialogues": [
+        {
+          "character": "FIRST LADY",
+          "parenthetical": "",
+          "text": "Oh, the Good Lord works..."
+        },
+        {
+          "character": "FIRST LADY",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ENSEMBLE",
+          "parenthetical": "",
+          "text": "The Good Lord works in mysterious ways."
+        },
+        {
+          "character": "FIRST LADY",
+          "parenthetical": "",
+          "text": "'Cause God’s watchin' over you wherever you go, yeah!"
+        },
+        {
+          "character": "ENSEMBLE",
+          "parenthetical": "",
+          "text": "Yes, The Good Lord works in mysterious ways."
+        },
+        {
+          "character": "FIRST LADY",
+          "parenthetical": "",
+          "text": "If your poor back breakin' under all that weight. St."
+        },
+        {
+          "character": "ENSEMBLE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "They all move away from the road, which was shaded by trees, and into the open fields. We see a cascade of arms as they try to shield themselves from the bright sunlight. 3. 4. ENSEMBLE 1 Yes, He works Oh, He works ENSEMBLE 2 I know He works First Lady is not bothered by the sun. She keeps singing. "
+    },
+    {
+      "number": 7,
+      "heading": "EXT. ROAD TO MAIN STREET - DAY",
+      "characters": [
+        "FIRST LADY"
+      ],
+      "dialogues": [
+        {
+          "character": "FIRST LADY",
+          "parenthetical": "",
+          "text": "Oh yes, He works."
+        },
+        {
+          "character": "FIRST LADY",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "They high-step down the hill. Umbrellas are now used as canes. A Choir and a Horse Drawn Piano join the parade! 4. 5. Young women march toward the camera, smacking their shoulders and clapping their hands. The Good Lord works In mysterious ways ENSEMBLE 1/ ENSEMBLE 2 Yes, He works / I know.. Oh, He "
+    },
+    {
+      "number": 8,
+      "heading": "EXT. THE GENERAL STORE - DAY",
+      "characters": [
+        "ALFONSO",
+        "NETTIE",
+        "DEACONESS",
+        "CELIE"
+      ],
+      "dialogues": [
+        {
+          "character": "ALFONSO",
+          "parenthetical": "",
+          "text": "Let’s get a move on, Celie, you ’re slower than mud."
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "",
+          "text": "She’s going as fast as she can, Pa."
+        },
+        {
+          "character": "DEACONESS",
+          "parenthetical": "",
+          "text": "Whatchu gon’ call your baby, chile?"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "If it’s a boy, I’m a name him Adam. ‘Cause in The Bible Adam had a garden. And I wants mine to own land."
+        },
+        {
+          "character": "DEACONESS",
+          "parenthetical": "",
+          "text": "Ain’t that precious."
+        },
+        {
+          "character": "ALFONSO",
+          "parenthetical": "",
+          "text": "Celie! Nettie! Get up here! 5."
+        }
+      ],
+      "actionPreview": "ALFONSO (the sisters’ only guardian whose cold disposition has been iced by years of oppression and bitterness) leads Celie and Nettie out of the store of which he is the proprietor. She say the baby been kickin’. All three join the procession. 6. CELIE/NETTIE Yes’em Pa."
+    },
+    {
+      "number": 9,
+      "heading": "EXT. GENERAL STORE - DAY",
+      "characters": [
+        "FIRST LADY",
+        "OHHH"
+      ],
+      "dialogues": [
+        {
+          "character": "FIRST LADY",
+          "parenthetical": "",
+          "text": "Yeah Yeah Yeah Yeah"
+        },
+        {
+          "character": "OHHH",
+          "parenthetical": "",
+          "text": "FIRST LADY & ENSEMB LE"
+        }
+      ],
+      "actionPreview": "First Lady waves her own fan as rows of women behind her swing their arms in stylized fashion as they fan themselves. The action creates a domino effect. It looks like a waterfall of arms. Light hits the fans, creating shadows. ENSEMBLE 1, 2 AND 3 God still works He still works God (God) God still w"
+    },
+    {
+      "number": 10,
+      "heading": "EXT. THE CHURCH - DAY",
+      "characters": [
+        "REVEREND AVERY",
+        "ENSEMBLE"
+      ],
+      "dialogues": [
+        {
+          "character": "REVEREND AVERY",
+          "parenthetical": "",
+          "text": "None of us knows what The"
+        },
+        {
+          "character": "REVEREND AVERY",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ENSEMBLE",
+          "parenthetical": "",
+          "text": "Walkin’ witcha."
+        },
+        {
+          "character": "REVEREND AVERY",
+          "parenthetical": "",
+          "text": "The Good Lord’s talkin’ witcha."
+        },
+        {
+          "character": "ENSEMBLE",
+          "parenthetical": "",
+          "text": "Talkin’ witcha."
+        },
+        {
+          "character": "REVEREND AVERY",
+          "parenthetical": "",
+          "text": "And He is shoutin’ witcha."
+        },
+        {
+          "character": "ENSEMBLE",
+          "parenthetical": "",
+          "text": "Shoutin’ witcha."
+        }
+      ],
+      "actionPreview": "We see REVEREND AVERY at the entrance to the church. He carries his bible and preaches as the ensemble stomps, claps, and dances towards the church! Lord's got planned for us, no sir. So I want you to stop your moanin', and quit your groanin'. Throw away your handkerchief! And put your hand in His a"
+    },
+    {
+      "number": 11,
+      "heading": "INT. THE CHURCH - DAY",
+      "characters": [
+        "REVEREND AVERY",
+        "ENSEMBLE",
+        "CELIE"
+      ],
+      "dialogues": [
+        {
+          "character": "REVEREND AVERY",
+          "parenthetical": "",
+          "text": "Oh! Oh, yeah!"
+        },
+        {
+          "character": "ENSEMBLE",
+          "parenthetical": "",
+          "text": "Because the Good Lord works in mysterious..."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "(praying)"
+        },
+        {
+          "character": "REVEREND AVERY",
+          "parenthetical": "",
+          "text": "In mysterious ways"
+        },
+        {
+          "character": "ENSEMBLE",
+          "parenthetical": "",
+          "text": "Ways!"
+        },
+        {
+          "character": "REVEREND AVERY",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "Inside, the congregation praises God as folks dance even more passionately. They slide down pews, stomp, clap, and shout in an exquisite chaos. Reverend Avery sits on a throne-like chair in the pulpit. Celie and Nettie sit in the back pew singing along. Alfonso sits next to them, bored. Dear, God..."
+    },
+    {
+      "number": 12,
+      "heading": "INT. THE GENERAL STORE - CELIE & NETTIE’S ROOM - NIGHT",
+      "characters": [
+        "NETTIE",
+        "CELIE"
+      ],
+      "dialogues": [
+        {
+          "character": "NETTIE",
+          "parenthetical": "",
+          "text": "“...the girl returned to work in the field. But it was so hot she could barely stand. The overseer yelled at her till she got"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Let me say it. This my favorite part. The girl said... ”Now Ma, can I do it now?”"
+        }
+      ],
+      "actionPreview": "Celie bows her head as her sister braids her hair. Celie sits on a pillow. Nettie stands, reciting a folktale passed down from their mother. 7. 8. The girls live with Alfonso in a two-bedroom apartment above the store. They share a small room that they have clearly made their own. Note: there is no "
+    },
+    {
+      "number": 13,
+      "heading": "INT. CELIE & NETTIE’S ROOM - DAY - 1905",
+      "characters": [
+        "MAMA",
+        "CELIE",
+        "NETTIE"
+      ],
+      "dialogues": [
+        {
+          "character": "MAMA",
+          "parenthetical": "",
+          "text": "Yes, Miss Celie. Fetch some fabric then I’ll show you how to sew."
+        },
+        {
+          "character": "MAMA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Yes, ma’am."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MAMA",
+          "parenthetical": "",
+          "text": "Not now baby but soon. This here color’s gon’ be heaven on you."
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "(V.O.)",
+          "text": "“The girl was floating above the ground but she wasn’t flying yet."
+        }
+      ],
+      "actionPreview": "(FLASHBACK) Instead of Nettie being there braiding her hair, Celie sees her mother. MAMA (Celie and Nettie’s mother, stunning and warm). She holds a spool of thread. CAMERA PULLS into the mirror. Excited, Celie runs to the corner and fetches blue fabric from a basket. MINUTES LATER: She sits in her "
+    },
+    {
+      "number": 14,
+      "heading": "INT. THE GENERAL STORE - CELIE & NETTIE’S ROOM - DAY",
+      "characters": [
+        "CELIE",
+        "NETTIE"
+      ],
+      "dialogues": [
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "I broke my water!"
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "",
+          "text": "Hold still! I’ll get the midwife."
+        }
+      ],
+      "actionPreview": "CAMERA PULLS BACK out of the mirror as Celie looks at Nettie. Nettie looks down and sees the puddle! Nettie leaves. Celie feels a PANG and grabs her belly."
+    },
+    {
+      "number": 15,
+      "heading": "INT. THE GENERAL STORE - CELIE & NETTIE’S ROOM - NIGHT",
+      "characters": [
+        "MIDWIFE",
+        "ALFONSO",
+        "CELIE",
+        "NETTIE"
+      ],
+      "dialogues": [
+        {
+          "character": "MIDWIFE",
+          "parenthetical": "",
+          "text": "One more good push, Miss Celie. You almost there."
+        },
+        {
+          "character": "MIDWIFE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ALFONSO",
+          "parenthetical": "",
+          "text": "That baby nursed yet?"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "I had a boy, Pa. His name Adam."
+        },
+        {
+          "character": "ALFONSO",
+          "parenthetical": "",
+          "text": "Hand ’im here. I’ll give him to G od. Same as I did the other one."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Let me have just one more day with ‘im. Just to make sure he okay."
+        },
+        {
+          "character": "ALFONSO",
+          "parenthetical": "",
+          "text": "Naw. Ain’t no sense in you gettin’ attached. Maybe if ya mama was alive she could look after it. You too young to mother-"
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "",
+          "text": "I can help Celie with the baby. I’ll even pull some of her weight ‘round the house."
+        },
+        {
+          "character": "ALFONSO",
+          "parenthetical": "",
+          "text": "Naw, you got schoolin’. Give ‘im here."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "You think he killin’ my babies?"
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "",
+          "text": "I believe he give ‘em to God, like he say. 10."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "But they mine. How come God don’t give ‘em back?"
+        }
+      ],
+      "actionPreview": "CELIE IS BREATHING HARD. She’s been in labor for hours. She lies in bed by candlelight. Sweat is coming down her face. Nettie holds her hand. THE MIDWIFE (a deeply spiritual woman, solid and wise) is looking between Celie’s legs. Celie PUSHES with a SCREAM ! The baby cries. It’s a boy. 9. 10. The mi"
+    },
+    {
+      "number": 16,
+      "heading": "EXT. GENERAL STORE - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Alfonso rides off in a horse Buggy with the baby, disappearing into the night. TITLE CARD: SUMMER OF 1910. A YEAR LATER."
+    },
+    {
+      "number": 17,
+      "heading": "EXT. DEADWOOD BEACH - DAY",
+      "characters": [
+        "MISTER",
+        "NETTIE"
+      ],
+      "dialogues": [
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "Aft’noon."
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "",
+          "text": "More like early evenin’ but howdy."
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "Early evenin’? That mean it’s late, gal. Let me give you a ride home."
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "",
+          "text": "I ain’t nobody’s gal but my ma and she dead. You can call me Nettie."
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "(making up the song)"
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "",
+          "text": "(to herself)"
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "And your skin dazzle my eyes. Like the moon light the night."
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "",
+          "text": "(laughing)"
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "That's a real pretty dress, Nettie."
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "",
+          "text": "My sister made it."
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "And them shoes look just right on them pretty little feets."
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "",
+          "text": "Now you lyin’. I got corns, bunions, and blisters. I’m a tomboy and I likes to climb trees - ain’t nothi n’ pretty ‘bout my feets. Now leave me be!"
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "Name’s Mister."
+        }
+      ],
+      "actionPreview": "Nettie walks along the shore carryin g her books and shoes. She lets the low tide sweep across her bare feet. Mister, the man from earlier, saunters by with his banjo. This time he’s sitting up on his horse. She walks on. He tries another strategy. He unstraps his banjo from the side of his saddle a"
+    },
+    {
+      "number": 18,
+      "heading": "EXT. GENERAL STORE - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Nettie walks into the general store. We follow her."
+    },
+    {
+      "number": 19,
+      "heading": "INT. THE GENERAL STORE - DAY",
+      "characters": [
+        "CELIE",
+        "ALFONSO",
+        "CORRINE"
+      ],
+      "dialogues": [
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "(whispering to the baby)"
+        },
+        {
+          "character": "ALFONSO",
+          "parenthetical": "",
+          "text": "Celie! Get your narrow behind back to work!"
+        },
+        {
+          "character": "CORRINE",
+          "parenthetical": "",
+          "text": "Blessings, honey..."
+        }
+      ],
+      "actionPreview": "Nettie passes Celie who is on a ladder stocking shelves. She turns around and sees CORRINE , 23, the Pastor’s wife. She is pushing a two-year-old baby in a stroller. She walks down an aisle. Celie looks down at the baby as Corrine passes. When Corrine turns her back to examine items on a shelf, Celi"
+    },
+    {
+      "number": 20,
+      "heading": "EXT. SIDE OF THE GENERAL STORE - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "She leans against the w all, grinning. The sight of seeing her baby after years of longing thrills her to no end. She looks back inside of the store window and CORRINE notices her. CELIE pretends to sweep the sidewalk. She hears the hammering of a chain gang and IMAGINES: CAMERA TRACKS TO REVEAL A H"
+    },
+    {
+      "number": 21,
+      "heading": "EXT. QUARRY - DAY",
+      "characters": [
+        "CELIE"
+      ],
+      "dialogues": [
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "I seen my baby girl. Can’t be no one else. Lookin’ just like me and my daddy. More us than us ourself."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "The pickaxe sets the beat of a CHAIN GANG breaking rocks. They’re making a road f or train tracks. We hear them chant “hwuh” repeatedly. This music inspires a song from Celie. She sings 04.“SHE BE MINE.” Celie walks past the prisoners on a chain gang still hitting rock with their pickaxes. I sees he"
+    },
+    {
+      "number": 22,
+      "heading": "EXT. THE CREEK - DAY",
+      "characters": [
+        "CEL IE",
+        "CELIE",
+        "ALFONSO"
+      ],
+      "dialogues": [
+        {
+          "character": "CEL IE",
+          "parenthetical": "",
+          "text": "When I see mamas holdin’ babies. I feel pain come ‘cross my heart."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "She be mine. She be mine. She be mine. She be mine. She be mine. She be mine. She be mine. She be mine."
+        },
+        {
+          "character": "ALFONSO",
+          "parenthetical": "(O.C.)",
+          "text": "Celie!"
+        }
+      ],
+      "actionPreview": "BLACK WASHERWOMEN wash their clothes in the water and hang them on nearby tree branches. Something deep inside been torn apart. It like a spell come on my body. My baby’s breath on me. She gon’ carry her away but I still see... The washerwomen hang laundry and rock their babies. CELIE & WASHERWOMEN "
+    },
+    {
+      "number": 23,
+      "heading": "EXT. THE GENERAL STORE - DAY",
+      "characters": [
+        "ALFONSO",
+        "CELIE"
+      ],
+      "dialogues": [
+        {
+          "character": "ALFONSO",
+          "parenthetical": "",
+          "text": "Where was you?"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Sweeping the porch."
+        },
+        {
+          "character": "ALFONSO",
+          "parenthetical": "",
+          "text": "Get upstairs."
+        }
+      ],
+      "actionPreview": "ALFONSO’S VOICE SNAPS CELIE OUT OF HER FANTASY. CELIE runs around to the front and realizes CORRINE and her baby are gone. S he imagined the moment as she hasn’t left the store. 14. (MORE) 15. She is clever. Alfonso is skeptical but lets her pass. Celie runs up the stairs, smiling. We realize that s"
+    },
+    {
+      "number": 24,
+      "heading": "EXT. THE GENERAL STORE - LATER",
+      "characters": [
+        "ALFONSO",
+        "MISTER",
+        "UP SEEING CELIE"
+      ],
+      "dialogues": [
+        {
+          "character": "ALFONSO",
+          "parenthetical": "",
+          "text": "What can I do ya for?"
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "Thinkin’ ‘bout plantin’ seed. Maybe grow"
+        },
+        {
+          "character": "ALFONSO",
+          "parenthetical": "",
+          "text": "Tobacca a hard crop. You best stick to indigo. Leave real crop to real men."
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "I wants to ask for your Nettie’s hand. I needs me a wife."
+        },
+        {
+          "character": "ALFONSO",
+          "parenthetical": "",
+          "text": "Who in they right mind gon’ marry you with all them triflin’, no-good chill’en you got?"
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "They triflin’ ‘cause they ain’t got no mama. I needs a woman to make ‘em mind."
+        },
+        {
+          "character": "ALFONSO",
+          "parenthetical": "",
+          "text": "You gon’ need more than that from what I hear. ‘Sides Nettie too smar t."
+        },
+        {
+          "character": "ALFONSO",
+          "parenthetical": "(CONT’D)",
+          "text": "16."
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "Celie? That’s what you call that thang that just walked in yo’ store? I don’t want that."
+        },
+        {
+          "character": "ALFONSO",
+          "parenthetical": "",
+          "text": "Then ya chill’ren ain’t beat you bad ‘nough yet. You’ll come ‘round."
+        },
+        {
+          "character": "UP SEEING CELIE",
+          "parenthetical": "",
+          "text": "AND NETTIE LOOKING OUT THE WINDOW."
+        }
+      ],
+      "actionPreview": "Alfonso sits on his porch whittling a spoon. Mister is waiting on him, sitting on his horse. tobacca. Folks say you used to grow some yaself. Mister responds by spitting on Alfonso’s land. Alfonso looks at the spit, annoyed. (MORE) 15. She gon’ be a school teacher. I’ll let you have Celie, though, f"
+    },
+    {
+      "number": 25,
+      "heading": "INT. GENERAL STORE - CELIE & NETTIE’S BEDROOM - DAY",
+      "characters": [
+        "CELIE",
+        "NETTIE",
+        "ALFONSO"
+      ],
+      "dialogues": [
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Who dat outside talkin’ to Pa?"
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "",
+          "text": "The devil. He followed me home from school. Now I can’t get rid of him."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "He sho’ look nice for a devil."
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "",
+          "text": "Devil always look nice till he raisin’ hell. Church ladies say he got four triflin’ chill’ren at home."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Four? That’s a handful and a headac he."
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "",
+          "text": "Say his last wife got shot by some man she was seeing on the side. But he didn’t grieve none cause he got somethin’ on the side too. A loose woman named Shug Avery."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "What’s a loose woman?"
+        },
+        {
+          "character": "ALFONSO",
+          "parenthetical": "(CONT’D)",
+          "text": "16."
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "",
+          "text": "A woman who won’t let no man tie her down, I s’pose."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "That sounds nice. I wants to be a loose woman."
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "",
+          "text": "No, you don’t. We come from queens."
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "(sounding the word out)"
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "",
+          "text": "She say our mommas was queens over there. That means we royal-tee."
+        },
+        {
+          "character": "ALFONSO",
+          "parenthetical": "",
+          "text": "Pack your things, Celie! Time for you to leave. You marryin’ Mister!"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Who Mister?"
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "",
+          "text": "The devil."
+        }
+      ],
+      "actionPreview": "17. Celie dances seductively. Nettie stops her. Let me teach you somethin’. Nettie DRAWS A MAP OF AFRICA ON THE WALL. Today, Mrs. Beasely told us about Africa. She say that’s where our peoples is from. Celie traces the sketch of the continent with her finger. Af...free....kah. Nettie wraps Celie’s h"
+    },
+    {
+      "number": 26,
+      "heading": "INT. THE GENERAL STORE - STAIRWAY - MINUTES LATER",
+      "characters": [
+        "CELIE",
+        "NETTIE"
+      ],
+      "dialogues": [
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Can’t believes I'se gettin’ married. You think there’ll be a wedding?"
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "",
+          "text": "Considerin’ he didn’t even propose, I doubt it. Don’t let him walk over you, hear? Keep your head held hi gh."
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "",
+          "text": "(CONT’D) I’ll come visit when I can. Even if we have to part, me and you... NETTIE & CELIE"
+        }
+      ],
+      "actionPreview": "Celie carries her bags down a flight of stairs. Nettie runs out and hands Celie her mother’s sewing kit. Celie stuffs it in her bag along with her baby’s toy rattle. Celie nods her head “yes.” Us have one heart. The sisters share a tight embrace."
+    },
+    {
+      "number": 27,
+      "heading": "EXT. THE GENERAL STORE - MINUTES LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Mister strolls on his horse away from the store. Celie follows on foot, carrying her sack."
+    },
+    {
+      "number": 28,
+      "heading": "EXT. MISTER’S HOUSE - DUSK",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Mister ties his horse to a fence while Celie stares at the white three-bedro om house, which sits on a hill. It has seen better days. A porch swing hangs from a single chain. Dead sunflowers and a sad looking tree sit in the front yard. Celie walks up dilapidated porch steps. She enters."
+    },
+    {
+      "number": 29,
+      "heading": "INT. MISTER’S HOUSE - VESTIBULE - DUSK",
+      "characters": [
+        "MISTER",
+        "ALL THE CHILDREN"
+      ],
+      "dialogues": [
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "If you think this is bad wait till you get upstairs. (MORE) 18."
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "(CONT’D)",
+          "text": "19."
+        },
+        {
+          "character": "ALL THE CHILDREN",
+          "parenthetical": "",
+          "text": "(mean-mugging Celie)"
+        }
+      ],
+      "actionPreview": "Inside, it looks like a tornado set down. Newspapers, clothes, paintings, furniture, and toys are strewn about. Celie looks over the space and drops her bag in UTTER SHOCK. You can get to cleanin’ after you fix supper. (yelling after his kids) Y’all come down here and greet ya new momma! MINUTES LAT"
+    },
+    {
+      "number": 30,
+      "heading": "INT. MISTER’S HOUSE - DINING ROOM - NIGHT",
+      "characters": [
+        "HARPO",
+        "MISTER",
+        "CELIE"
+      ],
+      "dialogues": [
+        {
+          "character": "HARPO",
+          "parenthetical": "",
+          "text": "(with food in his mouth)"
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "You done already had seconds."
+        },
+        {
+          "character": "HARPO",
+          "parenthetical": "",
+          "text": "Well thirds then."
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "(to Celie)"
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "(CONT’D)",
+          "text": "19."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "It’ll have to wait ‘till morn, I- -Mister BACKHANDS HER ACROSS THE FACE. She falls to the ground. He steps over her and walks away. The children (except for Harpo) giggle. Harpo helps her up."
+        },
+        {
+          "character": "HARPO",
+          "parenthetical": "",
+          "text": "You alright, Miss Celie?"
+        },
+        {
+          "character": "HARPO",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "All the children are UNRULY at the dinner table save for Harpo. He’s devouring the food as if it were his last supper. There’s no place for Celie to sit, so she stands. Mercy to glory, Miss Celie. This food so good , it’s got my eyes waterin’. I gots to have seconds. He reaches for more food. Celie "
+    },
+    {
+      "number": 31,
+      "heading": "INT. MISTER’S HOUSE -",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "LIVING ROOM - NIGHT Mister sits by the hearth with his banjo in his lap. He always dreamed he’d be a famed blues musician who travelled the world. While he plays, the following scenes are intercut with him playing and Celie cleaning."
+    },
+    {
+      "number": 32,
+      "heading": "INT. MISTER’S HOUSE - UPSTAIRS BATHROOM - HOURS LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Celie tries to give the younger children baths. They end up getting her wet, hopping out of the tub and running t hrough the house. -Mister is still playing banjo by the fire. -Celie is on her knees scrubbing the hallway floor. Scrubbing the tub. Scrubbing the bathroom sink. -She is cleaning dishes."
+    },
+    {
+      "number": 33,
+      "heading": "INT. MISTER’S HOUSE - STAIRCASE - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Tired, Celie walks up the stairs. Her face is nonchalant. 20. 21."
+    },
+    {
+      "number": 34,
+      "heading": "INT. MISTER’S HOUSE - MASTER BEDROOM - NIGHT",
+      "characters": [
+        "AS WE PUSH INTO",
+        "CELIE IS BACK TO REALITY."
+      ],
+      "dialogues": [
+        {
+          "character": "AS WE PUSH INTO",
+          "parenthetical": "",
+          "text": "THE PHOTO, IT COMES TO LIFE, REVEALING Shug Avery in a studio. She smiles. A photographer’s camera flashes."
+        },
+        {
+          "character": "CELIE IS BACK TO REALITY.",
+          "parenthetical": "",
+          "text": "We get the sense that Mister is being intimate with Celie."
+        }
+      ],
+      "actionPreview": "She falls backward onto the bedroom mattress. CLOSE ON: Celie’s face. SHE STARES AT A FRAMED SEPIA-COLORED PICTURE OF A BEAUTIFUL BLACK WOMAN. It sits on the night stand. The woman is SHUG AVERY. IN HER IMAGINATION: Suddenly, we hear a thumping sound. The studio begins to shake. We pull out of the p"
+    },
+    {
+      "number": 35,
+      "heading": "INT. MISTER'S HOUSE - MASTER BEDROOM - MORNING",
+      "characters": [
+        "CELIE"
+      ],
+      "dialogues": [
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "That’s my baby’s."
+        }
+      ],
+      "actionPreview": "Celie wakes up and SEES Mister’s oldest daughter, Lil Cat, teasingly shaking the rattle in her face. Lil Cat snickers then run s off. TRACKING SHOT AS: Celie darts after her out of the room..."
+    },
+    {
+      "number": 36,
+      "heading": "INT. MISTER’S HOUSE - UPSTAIRS - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Across the hall then down the stairs to..."
+    },
+    {
+      "number": 37,
+      "heading": "INT. MISTER’S HOUSE - VESTIBULE - DAY",
+      "characters": [
+        "NETTIE"
+      ],
+      "dialogues": [
+        {
+          "character": "NETTIE",
+          "parenthetical": "",
+          "text": "Pa tried to touch me. I can’t live there no more."
+        }
+      ],
+      "actionPreview": "FROM CELIE’S POV: CAMERA SPINS AROUND as Celie REALIZES the house is AGAIN A MESS. Bub is throwing mud on the walls and Baby Carrie is sitting on the counter with her hands in a cake. Food, clothes, and dishes are everywhere. A KNOCK AT THE DOOR! 21. 22. Celie opens it to FIND Nettie, wearing a pret"
+    },
+    {
+      "number": 38,
+      "heading": "EXT. MISTER’S HOUSE - DAY",
+      "characters": [
+        "MISTER",
+        "CELIE",
+        "NETTIE"
+      ],
+      "dialogues": [
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "Where she gon’ sleep?"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "I can put the girls in the same room. Nettie don’t mind sleeping on a child’s bed."
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "",
+          "text": "I won’t"
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "(to Nettie)"
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "",
+          "text": "Yes, suh."
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "Fair ‘nough. I’m going to town."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Yes’em."
+        }
+      ],
+      "actionPreview": "Mister is saddling his horse while Nettie and Celie look on, nervous. be any trouble, Mister. I spend my days in school and at night I'se study. You gon’ have to pull your weight ‘round the house. And whatever I say, go. Celie and Nettie smile at each other. Celie, gather me some firewood bout time "
+    },
+    {
+      "number": 39,
+      "heading": "INT. MISTER'S HOUSE - VESTIBULE - MINUTES LATER",
+      "characters": [
+        "NETTIE",
+        "CELIE"
+      ],
+      "dialogues": [
+        {
+          "character": "NETTIE",
+          "parenthetical": "",
+          "text": "Celie, what you do’in?"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Mister get upset if he come home and the place ain’t sparklin’."
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "",
+          "text": "Did you make this mess?"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Naw but-"
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "",
+          "text": "-Get up."
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "",
+          "text": "(CONT’D) I said, was it a mess?!"
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "Nettie comes downstairs, having put away her bags. She glances over the place while Celie cleans on her knees. The children are running around and screaming like banshees. Nettie helps her up then WHIS TLES. The children stop. You chill’ren come here! The children walk to the foyer, huddled together"
+    },
+    {
+      "number": 40,
+      "heading": "EXT. ROAD FROM MISTER’S HOUSE - DAY",
+      "characters": [
+        "CELIE",
+        "NETTIE"
+      ],
+      "dialogues": [
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Where you go’in? We’ze got to gather firewood ‘fore Mister come home."
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "",
+          "text": "We will. But first we needs to go sit up in our tree. For old"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "But Net-"
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "",
+          "text": "Live some. We’ll only be gon’ a spell!"
+        }
+      ],
+      "actionPreview": "Celie and Nettie are so happy to be back together again that they skip away from the house, laughing. This is the first moment of freedom that they have had in a good while. Celie starts to head right but Nettie heads left. time’s sake. Nettie grabs her by the hand and drags her along."
+    },
+    {
+      "number": 41,
+      "heading": "EXT. TREE-LINED STREET - NEARLY DUSK",
+      "characters": [
+        "NETTIE"
+      ],
+      "dialogues": [
+        {
+          "character": "NETTIE",
+          "parenthetical": "",
+          "text": "Days keep rolling by,"
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "(CONT’D)",
+          "text": "25."
+        }
+      ],
+      "actionPreview": "The wind blows through the trees as if a spirit is dancing above. The sisters look up at the canopy of trees. Light trickles through the trees and paints them in a prism of colored light. The wind raps at the tree branches setting a beat and whi stles through leaves like a wood instrument. It create"
+    },
+    {
+      "number": 42,
+      "heading": "EXT. DEADWOOD BEACH - DUSK",
+      "characters": [
+        "NETTIE",
+        "CELIE"
+      ],
+      "dialogues": [
+        {
+          "character": "NETTIE",
+          "parenthetical": "",
+          "text": "There’s so much to explore I hear a big big big world"
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "(CONT’D)",
+          "text": "25."
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "(in response)"
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "(CONT’D) (in response)"
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "CELIE and NETTIE run towards deadwood trees on the beach as fireflies disperse. Knocking at the door Getting a little taste Just leave s you wanting more We can’t be quiet like before If you could be a butterfly I know God will take you far Life could never break your soul Everyday the sun don’t shi"
+    },
+    {
+      "number": 43,
+      "heading": "EXT. MISTER’S HOUSE - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The girls quickly gather firewood before they run into the house."
+    },
+    {
+      "number": 44,
+      "heading": "INT. CHILDREN’S BEDROOM - HOURS LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "CELIE and NETTIE hide beneath a bedsheet. They giggle. Happy that they have outwitted Mister."
+    },
+    {
+      "number": 45,
+      "heading": "EXT. MISTER’S",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "HOUSE - BACK PORCH - LATER Mister sits in his rocking chair on his back porch, sipping hooch and playing his banjo. NETTIE crosses the back porch from the outhouse wrapped in a bath towel to her bedroom. Mister glances at her lustfully. He waits a beat, then - 26. 27."
+    },
+    {
+      "number": 46,
+      "heading": "INT. CHILDREN’S BEDROOM - HOURS LATER",
+      "characters": [
+        "NETTIE",
+        "MISTER"
+      ],
+      "dialogues": [
+        {
+          "character": "NETTIE",
+          "parenthetical": "",
+          "text": "What you doing!? You’re married to my sister!"
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "That don’t mean we can’t be friends. Let’s get friendly."
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "(CONT’D) (taunting her)"
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "",
+          "text": "Let me go!"
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "Why you fightin’? You knows how I feels ‘bout you."
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "",
+          "text": "I don’t feel the same."
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "I got something that’ll change that."
+        }
+      ],
+      "actionPreview": "Mister sneaks into the bedroom where Nettie lies asleep. She wakes, horrified! She pushes him away then tries to hop out of bed. Be sweet now. Possum can’t run from a big dog. He starts to pull down his bottoms. She knees him in the groin! He moans, releases her. PRE-LAP: A SCREAM!"
+    },
+    {
+      "number": 47,
+      "heading": "EXT. MISTER’S HOUSE - BACK PORCH - NIGHT",
+      "characters": [
+        "CELIE",
+        "NET TIE",
+        "MISTER",
+        "NETTIE",
+        "DRESS IN THE BACK YARD."
+      ],
+      "dialogues": [
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "LET HER STAY! PLEASE!"
+        },
+        {
+          "character": "NET TIE",
+          "parenthetical": "",
+          "text": "I didn’t mean it! I'se sorry!"
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "(to Nettie)"
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "",
+          "text": "Fine! I’m going!"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Please, suh. Please. I beg you. Anything you want, suh."
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "You ain't never gonna see or hear from her again! ‘Thanks I get for lettin’ her stay here. GET!!!!!"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "",
+          "text": "I'll write you every day! Nothin' but death can keep me from it!"
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "(to Nettie) I said, GET! And you don’t ever come back! Not e ver! 28."
+        }
+      ],
+      "actionPreview": "Mister is INCENSED! He carries Nettie over his shoulder, in the pouring rain as she tussles and CRIES. Celie follows after him PLEADING. He walks down the front steps and drops her to the ground. 27. 28. Celie runs to her while Mister goes back in the house. Celie helps Nettie to her feet. Mister co"
+    },
+    {
+      "number": 48,
+      "heading": "EXT. MISTER'S HOUSE - CONTINUOUS",
+      "characters": [
+        "CELIE"
+      ],
+      "dialogues": [
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "DEAR GOD!!!?"
+        }
+      ],
+      "actionPreview": "Celie falls to her knees in the rain! She sings 06.“DEAR GOD- NETTIE (LILY OF THE FIELD).” (to God; with tears) What you done with my sister? How this play in your plan? Won’t you bring back my Nettie? You the only one who can. I never ask for anything but I’m askin' for this. If I’m really a lily o"
+    },
+    {
+      "number": 49,
+      "heading": "EXT. MISTER'S HOUSE - BACK YARD - NIGHT",
+      "characters": [
+        "MISTER",
+        "HARPO"
+      ],
+      "dialogues": [
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "If s he come back here again, I’ll kill ya both. Hear me!? I’ll kill ya dead."
+        },
+        {
+          "character": "HARPO",
+          "parenthetical": "",
+          "text": "Here, Miss Celie. HE HANDS HER NETTIE’S BOOK AND THE YELLOW DRESS THAT WAS THROWN IN THE YARD. Celie holds the dress close to her, she smells Nettie on it."
+        }
+      ],
+      "actionPreview": "Celie turns and sees Mister standing on the back porch, angry. Celie walks back inside, sobbing. She feels a hand on her shoulder. It’s Harpo, staring at her with sympathetic eyes."
+    },
+    {
+      "number": 50,
+      "heading": "INT. MISTER'S HOUSE - DINING ROOM - DAYS LATER",
+      "characters": [
+        "CELIE",
+        "MISTER",
+        "POSTMAN"
+      ],
+      "dialogues": [
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "So many winters grey and summers blue. Another endless day to suffer through."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "Looks like spring come early this year."
+        },
+        {
+          "character": "POSTMAN",
+          "parenthetical": "",
+          "text": "Small miracle if you ask me."
+        }
+      ],
+      "actionPreview": "CLO SE ON THE YELLOW DRESS as CELIE cuts it into squares. She starts to sew something with her mother’s spool and thread. BEGIN TIME TRANSITION -- The CAMERA MOVES THROUGH the room, as time and seasons pass before our eyes. 29. 30. CELIE continues to sew what appears to be the beginnings of a quilt."
+    },
+    {
+      "number": 51,
+      "heading": "EXT. M ISTER'S HOUSE - FRONT PORCH - HOURS LATER",
+      "characters": [
+        "HARPO",
+        "SOFIA",
+        "CELIE"
+      ],
+      "dialogues": [
+        {
+          "character": "HARPO",
+          "parenthetical": "",
+          "text": "Sofia, don’t go no further! Now, I mean it. I’m putting my foot down."
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "What’s that foot s’pose to do,"
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Naw, he at the ale house. PRE-LAP: THE LAUGHTER OF MEN."
+        }
+      ],
+      "actionPreview": "CELIE hears two people bickering down the road and sees what appears to be a small dust storm. She realizes it’s a pregnant black woman marching up the road. This is SOFIA, pretty and strong-willed. Harpo catches up to her. 30. 31. Harpo? I bet it won’t walk over me. He moves aside. She continues up"
+    },
+    {
+      "number": 52,
+      "heading": "INT. BIG SLIM’S POOL HOUSE - DAY",
+      "characters": [
+        "MISTER",
+        "OL MISTER",
+        "BIG SLIM",
+        "SOFIA",
+        "HARPO"
+      ],
+      "dialogues": [
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "Give me ten like you drinkin’ gin, when your daddy come out, guess who go in."
+        },
+        {
+          "character": "OL MISTER",
+          "parenthetical": "",
+          "text": "I"
+        },
+        {
+          "character": "BIG SLIM",
+          "parenthetical": "",
+          "text": "What’s wrong with you, gal? Can’t you read?"
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "I read what pleases me."
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "HARPO",
+          "parenthetical": "",
+          "text": "Pa, Grampy, gents. I wants to introduce y’all to my girl. This here Sofia."
+        },
+        {
+          "character": "OL MISTER",
+          "parenthetical": "",
+          "text": "That’s a lot of woman."
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "(to Sofia)"
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "Naw. I’m one of Argus Butler’s daughters. I ain’t no trouble. Just big."
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "Who the daddy?"
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "Harpo."
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "How we know that?"
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "Harpo know, that’s what matter. We more than just a whimsy. We’ze in love. 32."
+        },
+        {
+          "character": "OL MISTER",
+          "parenthetical": "",
+          "text": "Lawdy, this better than radio."
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "I ain’t lettin’ my son marry you just ‘cause you in the family way."
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "Don’t matter. My sister and her husband say I can live with them. I come here out of respect but if there ain’t none to get, there sho’ ain’t none"
+        },
+        {
+          "character": "HARPO",
+          "parenthetical": "",
+          "text": "Comin’, sugar dumplin’."
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "Boy, don’t move a muscle."
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "Fine. Stay then Harpo. But when you gets cold, you know good and well who heats up your bone."
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "That gal ain’t welcomed in my house."
+        },
+        {
+          "character": "HARPO",
+          "parenthetical": "",
+          "text": "But she carryin’ my child."
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "Tough. She ain’t worthy of you. 33."
+        },
+        {
+          "character": "OL MISTER",
+          "parenthetical": "",
+          "text": "Least she don’t got the nasty woman’s disease like your Shug"
+        },
+        {
+          "character": "OL MISTER",
+          "parenthetical": "",
+          "text": "(CONT’D) I hear her legs skinny like baseball bats and she got the body of a worn out mattress-"
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "That’s enough, daddy! Play the game or get."
+        },
+        {
+          "character": "OL MISTER",
+          "parenthetical": "",
+          "text": "You lucky my hand s is itchin’. I’m bout to take er’body’s money. Here,"
+        },
+        {
+          "character": "OL MISTER",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "HARPO",
+          "parenthetical": "",
+          "text": "Bless you, gramp."
+        }
+      ],
+      "actionPreview": "Inside, the ale house is thick with cigar smoke and men playing pool. They drink corn liquor, listening to Delta Blues on a gramophone. The owner is BIG SLIM, big body and slim legs. Mister sits at a table with his father OL MISTER, mean as a wet cat. TWO OTHER MEN sit at the table. They play domino"
+    },
+    {
+      "number": 53,
+      "heading": "INT. MISTER'S HOUSE - LIVING ROOM - DAY",
+      "characters": [
+        "MISTER"
+      ],
+      "dialogues": [
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "What in tarnation... MORE HAMMERING! Mister heads for the front door. 34."
+        }
+      ],
+      "actionPreview": "Celie is teaching Lil Cat and Baby Carrie how to sew the quilt that she has been working on. More LOUD HAMMERING! It JOLTS Mister awake who is asleep on the couch! He looks out the window to see if he can spot where the noise is coming from. 35."
+    },
+    {
+      "number": 54,
+      "heading": "EXT. MISTER'S HOUSE - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "He marches down the road, following the loud clanging."
+    },
+    {
+      "number": 55,
+      "heading": "EXT. EDGE OF THE MANGROVE SWAMP - DAY",
+      "characters": [
+        "MISTER",
+        "HARPO"
+      ],
+      "dialogues": [
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "You get my permission to build down here!?"
+        },
+        {
+          "character": "HARPO",
+          "parenthetical": "",
+          "text": "You know good and well grampy gave me this land when I turnt sixteen. I’m building me and Sofia a home on it."
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "Boy, do you carry your brains in your back pocket? You can’t build a house on swampland. If you was smart you’d use it to plant rice."
+        },
+        {
+          "character": "HARPO",
+          "parenthetical": "",
+          "text": "Well maybe I ain’t smart."
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "That’s bout the wisest thing you done said-"
+        },
+        {
+          "character": "HARPO",
+          "parenthetical": "",
+          "text": "Maybe I got a dumb heart cause I'se in love."
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "You ain’t in love. You just in way over your head. All the learnin’ I put inside you and you still don’t know how to be a"
+        },
+        {
+          "character": "HARPO",
+          "parenthetical": "",
+          "text": "I’m buildin’ my woman a house, Pa!"
+        },
+        {
+          "character": "HARPO",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "HARPO",
+          "parenthetical": "",
+          "text": "Till the sun go down"
+        },
+        {
+          "character": "HARPO",
+          "parenthetical": "",
+          "text": "See ma baby there standing on the corner"
+        },
+        {
+          "character": "HARPO",
+          "parenthetical": "",
+          "text": "Looking so fine"
+        },
+        {
+          "character": "HARPO",
+          "parenthetical": "",
+          "text": "Lawd if I ever get my hand on a dollar"
+        },
+        {
+          "character": "HARPO",
+          "parenthetical": "",
+          "text": "Bet I'll blow her mind"
+        },
+        {
+          "character": "HARPO",
+          "parenthetical": "",
+          "text": "Till then I guess I'll"
+        }
+      ],
+      "actionPreview": "At the far end of his land, Mister finds Harpo hammering wooden slats over a bog. He approaches, mad enough to spit blood. man- You can help me if you want. If not, well... this conversation gon’ be shorter than the time it took you to walk down here. They stare each other down. Normally, Harpo woul"
+    },
+    {
+      "number": 56,
+      "heading": "EXT. HARPO & SOFIA’S HOUSE - DAY (SEVERAL MONTHS LATER)",
+      "characters": [
+        "SOFIA"
+      ],
+      "dialogues": [
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "Miss Celie! (call ing to Harpo)"
+        }
+      ],
+      "actionPreview": "Celie is taking a good look at the facade. The home is raised several feet above water by wooden stilts. It is well- constructed and quaint. Sofia answers the door holding her newborn baby. She FINDS Celie standing outside with gifts. Harpo, we got comp’ny! (to Celie) Come, on in! Celie enters."
+    },
+    {
+      "number": 57,
+      "heading": "INT. HARPO & SOFIA’S HOUSE - LIVING ROOM - CONTINUOUS",
+      "characters": [
+        "CELIE",
+        "SOFIA",
+        "HARPO"
+      ],
+      "dialogues": [
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "I sewed you curtains for the house and a blanket for the baby."
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "Don’t this beat the band. Harpo said you could do magi c with a needle but I do declare... (calling after him)"
+        },
+        {
+          "character": "HARPO",
+          "parenthetical": "",
+          "text": "Have mercy, I’m right here."
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "Take the baby. Me and Miss Celie need to converse like womens. Make us tea."
+        },
+        {
+          "character": "HARPO",
+          "parenthetical": "",
+          "text": "I’m holding the baby. How I’m s‘pose to make tea and hold the baby?"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "I’ll make it."
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "No, you won’t neither. You a guest."
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "(CONT’D) I’m so tickled you come by. You my only friend in these parts. Mister still won’t let me in his house."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Don’t know. I fig-"
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "-Maybe you too nice. If I was you, I’d up and left already. You must ain’t got no kinfolk ‘round these parts."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Only kin that cared for me was my sister. But I ain’t heard from her in ages. Figure she dead."
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "That’s sad. You wanna make my wedding dress? I’ll pay you good money for it."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "...sho. I guess..."
+        },
+        {
+          "character": "HARPO",
+          "parenthetical": "",
+          "text": "Tea."
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "How come it ain’t hot? 38."
+        },
+        {
+          "character": "HARPO",
+          "parenthetical": "",
+          "text": "You didn’t say hot."
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "Tea got to be hot, Harpo!"
+        },
+        {
+          "character": "HARPO",
+          "parenthetical": "",
+          "text": "Don’t sass me in front of comp’ny!"
+        }
+      ],
+      "actionPreview": "There are three rooms, a small kitchen, and a sitting room inside the house. Inside, it’s modest but comfy. She shows Sofia the curtains and blanket. Harpo! I said, we got comp’ny! Harpo appears. The ladies sit. 37. 38. Celie starts to get up. Harpo, hand me the baby then go make tea. Harpo walks aw"
+    },
+    {
+      "number": 58,
+      "heading": "INT. THE CHURCH - DAY (A YEAR LATER)",
+      "characters": [
+        "REVEREND AVERY",
+        "SOFIA"
+      ],
+      "dialogues": [
+        {
+          "character": "REVEREND AVERY",
+          "parenthetical": "",
+          "text": "“What God hath joined together, let no man"
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "I’se married now!"
+        }
+      ],
+      "actionPreview": "TITLE CARD: SPRING OF 1919. CAMERA PULLS BACK revealing Harpo kissing Sofia at their weddi ng. She is still holding the baby. They have just tied the knot. Attendees cheer! put asunder.” SOFIA’S SIDE OF THE FAMILY glares at Mister, who sits next to Celie on the other side of the church, asleep and S"
+    },
+    {
+      "number": 59,
+      "heading": "INT. MISTER'S HOUSE - MASTER BEDROOM - SEVERAL NIGHTS LATER",
+      "characters": [
+        "CELIE",
+        "MISTER"
+      ],
+      "dialogues": [
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Who this in the picture?"
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "That’s Shug. Woman I shoulda married. 39."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "She pretty."
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "I knows it. Now shut up."
+        }
+      ],
+      "actionPreview": "Mister is w ith Celie in bed while she again stares at THE FRAMED SEPIA-PICTURE OF SHUG. Without thinking she says: 40. Mister slams the picture down. Later, when he is asleep, Celie secretly looks at the picture. The picture remains still. Celie smiles."
+    },
+    {
+      "number": 60,
+      "heading": "INT. MISTER'S HOUSE - DINING ROOM - THE NEXT MORNING",
+      "characters": [
+        "CELIE",
+        "HARPO"
+      ],
+      "dialogues": [
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "I take it you and Miss Sofia having a rough honeymoon?"
+        },
+        {
+          "character": "HARPO",
+          "parenthetical": "",
+          "text": "How come I can’t get her to mind me like you do Pa?"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Don’t know. Every woman ain’t the same. You want coffee?"
+        },
+        {
+          "character": "HARPO",
+          "parenthetical": "",
+          "text": "I wants her to jump when I say."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Maybe she ain’t a jumpin’ woman."
+        },
+        {
+          "character": "HARPO",
+          "parenthetical": "",
+          "text": "I fear we ain’t gon’ last. She mean as a train but I loves her. What’s I’m gon’ do?"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Beat her."
+        }
+      ],
+      "actionPreview": "Celie comes downstairs in her night robe to make Mister coffee. She spots Harpo sitting at the dining table nursing a golfball-sized knot on his forehead with ice wrap ped in cloth. Celie shrugs. A pause, then... The w ords sit on Harpo like a thick coat of sweat."
+    },
+    {
+      "number": 61,
+      "heading": "EXT. MISTER’S HOUSE - BACKYARD - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Something moves with determination through the grass. 40. 41. CLOSE ON Sofia’s BOOTS TRAMPING ACROSS THE DIRT."
+    },
+    {
+      "number": 62,
+      "heading": "EXT. MISTER'S HOUSE - BACKYARD - DAY",
+      "characters": [
+        "SOFIA",
+        "CELIE"
+      ],
+      "dialogues": [
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "You told Harpo to beat me?"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "No, ma’am."
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "You’ze a damn lie!"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "(ashamed) I didn’t mean it if’in I-"
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "Why you fix your mouth to say it!?"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Don’t know. I say it ‘cause... I'se a fool. ‘Cause I jealous of you."
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "I loves Harpo. God kn ows I do. But I’ll kill him dead 'fo I let him or anybody beat me!"
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "Celie is taking down bedsheets, folding them, and putting them in a basket. The silhouette of Sofia moves behind the hung linens and SEEMS TO GROW IN SIZE THE CLOSER SHE GETS TO CELIE. Then she BURSTS through the sheets like a mighty wind, startling Celie. SOFIA HAS A BLACK EYE. Sofia moves in close"
+    },
+    {
+      "number": 63,
+      "heading": "EXT. HARPO & SOFIA'S HOUSE - MINUTES LATER",
+      "characters": [
+        "SISTERS",
+        "SOFIA"
+      ],
+      "dialogues": [
+        {
+          "character": "SISTERS",
+          "parenthetical": "",
+          "text": "Hell, hell... hell no!"
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "Hell no!"
+        }
+      ],
+      "actionPreview": "ALL SIX OF SOFIA’S SISTERS show up in two horse buggies as Celie and Sofia are waiting. The sisters bail out. They march into the hous e. Hell, hell... hell no!"
+    },
+    {
+      "number": 64,
+      "heading": "INT. HARPO & SOFIA’S HOUSE - LIVING ROOM - MINUTES LATER",
+      "characters": [
+        "SOFIA"
+      ],
+      "dialogues": [
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "Girl child ain’t safe in a family ‘o mens! Sick and tired how a woman still live like a slave. Oh, you better learn how to fight back"
+        }
+      ],
+      "actionPreview": "Sofia dresses her baby as her sisters start to collect ALL her belongings. They work fast and efficiently. While you still alive! Everybod y moves around Celie, who is too frightened to do anything."
+    },
+    {
+      "number": 65,
+      "heading": "INT. HARPO & SOFIA’S HOUSE - BEDROOM - DAY",
+      "characters": [
+        "SOFIA",
+        "SISTERS"
+      ],
+      "dialogues": [
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "You show them, girl, and beat back that jive! ‘Cause when a man just don’t give a damn... Hell no!"
+        },
+        {
+          "character": "SISTERS",
+          "parenthetical": "",
+          "text": "Hell, hell... hell no!"
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "No, when that man used to touch me."
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "Sofia packs a suitcase and throws everything in it. Celie looks on. 42. 43. Hell, hell... hell no! Hell, hell... hell no! Hell, hell... hell no! Hell, no! No, No, No, No. Hell, no! MINUTES LATER: Sofia clocks a photo of her and Harpo hanging on the wall. She contemplates taking it. He'd climb on top"
+    },
+    {
+      "number": 66,
+      "heading": "INT. HARPO & SOFIA’S HOUSE - LIVING ROOM - DAY",
+      "characters": [
+        "TWO KNOTS ON HIS FOREHEAD.",
+        "SISTERS"
+      ],
+      "dialogues": [
+        {
+          "character": "SISTERS",
+          "parenthetical": "",
+          "text": "Hell, hell... hell no."
+        }
+      ],
+      "actionPreview": "Each of her sisters carry big items out of the house: furniture, pots and pans, clothes, etc. Harpo enters. HE HAS Sister #1 drops the plate on the ground and keeps moving. Harpo clea ns the mess."
+    },
+    {
+      "number": 67,
+      "heading": "INT. HARPO & SOFIA’S HOUSE - BEDROOM - DAY",
+      "characters": [
+        "SOFIA",
+        "SISTERS"
+      ],
+      "dialogues": [
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "(to Celie)"
+        },
+        {
+          "character": "SISTERS",
+          "parenthetical": "",
+          "text": "(taking the welcome mat)"
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "Any man that hurts you ain’t worth a dime. Yeah, yeah, yeah"
+        },
+        {
+          "character": "SISTERS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "Celie sits on Sofia’s suitcase so she can close it. 43. 44. Don’t be no fool. Don’t waste your time. Hell, hell... hell no. Hell, hell... hell no. Celie carries the suitcase outside for Sofia."
+    },
+    {
+      "number": 68,
+      "heading": "EXT. HARPO & SOFIA'S HOUSE - CONTINUOUS",
+      "characters": [
+        "SOFIA",
+        "SISTERS"
+      ],
+      "dialogues": [
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "(to Celie)"
+        },
+        {
+          "character": "SISTERS",
+          "parenthetical": "",
+          "text": "Hell, hell... hell no."
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "Hell no."
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "(CONT’D) (to Celie)"
+        },
+        {
+          "character": "SISTERS",
+          "parenthetical": "",
+          "text": "Hell."
+        }
+      ],
+      "actionPreview": "All of the sisters gather the last of Sofia’s things then hop back into the horse and buggy. Sofia steps out of t he house, still holding her baby. Harpo hugs her. She has a moment of weakness but Sister #6 intervenes. You too good for that man. Sister #6 (the strongest) pulls her apart from Harpo. "
+    },
+    {
+      "number": 69,
+      "heading": "EXT. HARPO & SOFIA’S HOUSE - DAY",
+      "characters": [
+        "SOFIA",
+        "SOFIA AND SISTERS"
+      ],
+      "dialogues": [
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "Hell, hell, hell, hell, hell, hell!"
+        },
+        {
+          "character": "SOFIA AND SISTERS",
+          "parenthetical": "",
+          "text": "No!!"
+        }
+      ],
+      "actionPreview": "The sisters sing as they load into the wagon and ride off. Sofia and her sisters ride away in a cloud of dust."
+    },
+    {
+      "number": 70,
+      "heading": "EXT. MISTER’S HOUSE - BACK PORCH - MINUTES LATER",
+      "characters": [
+        "MISTER",
+        "HARPO",
+        "CELIE"
+      ],
+      "dialogues": [
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "What happened to you?"
+        },
+        {
+          "character": "HARPO",
+          "parenthetical": "",
+          "text": "Kicked by a mule."
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "Was this mule wearing a dress?"
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "HARPO",
+          "parenthetical": "",
+          "text": "Thinkin’ bout turnin’ it into a juke joint."
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "Juke joint? People don’t want to dance by no smelly swamp. 45."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Unless Shug Avery singing there."
+        }
+      ],
+      "actionPreview": "Celie and Harpo walk into the backyard. Miste r is sitting on the porch playing his banjo. He plays the same song we heard in an earlier scene. He sees his son bruised - both physically and emotionally. Harpo sits on the steps as Celie goes inside. You gon’ be alright. Some women you just can’t tame"
+    },
+    {
+      "number": 71,
+      "heading": "INT. MISTER'S HOUSE - KITCHEN - DUSK",
+      "characters": [
+        "CELIE"
+      ],
+      "dialogues": [
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Stay here."
+        }
+      ],
+      "actionPreview": "Celie sews with Baby Carrie. She is now 17 and Celie is 27. They hear a CHOIR OF ROBINS in the sky!"
+    },
+    {
+      "number": 72,
+      "heading": "EXT. MISTER'S HOUSE -",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "FRONT PORCH - DUSK Celie walks outside. The sky seems to be thick with rolling mud. She takes a closer look and SEES THOUSANDS OF STARLINGS covering the sky. The sight chills her."
+    },
+    {
+      "number": 73,
+      "heading": "EXT. MAIN STREET - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Townspeople in the streets look up and see rounds of SHRIEKING STARLINGS. They stand in the road looking up in awe. The STARLINGS blot out the sky, causing total darkness."
+    },
+    {
+      "number": 74,
+      "heading": "EXT. REVEREND AVERY’S HOUS E - NIGHT",
+      "characters": [
+        "FIRST LADY",
+        "REVEREND AVERY",
+        "SHUG"
+      ],
+      "dialogues": [
+        {
+          "character": "FIRST LADY",
+          "parenthetical": "",
+          "text": "Reverend husband? I thinks you was right about these being the last days."
+        },
+        {
+          "character": "REVEREND AVERY",
+          "parenthetical": "",
+          "text": "Lord of mercy. Of all the things to be right about."
+        },
+        {
+          "character": "FIRST LADY",
+          "parenthetical": "",
+          "text": "Who that comin’ yonder?"
+        },
+        {
+          "character": "REVEREND AVERY",
+          "parenthetical": "",
+          "text": "God help me. It’s my daughter. EVERYONE GASPS! They part to make a path for a 1921 KENWORTHY. It’s being driven slowly by a good-looking man. INSIDE, A STUNNING BLACK WOMAN SITS IN THE BACK SEAT. She is SHUG AVERY, 33, with ruby-red lips and a face hiding beneath a handsome wide-brim hat with a long hat pin. She se es her father, the Reverend, and quickly rolls down the window."
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "Howdy, Pa. How ya be?"
+        }
+      ],
+      "actionPreview": "Reverend Avery, First Lady, and several townspeople rush out of their homes to the front of Reverend Avery’s House, to look at the sky. He looks down the road and sees HEADLIGHTS FOLLOWED BY THE BLARE OF A CAR HORN - it sounds like a lonely jazz trumpet. 46. 47. Reverend sees her before anyone else."
+    },
+    {
+      "number": 75,
+      "heading": "EXT. MAIN STREET - NIGHT",
+      "characters": [
+        "MALE ENSEMBLE"
+      ],
+      "dialogues": [
+        {
+          "character": "MALE ENSEMBLE",
+          "parenthetical": "(3)",
+          "text": "Shug Avery’s comin’ to town. Shug"
+        },
+        {
+          "character": "MALE ENSEMBLE",
+          "parenthetical": "(6)",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MALE ENSEMBLE",
+          "parenthetical": "(10)",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "A beat is set by SHOE SHINERS (or BOOT BLACKS) hitting rags against the tips of dress shoes. Several men rush into A BARBERSHOP wanting a haircut! Avery’s comin’ Several men rush into a SUIT STORE wanting to buy new clothes! Shug Avery comin’ to town. You know that she’s comin’ Several men get their"
+    },
+    {
+      "number": 76,
+      "heading": "EXT. MAIN STREET - NIGHT",
+      "characters": [
+        "MALE ENSEMBLE",
+        "FEMALE ENSEMBLE",
+        "ENSEMBLE"
+      ],
+      "dialogues": [
+        {
+          "character": "MALE ENSEMBLE",
+          "parenthetical": "",
+          "text": "Ain’t no other woman like Shug. You know she’s comin’."
+        },
+        {
+          "character": "FEMALE ENSEMBLE",
+          "parenthetical": "",
+          "text": "Ain’t no other woman like Shug."
+        },
+        {
+          "character": "ENSEMBLE",
+          "parenthetical": "",
+          "text": "Shug Avery comin’ to town. Shug"
+        },
+        {
+          "character": "FEMALE ENSEMBLE",
+          "parenthetical": "",
+          "text": "Lock up all your mens and your young boys too. Got no friends ‘cept the ones s he screw."
+        },
+        {
+          "character": "ENSEMBLE",
+          "parenthetical": "",
+          "text": "Shug Avery comin’ to town."
+        },
+        {
+          "character": "MALE ENSEMBLE",
+          "parenthetical": "",
+          "text": "Shug Avery’s comin’ to town. Shug"
+        }
+      ],
+      "actionPreview": "WIVES and GIRLFRIENDS are PANICKED. A woman drags her husband from the barbershop. Another chases him from the suit store with a rolling pin. 1 FEMALE ENSEMBLE (5) She’s a trollop in a tight dress. Lookin’ like a hot mess. Bouncin’ in the bed. Bumpin’ in the shed. 2 FEMALE ENSEMBLE (10) Cryin’ shame"
+    },
+    {
+      "number": 77,
+      "heading": "INT. MISTER'S HOUSE - MASTER BEDROOM - NIGHT",
+      "characters": [
+        "CELIE",
+        "MISTER"
+      ],
+      "dialogues": [
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Got about a million questions."
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "Ain’t no other woman like Shug."
+        }
+      ],
+      "actionPreview": "FROM ABOVE: Celie stands at the window looking out. She picks up Shug’s photograph. 48. 49. Rollin’ around my head. What she wear? How her hair? Is she skinny? Is she stout? Must be somethin' to fuss about. Mister bursts through the door, half-dressed with half a sock on and trying to tie a tie. Cel"
+    },
+    {
+      "number": 78,
+      "heading": "EXT. MAIN STREET - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "A car horn BLARES transporting us back to the crowded street. All the young people march down the street to catch up with Shug’s car. Once this beat is set, everyone feels the rhythm in their bones and dances toward Shug’s car. EXT./INT. SHUG’S CAR - END OF MAIN STREET - NIGHT Inside, Shug is drinki"
+    },
+    {
+      "number": 79,
+      "heading": "EXT. MAIN STREET - CONTINUOUS",
+      "characters": [
+        "FEMALE ENSEMBLE",
+        "MALE ENSEMBLE",
+        "ENSEMBLE"
+      ],
+      "dialogues": [
+        {
+          "character": "FEMALE ENSEMBLE",
+          "parenthetical": "",
+          "text": "Ooh, that Shug. You know she no good. A snake in the woods, gonna poison you."
+        },
+        {
+          "character": "MALE ENSEMBLE",
+          "parenthetical": "",
+          "text": "You don't understand what it do to a man when you in her hands and she turn that screw."
+        },
+        {
+          "character": "FEMALE ENSEMBLE",
+          "parenthetical": "",
+          "text": "Better say farewell, 'cuz you're goin' to hell!"
+        },
+        {
+          "character": "MALE ENSEMBLE",
+          "parenthetical": "",
+          "text": "But a man feel swell when he in her spell."
+        },
+        {
+          "character": "FEMALE ENSEMBLE",
+          "parenthetical": "",
+          "text": "Better lock your doors!"
+        },
+        {
+          "character": "MALE ENSEMBLE",
+          "parenthetical": "",
+          "text": "Better change your drawers!"
+        },
+        {
+          "character": "ENSEMBLE",
+          "parenthetical": "",
+          "text": "She's coming, comin’, comin’, comin’. Shug Avery comin’ to town!"
+        },
+        {
+          "character": "FEMALE ENSEMBLE",
+          "parenthetical": "",
+          "text": "Lock up all your mens and"
+        },
+        {
+          "character": "ENSEMBLE",
+          "parenthetical": "",
+          "text": "Shug Avery comin’ to town! (town, town, town)"
+        },
+        {
+          "character": "FEMALE ENSEMBLE",
+          "parenthetical": "",
+          "text": "Shug Avery comin’ to town!"
+        },
+        {
+          "character": "MALE ENSEMBLE",
+          "parenthetical": "",
+          "text": "Don’t understand what it do to a man."
+        }
+      ],
+      "actionPreview": "Women in fine dresses high-step out of a boutique in heels. They get closer to Shug’s vehicle. 49. 50. The men run toward Shug’s car. The women chase after them! Shug Avery comin’ to town! your young boys too. Got no friends ‘cept the ones she screw. Shug Avery comin’ to town! Shug Avery comin’ to t"
+    },
+    {
+      "number": 80,
+      "heading": "EXT. END OF MAIN STREET - CONTINUOUS",
+      "characters": [
+        "ENSEMBLE",
+        "MUSIC STOPS."
+      ],
+      "dialogues": [
+        {
+          "character": "ENSEMBLE",
+          "parenthetical": "",
+          "text": "(confused)"
+        }
+      ],
+      "actionPreview": "The townspeople finally arrive at the car. They think Shug is going to get out to greet them. ENSEMBLE 1/ ENSEMBLE 2/ ENSEMBLE 3 (tiered) Comin’/ Comin’/ Comin’ Suddenly the driver speeds off, leaving the townspeople behind. Everyone is stunned. 50. 51. Comin’ to town."
+    },
+    {
+      "number": 81,
+      "heading": "EXT. MISTER'S HOUSE - NIGHT",
+      "characters": [
+        "MISTER",
+        "CELIE"
+      ],
+      "dialogues": [
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "(to Celie)"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "What’s wrong with her?"
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "Nothin’. She just gets thirsty and likes to drink a little."
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "CAMERA STAYS with Shug as her driver takes her up to Mister’s place. When they arrive, Mister and Celie greet her. Shug steps out of the car, drunk, but tries to stand tall like a queen. The minute she and MISTER LOCK EYES, she faints into his arms. Celie GASPS! Grab her legs! Mister and Celie carry"
+    },
+    {
+      "number": 82,
+      "heading": "INT. MISTER'S HOUSE - MASTER BEDROOM - MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Celie wakes. To her surprise Mister is not i n bed. She smells something burning. She hurries downstairs."
+    },
+    {
+      "number": 83,
+      "heading": "INT. MISTER'S HOUSE - KITCHEN - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "She rushes into the kitchen. It is filled with smoke. Mister is at the stove burning food. He puts the burnt and blackened food onto a plate and carries it up to Shug."
+    },
+    {
+      "number": 84,
+      "heading": "INT. MISTER'S HOUSE - STAIRWAY - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Celie is intrigued. She sits on the bottom stair and waits while she darns socks. 51. 52. She hears Mister knock on Shug’s door."
+    },
+    {
+      "number": 85,
+      "heading": "INT. MISTER'S HOUSE - UPSTAIRS HALLWAY - DAY",
+      "characters": [
+        "SHUG",
+        "MISTER"
+      ],
+      "dialogues": [
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "You tryin’ to poison me!"
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "It ain’t too bad, baby, if’in you put some hot sauce on it."
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "Oh, I got your hot sauce!"
+        }
+      ],
+      "actionPreview": "A beat, then CRASH! Shug throws the plate against the wall. Shug slams the door in his face. He stumbles down the stairs and rushes back into the kitchen."
+    },
+    {
+      "number": 86,
+      "heading": "INT. MISTER'S HOUSE - KITCHEN - DAY",
+      "characters": [
+        "MISTER"
+      ],
+      "dialogues": [
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "Hot nuts!"
+        }
+      ],
+      "actionPreview": "Miste r is back behind the coal stove trying to fry eggs when Celie enters. He cracks an egg. The yolk lands on his shoe. Celie steps beside him and cracks an egg with one hand in a quick motion like a master chef. The action stuns Mister. He steps aside and lets her continue. SERIES OF SHOTS: Celie"
+    },
+    {
+      "number": 87,
+      "heading": "INT. MISTER’S HOUSE - STAIRWAY - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Celie walks upstairs with a new tray of food. Everything is cooked to perfection. Mister puts a red flower sticking out of a tin can on the tray. Then he waits downstairs, listening and waiting for Shug’s reaction."
+    },
+    {
+      "number": 88,
+      "heading": "INT. MISTER’S HOUSE - UPSTAIRS HALLWAY - DAY",
+      "characters": [
+        "SHUG"
+      ],
+      "dialogues": [
+        {
+          "character": "SHUG",
+          "parenthetical": "(O.C.)",
+          "text": "Didn’t I say I wasn’t hungry! 52."
+        }
+      ],
+      "actionPreview": "Stil l holding the tray, Celie knocks on the door. 53. Celie cracks open the door then slides the tray of food through. She quickly closes the door and hides behind a corner in case the food is tossed again. But nothing happens. MANY MINUTES LATER: The door opens and the tray slides back out. THE PL"
+    },
+    {
+      "number": 89,
+      "heading": "INT. MISTER'S HOUSE - STAIRWAY - HOURS LATER",
+      "characters": [
+        "SHUG",
+        "MISTER"
+      ],
+      "dialogues": [
+        {
+          "character": "SHUG",
+          "parenthetical": "(O.C.)",
+          "text": "I’m out of giggle water! Somebody fetch me a bottle in town."
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "Right away, baby."
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "Somebody come turn my crank!"
+        }
+      ],
+      "actionPreview": "Celie si ts at the bottom of the stairs, STILL SEWING HER QUILT. It is even more intricate. She hears from upstairs: Mister dashes down the stairs and bolts out the front door. SECONDS LATER: The music from Shug’s gramophone stops. Celie moves up the stairs. She cracks open the bathroo m door."
+    },
+    {
+      "number": 90,
+      "heading": "INT. MISTER’S HOUSE - BATHROOM - DAY",
+      "characters": [
+        "SHUG",
+        "CELIE"
+      ],
+      "dialogues": [
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "Don’t just stare at it! Turn the handle!"
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Got about a million tingles"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "You sho’ is ugly!"
+        }
+      ],
+      "actionPreview": "She enters quietly. The room is foggy from cigarette smoke and steamy from the hot bath. Shug soaks in the tub with one leg leaning over the rim and a cigarette dangling from her fingers. She has the flower from earlier in her hair. Her eyes are closed. Celie is too timid to look at her. Instead, sh"
+    },
+    {
+      "number": 91,
+      "heading": "INT. MISTER’S HOUSE - SHUG’S ROOM - HOURS LATER",
+      "characters": [
+        "SHUG",
+        "CELIE"
+      ],
+      "dialogues": [
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "You got good hands. You scratched a song right outta my head."
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Albert?"
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "Your husband. You tryin’ to tell me you don’t know your own husband’s name?"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Thought his name was Mister-"
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "Mister ain’t no name, it’s a title."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Let him tell it, he’ll try to convince you he is. And don’t let him put on a suit. That man will start high-steppin’ and talkin’ proud like butter don’t melt in his mouth. 55."
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "How come you don’t laugh none? If you ain’t gon’ laugh, you need to sell your funny bone."
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Had two. But they was taken. Don’t know where they is or if they even alive."
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "When you think about ‘em does your heart get full like the first time you held ‘em?"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Yes, ma’am."
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "Then they still alive. It’s nature’s way of telephonin’. That’s how I know my pa still in this world . ‘Cause when I think about him. And how he used to sing to me when I was a little bit. My heart gets so full..."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Why come you just don’t visit ‘im?"
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "He don’t want to see me. He ain’t forgave me for choosin’ The Blues over his religion. Funny thing is,"
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "(disgusted)"
+        }
+      ],
+      "actionPreview": "Shug is sitting on the floor between Celie’s legs, dressed in a nightgown, humming a melody that will later be “Miss Celie ’s Blues.” Celie sits on the bed and combs her hair. She hums a little more, then... How long you and Albert been a thang? Just another way of sayin’ “master” if you as k me. Th"
+    },
+    {
+      "number": 92,
+      "heading": "INT. MISTER'S HOUSE - LIVING ROOM - HOURS LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "A SONG FROM THE PERIOD PLAYS ON THE GRAMOPHONE. Mister and Shug slow danc e. Celie sits, staring at their feet. She looks up. Shug and Mister are kissing. She drops her head. Suddenly, Mister’s pants drop. Then Shug’s dress. Now Celie is too afraid to look up. She walks to the door with her head bow"
+    },
+    {
+      "number": 93,
+      "heading": "EXT. MISTER'S HOUSE - FRONT PORCH - NEXT DAY",
+      "characters": [
+        "OL MISTER",
+        "MISTER",
+        "CE LIE",
+        "CELIE"
+      ],
+      "dialogues": [
+        {
+          "character": "OL MISTER",
+          "parenthetical": "",
+          "text": "Heard your ho done come back and brought the plagues."
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "Don’t start that foolishness, pa."
+        },
+        {
+          "character": "OL MISTER",
+          "parenthetical": "",
+          "text": "You ain’t seen them robins covering the sky last week? Heard that’s when she arrived."
+        },
+        {
+          "character": "OL MISTER",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CE LIE",
+          "parenthetical": "",
+          "text": "You wanna glass of water, Ol"
+        },
+        {
+          "character": "OL MISTER",
+          "parenthetical": "",
+          "text": "Don’t mind if I do."
+        },
+        {
+          "character": "OL MISTER",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "Shug ain’t no whore, she got a wild heart like me. You ain’t got the head to understand it but I ain’t never stopped lovin’ her. Shoulda married her when I had the chance. 58."
+        },
+        {
+          "character": "OL MISTER",
+          "parenthetical": "",
+          "text": "Is that what this ‘bout? Love? That mess less reliable than rain. Land the only thing a colored man can count on. Land can grow green and put green in your pockets. You wanna love somethin’, love this land."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Here you are. I sweetened it for ya."
+        },
+        {
+          "character": "OL MISTER",
+          "parenthetical": "",
+          "text": "Celie, you has"
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "Time for you to go, daddy."
+        },
+        {
+          "character": "OL MISTER",
+          "parenthetical": "",
+          "text": "Can’t I drink my water first?!"
+        }
+      ],
+      "actionPreview": "IT’S THE HOTTEST DAY OF THE SUMMER! Mister is sitting on his porch steps with his chest bare, rubbing ice cubes on his neck. Ol Mister saunters up the walk with his cane, wearing a three-piece-suit, a tie, and a straw hat. They say mean people don’t sweat. Here’s an example. 57. 58. Ol Mister slaps "
+    },
+    {
+      "number": 94,
+      "heading": "EXT. MISTER’S HOUSE - CELIE’S GARDEN - NEXT DAY",
+      "characters": [
+        "SHUG",
+        "CELIE"
+      ],
+      "dialogues": [
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "I don’t know nothin bout pickin’ peas. How you know which one is ripe?"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Got to feel ‘em. They like some people. If they rough around the edges, it usually means they soft inside. Taste this one."
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "That’s a piece of heaven."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "You ain’t see nothin. Come on..."
+        }
+      ],
+      "actionPreview": "Celie and Shug pick peas. She hands Shug a pea from her lap. Shug eats. It’s deli cious. 59. 60. Celie lifts Shug to her feet."
+    },
+    {
+      "number": 95,
+      "heading": "EXT. FIELD OF HIGH GRASS - DUSK",
+      "characters": [
+        "SHUG",
+        "CELIE",
+        "THIS IS"
+      ],
+      "dialogues": [
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "More than anything, God love admiration."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "You sayin’ God is vain?"
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "Not vain, Miss Celie. God just wants to share a good thing. I think it pisses God off if you wa lk by the color purple in a field and don't notice it."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "You sayin’ God wants to be loved like it say in The Bible?"
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "Everything wants to be loved. ‘Specially God. That’s why God be in everything. ‘Cause the more you love what God made, the more you is lovin’ God and God lovin’ you. God be in music, water, in sunlight."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Bee n wonderin’ if God love me, why he let my babies be takin’ and why he take my Nettie."
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "Sound like men did that. Not God."
+        },
+        {
+          "character": "THIS IS",
+          "parenthetical": "",
+          "text": "THE FIRST TIME WE SEE THE COLOR PURPLE IN THE FILM."
+        }
+      ],
+      "actionPreview": "They walk carrying goods in a basket. Shug smells and picks flowers. We start the scene in medias res: God be... big like the sky yet small enough to live in our hearts. Shug spots A RARE PURPLE CROCUS FLOWER in the field. She plucks the flower then hands it to Celie. 60. 61. CLOSE ON CELIE smelling"
+    },
+    {
+      "number": 96,
+      "heading": "EXT. DOWN THE ROAD FROM THE JUKE JOINT - DUSK",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Celie and Shug walk to Harpo’s juke joint. One can hear crickets greasing their legs under the blush of the moon."
+    },
+    {
+      "number": 97,
+      "heading": "EXT. HARPO’S JUKE JOINT - DUSK",
+      "characters": [
+        "SHUG",
+        "HARPO",
+        "SQUEAK"
+      ],
+      "dialogues": [
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "(to Harpo)"
+        },
+        {
+          "character": "HARPO",
+          "parenthetical": "",
+          "text": "Thank ya, Miss Shug. We open Friday night. Was hopin’ you might come by and sang a little-"
+        },
+        {
+          "character": "SQUEAK",
+          "parenthetical": "",
+          "text": "But if you can’t, don’t worry. ‘Cause I gots a voice too."
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "Sounds nice."
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "(CONT’D) (flirtatiously)"
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "Well alright. I guess I’m singing. 61."
+        }
+      ],
+      "actionPreview": "Harpo and his buddies are almost done building the juke. SQUEAK is helping them. She hangs on Harpo, which in dicates they are an item. Shug can’t keep her eyes off the handsome, sweaty men. Harpo walks toward her and Celie. Good to see you not just followin’ in your pa’s footsteps. But building som"
+    },
+    {
+      "number": 98,
+      "heading": "EXT. MAIN STREET - NEXT DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Harpo and his buddies hang signs over town. They read: “COME SEE SHUG SING THE BLUES, FRIDAY NIGHT DOWN AT HARPO’S JUKE.” Townspeople read the sign and take note."
+    },
+    {
+      "number": 99,
+      "heading": "INT. MISTER’S HOUSE - SHUG’S ROOM - NIGHT",
+      "characters": [
+        "SHUG",
+        "CELIE"
+      ],
+      "dialogues": [
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "Tell me the truth, yo u mind if"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Naw. It keep him off me."
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "Why you say it like that? You don’t like layin’ with him?"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Most time I pretend I ain’t even there. He don’t know the difference. (then)"
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "I gots what you call a passion for him. He smell right. Makes me laugh some. Sometime it just feel good being with somebody who loves you unconditional."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "That do sou nd nice."
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "I laid you out somethin’ on the bed."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "My, that’s fancy. But it ain’t me. I’ll look silly-"
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "Put it on. You gon’ be my guest tonight. Gots to look like we belong."
+        }
+      ],
+      "actionPreview": "Celie helps Shug step into an exquisite dress. There is a palpable chemistry between them. Albert sleep with me? You love ’im? Shug shrugs. Shug dabs perfume on her neck. Celie looks at the dress. It’s really fancy. 62. 63. Celie puts it down. Shug puts it back in her arms. Celie is speechless. This"
+    },
+    {
+      "number": 100,
+      "heading": "INT. MISTER'S HOUSE - BOTTOM OF STAIRCASE - NIGHT",
+      "characters": [
+        "CELIE"
+      ],
+      "dialogues": [
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Shug said for us to go on ahead."
+        }
+      ],
+      "actionPreview": "Mister is waiting downstairs when Celie walks down. SHE IS A VISION. Shug has completely dolled her up. Mister can hardly speak. She wanna make an entrance. Mister is disappointed. He wanted to walk to the juke with Shug on his arm. He and Celie leave the house."
+    },
+    {
+      "number": 101,
+      "heading": "EXT. DOWN THE ROAD FROM THE JUKE JOINT - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "They walk together in silence. Mister carries an oil lamp to guide their way. Fireflies float around them. Couples, holdin g hands and kissing one another, pass Celie and Mister on their way to the juke. Celie keeps her eyes to the ground. Mister looks at trees. This is awkward for them."
+    },
+    {
+      "number": 102,
+      "heading": "EXT. HARPO’S JUKE JOINT - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "People sit on the roof fanning themselves with their own hats. An old man chews snuff as he fishes from a tree. An inebriated woman hangs out of a window drinking moonshine. Celie and Mister arrive. Mister helps her into the juke via a plank walkway."
+    },
+    {
+      "number": 103,
+      "heading": "INT. HARPO'S JUKE JOINT - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Inside, the place is packed. Folks sit on tables, chairs, and each other. The piano player plays a rag. People are waiting for Shug. 63. 64. Harpo guides Celie and Mister to the best seats - front and center. Suddenly, everyone hears a commotion coming from up river. They rush to the windows to see "
+    },
+    {
+      "number": 104,
+      "heading": "EXT. DOWN THE MANGROVE SWAMP - NIGHT",
+      "characters": [
+        "SHUG",
+        "HARPO"
+      ],
+      "dialogues": [
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "Now there's somethin' 'bout good lovin' that all you ladies should know."
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "HARPO",
+          "parenthetical": "",
+          "text": "It’s Shug! Everybody, Shug’s on the water!"
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "We see flickering lights coming from something floating upstream toward the juke. Before we can make it out, we hear Shug’s voice. She loudly sings 11.“PUSH DA BUTTON” . We hear instruments blaring as we see paper water candles floating on the swamp in front of a large log raft. If you wanna light y"
+    },
+    {
+      "number": 105,
+      "heading": "INT. HARPO'S JUKE JOINT - NIGHT",
+      "characters": [
+        "SHUG",
+        "HARPO",
+        "SOFIA",
+        "S OFIA",
+        "CELIE",
+        "HENRY",
+        "MISTER",
+        "MUSIC PLAYS.",
+        "SQUEAK",
+        "BUSTER"
+      ],
+      "dialogues": [
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "Now that I've got your attention."
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "Ey! Push da button. (Push da button) Push da button. (Push da button) You gotta push it if you wanna come in! Push da button! (Push da button!) Give me somethin'! (Push da button!) To let ya baby know it ain’t no sin! Well."
+        },
+        {
+          "character": "HARPO",
+          "parenthetical": "",
+          "text": "Drinks on the house!"
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "C'mon, Buster! Let’s find us a seat."
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "S OFIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Sofia!"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "Nice to meet you, ma'am."
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "Mutual. Who dis?"
+        },
+        {
+          "character": "HENRY",
+          "parenthetical": "",
+          "text": "Henry Broadnax. But my people call me Buster."
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "He’s a prizefighter. Man was never knocked out till he met me."
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "Shouldn’t you be at home, tendin’ to your baby?"
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "Shouldn’t you be somewhere with folks your age. Like a cemetery."
+        },
+        {
+          "character": "HARPO",
+          "parenthetical": "",
+          "text": "(to Sofia)"
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "Our"
+        },
+        {
+          "character": "HARPO",
+          "parenthetical": "",
+          "text": "It’s scandless, you"
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "Six if you count our new baby. HARPO & MISTER"
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "Yes, Lawd. Me and"
+        },
+        {
+          "character": "HARPO",
+          "parenthetical": "",
+          "text": "(to the piano player)"
+        },
+        {
+          "character": "MUSIC PLAYS.",
+          "parenthetical": "",
+          "text": "Harpo stares at Sofia and Buster. Mister and Shug converse."
+        },
+        {
+          "character": "HARPO",
+          "parenthetical": "",
+          "text": "Thanks for comin. I'se sorry, I gots off on the wrong foot just now. Care to shake a leg? Let me make up for it?"
+        },
+        {
+          "character": "SQUEAK",
+          "parenthetical": "",
+          "text": "Harpo, who dis woman?"
+        },
+        {
+          "character": "HARPO",
+          "parenthetical": "",
+          "text": "You know who dis is. Go somewhere and be nice. Me and Sofia just findin’ our rhythm."
+        },
+        {
+          "character": "SQUEAK",
+          "parenthetical": "",
+          "text": "But I wants to dance too!"
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "Fine with me."
+        },
+        {
+          "character": "HARPO",
+          "parenthetical": "",
+          "text": "You don't have to go nowhere. This used to be your house!"
+        },
+        {
+          "character": "SQUEAK",
+          "parenthetical": "",
+          "text": "What you mean her"
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "Like I say. Fine. with. me."
+        },
+        {
+          "character": "SQUEAK",
+          "parenthetical": "",
+          "text": "(To Sofia)"
+        },
+        {
+          "character": "BUSTER",
+          "parenthetical": "",
+          "text": "Momma bear, don’t do nothin’ rash."
+        }
+      ],
+      "actionPreview": "Shug enters the juke gyrating her body, using her fan like a vaudeville dancer and flirting with the men, driving them crazy. One man slides between her legs. She pulls him up by h is ears, drawing him toward her breasts. When he gets close to kissing her, she pushes him away. He pretends to faint. "
+    },
+    {
+      "number": 106,
+      "heading": "EXT. HARPO’S JUKE JOINT - NIGHT",
+      "characters": [
+        "CELIE",
+        "SHUG"
+      ],
+      "dialogues": [
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "You keep singing at the juke, I bet"
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "Aw, he don’t need me. That boy got a good head on his shoulders. He goin’ places most folks never dream. ‘Sides, as much as I’d like to stay, Memphis callin’. If I don’t remind folks"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "I ain’t ready for you to leave."
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "Beat you? Why he do that?"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "‘Cause I ain’t you, I guess."
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "You gots to stand up to him. You gots to try."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "When you leavin’?"
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "Tomorrow afternoon. But I’ll be back in a month or so, you’ll see."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "When you gone a hour, it feel like forever to me."
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "That’s why I gots to come back."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Where’s we goin’?"
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "Time fo r you to see more of the world."
+        }
+      ],
+      "actionPreview": "THE CAMERA FOLLOWS Shug and Celie as they walk close. We hear the distant sounds of brawling at the juke joint. Harpo make a lot of money. I’m still alive in the big city, they’ll forget about me. Celie is gutted by this news. Mister so much nicer when you around. He don’t beat me as much. Celie shr"
+    },
+    {
+      "number": 107,
+      "heading": "EXT. THE ELMIRA MOVIE THEATER - NIGHT",
+      "characters": [
+        "SHUG"
+      ],
+      "dialogues": [
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "Two tickets, please."
+        }
+      ],
+      "actionPreview": "Shug pulls up to the cinema and screeches to a halt. They walk towards the entrance with their arms linked. They approach A WHITE TICKET BOOTH OPERATOR who sits in a glass box. WHITE TICKET BOOTH OPERATOR May I help you? Shug hands him money. He gives her the tickets. 71. 72."
+    },
+    {
+      "number": 108,
+      "heading": "INT. THE ELMIRA MOVIE THEATER - MEZZANINE - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "They sit in the front row of the balcony. NO ONE IS THERE BUT THEM. A black and white movie plays. Celie is engrossed by the screen yet she can feel Shug staring at her. IMAGINED: The shaft of light emanating from the movie projector pours onto Celie, she glances at Shug and the CAMERA pushes into t"
+    },
+    {
+      "number": 109,
+      "heading": "INT. FILM STAGE - CONTINUOUS",
+      "characters": [
+        "CELIE",
+        "SHUG",
+        "CE LIE"
+      ],
+      "dialogues": [
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Is that me who's floating away"
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "Will you be my light in the storm?"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "And what about hope"
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "What about hope"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "What about joy"
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "What about joy"
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "And what about..."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "What about..."
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "What about..."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "What about..."
+        },
+        {
+          "character": "CE LIE",
+          "parenthetical": "",
+          "text": "What about..."
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "What about..."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "What about..."
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "What about..."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "What about love?"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "You and me,"
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "What about..."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "What about..."
+        }
+      ],
+      "actionPreview": "The movie screen rises r evealing a stage. On both sides sits an orchestra dressed in tuxedos and an art deco background. Celie and Shug walk down the stairs to center stage dressed in stunning gowns. They sing into box head microphones. 12. “WHAT ABOUT LOVE?” Lifted up to the clouds by a kiss Never"
+    },
+    {
+      "number": 110,
+      "heading": "INT. THE ELMIRA MOVIE THEATER - MEZZANINE - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "They are back in their seats, KISSING."
+    },
+    {
+      "number": 111,
+      "heading": "INT. MISTER'S HOUSE - SHUG'S ROOM - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Shug takes Celie into her bedroom and into her bed. They kiss. Shug turns off the light, giving us the impression that they will sleep together."
+    },
+    {
+      "number": 112,
+      "heading": "INT. MISTER'S HOUSE - SHUG'S ROOM - NEXT MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Celie is still asleep when S hug wakes in bed. She feels dawn on her skin. She gets out of bed and slips into her robe."
+    },
+    {
+      "number": 113,
+      "heading": "INT. MISTER'S HOUSE - DOWNSTAIRS - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Shug is about to make coffee when she sees the postman coming up the road in a 1920s U.S. Mail truck."
+    },
+    {
+      "number": 114,
+      "heading": "EXT. ROAD LEADING TO MISTER’S HOUSE - CONTINUOUS",
+      "characters": [
+        "SHUG",
+        "POSTMAN"
+      ],
+      "dialogues": [
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "(grinning)"
+        },
+        {
+          "character": "POSTMAN",
+          "parenthetical": "",
+          "text": "Albert around?"
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "Naw. Probably passed out somewhere."
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "She meets the postman at the mailbox. He sees her in her robe and is embarrassed. This tickles her. Mornin’. S hug opens her hand to take the mail from him. The postman nods his hat then leaves. Shug sorts through the mail. She sees something that catches her eye. 74. 75. CAMERA FOCUS: On the return"
+    },
+    {
+      "number": 115,
+      "heading": "INT. MISTER'S HOUSE - SHUG'S ROOM - DAY",
+      "characters": [
+        "SHUG",
+        "CELIE"
+      ],
+      "dialogues": [
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "It’s from her!"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "(wiping her eyes)"
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "You got a letter. Celie, it’s... ...it’s from ya Nettie."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "“Dear Celie, I hope this r eaches you, as I’ve been writing you every week for years. I suppose you didn’t get any of my letters because you haven’t written back.”"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "(CONT’D) (to Shug)"
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "“You probably won’t get this either, because Mister is still probably the only one who takes mail from the box. B ut if you do get this, I want you to know, I love you, and I’m not dead.”"
+        }
+      ],
+      "actionPreview": "Shug bolts into the room, waking Celie! What’s from who? Shug hands her the letter. Celie looks at the return address. Tears fill her eyes. She opens the letter, reads. Celie looks at Shug IN SHOCK. She’s alive. My Nettie, she... Celie is so overcome she can’t continue. Shug takes the letter and hel"
+    },
+    {
+      "number": 116,
+      "heading": "INT. HARPO’S JUKE JOINT - DAY",
+      "characters": [
+        "HARPO",
+        "MISTER"
+      ],
+      "dialogues": [
+        {
+          "character": "HARPO",
+          "parenthetical": "",
+          "text": "Time for you to go home, pa."
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "Why you givin’ way free drinks?"
+        },
+        {
+          "character": "HARPO",
+          "parenthetical": "",
+          "text": "I hear ya, pa."
+        }
+      ],
+      "actionPreview": "Mister is passed out at the bar. Harpo has just cleaned the place after a long night of revelry. Mister wakes, groggy. Harpo helps his father up. It’s bad for biz-ness. The point is to make money, not give it away. Harpo escorts his father outside."
+    },
+    {
+      "number": 117,
+      "heading": "INT. MISTER'S HOUSE - SHUG'S ROOM",
+      "characters": [
+        "SHUG"
+      ],
+      "dialogues": [
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "There’s got to be more of ‘em somewhere."
+        }
+      ],
+      "actionPreview": "- DAY Celie is reading the letter again when Shug nudges her. They look at each other. They rush into--"
+    },
+    {
+      "number": 118,
+      "heading": "INT. MISTER'S HOUSE - MASTER BEDROOM - CONTINUOUS",
+      "characters": [
+        "CELIE",
+        "SHUG"
+      ],
+      "dialogues": [
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "He’ll be back any minute."
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "Let’s just t hink. If you were"
+        }
+      ],
+      "actionPreview": "--Mister’s bedroom and hurriedly look for the other letters. They look under the mattress. In his drawers. In his suitcase. In his closet. Celie gets nervous. Albert, what piece of furniture would you value most? They both look at the bed."
+    },
+    {
+      "number": 119,
+      "heading": "EXT. DIRT ROAD TOWARD MISTER'S HOUSE - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Mister and Harpo are near the house. Mister is hungover and can hardly walk. He leans on his son for strength. 76. 77."
+    },
+    {
+      "number": 120,
+      "heading": "INT. MISTER'S HOUSE - MASTER BEDROOM - DAY",
+      "characters": [
+        "A LARGE TRUNK.",
+        "CELIE",
+        "MISTER",
+        "SHUG"
+      ],
+      "dialogues": [
+        {
+          "character": "A LARGE TRUNK.",
+          "parenthetical": "",
+          "text": "SHE OPENS IT AND DISCOVERS HUNDREDS OF LETTERS. She is STUNNED. Celie embraces them."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "(laughter and tears)"
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "(O.C.)",
+          "text": "Shug, baby!"
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "(calling back to him)"
+        }
+      ],
+      "actionPreview": "The ladies pull the bed back revealing a crack in one of the floor slats. Celie pulls up the slat and FINDS My Nettie sho’ not dead! They hear the front door SLAM! Mister has entered the house. Just a minute! I’m coming down!"
+    },
+    {
+      "number": 121,
+      "heading": "INT. MISTER'S HOUSE - UPSTAIRS HALLWAY - DAY",
+      "characters": [
+        "SHUG"
+      ],
+      "dialogues": [
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "Take your time. I’ll keep him busy downstairs."
+        }
+      ],
+      "actionPreview": "Celie takes the letters into Shug’s bedroom. Shug exits. Celie organizes the let ters according to date."
+    },
+    {
+      "number": 122,
+      "heading": "EXT. MISTER’S HOUSE - HOURS LATER",
+      "characters": [
+        "CELIE",
+        "SHUG"
+      ],
+      "dialogues": [
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "(whispering in her ear)"
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "Next time. I’ll be back ‘fore y’all can spell Mississippi."
+        }
+      ],
+      "actionPreview": "Dressed in a fur coat and hat, Shug joins her band members in the yard. They take her luggage to a truck and drive off. Shug kisses Mister and embraces Celie. Take me with you. Shug eyes Mister, who looks on, jealous. She can’t do it. She gets into her co nvertible and waves “goodbye” as her driver "
+    },
+    {
+      "number": 123,
+      "heading": "EXT. DEADWOOD BEACH - LATER THAT DAY (SPRING, 1923)",
+      "characters": [
+        "HOMELAND.",
+        "NETTIE",
+        "CELIE",
+        "ASHANTI TRIBE",
+        "TRIBE"
+      ],
+      "dialogues": [
+        {
+          "character": "NETTIE",
+          "parenthetical": "(V.O.)",
+          "text": "“Dear Celie, When Mister forced me off his land, I got a job working for a pastor across town. He and his wife needed somebody to see after their two children. I helped take care of their babies for food and shelter. Eventually, they told me they were going to Africa as missionaries and maybe I could go with them.”"
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "(V.O.)",
+          "text": "“While we were on a great boat to"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "My babies, they’re alive. They with"
+        },
+        {
+          "character": "ASHANTI TRIBE",
+          "parenthetical": "",
+          "text": "Agoo-aye"
+        },
+        {
+          "character": "TRIBE",
+          "parenthetical": "",
+          "text": "“A-goo-AYE” (Are you out there?) “A-meeer” (Yes, we are) “A-gooo-AYE” (Are you out there?) “A-meeer” (Yes, we are)"
+        },
+        {
+          "character": "ASHANTI TRIBE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "(V.O)",
+          "text": "(overlaps following lyric)"
+        },
+        {
+          "character": "ASHANTI TRIBE",
+          "parenthetical": "",
+          "text": "Agoo-aye"
+        },
+        {
+          "character": "ASHANTI TRIBE",
+          "parenthetical": "",
+          "text": "“A-gooo-AYE” (Are you out there?) “A-meeer” (Yes, we are) “A-gooo-AYE” (Are you out there?) “A-meeer” (Yes, we are)"
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "(V.O.)",
+          "text": "The little I knew about myself and my people wouldn’t have filled a thimble. Celie, we are more than just kings and queens. The world began here. We are at the center of the universe. 79."
+        },
+        {
+          "character": "ASHANTI TRIBE",
+          "parenthetical": "",
+          "text": "Na okoo, Na !"
+        },
+        {
+          "character": "ASHANTI TRIBE",
+          "parenthetical": "",
+          "text": "“NA-wor-KOO, NA-wor-BA” (He/She goes, He/She comes) “A-san-te-MAN-e-chia moh” (The Ashanti people greet you) “YER ma-moa-KWAA-boh” (We welcome you)"
+        },
+        {
+          "character": "ASHANTI TRIBE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ASHANTI TRIBE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ASHANTI TRIBE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ASHANTI TRIBE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ASHANTI TRIBE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ASHANTI TRIBE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ASHANTI TRIBE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ASHANTI TRIBE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "Celie sits on a deadwood tree and reads a letter. 13. AFRICAN Celie looks up from the paper. She imagines the ship sailing on the hor izon. Africa, the Reverend told me he and his wife couldn’t bare children. But God sent them two. They showed me the name you had sewn on the baby’s blanket and I kne"
+    },
+    {
+      "number": 124,
+      "heading": "INT. MISTER’S HOUSE - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Celie hurries into the house. She hides the letters and tiptoes into the bedroom where Mister snores loudly. 80. 81. Celie slides into bed and the CAMERA STAYS with her. She is overcome with joy, finally knowing her Sister is alive."
+    },
+    {
+      "number": 125,
+      "heading": "INT. GENERAL STORE - THE NEXT DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Celie shops in the General Store and sees MARY ELLEN, 16, Alfonso’s new wife. ALFONSO comes out of the back room. He makes eye contact, but she averts his gaze."
+    },
+    {
+      "number": 126,
+      "heading": "EXT. BACK ROAD (MAIN DRAG, BLACK PART OF TOWN) - DAY",
+      "characters": [
+        "NETTIE"
+      ],
+      "dialogues": [
+        {
+          "character": "NETTIE",
+          "parenthetical": "(V.O)",
+          "text": "Dear Celie, I hope this letter finds you well. Life has become dire for us. Our village was bombed in order to make way for a road to grow cocoa trees!"
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "(V.O.)",
+          "text": "The British colonial administrators ignored our pleas to let us keep our land. We couldn’t fight them, so now we walk to a refugee camp across the border."
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "(V.O.)",
+          "text": "I have faith that God will let us see each other before we die. I only hope when that day comes, we are not too old to recognize each other."
+        }
+      ],
+      "actionPreview": "Celie continues to read Nettie’s letter as she walks home. CELIE’S environment transforms to the village in Africa. She imagines the Ashanti tribesmen and women marching away from their village. BRITISH COLONIAL OFFICERS on horseback oversee the village’s eviction. Celie ima gines Pastor Samuel, Cor"
+    },
+    {
+      "number": 127,
+      "heading": "INT. MISTER’S HOUSE - DINING ROOM - NIGHT",
+      "characters": [
+        "MISTER",
+        "CELIE"
+      ],
+      "dialogues": [
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "Why supper late?"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Lost track of time-"
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "I works the land sun up to sun down - breaking my back. All you have to do is cook and clean and ya can’t even do that."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "(gritting her teeth) I’ll do better."
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "That’s what ya mouth say."
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "When Celie arrives, Mister is sitting at the table. She puts a plate of food in front of him and places one for herself. 81. 82. Mister pushes her plate on the floor. Clean it up! If I got to eat late, you won’t eat at all. Celie gets on her knees to clean up the mess."
+    },
+    {
+      "number": 128,
+      "heading": "EXT. MIS TER’S HOUSE - NEXT DAY",
+      "characters": [
+        "SOFIA",
+        "CELIE"
+      ],
+      "dialogues": [
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "Miss Celie! Hop on in, we going to town!"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "I can’t. Gots work ‘round the house."
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "Work can wait. Come on, gal. I ain’t seen you since Jesus wept."
+        }
+      ],
+      "actionPreview": "Celie is raking leaves when Sofia, Henry, and their children pull up in a car. Sofia honks. Get in here! Celie thinks. Then in her first act of defiance, she proudly gets into Sofia’s car. INT./EXT. SOFIA’S SEDAN - DAY Celie sits in the back, sandwiched between Sofia’s children. 82. 83."
+    },
+    {
+      "number": 129,
+      "heading": "EXT. MAIN STREET - GAS STATION (WHITE PART OF TOWN) - DAY",
+      "characters": [
+        "MISS MILLIE",
+        "SOFIA",
+        "HENRY",
+        "THE MAYOR"
+      ],
+      "dialogues": [
+        {
+          "character": "MISS MILLIE",
+          "parenthetical": "",
+          "text": "(to Sofia)"
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "No and no, thank you. Come on chill’ren. Let’s get in the car."
+        },
+        {
+          "character": "MISS MILLIE",
+          "parenthetical": "",
+          "text": "You sure? That’s a lot of mouths to feed."
+        },
+        {
+          "character": "MISS MILLIE",
+          "parenthetical": "",
+          "text": "(CONT’D) I’m Miss Millie in case you wonderin’. The mayor’s wife. I’m sure you heard of me. If not, just ask around. The colored love me. I’l l pay you fair."
+        },
+        {
+          "character": "HENRY",
+          "parenthetical": "",
+          "text": "(to Sofia)"
+        },
+        {
+          "character": "MISS MILLIE",
+          "parenthetical": "",
+          "text": "I’m talkin to you, gal! You wants to be my maid or not?!"
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "Hell. No."
+        },
+        {
+          "character": "THE MAYOR",
+          "parenthetical": "",
+          "text": "What’s that you say to my wife?"
+        },
+        {
+          "character": "HENRY",
+          "parenthetical": "",
+          "text": "Come on, Sofia! G et in the car!!!"
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "(to Buster)"
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "(CONT’D) GET MY CHILDREN OUT OF HERE NOW!!!"
+        },
+        {
+          "character": "HENRY",
+          "parenthetical": "",
+          "text": "(to Celie re: the kids)"
+        }
+      ],
+      "actionPreview": "Sofia, and her children eat ice cream cones as they lean against the sedan. Henry pumps gas into the car’s tank. Celie sits in the back seat. THE MAYOR pulls up to the gas station in a convertible. His wife, MISS MILLIE, sits in the passenger seat. She SPOTS Sofia’s children and walks up to them. Ar"
+    },
+    {
+      "number": 130,
+      "heading": "INT. LOCAL JAIL HOUSE - HALLWAY - DAY",
+      "characters": [
+        "CELIE",
+        "DEPUTY"
+      ],
+      "dialogues": [
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Hey, Sofia. What you know good?"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DEPUTY",
+          "parenthetical": "",
+          "text": "Time to go."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "But I just got here. 85."
+        },
+        {
+          "character": "DEPUTY",
+          "parenthetical": "",
+          "text": "‘Said, time to go."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "(to Sofia) I’ll be back next week. Eat somethin’ for me, hear? I’m a get you out of this place, God’s my witness. MONTAGE: (SOFIA IN JAIL SEQUENCE)"
+        }
+      ],
+      "actionPreview": "Sofia sits behind bars. Her wounds have not properly healed since the attack and her face is somewhat deformed. Celie enters the corridor with food. She stops at Sofia’s cell and sits on a stool that’s been put there for her. Sofia remains quiet and motionless. Sorry, I’se late. The weather outside "
+    },
+    {
+      "number": 131,
+      "heading": "EXT. JAIL - DAY",
+      "characters": [
+        "CELIE"
+      ],
+      "dialogues": [
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Girl child ain’t safe in a family ‘o mens! I’m sick and tired how a woman still live like a slave."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "We hear the clanging sounds of jail bars closing. This forms the beat for 14. “HELL NO (REPRISE).” Celie sings as she walks away from the jail. Oh, We better learn how to fight back While we still alive! Tears flood Celie’s eyes. She glances back at the jail. So all of us girls can beat back that ji"
+    },
+    {
+      "number": 132,
+      "heading": "INT. JAIL CELL/HALLWAY - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "CAMERA starts on Sofia in her cell. Celie, Harpo and their young children standing there to visit. Heavy rain rattles on the jail window. A FEW MORE YEARS HAVE PASSED. Sofia’s wounds have healed. We see a snowstorm outside the jail window, Celie, Harpo and Sofia’s now older kids stand outside the ja"
+    },
+    {
+      "number": 133,
+      "heading": "EXT. OUTSIDE JAIL HOUSE - DAY",
+      "characters": [
+        "MISS MILLIE",
+        "MISS MILLE"
+      ],
+      "dialogues": [
+        {
+          "character": "MISS MILLIE",
+          "parenthetical": "",
+          "text": "Aren’t we proud of our Sofia? She’s come so far, I’ve agreed to let her live and work for me till she gets on her feet."
+        },
+        {
+          "character": "MISS MILLE",
+          "parenthetical": "",
+          "text": "Well. Come on then."
+        },
+        {
+          "character": "MISS MILLIE",
+          "parenthetical": "",
+          "text": "Let’s not dawdle."
+        }
+      ],
+      "actionPreview": "Sofia walks out of jail on Miss Millie’s arm, Harpo and her children are surprised to see how old she looks. Miss Millie waits for an applause. There is none. Miss Millie heads to her car. Sofia follows, but not before she embraces her children. Celie hands her a cardigan that she made. HARPO AND SO"
+    },
+    {
+      "number": 134,
+      "heading": "INT. MISTER'S HOUSE - LIVING ROOM - DAY",
+      "characters": [
+        "NETTIE",
+        "MISTER"
+      ],
+      "dialogues": [
+        {
+          "character": "NETTIE",
+          "parenthetical": "(V.O.)",
+          "text": "“Dear Celie, The letters you’ve sent fill my days with joy. I know it must have been hard finding me."
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "(V.O.) (CONT'D)",
+          "text": "88."
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "I told you not to touch the mail?!"
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "BLACK HANDS open Nettie’s latest letter. While we hear her voice, we see sharecroppers picking indigo in Mi ster’s field. We’ve had to relocate several times over the years. I’ve decided it’s best that me and the children make our way back home to you. The British have seized the East. Nationalist m"
+    },
+    {
+      "number": 135,
+      "heading": "EXT. MISTER'S HOUSE - FRONT PORCH - MINUTES LATER",
+      "characters": [
+        "SHUG"
+      ],
+      "dialogues": [
+        {
+          "character": "SHUG",
+          "parenthetical": "(O.C.)",
+          "text": "I’se home!"
+        }
+      ],
+      "actionPreview": "FOCUS ON: A STRAIGHT RAZOR. Celie sharpens it against a leather strap. Her hand is steady. Her eyes are cold. She continues to sharpen the straight razor as... Mister walks onto th e porch, WHISTLING. His lower face is covered in shaving cream. He sits in a chair and leans his head back. Closes his "
+    },
+    {
+      "number": 136,
+      "heading": "EXT. MISTER'S HOUSE - DAY",
+      "characters": [
+        "NETTIE",
+        "SHUG",
+        "GRADY"
+      ],
+      "dialogues": [
+        {
+          "character": "NETTIE",
+          "parenthetical": "(V.O.) (CONT'D)",
+          "text": "88."
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "The minute after we gots married,"
+        },
+        {
+          "character": "GRADY",
+          "parenthetical": "",
+          "text": "Shug talks about y’all so much, I feel like we already kin."
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "Miss Celie, us married ladies now."
+        }
+      ],
+      "actionPreview": "A yellow convertible pulls up to the house. Shug hops out with her new husband GRADY, 40-something, debonair and rich. They walk up to the porch where Celie and Mister are. 89. Grady say, “honey, what you want for your honeymoon?” I told him two things: a new car and a drive to see my two favorite p"
+    },
+    {
+      "number": 137,
+      "heading": "EXT. MISTER'S HOUSE - LATER THAT DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Miss Millie speeds down the road in her automobile with Sofia in the passenger seat. She drives to Mister’s house. Then breaks. Then backs up. She’s finally letting Sofia be with her family. Sofia gets out and slowly walks to the door. She wears the card igan that Celie made for her. She looks worse"
+    },
+    {
+      "number": 138,
+      "heading": "INT. MISTER'S HOUSE - DINING ROOM - LATER THAT DAY",
+      "characters": [
+        "GRADY",
+        "HARPO",
+        "SHUG",
+        "MISTER",
+        "CELIE",
+        "OL MISTER",
+        "OL MISTE R",
+        "SOFIA",
+        "SQUEAK",
+        "SQU EAK"
+      ],
+      "dialogues": [
+        {
+          "character": "GRADY",
+          "parenthetical": "",
+          "text": "That was a fine supper, Miss Celie. I’m fuller than a tick on a big dog."
+        },
+        {
+          "character": "HARPO",
+          "parenthetical": "",
+          "text": "Sofia, we glad you finally home."
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "It’s come time for me to tell y’all, Me and Grady can’t stay. We need to be on the road ‘fore dusk."
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "Y’all just got here."
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "I know. But Grady got to get back to work tomorrow. Also... we takin’"
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "Come ‘gain?"
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "Celie coming to Memphis with us."
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "Like hell! I’d die ‘fore I let that happen."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Good. That’s just the going away present I been needin’."
+        },
+        {
+          "character": "OL MISTER",
+          "parenthetical": "",
+          "text": "Woah, son. Handle your woman. She found her mouth-"
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "She just bein’ stupid. What’s gotten into you, dummy?"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "I done had enough of you! That’s what’s gotten into me. It's time for me to get free from you and enter Creation."
+        },
+        {
+          "character": "OL MISTE R",
+          "parenthetical": "",
+          "text": "You ain’t gon’ be talkin’ to my boy that way in my house! 90."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Maybe if he hadn’t been your boy he mighta turned out an inch of a man!"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "(CONT’D) (to Mister)"
+        },
+        {
+          "character": "GRADY",
+          "parenthetical": "",
+          "text": "I better start loading the luggage."
+        },
+        {
+          "character": "HARPO",
+          "parenthetical": "",
+          "text": "Miss Celie, it’s Easter. Let’s try and be civil-"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Your daddy made my life hell on earth! He ain’t nothin’ but a sack of dead horse shit and horse shit belong in t he ground."
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "(still laughing)"
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "(CONT’D)",
+          "text": "92."
+        },
+        {
+          "character": "OL MISTER",
+          "parenthetical": "",
+          "text": "The women at this table done lost they’ze mind."
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "Jus’ hush, you old toothless goat."
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "(to Celie)"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Did I ever ask you for anything!?"
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "Come on, Miss Celie. Let’s go now."
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "(while eating)"
+        },
+        {
+          "character": "HARPO",
+          "parenthetical": "",
+          "text": "Where you going Squeak?"
+        },
+        {
+          "character": "SQUEAK",
+          "parenthetical": "",
+          "text": "I wants to go to Memphis too."
+        },
+        {
+          "character": "HARPO",
+          "parenthetical": "",
+          "text": "And do what?"
+        },
+        {
+          "character": "SQU EAK",
+          "parenthetical": "",
+          "text": "I wants to be a singer like Shug."
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "(CONT’D)",
+          "text": "92."
+        },
+        {
+          "character": "HARPO",
+          "parenthetical": "",
+          "text": "So you just leavin’ me? SQUEAK?"
+        },
+        {
+          "character": "SQUEAK",
+          "parenthetical": "",
+          "text": "My name ain’t Squeak. It’s Mary"
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "Old Sofia home now. There gon’ be some changes made!"
+        }
+      ],
+      "actionPreview": "Easter dinner. Mister and Ol Mister sit at the heads of a long table. Around the table sits Harpo, Grady, Sofia, Squeak, Celie, and Shug. Sofia sits with her head hung low. Grady releases a belly laugh! Celie says no thing. She hasn’t been herself since Mister hit her and a rage is simmering. You su"
+    },
+    {
+      "number": 139,
+      "heading": "EXT. MISTER’S HOUSE - CONTINUOUS",
+      "characters": [
+        "MISTER",
+        "CELIE"
+      ],
+      "dialogues": [
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "(to Celie)"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Until you do right by me... everything you think about gon’ crumble!"
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "You’ze black, poor, you ugly, you a woman. I shoulda kept you under my shoe like the roach you is."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "The jail you planned for me is the one you’ll rot in. (no malice but insight)"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "(CONT’D) I may be poor. I may be black. I may even be ugly. But I’m here!"
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "(calling after her)"
+        }
+      ],
+      "actionPreview": "Grady puts the last of the luggage in the trunk . Celie, Shug and Squeak are getting in the car when Mister approaches. You’ll be back! Shug got talent. And looks. All you fit to do is clean her slop-jar and cook her food. You not even that good a cook. Mister is just about to grab Celie, when she t"
+    },
+    {
+      "number": 140,
+      "heading": "EXT. TREE-LINED STREET - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Grady drives away from Misters House. Celie fon dly remembers the good times with her sister Nettie."
+    },
+    {
+      "number": 141,
+      "heading": "EXT. GEORGIA ROAD TO HIGHWAY - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Grady’s car turns off of a dirt road and onto a paved highway."
+    },
+    {
+      "number": 142,
+      "heading": "EXT. TENNESSEE ROAD - MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "They pass a road sign that reads: “WELCOME TO MEMPHIS.” CAMERA FOCUSES on Celie’s face. We see the reflection of lights, buildings, and steamboats on her beautiful skin. This is her first time in a major city."
+    },
+    {
+      "number": 143,
+      "heading": "EXT. SHU G’S HOUSE - MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Grady pulls up to a Victorian house with a well-manicured garden."
+    },
+    {
+      "number": 144,
+      "heading": "INT. SHUG’S HOUSE - LIVING ROOM - MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Shug and Grady give Celie and Squeak a tour of the huge and beautiful home. The ladies are speechless. 94. 95."
+    },
+    {
+      "number": 145,
+      "heading": "INT. SHUG’S HOUSE - CELIE’S ROOM - MORNING",
+      "characters": [
+        "SHUG",
+        "CELIE"
+      ],
+      "dialogues": [
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "If you ask me, this room gets the best sunlight."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Ain’t never had my own room before."
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "Then just act natural."
+        }
+      ],
+      "actionPreview": "Shug shows Celie her room. It is breathtaking. Afraid I won’t know how to act. Celie opens the shades. A glaze of sunlight falls over her. THEY HOLD HANDS AS THEY WATCH THE DAWN. The sun shines!"
+    },
+    {
+      "number": 146,
+      "heading": "EXT. MISTER'S LAND - INDIGO FIELDS - DAY",
+      "characters": [
+        "SHARECROPPER",
+        "SHUG",
+        "CELIE"
+      ],
+      "dialogues": [
+        {
+          "character": "SHARECROPPER",
+          "parenthetical": "",
+          "text": "Boss, you might wanna come look. SERIES OF SHOTS: -Mister looks at leaves in his crop. All are chewed up. -He"
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "Girl, what you doin’ still up in this room? We got company."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "I’m almost done."
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "You been workin’ on that quilt since before I even met you. It can wait. Come on!"
+        }
+      ],
+      "actionPreview": "The s un is scorching the earth. SHARECROPPERS are working in the fields, cutting Mister’s crop, and keeping their heads cool with straw hats and wet rags around their necks. A SHARECROPPER EXAMINES A LEAF. IT LOOKS CHEWED. He looks at more leaves. They’re all chewed. He runs to Mister. moves furthe"
+    },
+    {
+      "number": 147,
+      "heading": "INT. SHUG’S HOUSE - STAIRWAY - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "She guides Celie downstairs, covering her eyes and into..."
+    },
+    {
+      "number": 148,
+      "heading": "INT. SHUG’S HOUSE - PARLOR ROOM - D AY",
+      "characters": [
+        "EVERYONE",
+        "SQUEAK",
+        "SHUG",
+        "CELIE"
+      ],
+      "dialogues": [
+        {
+          "character": "EVERYONE",
+          "parenthetical": "",
+          "text": "Surprise!"
+        },
+        {
+          "character": "SQUEAK",
+          "parenthetical": "",
+          "text": "Happy Birthday, Miss Celie."
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "Here. This that little somethin’ you scra tched out of my head."
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "(CONT’D)",
+          "text": "97."
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "SQUEAK",
+          "parenthetical": "",
+          "text": "You got a call."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Who is it?"
+        },
+        {
+          "character": "SQUEAK",
+          "parenthetical": "",
+          "text": "Don’t know but sounds urgent. TIGHT SHOT ON CELIE taking a phone"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Evening. This Celie."
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "(CONT’D)",
+          "text": "97."
+        }
+      ],
+      "actionPreview": "...a room where dozens of Shug and Grady’s friends (affluent African Americans in Memphis) await Celie. Shug removes her hand from Celie’s face REVEALING THE CROWD OF PEOPLE AND A BIRTHDAY CAKE that Squeak holds. Celie is elated! She blows out her candles and folks CHEER! Shug presents her with a gi"
+    },
+    {
+      "number": 149,
+      "heading": "EXT. OUTSIDE CHURCH ON A HILL - DAY",
+      "characters": [
+        "REVEREND AVERY"
+      ],
+      "dialogues": [
+        {
+          "character": "REVEREND AVERY",
+          "parenthetical": "(O.C.)",
+          "text": "Oh God, we thank you for the life of Mr. Alphonso."
+        }
+      ],
+      "actionPreview": "We see a WIDE SHOT of the facade as we hear Reverend Avery’s booming voice!"
+    },
+    {
+      "number": 150,
+      "heading": "INT. CHURCH ON A HILL - CONTINUOUS",
+      "characters": [
+        "REVEREND AVERY",
+        "SOFIA"
+      ],
+      "dialogues": [
+        {
+          "character": "REVEREND AVERY",
+          "parenthetical": "",
+          "text": "Bible say we ought to weep when a child is born and rej oice when a body goes to the dust. Because in death there is everlasting life for those who are pure in heart."
+        },
+        {
+          "character": "REVEREND AVERY",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "(under her breath)"
+        },
+        {
+          "character": "REVEREND AVERY",
+          "parenthetical": "",
+          "text": "Sho. He could be difficult and stubborn."
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "Now"
+        },
+        {
+          "character": "REVEREND AVERY",
+          "parenthetical": "",
+          "text": "I’d be a lie, if I said I was certain Mr. Alfonso made it to The"
+        },
+        {
+          "character": "REVEREND AVERY",
+          "parenthetical": "",
+          "text": "(CONT’D) ...God will be hard-pressed to show"
+        },
+        {
+          "character": "REVEREND AVERY",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "We are at Alfonso’s homegoing. Reverend Avery is standing behind a podium giving the eulogy; handkerchief in hand. As he speaks, the CAMERA FINDS Celie sitting on a church pew in between Sofia and Shug. We get the sense that the ladies are there to support her. Shug holds her hand. Mary Ellen, Alfon"
+    },
+    {
+      "number": 151,
+      "heading": "EXT. OUTSIDE CHURCH ON A HILL",
+      "characters": [
+        "SOFIA",
+        "CELIE"
+      ],
+      "dialogues": [
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "(to Shug)"
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Y’all go ‘head. I’ll be there soon."
+        }
+      ],
+      "actionPreview": "- FRONT STEPS - DAY People gather. A hearse is parked on the lawn. Celie and Mary Ellen embrace. She whispers something in Celie’s ear as... Your pa sho know he can preach. But all that talk of hell got me thirsty! Let’s us mosey to the juke for a drank. Shug looks back into the church through the f"
+    },
+    {
+      "number": 152,
+      "heading": "EXT. THE GENERAL STORE - DAY (A WEEK LATER)",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Back in town, a horse driven hearse carrying the casket of Alfonso passes before Celie and Mary Ellen - Alfonso’s widow. The women wear all black."
+    },
+    {
+      "number": 153,
+      "heading": "INT. THE GENERAL STORE - MINUTES LATER",
+      "characters": [
+        "CELIE",
+        "MARY ELLEN",
+        "OF THE WINDOW GLASS."
+      ],
+      "dialogues": [
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "What’s this for?"
+        },
+        {
+          "character": "MARY ELLEN",
+          "parenthetical": "",
+          "text": "It’s for you of course. T he place is yours."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "He didn’t leave it to you?"
+        },
+        {
+          "character": "MARY ELLEN",
+          "parenthetical": "",
+          "text": "No, ma’am. It what’in his to give. (then)"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "We wasn’t exactly on speaking terms..."
+        },
+        {
+          "character": "MARY ELLEN",
+          "parenthetical": "",
+          "text": "I see. Well. When I went to settle"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "But Alfonso was my pa."
+        },
+        {
+          "character": "MARY ELLEN",
+          "parenthetical": "",
+          "text": "No, ma’am . I read the papers myself. The one your real pa drew up. Long before your maw met"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "I don’t believe it. He... Alfonso whatin’t my real pa. I had a pa and a mamma that loved me. Sweet"
+        },
+        {
+          "character": "MARY ELLEN",
+          "parenthetical": "",
+          "text": "I hope this place brings you and your sister comfort."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Ma, I got our home back. Now what’s I gon’ do?"
+        }
+      ],
+      "actionPreview": "Celie peruses the store. It’s dusty and unkempt. Mary Ellen comes downstairs with a suitcase. She hands Celie keys. You didn’t know? Alfonso’s will, I found out from the lawyer, this wasn’t his land nor his sto’. Your pa built this place and when he died, the place went to your ma- Alfonso. Your rea"
+    },
+    {
+      "number": 154,
+      "heading": "INT. CELIE’S FANCY PANTS SHOP - DAY (MONTHS LATER)",
+      "characters": [
+        "CELIE SINGS",
+        "CELIE",
+        "SEAMSTRESSES",
+        "SOFIA",
+        "SHUG",
+        "SQUEAK"
+      ],
+      "dialogues": [
+        {
+          "character": "CELIE SINGS",
+          "parenthetical": "",
+          "text": "16. “MISS CELIE’S PANTS”"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "All I need's a needle and a spool of thread. Got about a million patterns in my head."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "SEAMSTRESSES",
+          "parenthetical": "",
+          "text": "Gabardine, velveteen, satin, or lace. Buttons and bows all over the place."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Styles that make you feel like a queen."
+        },
+        {
+          "character": "SEAMSTRESSES",
+          "parenthetical": "",
+          "text": "That woman's a wiz with the sewing machine!"
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "Lookit here, get out my way."
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "Girl, you swept out the mem'ries,"
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "In this big ol' st ore!"
+        },
+        {
+          "character": "SQUEAK",
+          "parenthetical": "",
+          "text": "Got your sewing machines."
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "Mirrors shiny clean."
+        },
+        {
+          "character": "SQUEAK",
+          "parenthetical": "",
+          "text": "And a fittin' room"
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "That man might have."
+        },
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "And brought you to tears, made you believe you’re not strong."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "But look . . . I said, look . . ."
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "We all lookin’ honey."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Look who's wearin’ the p ants"
+        }
+      ],
+      "actionPreview": "GRAND OPENING. A small crowd has gathered to celebrate the opening of Celie’s store. With the women in the shop, Celie slides across the floor hanging onto a dress rack with wheels. She slides by several ladies who hop out of dressing rooms wearing fabulous pants! They all dance in sync! All the lad"
+    },
+    {
+      "number": 155,
+      "heading": "INT. MISS CELIE’S FANCY PANTS STORE - DRESSING ROOMS",
+      "characters": [
+        "CELIE",
+        "ONE"
+      ],
+      "dialogues": [
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "NOW!"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Who dat say. Who that say."
+        },
+        {
+          "character": "ONE",
+          "parenthetical": "",
+          "text": "Dwee-Doo-N-Dow, Dwee-Doo-N-"
+        }
+      ],
+      "actionPreview": "Women roll in on the back of dress form dummies. Some Lindy Hop and tap dance! A few leap in the air from trampolines! SQUEAK/SOFIA/SHUG/EVERYONE Who dat? Who dat say? Who dat say? Who dat? Who dat say? Who dat say? Who dat? CELIE/HARPO/SQUEAK/SOFIA/SHUG/EVERYONE Who dat say? What you say? In Miss C"
+    },
+    {
+      "number": 156,
+      "heading": "INT. HARPO'S JUKE JOINT - NIGHT",
+      "characters": [
+        "SOFIA",
+        "HARPO",
+        "MISTER"
+      ],
+      "dialogues": [
+        {
+          "character": "SOFIA",
+          "parenthetical": "",
+          "text": "(to Harpo)"
+        },
+        {
+          "character": "HARPO",
+          "parenthetical": "",
+          "text": "I know, I’ll take care of it."
+        },
+        {
+          "character": "HARPO",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "Y’all don’t know nothin ‘bout real music no how! I used to break hearts back in my day! Women used to toss off theyz drawers. (to Harpo)"
+        }
+      ],
+      "actionPreview": "Sofia clears tables at the juke. Harpo is counting money at the bar. A band plays. Very few people slow dance. Sofia goes behind the bar to put dirty jars in sud water. Harpo sees how beautiful she is and dances seductively with her to the music. She refuses him at first but quickly gives in. Soon, "
+    },
+    {
+      "number": 157,
+      "heading": "EXT. HARPO’S JUKE - NIGHT",
+      "characters": [
+        "MISTER",
+        "HARPO"
+      ],
+      "dialogues": [
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "Had my doubts. ‘Bout you buildin’ that juke, boy. But you done good."
+        },
+        {
+          "character": "HARPO",
+          "parenthetical": "",
+          "text": "You alright, pa?"
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "‘Course."
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "IT’S RAINING. Harpo he lps his father home. Harpo has NEVER heard a compliment from his father. Mister shoves him away. Why you got your arm ‘round me like I’m old? I can get home myself. Harpo stops, watches his father walk up the road in the rain."
+    },
+    {
+      "number": 158,
+      "heading": "EXT. MISTER’S LAND - INDIGO FIELDS - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "It’s pitch black . LIGHTNING FLASHES. Followed by THUNDER! It JOLTS Mister on his walk home. He tries to cover his ears from the thunder and shield his eyes from the lightning. It’s as if they are yelling at him. The rain falls hard as rocks. He tries to run but trips and falls. He balls up into his"
+    },
+    {
+      "number": 159,
+      "heading": "EXT. MISTER'S LAND - INDIGO FIELDS - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Exhausted, Mister passes out on the wet muddy earth."
+    },
+    {
+      "number": 160,
+      "heading": "EXT. MISTER’S LAND - INDIGO FIELDS - THE NEXT MORNING",
+      "characters": [
+        "POSTMAN",
+        "MISTER"
+      ],
+      "dialogues": [
+        {
+          "character": "POSTMAN",
+          "parenthetical": "",
+          "text": "You alright, Albert?"
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "Yes, sir. Fell asleep lookin’ at the stars is all."
+        },
+        {
+          "character": "POSTMAN",
+          "parenthetical": "",
+          "text": "You take care of yourself."
+        }
+      ],
+      "actionPreview": "He is awaken by the Postman (who is quite old now). Mister realizes he slept on the ground all night. The Postman helps him up. Mister stands, embarrassed. Mister dusts h imself off as the postman hands him mail. Mister does not reply, he sorts through the mail. One in particular catches his eye. CL"
+    },
+    {
+      "number": 161,
+      "heading": "EXT. MAIN STREET - OUTSIDE IMMIGRATION OFFICE - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Mister walks up the steps into the building. He wears an old, worn-out suit."
+    },
+    {
+      "number": 162,
+      "heading": "INT. IMMIGRATION OFFICE - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "He crosses a large foyer and goes up the spiral staircase."
+    },
+    {
+      "number": 163,
+      "heading": "INT. IMMIGRATION OFFICE - WAITING ROOM - DAY",
+      "characters": [
+        "IMMIGRATION OFFICER"
+      ],
+      "dialogues": [
+        {
+          "character": "IMMIGRATION OFFICER",
+          "parenthetical": "(O.S.)",
+          "text": "Mr. Johnson? 106."
+        }
+      ],
+      "actionPreview": "H e waits outside the office. He’s nervous and feels out of place. A voice startles him. 107."
+    },
+    {
+      "number": 164,
+      "heading": "INT. IMMIGRATION OFFICE - DAY",
+      "characters": [
+        "IMMIGRATION OFFICER",
+        "MISTER"
+      ],
+      "dialogues": [
+        {
+          "character": "IMMIGRATION OFFICER",
+          "parenthetical": "",
+          "text": "Even if we could find them, which I doubt, it’ll cost you hundreds to get them here from Africa."
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "I see. Well. I thanks ya."
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "IMMIGRATION OFFICER",
+          "parenthetical": "",
+          "text": "If I were you sir, I’d put my money to better use."
+        }
+      ],
+      "actionPreview": "Mister sits on the other side of the desk from AN IMMIGRATION OFFICER, 40s, white and male. We start mid-scene: He hands Mister back the letters. Mister starts to leave. Then a thought strikes him. Say, I gots some land . I could sell some of it and get the money. That’ll help wouldn’t it? The Offic"
+    },
+    {
+      "number": 165,
+      "heading": "INT. CELIE’S FANCY PANTS SHOP - NIGHT",
+      "characters": [
+        "CELIE"
+      ],
+      "dialogues": [
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "We’re closed."
+        }
+      ],
+      "actionPreview": "Celie is sweeping when suddenly, THERE IS A KNOCK. She has her back to the door... The stranger goes away. She continues to sweep. A beat, then... the stranger r eturns. Knocks again. Celie gets a look at the person. They look familiar. She puts down her broom and cracks opens the door."
+    },
+    {
+      "number": 166,
+      "heading": "INT. CELIE'S FANCY PANTS SHOP - DOORWAY - NIGHT",
+      "characters": [
+        "CELIE",
+        "MISTER"
+      ],
+      "dialogues": [
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Albert?"
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "Eve’nin’. Hate to bother..."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Something wrong? 107."
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "Naw. Uh. This gon’ sound odd but... I come to try on some pants. I can come back another time if it’s too much trouble."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Come on in."
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "Obliged."
+        }
+      ],
+      "actionPreview": "108. He can’t find the words. He hands Celie a box. Inside the box, there are: A FEW NEW LETTERS FROM NETTIE, that SEPIA PHOTO OF SHUG and THE TOY RATTLE. She looks at the items and starts to turn away. Celie thinks, looks at the box, she gives in."
+    },
+    {
+      "number": 167,
+      "heading": "INT. CELIE'S FANCY PANTS SHOP - CONTINUOUS",
+      "characters": [
+        "CELIE",
+        "MISTER"
+      ],
+      "dialogues": [
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "You’ll need to take off your coat."
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "You... you lookin’ nice... if I may say. Not just for your age neither."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "You see some fabric you like?"
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "Why don’t I just get the one that nobody ever buys? Help out your business some. MINUTES LATER:"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "You sure you want to be seen in those? They’re starting to make me itch and I ain’t even wearing ‘em."
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "I don’t mind. Might as well give folks somethin to laugh about. (imi tating them) “Y’all see Mister. I think he done took a job as a circus clown on ‘count of his new bloomers.”"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Forgive me."
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "Worth it to see you smile."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "I best be closin’ the shop. It’s getting late."
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "That it is."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Thank ya."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "(CONT’D) I’m throwing my annual Easter feast come Sunday. You’re more than welcome to come by. 109."
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "I’d like that. (beat)"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Uh. Let’s us just be friends."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "Mister enters the store with a box of materials that belong to Celie. He takes off his hat. Rubs his hand over his head as a means to brush his hair. We’ve never seen this side of him. He’s nervous. She is confused by this. She retrieves her tape measure. He does. She wraps her tape measure around h"
+    },
+    {
+      "number": 168,
+      "heading": "EXT. CELIE’S FANCY PANTS SHOP - NIGHT",
+      "characters": [
+        "CELIE"
+      ],
+      "dialogues": [
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Got my house, it still keep the cold out. Got my chair when m y body can't hold out. Got my hands doing good like they s'posed to. Showing my heart to the folks that I'm close to."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "(CONT’D) (looks up, sings to God)"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "Celie sits on a chair on the porch near the store entrance. The moon is so bright. Celie sings her heart out! Got my eyes though they don't see as far now. They see more 'bout how things really are now! Celie looks up the road. 110. 111. I'm gonna take a deep breath. Gonna hold my head up. Gonna put"
+    },
+    {
+      "number": 169,
+      "heading": "EXT. MISTER’S HOUSE - MAIL BOX - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Mister opens the mailbox, finds an invitation to Celie’s Annual Easter Picnic."
+    },
+    {
+      "number": 170,
+      "heading": "EXT. ROAD NEAR CHURCH ON A HILL - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "It’s a few days before Celie’s Easter Feast. Shug drives slowly toward Celie’s house."
+    },
+    {
+      "number": 171,
+      "heading": "INT. SHUG’S AUTOMOBILE - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "She is fiddling with the radio, trying to find a tune to soothe her soul when she hears familiar strains coming from a piano in the distance. She stops her car."
+    },
+    {
+      "number": 172,
+      "heading": "EXT. OUTSIDE CHURCH ON THE HILL - CONTINUOUS",
+      "characters": [
+        "SHUG",
+        "SPEAK MY LORD...",
+        "SPEAK TO ME..."
+      ],
+      "dialogues": [
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "Oh, pa. That used to be our song."
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "She realizes that she is just a stone’s throw from her father’s church. She gets out of the car, and follows after the glorious melody from the piano. The song is familiar. It’s the signature song she and her father used to sing when she was a girl. She smiles, hearing the piano. She cl oses her eye"
+    },
+    {
+      "number": 173,
+      "heading": "EXT. OUTSIDE CHURCH ON THE HILL - CONTINUOUS",
+      "characters": [
+        "SHUG",
+        "SPEAK TO ME..."
+      ],
+      "dialogues": [
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "I LOVE YOU, LORD..."
+        },
+        {
+          "character": "SPEAK TO ME...",
+          "parenthetical": "",
+          "text": "Reverend Avery recognizes his daughter’s voice. He STOPS playing but he doesn’t turn around. She walks to him and si ts beside him at the piano. She sings. He plays."
+        },
+        {
+          "character": "SHUG",
+          "parenthetical": "",
+          "text": "(CONT’D) CAN’T SLEEP AT NIGHT..."
+        }
+      ],
+      "actionPreview": "Shug stops at the threshold when she sees her father sitting at the piano. His back is to her. She hesitates then enters. They sing together as tears fall from Shug’s eyes. 112. 113. SHUG & REVEREND AVERY AND YOU WONDER WHY. MAYBE GOD IS TRYIN’ TO TELL YOU SOMETHIN’ RIGHT NOW. OH YES! She lays her h"
+    },
+    {
+      "number": 174,
+      "heading": "EXT. THE GREAT ANGEL OAK - EASTER DAY",
+      "characters": [
+        "CELIE",
+        "MISTER",
+        "NETTIE"
+      ],
+      "dialogues": [
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "I can’t believe you wore those."
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "Thought it’d help scare away some of the flies."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "(looking to the distance)"
+        },
+        {
+          "character": "MISTER",
+          "parenthetical": "",
+          "text": "I invited a few folks. Hope that’s alright."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "‘Course. Everyone’s welcome. (to"
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "",
+          "text": "Hey, sista! Whatcha gon' do!?"
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Sho nuff sun gon’ shine."
+        }
+      ],
+      "actionPreview": "There is an extremely large and round table that surrounds the ancient tree. The very tree where she and Nettie frequented when they were young. THE TABLE IS COVERED I N THE PHENOMENAL QUILT THAT CELIE HAS BEEN SEWING THROUGHOUT THE FILM. SERIES OF QUICK CUTS: People arrive. They all greet Celie as "
+    },
+    {
+      "number": 175,
+      "heading": "EXT. THE GREA T ANGEL OAK - CONTINUOUS",
+      "characters": [
+        "CELIE",
+        "NETTIE",
+        "ADAM",
+        "ABENA",
+        "HER GRANDCHILDREN",
+        "EVERYONE",
+        "EVERY ONE",
+        "SKIES FADE TO BLACK."
+      ],
+      "dialogues": [
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "My Nettie."
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "",
+          "text": "Celie."
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ADAM",
+          "parenthetical": "",
+          "text": "This my wife, Abena. ABENA walks to Celie and kisses her hand."
+        },
+        {
+          "character": "ABENA",
+          "parenthetical": "",
+          "text": "(West African accent)"
+        },
+        {
+          "character": "HER GRANDCHILDREN",
+          "parenthetical": "",
+          "text": "We pleased! / We pleased to meet you, Nana !"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "My family home! THE FEASTING TABLE:"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Dear God, dear stars, dear trees, dear sky. Dear peoples, dear everything, dear God."
+        },
+        {
+          "character": "EVERYONE",
+          "parenthetical": "",
+          "text": "Like the sun"
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Your heart beat"
+        },
+        {
+          "character": "EVERYONE",
+          "parenthetical": "",
+          "text": "When we share love."
+        },
+        {
+          "character": "EVERY ONE",
+          "parenthetical": "",
+          "text": "It takes a grain of love, to make a mighty tree. Even the smallest voice, can make a harmony. Like a drop of water, keep the river high."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Grain of love. Mighty tree."
+        },
+        {
+          "character": "EVERYONE",
+          "parenthetical": "",
+          "text": "Like a blade of corn. Like a honeybee. Like a waterfall."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "Oh a blade of corn. Like a honeybee. All a part of me, yeah."
+        },
+        {
+          "character": "CELIE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "NETTIE",
+          "parenthetical": "",
+          "text": "I think this is the youngest us ever felt. Yeah."
+        },
+        {
+          "character": "SKIES FADE TO BLACK.",
+          "parenthetical": "",
+          "text": "117."
+        }
+      ],
+      "actionPreview": "NETTIE & CELIE Gonna be grown ladies of the marryin’ kind. Gon’ be alright. Gon’ be alright. They run into each other’s arms! They are crying, overcome with earth-shattering joy. Everyone around the table has followed Celie and now stand a few feet away, watching. When Celie and Nettie break apart, "
+    }
+  ]
+}

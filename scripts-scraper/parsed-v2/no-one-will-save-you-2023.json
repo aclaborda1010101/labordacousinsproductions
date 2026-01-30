@@ -1,0 +1,2193 @@
+{
+  "slug": "no-one-will-save-you-2023",
+  "title": "No One Will Save You",
+  "parsedWith": "v2",
+  "parsedAt": "2026-01-29T22:09:15.141Z",
+  "stats": {
+    "scenes": 127,
+    "dialogues": 154,
+    "characters": 143
+  },
+  "characters": [
+    {
+      "name": "MAN",
+      "dialogueLines": 3,
+      "totalWords": 16
+    },
+    {
+      "name": "WALTZ",
+      "dialogueLines": 2,
+      "totalWords": 7
+    },
+    {
+      "name": "WOMAN",
+      "dialogueLines": 2,
+      "totalWords": 5
+    },
+    {
+      "name": "NOISE",
+      "dialogueLines": 2,
+      "totalWords": 4
+    },
+    {
+      "name": "SOUND",
+      "dialogueLines": 2,
+      "totalWords": 2
+    },
+    {
+      "name": "CLOSED",
+      "dialogueLines": 2,
+      "totalWords": 4
+    },
+    {
+      "name": "TRUCK",
+      "dialogueLines": 2,
+      "totalWords": 12
+    },
+    {
+      "name": "NOT",
+      "dialogueLines": 2,
+      "totalWords": 3
+    },
+    {
+      "name": "MAUDE",
+      "dialogueLines": 2,
+      "totalWords": 2
+    },
+    {
+      "name": "DRIVER",
+      "dialogueLines": 2,
+      "totalWords": 3
+    },
+    {
+      "name": "MAILMAN",
+      "dialogueLines": 1,
+      "totalWords": 16
+    },
+    {
+      "name": "BROWN BOX",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "HALLOWEEN VILLAGE BUILDING",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "STRANGE BURNED CIRCLE",
+      "dialogueLines": 1,
+      "totalWords": 8
+    },
+    {
+      "name": "SCRATCH",
+      "dialogueLines": 1,
+      "totalWords": 3
+    },
+    {
+      "name": "KID",
+      "dialogueLines": 1,
+      "totalWords": 11
+    },
+    {
+      "name": "ALL OF THE LIGHTS TURN ON.",
+      "dialogueLines": 1,
+      "totalWords": 12
+    },
+    {
+      "name": "OFF",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "THE FRONT DOOR OPENING.",
+      "dialogueLines": 1,
+      "totalWords": 4
+    },
+    {
+      "name": "FEET",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "SLAMMED",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "GASPS",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "CURLING IRON",
+      "dialogueLines": 1,
+      "totalWords": 9
+    },
+    {
+      "name": "SHUTS",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "NOT HUMAN",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "DROPS",
+      "dialogueLines": 1,
+      "totalWords": 3
+    },
+    {
+      "name": "THE CORD.",
+      "dialogueLines": 1,
+      "totalWords": 2
+    },
+    {
+      "name": "ALIEN",
+      "dialogueLines": 1,
+      "totalWords": 4
+    },
+    {
+      "name": "GRUNTS",
+      "dialogueLines": 1,
+      "totalWords": 2
+    },
+    {
+      "name": "RUNNING",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "TWO GREY LEGS",
+      "dialogueLines": 1,
+      "totalWords": 4
+    },
+    {
+      "name": "RUNS",
+      "dialogueLines": 1,
+      "totalWords": 3
+    },
+    {
+      "name": "ALL THE LIGHTS TURN ON",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "THE TWO GREY LEGS",
+      "dialogueLines": 1,
+      "totalWords": 7
+    },
+    {
+      "name": "NUTS",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "BURNS",
+      "dialogueLines": 1,
+      "totalWords": 2
+    },
+    {
+      "name": "SMALL ALIEN HAND",
+      "dialogueLines": 1,
+      "totalWords": 9
+    },
+    {
+      "name": "TOES",
+      "dialogueLines": 1,
+      "totalWords": 2
+    },
+    {
+      "name": "KNOCKING",
+      "dialogueLines": 1,
+      "totalWords": 8
+    },
+    {
+      "name": "TURN ON",
+      "dialogueLines": 1,
+      "totalWords": 6
+    },
+    {
+      "name": "EXPLODE",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "BLASTS OFF ITS HINGES",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "SHE GETS DRAGGED BACKWARDS",
+      "dialogueLines": 1,
+      "totalWords": 4
+    },
+    {
+      "name": "JERKED",
+      "dialogueLines": 1,
+      "totalWords": 3
+    },
+    {
+      "name": "SPUN",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "SCREAMING",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "DEAD.",
+      "dialogueLines": 1,
+      "totalWords": 6
+    },
+    {
+      "name": "LIGHTBULB",
+      "dialogueLines": 1,
+      "totalWords": 2
+    },
+    {
+      "name": "GREY",
+      "dialogueLines": 1,
+      "totalWords": 3
+    },
+    {
+      "name": "BLOOD",
+      "dialogueLines": 1,
+      "totalWords": 4
+    }
+  ],
+  "scenes": [
+    {
+      "number": 1,
+      "heading": "INT. BATHROOM - MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "BRYNN practices smiling in the mirror. She’s not particularly convincing. Adds a wave for good measure. Trying to look casual and pleasant- But just looking nervous and uncomfortable. Tries again before frowning and fixing her hair, still in her nightgown."
+    },
+    {
+      "number": 2,
+      "heading": "INT. BEDROOM - MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Brynn stares at two dress options. She made them both. After some debate, she picks one. Then changes her mind and goes with the other."
+    },
+    {
+      "number": 3,
+      "heading": "INT. THE FAMILY ROOM - MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "It’s clear that Brynn lives here alone. In her early twenties. She heads downstairs into her immaculately designed home. It’s decorated cutely with Halloween trinkets. She passes a LeMax halloween village of different spooky buildings which is just a liiiiittle too big. She turns their lights on and"
+    },
+    {
+      "number": 4,
+      "heading": "INT. BASEMENT - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "This is where she works. Reams of fabric. Drawers of buttons. Sewing machine. A list of her Etsy orders. Brynn does a little more work on a dress. The work makes her happy. 2. She finishes off a dress and carefully folds it. Wraps a bow around it. Like it was the most special thing in the world. Han"
+    },
+    {
+      "number": 5,
+      "heading": "EXT. FRONT YARD - DAY",
+      "characters": [
+        "MAILMAN",
+        "BROWN BOX"
+      ],
+      "dialogues": [
+        {
+          "character": "MAILMAN",
+          "parenthetical": "",
+          "text": "can’t see her when he pulls up to her mailbox at the end of her driveway."
+        },
+        {
+          "character": "BROWN BOX",
+          "parenthetical": "",
+          "text": "."
+        }
+      ],
+      "actionPreview": "Brynn writes a letter under a tree, lounging against the trunk. Dear Maude, Her home is very well kept. Surrounded by thick woods. There are garden boxes of vegetables by a small shed. Brynn looks up from her letter when she hears something. Turns towards the street. The sound of a car. She smiles. "
+    },
+    {
+      "number": 6,
+      "heading": "INT. THE FAMILY ROOM - MOMENTS LATER",
+      "characters": [
+        "HALLOWEEN VILLAGE BUILDING"
+      ],
+      "dialogues": [
+        {
+          "character": "HALLOWEEN VILLAGE BUILDING",
+          "parenthetical": "",
+          "text": "."
+        }
+      ],
+      "actionPreview": "She carefully cuts open the box with scissors, finally revealing- An ungodly amount of bubble wrap inside. She laughs victoriously at her flawless defeat of the mailman. She carefully reaches inside and pulls out- A small LeMax box of a She grins, carefully opens it so as not to ruin the packaging- "
+    },
+    {
+      "number": 7,
+      "heading": "INT. CLOSET - MOMENTS LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Brynn carefully places the empty box on a row of similar boxes. Rows of Christmas Village buildings wait their turn."
+    },
+    {
+      "number": 8,
+      "heading": "EXT. FRONT YARD - DAY",
+      "characters": [
+        "STRANGE BURNED CIRCLE"
+      ],
+      "dialogues": [
+        {
+          "character": "STRANGE BURNED CIRCLE",
+          "parenthetical": "",
+          "text": "in her grass and part of her flowerbed."
+        }
+      ],
+      "actionPreview": "The sun is beginning to set. Brynn sets her packages in her small car. She moves over to a flower bed and carefully cuts a few stems- Pauses when she sees a Brynn groans, looking closer. 3. 4. Not burned necessarily. Just like everything dried up in a perfect 8 foot wide circle. She sighs and waters"
+    },
+    {
+      "number": 9,
+      "heading": "INT. CAR - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "She listens to oldies while she drives. Strangely full of anxiety. She looks into her rear-view mirror and practices that smile again."
+    },
+    {
+      "number": 10,
+      "heading": "EXT. POST OFFICE - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "She drives up to a mailbox- But before she lowers the window- She puts on a hat and sunglasses to obscure her face. Then she lowers the window and quickly drops off her mail. Before zipping away quickly."
+    },
+    {
+      "number": 11,
+      "heading": "EXT. PARKING LOT - SUNSET",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Brynn gets out of her car. The parking lot a little too full for her liking. She carries the flowers with her."
+    },
+    {
+      "number": 12,
+      "heading": "EXT. GRAVEYARD - SUNSET",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Brynn replaces the not-too-dead flowers in a vase by the headstone that reads Sarah Adams, Wife to Hugh, Mother to Brynn. She spends some time with her mother, before feeling that awful sensation that she’s being watched. She slowly turns and sees a group of women across the graveyard at a funeral- "
+    },
+    {
+      "number": 13,
+      "heading": "EXT. PARKING LOT - SUNSET",
+      "characters": [
+        "SCRATCH"
+      ],
+      "dialogues": [
+        {
+          "character": "SCRATCH",
+          "parenthetical": "",
+          "text": "along its side."
+        }
+      ],
+      "actionPreview": "When Brynn returns to her car, she sees a small She doesn’t remember that being there before. Looks back towards the funeral, unsure of how to react- Before getting back into her car and driving away."
+    },
+    {
+      "number": 14,
+      "heading": "INT. RECORD PLAYER - EVENING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Brynn carefully selects a record from her shelf of oldies. She puts one on. The speakers crackle and the jazzy waltz begins. Brynn happily sways in her dress, all the anxiety from leaving the house gone as she dances-"
+    },
+    {
+      "number": 15,
+      "heading": "INT. KITCHEN - EVENING",
+      "characters": [
+        "WALTZ"
+      ],
+      "dialogues": [
+        {
+          "character": "WALTZ",
+          "parenthetical": "",
+          "text": "steps from a vintage dance book."
+        }
+      ],
+      "actionPreview": "Into her kitchen. Pulls the cork off a bottle. Pours herself some red. Opens her laptop. And begins cooking a dinner for one. The ‘30s music carries her through as she- Sautés vegetables. Broils chicken. Practices Drinks more red (but never irresponsibly so). 5. 6. Chats on iChat with someone named "
+    },
+    {
+      "number": 16,
+      "heading": "INT. FREEZER - NIGHT",
+      "characters": [
+        "WOMAN",
+        "KID"
+      ],
+      "dialogues": [
+        {
+          "character": "WOMAN",
+          "parenthetical": "",
+          "text": "and"
+        },
+        {
+          "character": "KID",
+          "parenthetical": "",
+          "text": "outside that house on the fridge door. Brynn and her mom."
+        }
+      ],
+      "actionPreview": "She pulls out some cookie dough ice cream. Photo of a"
+    },
+    {
+      "number": 17,
+      "heading": "INT. THE FAMILY ROOM - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "She sits down on her couch. Clicks on TCM. Watches a black and white romance. She loves it with all of her heart."
+    },
+    {
+      "number": 18,
+      "heading": "INT. KITCHEN - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Polishes off the red. Does all of her dishes. Washed and dried. Bottle into the recycling. Ties up the trash."
+    },
+    {
+      "number": 19,
+      "heading": "EXT. BACK OF THE HOUSE - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "She puts her bags neatly in their respective bins. Looks up at her house in the dark. Can faintly see remnants of painted over graffiti on her wall. Unclear what it says. 6. 7. Brynn frowns. Problems for another a day."
+    },
+    {
+      "number": 20,
+      "heading": "INT. KITCHEN - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Brynn wishes LeMaxter85 sweet dreams and closes her laptop. Finishes the letter she was writing. Seals it in an envelope. Takes it with her upstairs. The computer never travels upstairs with her."
+    },
+    {
+      "number": 21,
+      "heading": "INT. UPSTAIRS HALLWAY - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Brynn carries the letter into a room. She’s only in there for a few seconds. And when she returns to the hallway, there is no letter in her hand."
+    },
+    {
+      "number": 22,
+      "heading": "INT. BATHROOM - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "She brushes her teeth. Brushes her long hair. Puts on face cream."
+    },
+    {
+      "number": 23,
+      "heading": "INT. BEDROOM - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Breeze flutters into her room from the window. Curtains billow. The drone of crickets. She reads late into the night. No cellphone or iPad or TV in here. Just the soft glow of her bedside reading lamp. An owl hoots outside. She raises her eyes and smiles. Places her bookmark and sets the book down. "
+    },
+    {
+      "number": 24,
+      "heading": "INT. BRYNN’S BEDROOM - 3:27 A.M.",
+      "characters": [
+        "ALL OF THE LIGHTS TURN ON.",
+        "OFF",
+        "THE FRONT DOOR OPENING.",
+        "FEET",
+        "SLAMMED",
+        "GASPS",
+        "CURLING IRON",
+        "SHUTS"
+      ],
+      "dialogues": [
+        {
+          "character": "ALL OF THE LIGHTS TURN ON.",
+          "parenthetical": "",
+          "text": "The sound of the TV and the record player downstairs and then-"
+        },
+        {
+          "character": "OFF",
+          "parenthetical": "",
+          "text": "."
+        },
+        {
+          "character": "THE FRONT DOOR OPENING.",
+          "parenthetical": "",
+          "text": "Brynn keeps sleeping peacefully."
+        },
+        {
+          "character": "FEET",
+          "parenthetical": "",
+          "text": "."
+        },
+        {
+          "character": "SLAMMED",
+          "parenthetical": "",
+          "text": "shut."
+        },
+        {
+          "character": "GASPS",
+          "parenthetical": "",
+          "text": "-"
+        },
+        {
+          "character": "CURLING IRON",
+          "parenthetical": "",
+          "text": "on her dresser and decides it’s her best option."
+        },
+        {
+          "character": "SHUTS",
+          "parenthetical": "",
+          "text": "gently."
+        }
+      ],
+      "actionPreview": "Brynn is fast asleep. Breeze still ruffling the curtains. Crickets still performing. Until- A large gust of wind comes through the room. Curtains flow. Brynn stirs but doesn’t wake. Fast asleep when the crickets completely stop. Then- The sound of birds quickly flying from their nests. Too many bird"
+    },
+    {
+      "number": 25,
+      "heading": "EXT. UPSTAIRS HALLWAY - CONTINUOUS",
+      "characters": [
+        "NOT HUMAN",
+        "DROPS",
+        "GRASPS",
+        "THE CORD.",
+        "ALIEN",
+        "GRUNTS",
+        "RUNNING"
+      ],
+      "dialogues": [
+        {
+          "character": "NOT HUMAN",
+          "parenthetical": "",
+          "text": "."
+        },
+        {
+          "character": "DROPS",
+          "parenthetical": "",
+          "text": "the curling iron."
+        },
+        {
+          "character": "THE CORD.",
+          "parenthetical": "",
+          "text": "Inches away."
+        },
+        {
+          "character": "ALIEN",
+          "parenthetical": "",
+          "text": "still rummaging down there."
+        },
+        {
+          "character": "GRUNTS",
+          "parenthetical": "",
+          "text": "and noises."
+        },
+        {
+          "character": "RUNNING",
+          "parenthetical": "",
+          "text": "."
+        }
+      ],
+      "actionPreview": "She walks slowly- Slowly- Across her wooden floors. Towards the stairs at the end of the hall. Passing closed doors on either side. She reaches the top of the stairs and looks below. Nothing. She takes a cautious step down. Nothing. And then a second step down when- A FIGURE HURRIES ACROSS THE ROOM."
+    },
+    {
+      "number": 26,
+      "heading": "INT. UNDER BRYNN’S BED - NIGHT",
+      "characters": [
+        "TWO GREY LEGS"
+      ],
+      "dialogues": [
+        {
+          "character": "TWO GREY LEGS",
+          "parenthetical": "",
+          "text": "enter the door frame."
+        }
+      ],
+      "actionPreview": "Brynn squeezes herself under- Reaches and pulls her blanket down to obstruct her view as- Her bedroom door is pushed open. But there’s no footsteps yet. She turns her head to face the door- Tears in her eyes and- Sees the No denying what she’s seeing now. It doesn’t move for a long time. A long time"
+    },
+    {
+      "number": 27,
+      "heading": "INT. BRYNN’S BEDROOM - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "She slowly lifts her head- Peering above the bed- And sees nothing. Just the breeze through her curtains. She swallows. Takes a deep breath and- Rushes to the window- Where she quickly and quietly pushes it closed- Locking it. She dodges out of view, expecting some kind of reaction but- There is not"
+    },
+    {
+      "number": 28,
+      "heading": "INT. UPSTAIRS HALLWAY - NIGHT",
+      "characters": [
+        "RUNS"
+      ],
+      "dialogues": [
+        {
+          "character": "RUNS",
+          "parenthetical": "",
+          "text": "to the door-"
+        }
+      ],
+      "actionPreview": "Brynn walks with the curling iron raised over her head like a baseball bat. Shuffling down the hall- Towards the stairs- She reaches the top of the stairs again- Sees the front door open down below. Leans forward to see if the coast is clear- Seems to be- So she takes a few sharp breaths and-"
+    },
+    {
+      "number": 29,
+      "heading": "INT. THE FAMILY ROOM - NIGHT",
+      "characters": [
+        "ALL THE LIGHTS TURN ON",
+        "THE TWO GREY LEGS"
+      ],
+      "dialogues": [
+        {
+          "character": "ALL THE LIGHTS TURN ON",
+          "parenthetical": "",
+          "text": "."
+        },
+        {
+          "character": "THE TWO GREY LEGS",
+          "parenthetical": "",
+          "text": "standing at the top of the stairs."
+        }
+      ],
+      "actionPreview": "She pushes it closed and locks both locks. Backing away from it- Expecting something to happen- Some reaction- But there is nothing. She keeps backing away when- Again, The TV and the record player. Horrifically loud. She SCREAMS! This time they don’t turn off. She runs over to the TV and rips the p"
+    },
+    {
+      "number": 30,
+      "heading": "INT. KITCHEN - CONTINUOUS",
+      "characters": [
+        "NUTS",
+        "BURNS",
+        "SMALL ALIEN HAND",
+        "TOES",
+        "KNOCKING"
+      ],
+      "dialogues": [
+        {
+          "character": "NUTS",
+          "parenthetical": "",
+          "text": "."
+        },
+        {
+          "character": "BURNS",
+          "parenthetical": "",
+          "text": "her hand."
+        },
+        {
+          "character": "SMALL ALIEN HAND",
+          "parenthetical": "",
+          "text": "with long boney fingers reaches out from the darkness."
+        },
+        {
+          "character": "TOES",
+          "parenthetical": "",
+          "text": "waiting underneath."
+        },
+        {
+          "character": "KNOCKING",
+          "parenthetical": "",
+          "text": "into the door and throwing the Alien back-"
+        }
+      ],
+      "actionPreview": "Where she presses her body flush against the wall. Waiting to hear anything but- Nothing. She looks ahead- The glass doors to her backyard. The trees of the woods swaying ominously. Full of shadow and darkness. She tears her eyes away and looks towards the ceiling. The phone cord above her. She slid"
+    },
+    {
+      "number": 31,
+      "heading": "INT. THE FAMILY ROOM - CONTINUOUS",
+      "characters": [
+        "TURN ON",
+        "EXPLODE",
+        "BLASTS OFF ITS HINGES",
+        "SHE GETS DRAGGED BACKWARDS",
+        "JERKED",
+        "SPUN",
+        "SCREAMING",
+        "DEAD."
+      ],
+      "dialogues": [
+        {
+          "character": "TURN ON",
+          "parenthetical": "",
+          "text": "but with way too much power-"
+        },
+        {
+          "character": "EXPLODE",
+          "parenthetical": "",
+          "text": "-"
+        },
+        {
+          "character": "BLASTS OFF ITS HINGES",
+          "parenthetical": "",
+          "text": "-"
+        },
+        {
+          "character": "SHE GETS DRAGGED BACKWARDS",
+          "parenthetical": "",
+          "text": "by an unseen force-"
+        },
+        {
+          "character": "JERKED",
+          "parenthetical": "",
+          "text": "to her feet-"
+        },
+        {
+          "character": "SPUN",
+          "parenthetical": "",
+          "text": "around-"
+        },
+        {
+          "character": "SCREAMING",
+          "parenthetical": "",
+          "text": "-"
+        },
+        {
+          "character": "DEAD.",
+          "parenthetical": "",
+          "text": "Brynn doesn’t move for a second-"
+        }
+      ],
+      "actionPreview": "She heads for the front door- Gasping as she goes when- All the lights, the tv, the record player- All Bulbs She yelps at the raining glass- 21. 22. Pixels in the TV burn through- Speakers on the record player blow out- But Brynn keeps running towards that door- But as she reaches for it- The front "
+    },
+    {
+      "number": 32,
+      "heading": "INT. THE FAMILY ROOM - DAY",
+      "characters": [
+        "LIGHTBULB",
+        "GREY",
+        "BLOOD"
+      ],
+      "dialogues": [
+        {
+          "character": "LIGHTBULB",
+          "parenthetical": "",
+          "text": "lodged there."
+        },
+        {
+          "character": "GREY",
+          "parenthetical": "",
+          "text": "skin like marble."
+        },
+        {
+          "character": "BLOOD",
+          "parenthetical": "",
+          "text": "for the first time."
+        }
+      ],
+      "actionPreview": "Brynn hasn’t moved in hours. She shivers from cold. Still in shock. Traumatized. The Alien still very dead in the middle of her living room. Brynn blinks and finally realizes how cold she is. Sniffles. Dried blood on her face and in her hair. She looks down towards her feet and sees- A shard of She "
+    },
+    {
+      "number": 33,
+      "heading": "INT. KITCHEN - MOMENTS LATER",
+      "characters": [
+        "NO DIAL TONE",
+        "NO LIGHT"
+      ],
+      "dialogues": [
+        {
+          "character": "NO DIAL TONE",
+          "parenthetical": "",
+          "text": "."
+        },
+        {
+          "character": "NO LIGHT",
+          "parenthetical": "",
+          "text": "on inside."
+        }
+      ],
+      "actionPreview": "The phone on the wall. Brynn stares at it nervously. Glances around. Fridge door open- No light on inside. Spilled drinks and food on the floor. Eyes back to the corpse. Still dead. Eyes back to the phone. A nervous step forward. She reaches out her hand. Deep breath and- Grabs the phone off the rec"
+    },
+    {
+      "number": 34,
+      "heading": "INT. LAPTOP - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "She throws open her laptop. Nothing. Jams the power key. Nothing. Plugs it in. No green light. Nonononono-"
+    },
+    {
+      "number": 35,
+      "heading": "INT. CLOSET - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "She pulls the light string- Nothing. Looks down. Sees bulb glass. Ughhhh- 27. 28."
+    },
+    {
+      "number": 36,
+      "heading": "INT. LAUNDRY ROOM - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Hobbles into the laundry room- Tries the light switches. Nothing. No power to the washer or dryer."
+    },
+    {
+      "number": 37,
+      "heading": "INT. DOWNSTAIRS BATHROOM - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "No power in the tiny bathroom-"
+    },
+    {
+      "number": 38,
+      "heading": "INT. BASEMENT - CONTINUOUS",
+      "characters": [
+        "FLIP PHONE"
+      ],
+      "dialogues": [
+        {
+          "character": "FLIP PHONE",
+          "parenthetical": "",
+          "text": "."
+        }
+      ],
+      "actionPreview": "Opens the door to the basement and flicks the lights. Nothing either. Hurries downstairs. Roots through a drawer- Pulls out an old Dead. Glass on the floor. Sewing machine fried. Brynn groans and runs back upstairs-"
+    },
+    {
+      "number": 39,
+      "heading": "INT. UPSTAIRS HALLWAY - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "She scampers into that room she left the letter in. No luck in there either as she comes back out. Tip-toeing around glass as best she can as she hurries into-"
+    },
+    {
+      "number": 40,
+      "heading": "INT. BEDROOM - CONTINUOUS",
+      "characters": [
+        "POLAROID CAMERA"
+      ],
+      "dialogues": [
+        {
+          "character": "POLAROID CAMERA",
+          "parenthetical": "",
+          "text": "and discovers that- 28."
+        }
+      ],
+      "actionPreview": "Nothing in the bedroom either. She opens a dresser drawer and pulls out- An old 29. All the polaroids discharged overnight. There are no photos left. Angry, she tosses it roughly back in the drawer- Slamming it shut- She leaves- Then comes back and looks at her sheets, still jumbled from when the Al"
+    },
+    {
+      "number": 41,
+      "heading": "INT. TRASH BAG - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "She puts them all in a trash bag. But doesn’t throw them out. She ties the bag neatly and sets it in the corner of her room. Evidence."
+    },
+    {
+      "number": 42,
+      "heading": "INT. MASTER BATHROOM - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "No power in the upstairs bathroom. She catches her reflection in the mirror. She looks like a mess. Quickly moves away. More important things to deal with first."
+    },
+    {
+      "number": 43,
+      "heading": "INT. THE FAMILY ROOM - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "This room is a disaster. She stumbles around- Trying not to look at the corpse- Trying to figure out what might have power- Has a thought and runs out the front space where the door used to be to- 29. 30."
+    },
+    {
+      "number": 44,
+      "heading": "EXT. BACK OF THE HOUSE - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Where the fusebox is. She opens it up. Tries turning it off and on. Makes no difference. She groans and whines and then- Has a terrible thought."
+    },
+    {
+      "number": 45,
+      "heading": "INT. KITCHEN - CONTINUOUS",
+      "characters": [
+        "CAR KEYS"
+      ],
+      "dialogues": [
+        {
+          "character": "CAR KEYS",
+          "parenthetical": "",
+          "text": "."
+        }
+      ],
+      "actionPreview": "Scrambles through some of the mess to find- Her"
+    },
+    {
+      "number": 46,
+      "heading": "EXT. DRIVEWAY - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Hobbles with her sore bare foot to the car as quick as she can. Hits the unlock button but- Nothing happens. Hits it over and over and over- Nothing. Desperate and frustrated she unlocks it with the key like a goddamn peasant- And dives inside."
+    },
+    {
+      "number": 47,
+      "heading": "INT. CAR - CONTINUOUS",
+      "characters": [
+        "FUCKING NOTHING HAPPENS."
+      ],
+      "dialogues": [
+        {
+          "character": "FUCKING NOTHING HAPPENS.",
+          "parenthetical": "",
+          "text": "She tries again and again until-"
+        }
+      ],
+      "actionPreview": "Sits in the front seat. Deep breath and prayers and- Turns the ignition. She breaks down- 30. 31. Slamming her fists on the steering wheel and screaming. When she’s done- She doesn’t feel better. Her eyes drift to the back of the car- And her tiny shed behind the car."
+    },
+    {
+      "number": 48,
+      "heading": "INT. SHED - CONTINUOUS",
+      "characters": [
+        "BICYCLE"
+      ],
+      "dialogues": [
+        {
+          "character": "BICYCLE",
+          "parenthetical": "",
+          "text": "and sets it outside."
+        }
+      ],
+      "actionPreview": "She pulls out her Surveys what’s inside. Lots of gardening equipment. Shears. Soil. Shovel. A lawn mower."
+    },
+    {
+      "number": 49,
+      "heading": "EXT. FRONT YARD - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "She grabs her bike- Hopping on- And then as soon as her bare foot hits the pedal- Quickly stumbling off. Wincing. Rubbing her poor bare foot. She catches her disheveled reflection in the car window. Pats down her hair. Knows exactly how it will go for her if anyone in town sees her looking like this"
+    },
+    {
+      "number": 50,
+      "heading": "INT. SHOWER - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Still in her nightgown, she scrubs her foot clean. It hurts. She scrubs her head clean. 31. 32. It hurts. Big ol’ cut and bruise where the door hit her. She pokes it curiously. There will be more."
+    },
+    {
+      "number": 51,
+      "heading": "INT. BEDROOM CLOSET - DAY",
+      "characters": [
+        "TREMENDOUS"
+      ],
+      "dialogues": [
+        {
+          "character": "TREMENDOUS",
+          "parenthetical": "",
+          "text": "amount of anxiety."
+        }
+      ],
+      "actionPreview": "She opens her closet, wrapped in a robe, and pulls out options of what to wear. It fills her with a She bites her lip and stares at three options displayed on her bed while she quickly combs her hair. She chooses one and puts it on. She applies Neosporin and bandages to her foot and face. Carefully "
+    },
+    {
+      "number": 52,
+      "heading": "INT. THE FAMILY ROOM - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "She stares at the corpse. Then out the front door shaped hole at her bike. Then back at the corpse. There are flies buzzing around it. Scrunches up her face. Well it’s not going with her on that bike so she- 32. 33."
+    },
+    {
+      "number": 53,
+      "heading": "INT. LINEN CLOSET - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Finds the blanket she likes the least."
+    },
+    {
+      "number": 54,
+      "heading": "INT. THE FAMILY ROOM - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Lays it over the Alien. Then sprays a ton of air freshener around it. Heads for the door-hole and- Stops. Realizes that anything could get in. Think think think- She moves to her couch- Pushes it as hard as she can- Grunts and sweats as- It finally budges and- She blocks part of the door with it."
+    },
+    {
+      "number": 55,
+      "heading": "EXT. FRONT YARD - CONTINUOUS",
+      "characters": [
+        "NOISE"
+      ],
+      "dialogues": [
+        {
+          "character": "NOISE",
+          "parenthetical": "",
+          "text": "from the woods."
+        }
+      ],
+      "actionPreview": "She crawls over it to land outside. Reaches back in and props up some cushions to block the entrance a little bit. Surveys her work. It’ll do. Then- A Her eyes dart there in fear- But sees nothing. Maybe it was just a bird. She stares intensely into the distance- Nothing now but shadows and the crea"
+    },
+    {
+      "number": 56,
+      "heading": "EXT. ROAD - MOMENTS LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Brynn zips down the road on her bike. Long hair in the wind. Determined like she’s never been before."
+    },
+    {
+      "number": 57,
+      "heading": "EXT. MAIN STREET - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "She bikes down a quaint, boring American main street. A couple people notice her go past- But even though she clearly notices- She doesn’t stop."
+    },
+    {
+      "number": 58,
+      "heading": "EXT. THE POLICE STATION - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "She locks her bicycle at a rack to the side of the station. She stands there, trying to psych herself up. Shaking. Scared as hell. But she summons every bit of courage she has- Lowers her head and- Walks inside."
+    },
+    {
+      "number": 59,
+      "heading": "INT. THE POLICE STATION - CONTINUOUS",
+      "characters": [
+        "MRS. COLLINS",
+        "THE",
+        "POLICE CHIEF."
+      ],
+      "dialogues": [
+        {
+          "character": "MRS. COLLINS",
+          "parenthetical": "",
+          "text": "and her husband,"
+        },
+        {
+          "character": "POLICE CHIEF.",
+          "parenthetical": "",
+          "text": "In their sixties. 34."
+        }
+      ],
+      "actionPreview": "She opens the door and- Comes face to face with 35. They stare at her- Startled. Literally no one in the world they’d rather see less than her- And literally no one Brynn would be more scared to see right now than them. The rest of the station hushes up to watch the unfortunate encounter. Brynn look"
+    },
+    {
+      "number": 60,
+      "heading": "EXT. THE POLICE STATION - MOMENTS LATER",
+      "characters": [
+        "SOBS",
+        "TWO COPS",
+        "SOUND",
+        "FOLLOW",
+        "BUS",
+        "GREAT"
+      ],
+      "dialogues": [
+        {
+          "character": "SOBS",
+          "parenthetical": "",
+          "text": "."
+        },
+        {
+          "character": "TWO COPS",
+          "parenthetical": "",
+          "text": "staring at her-"
+        },
+        {
+          "character": "SOUND",
+          "parenthetical": "",
+          "text": "again."
+        },
+        {
+          "character": "FOLLOW",
+          "parenthetical": "",
+          "text": "her?"
+        },
+        {
+          "character": "BUS",
+          "parenthetical": "",
+          "text": "drive by."
+        },
+        {
+          "character": "GREAT",
+          "parenthetical": "",
+          "text": "idea."
+        }
+      ],
+      "actionPreview": "Brynn stumbles out of the station- Wiping her face- Humiliated and mortified- Hurries to her bike- Kneels to unlock it and- Breaks down into She can’t help it. It all just pours out of her. She tries to make herself stop. Balling up her fists- Hitting her leg. Wipes her face again. Tries taking deep"
+    },
+    {
+      "number": 61,
+      "heading": "INT. BUS STATION - DAY",
+      "characters": [
+        "BUS TICKET"
+      ],
+      "dialogues": [
+        {
+          "character": "BUS TICKET",
+          "parenthetical": "",
+          "text": "to Tulsa clenched in her hand."
+        }
+      ],
+      "actionPreview": "Brynn walks with a Keeps her head down. Just trying to get out."
+    },
+    {
+      "number": 62,
+      "heading": "INT. STORE AT THE BUS STATION - DAY",
+      "characters": [
+        "TEENAGE CASHIER",
+        "FLINCHES",
+        "THE MAIL MAN"
+      ],
+      "dialogues": [
+        {
+          "character": "TEENAGE CASHIER",
+          "parenthetical": "",
+          "text": "rings each item up."
+        },
+        {
+          "character": "FLINCHES",
+          "parenthetical": "",
+          "text": "-"
+        },
+        {
+          "character": "THE MAIL MAN",
+          "parenthetical": "",
+          "text": "from yesterday."
+        }
+      ],
+      "actionPreview": "She quickly dashes into a convenience store- Grabs a baseball hat- Sunglasses- 37. 38. Someone is watching her. She crosses an aisle- Grabs a sweatshirt- Toothbrush- Toothpaste- A watch- A man at the end of the aisle. Gum- Chips- Snacks- Whatever it takes to get to tomorrow- There is something diffe"
+    },
+    {
+      "number": 63,
+      "heading": "INT. BUS - DAY",
+      "characters": [
+        "MAIL",
+        "MAN",
+        "HE",
+        "GRABS HER BY THE ELBOW",
+        "STRANGE GUTTURAL NOISES",
+        "PUSHES",
+        "FALLS BACK IN THE SEAT.",
+        "CRAWLING"
+      ],
+      "dialogues": [
+        {
+          "character": "MAN",
+          "parenthetical": "",
+          "text": "sitting a few rows behind her."
+        },
+        {
+          "character": "GRABS HER BY THE ELBOW",
+          "parenthetical": "",
+          "text": "-"
+        },
+        {
+          "character": "STRANGE GUTTURAL NOISES",
+          "parenthetical": "",
+          "text": "."
+        },
+        {
+          "character": "PUSHES",
+          "parenthetical": "",
+          "text": "him away-"
+        },
+        {
+          "character": "FALLS BACK IN THE SEAT.",
+          "parenthetical": "",
+          "text": "Everyone in the bus staring at Brynn-"
+        },
+        {
+          "character": "CRAWLING",
+          "parenthetical": "",
+          "text": "over a row of seats."
+        }
+      ],
+      "actionPreview": "Brynn sits against the window on the sparsely populated bus. Foot tapping anxiously. No one in the seat beside her. Just her bags of supplies. Hat down. Sunglasses on. That Out of focus but clearly staring at her when- The bus lurches forward. And the journey begins. Brynn lets out a small, victorio"
+    },
+    {
+      "number": 64,
+      "heading": "EXT. STREET - DAY",
+      "characters": [
+        "BOLTS",
+        "MAIL",
+        "MAN"
+      ],
+      "dialogues": [
+        {
+          "character": "BOLTS",
+          "parenthetical": "",
+          "text": "out of there-"
+        },
+        {
+          "character": "MAN",
+          "parenthetical": "",
+          "text": "stumbles off the bus."
+        }
+      ],
+      "actionPreview": "The bus makes an unplanned stop and- Brynn High-tailing it as fast as she can away. And after a long, drawn out moment- The He watches her go. Then turns and walks the other direction- Mumbling to himself."
+    },
+    {
+      "number": 65,
+      "heading": "EXT. TOWN - DAY",
+      "characters": [
+        "CLOTHING STORE",
+        "CLERK",
+        "CLOSED",
+        "SUNSET.",
+        "FUCK."
+      ],
+      "dialogues": [
+        {
+          "character": "CLOTHING STORE",
+          "parenthetical": "",
+          "text": "-"
+        },
+        {
+          "character": "CLERK",
+          "parenthetical": "",
+          "text": "inside-"
+        },
+        {
+          "character": "CLOSED",
+          "parenthetical": "",
+          "text": "."
+        },
+        {
+          "character": "CLOSED",
+          "parenthetical": "",
+          "text": "sign going up."
+        },
+        {
+          "character": "FUCK.",
+          "parenthetical": "",
+          "text": "Brynn grasps her head-"
+        }
+      ],
+      "actionPreview": "Out of breath and sweaty- 42. 43. Brynn finally slows down. Hands on her knees. Deep breaths. She looks back- No sign of the man. Well that’s something. But now there’s even less of a scrap of a plan- When something catches her eye to the right- She looks and- Sees a And the Flipping the open sign- "
+    },
+    {
+      "number": 66,
+      "heading": "EXT. ROAD - DAY",
+      "characters": [
+        "TRUCK",
+        "SLAMS",
+        "SOUND",
+        "BURNED IN CIRCLE",
+        "MOVES",
+        "BIG"
+      ],
+      "dialogues": [
+        {
+          "character": "TRUCK",
+          "parenthetical": "",
+          "text": "is coming down the road from behind her."
+        },
+        {
+          "character": "SLAMS",
+          "parenthetical": "",
+          "text": "the plastic bag onto the ground."
+        },
+        {
+          "character": "SOUND",
+          "parenthetical": "",
+          "text": "again."
+        },
+        {
+          "character": "BURNED IN CIRCLE",
+          "parenthetical": "",
+          "text": "in the grass by the side of the road."
+        },
+        {
+          "character": "MOVES",
+          "parenthetical": "",
+          "text": "away quickly-"
+        },
+        {
+          "character": "BIG",
+          "parenthetical": "",
+          "text": "."
+        }
+      ],
+      "actionPreview": "Brynn hurries homeward- Shuffling more than running at this point. She reaches into her bag and pulls out- Another 5 hour energy shot. Downs it. Puts the empty carcass back in the bag. A She stops and holds out her thumb, hopeful- But the truck doesn’t stop- In frustration and desperation- Brynn Mor"
+    },
+    {
+      "number": 67,
+      "heading": "EXT. CHURCH - EVENING",
+      "characters": [
+        "OLD CHURCH",
+        "LOCKED",
+        "MISSING PERSON",
+        "NOT"
+      ],
+      "dialogues": [
+        {
+          "character": "OLD CHURCH",
+          "parenthetical": "",
+          "text": "-"
+        },
+        {
+          "character": "LOCKED",
+          "parenthetical": "",
+          "text": "."
+        },
+        {
+          "character": "MISSING PERSON",
+          "parenthetical": "",
+          "text": "fliers."
+        },
+        {
+          "character": "NOT",
+          "parenthetical": "",
+          "text": "to look-"
+        }
+      ],
+      "actionPreview": "Further down the road she sees it- An And with a faint smile, heads towards it- She reaches the door and pulls the handle- But- It’s Brynn groans and looks inside. Sees a church bulletin board, the worship hall behind it. Some But no one inside. Completely dark. She takes a step back and sees- The p"
+    },
+    {
+      "number": 68,
+      "heading": "EXT. THE TINY GRAVEYARD - CONTINUOUS",
+      "characters": [
+        "THUNDER"
+      ],
+      "dialogues": [
+        {
+          "character": "THUNDER",
+          "parenthetical": "",
+          "text": "rumbles in the distance. 46."
+        }
+      ],
+      "actionPreview": "She slowly makes her way in- Checking each headstone’s name when- She spots it. A few rows ahead of her. Maude Collins She stares at it for a very long seconds. Until 47. She looks up. Storm clouds coming in. Wind picking up- The flags rippling. But at a longer look- Those clouds don’t feel quite na"
+    },
+    {
+      "number": 69,
+      "heading": "EXT. CHURCH - MOMENTS LATER",
+      "characters": [
+        "ROCK.",
+        "THROWS IT"
+      ],
+      "dialogues": [
+        {
+          "character": "ROCK.",
+          "parenthetical": "",
+          "text": "Grabs it-"
+        },
+        {
+          "character": "THROWS IT",
+          "parenthetical": "",
+          "text": "so she can break in-"
+        }
+      ],
+      "actionPreview": "She looks desperately around the church- Sees a Heads back to the church door and- Fucking thing bounces off- So she picks it back up and really chucks it- This time, it shatters the- RI-RI-RI-RI-RI-RI-RI-RI-RI-RI-RI-RI-RI-RI-RI-RI-RI-RI-RI-RI! The alarm is deafening. She covers her ears- Eyes dart "
+    },
+    {
+      "number": 70,
+      "heading": "EXT. THE ROAD - EVENING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Brynn runs faster than she has ever run in her life. The clouds follow steadily. There’s only one place left for Brynn to go-"
+    },
+    {
+      "number": 71,
+      "heading": "EXT. THE ROAD - EVENING",
+      "characters": [
+        "HOME"
+      ],
+      "dialogues": [
+        {
+          "character": "HOME",
+          "parenthetical": "",
+          "text": "."
+        }
+      ],
+      "actionPreview": "And that’s her From the road, she stares up at her house like it’s the most haunted place in the world. She looks at her watch. 6:36. There is no sun left in the sky. She taps her watch a few times, wishing it was earlier. And that she had more time. But she doesn’t. So she moves with the weight of "
+    },
+    {
+      "number": 72,
+      "heading": "EXT. FRONT YARD - EVENING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "She slows down as she approaches her house- Craning her neck forward nervously to see if the couch blockade is still at her door... It is. She exhales. Small blessings."
+    },
+    {
+      "number": 73,
+      "heading": "INT. THE FAMILY ROOM - CONTINUOUS",
+      "characters": [
+        "STENCH"
+      ],
+      "dialogues": [
+        {
+          "character": "STENCH",
+          "parenthetical": "",
+          "text": "instantly hits her. 48."
+        }
+      ],
+      "actionPreview": "She pushes the cushions out of the way and- The 49. Yugh. She covers her mouth and sees- The Alien under the blanket still. But even more flies. It’s... souring. Brynn almost throws up until- There’s another rumble of strange thunder outside. And she snaps to. There’s too much work to be done. And n"
+    },
+    {
+      "number": 74,
+      "heading": "EXT. SHED - EVENING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Dumps out the contents of her shed. Lawnmower. Leaf blower. Generator. Ladder. Hammer. Taps her foot while staring at them. Looks back at her dead car. 49. 50. That could work. So she begins to unscrew the cap on her lawnmower."
+    },
+    {
+      "number": 75,
+      "heading": "EXT. CAR - EVENING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "She pops up from behind the car, having done something underneath. Wipes her hands on her pants and gets in- She makes sure all the car doors are unlocked. Then, to be extra safe, makes sure all the doors are just barely left open."
+    },
+    {
+      "number": 76,
+      "heading": "EXT. BACK OF THE HOUSE - DAY",
+      "characters": [
+        "FUSES"
+      ],
+      "dialogues": [
+        {
+          "character": "FUSES",
+          "parenthetical": "",
+          "text": "from the fusebox."
+        }
+      ],
+      "actionPreview": "She rips out all of the Just drops them on the ground. Leaves- But returns quickly- Gathering them up. Feeling bad about littering."
+    },
+    {
+      "number": 77,
+      "heading": "EXT. GARBAGE CANS - DAY",
+      "characters": [
+        "STORM DOORS"
+      ],
+      "dialogues": [
+        {
+          "character": "STORM DOORS",
+          "parenthetical": "",
+          "text": "leading to the basement."
+        }
+      ],
+      "actionPreview": "Drops them in the garbage. Closes the lid- Sees that little bit of graffiti still peaking through the layers of paint she covered it up with in the past. Another frown. She looks down at the She darts away, motivation renewed. Still so much to do."
+    },
+    {
+      "number": 78,
+      "heading": "INT. BEDROOM - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Wraps a scarf around her nose and mouth. 50. 51."
+    },
+    {
+      "number": 79,
+      "heading": "INT. THE FAMILY ROOM - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "A scented candle is lit. Then a second. And a third. Broken glass and broken village all over the floor. Fucking front door on the floor. Brynn tries her best to ignore the Alien for now. Moves to pick up the door- It breaks apart as soon as she lifts it into two splintered pieces. Fucking useless. "
+    },
+    {
+      "number": 80,
+      "heading": "INT. VARIOUS ROOMS - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "She leaves chunks of door in various places of various rooms."
+    },
+    {
+      "number": 81,
+      "heading": "EXT. KITCHEN - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Looks through the contents of her kitchen cupboards. Knives. Pots. Pans. An old lighter. She flicks it. Flame. Good. Pockets it."
+    },
+    {
+      "number": 82,
+      "heading": "INT. FREEZER - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "She opens the freezer- Everything thawed. She turns back and looks at her oven. 51. 52."
+    },
+    {
+      "number": 83,
+      "heading": "INT. KITCHEN - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Turns the dial- FLAME! She jumps in the air with glee. Fills four pots with water. Sets them to boil. More ideas-"
+    },
+    {
+      "number": 84,
+      "heading": "INT. DOWNSTAIRS BATHROOM - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Takes the hand-held shower off its holder- Turns on the water- All the way hot. Leaves it there in the tub. Steam billows."
+    },
+    {
+      "number": 85,
+      "heading": "INT. BASEMENT - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Her work space. Those big storm doors. Barricades the handles with a pipe. Then digs trough incredibly well-manicured drawers and finds- Superglue- Shrugs. Pours it all over the steps on her way back upstairs."
+    },
+    {
+      "number": 86,
+      "heading": "INT. FRONT DOOR - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "She begins barricading her open wound of a front door with layers of saran wrap, duct taping it in place. Starting from the top. Moving side to side. Working her way down. About a yard from the bottom she stops. 52. 53. Pushes the couch back in front of it. Surveys her work. It’s... kinda shit. She "
+    },
+    {
+      "number": 87,
+      "heading": "INT. THE BEDROOM - NIGHT",
+      "characters": [
+        "NOT",
+        "COLORFUL LIGHTS"
+      ],
+      "dialogues": [
+        {
+          "character": "NOT",
+          "parenthetical": "",
+          "text": "see-"
+        },
+        {
+          "character": "COLORFUL LIGHTS",
+          "parenthetical": "",
+          "text": "illuminate through her window outside-"
+        }
+      ],
+      "actionPreview": "That trash bag in the corner. Hurries into her bathroom and gets the shower going in there- But does The And by the time she comes back- The lights have moved on, and the bedroom is dark once again."
+    },
+    {
+      "number": 88,
+      "heading": "INT. HALLWAY - NIGHT",
+      "characters": [
+        "LIGHTS"
+      ],
+      "dialogues": [
+        {
+          "character": "LIGHTS",
+          "parenthetical": "",
+          "text": "that silently illuminate through the windows of the rooms she passes."
+        }
+      ],
+      "actionPreview": "Brynn hurries back down the hallway- Never noticing the She runs back down the stairs-"
+    },
+    {
+      "number": 89,
+      "heading": "INT. THE FAMILY ROOM - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Through the living room- Hand over her mouth and nose as she passes the carcass- A girl on a mission as she enters-"
+    },
+    {
+      "number": 90,
+      "heading": "INT. KITCHEN - CONTINUOUS",
+      "characters": [
+        "BLINDING WHITE LIGHT",
+        "MELTS",
+        "RISES IN THE AIR",
+        "COUCH BLOCKING THE DOOR",
+        "PUSHED",
+        "THUMPS",
+        "MOVING",
+        "DISAPPEARS",
+        "ARM"
+      ],
+      "dialogues": [
+        {
+          "character": "BLINDING WHITE LIGHT",
+          "parenthetical": "",
+          "text": "powers through the front door!"
+        },
+        {
+          "character": "MELTS",
+          "parenthetical": "",
+          "text": "the cellophane wrap over the door-"
+        },
+        {
+          "character": "RISES IN THE AIR",
+          "parenthetical": "",
+          "text": "-"
+        },
+        {
+          "character": "COUCH BLOCKING THE DOOR",
+          "parenthetical": "",
+          "text": "-"
+        },
+        {
+          "character": "PUSHED",
+          "parenthetical": "",
+          "text": "out of the path of the door-"
+        },
+        {
+          "character": "THUMPS",
+          "parenthetical": "",
+          "text": "uselessly on the floor-"
+        },
+        {
+          "character": "MOVING",
+          "parenthetical": "",
+          "text": "through the light."
+        },
+        {
+          "character": "DISAPPEARS",
+          "parenthetical": "",
+          "text": "in a blink-"
+        },
+        {
+          "character": "ARM",
+          "parenthetical": "",
+          "text": "-"
+        }
+      ],
+      "actionPreview": "Where she heads to the pots of boiling water on the stove when- THWUMMMPPPP! 53. 54. A Brynn dives for cover, never in the path of the beam. A droning HMMMMMMMMM accompanies it- Brynn covers her ears- Squinting through the brightness even though it’s not directly on her- The light so hot that it So "
+    },
+    {
+      "number": 91,
+      "heading": "INT. BASEMENT - NIGHT",
+      "characters": [
+        "BOX CUTTER",
+        "LIGHT",
+        "BULGING INWARDS",
+        "SNAPS IN TWO",
+        "CLANG",
+        "FIGURE",
+        "FREEZES",
+        "THE",
+        "PIPE SLAMS INTO THE WALL"
+      ],
+      "dialogues": [
+        {
+          "character": "BOX CUTTER",
+          "parenthetical": "",
+          "text": "."
+        },
+        {
+          "character": "LIGHT",
+          "parenthetical": "",
+          "text": "move across the basement windows."
+        },
+        {
+          "character": "BULGING INWARDS",
+          "parenthetical": "",
+          "text": ". 56."
+        },
+        {
+          "character": "SNAPS IN TWO",
+          "parenthetical": "",
+          "text": "!"
+        },
+        {
+          "character": "CLANG",
+          "parenthetical": "",
+          "text": "on the floor loudly."
+        },
+        {
+          "character": "FIGURE",
+          "parenthetical": "",
+          "text": "approaching the steps."
+        },
+        {
+          "character": "FREEZES",
+          "parenthetical": "",
+          "text": "mid-air."
+        },
+        {
+          "character": "PIPE SLAMS INTO THE WALL",
+          "parenthetical": "",
+          "text": "!"
+        }
+      ],
+      "actionPreview": "She closes the door behind her. Locks it. It’s darker down here. She carefully lifts herself over the spilled glue- Lowering herself gently onto the floor- The little scratching sounds from the living room above her. She stands there, not sure where to go when- She heads to her work drawers- Quietly"
+    },
+    {
+      "number": 92,
+      "heading": "INT. HALLWAY - CONTINUOUS",
+      "characters": [
+        "SPRINTS",
+        "BITES DOWN",
+        "SQUEALS"
+      ],
+      "dialogues": [
+        {
+          "character": "SPRINTS",
+          "parenthetical": "",
+          "text": "TOWARDS HER-"
+        },
+        {
+          "character": "BITES DOWN",
+          "parenthetical": "",
+          "text": "as hard as she can into the fucker’s arm-"
+        },
+        {
+          "character": "SQUEALS",
+          "parenthetical": "",
+          "text": "in agony as it tries to get away from her-"
+        }
+      ],
+      "actionPreview": "Brynn hits the wall opposite the door- Slamming it closed when- Something SHRIEKS! As whatever the fuck was behind her rocking chair Half as tall as the other aliens- But with hideous long skeleton arms raised- Talons out. Brynn scrambles back but not fast enough as- The little fucker POUNCES! Brynn"
+    },
+    {
+      "number": 93,
+      "heading": "INT. KITCHEN - CONTINUOUS",
+      "characters": [
+        "SHRIEKS",
+        "SWINGS",
+        "WHINES",
+        "NOISE"
+      ],
+      "dialogues": [
+        {
+          "character": "SHRIEKS",
+          "parenthetical": "",
+          "text": "again as the water burns into its face."
+        },
+        {
+          "character": "SWINGS",
+          "parenthetical": "",
+          "text": "the pot at it-"
+        },
+        {
+          "character": "WHINES",
+          "parenthetical": "",
+          "text": "loudly before it-"
+        },
+        {
+          "character": "NOISE",
+          "parenthetical": "",
+          "text": "-"
+        }
+      ],
+      "actionPreview": "Barrels into the kitchen- Towards the stove- Alien fucker screaming behind her- Brynn grabs a towel- Grabs a pot of boiling water and- Pivots- Slinging it into the fucker’s face- It It stumbles back, pawing its eyes when- Brynn But keeps missing as it scurries about on the floor- 61. 62. She finally"
+    },
+    {
+      "number": 94,
+      "heading": "INT. THE HALLWAY - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Past the basement door and into-"
+    },
+    {
+      "number": 95,
+      "heading": "INT. THE BATHROOM - CONTINUOUS",
+      "characters": [
+        "INSIDE",
+        "BANG",
+        "ABOMINATION.",
+        "GRABS HER LEG.",
+        "FIT"
+      ],
+      "dialogues": [
+        {
+          "character": "INSIDE",
+          "parenthetical": "",
+          "text": "her house- 62."
+        },
+        {
+          "character": "BANG",
+          "parenthetical": "",
+          "text": "It clobbers into the door-"
+        },
+        {
+          "character": "ABOMINATION.",
+          "parenthetical": "",
+          "text": "Four disgustingly long limbs-"
+        },
+        {
+          "character": "GRABS HER LEG.",
+          "parenthetical": "",
+          "text": "It jerks her back violently-"
+        },
+        {
+          "character": "FIT",
+          "parenthetical": "",
+          "text": "in this room-"
+        }
+      ],
+      "actionPreview": "The bathroom- Full of steam from the shower. She locks the door and- Backs up against the wall- Grabbing the shower head- Spraying it into the tub- Waiting for the worst- That noise again- 63. Brynn whimpers. Terrified- There’s a scratching at the door- Skrrrriiiiiiiitcccchhhh- Oh God- Skrrrriiiiiii"
+    },
+    {
+      "number": 96,
+      "heading": "EXT. BACK OF THE HOUSE - CONTINUOUS",
+      "characters": [
+        "HER CAR.",
+        "GASOLINE DRENCHED RAG.",
+        "THE CAR",
+        "HITS"
+      ],
+      "dialogues": [
+        {
+          "character": "HER CAR.",
+          "parenthetical": "",
+          "text": "Just sitting there."
+        },
+        {
+          "character": "GASOLINE DRENCHED RAG.",
+          "parenthetical": "",
+          "text": "Fucking A, Brynn!"
+        },
+        {
+          "character": "THE CAR",
+          "parenthetical": "",
+          "text": "EXPLODES UPWARDS IN A BALL OF FLAME."
+        },
+        {
+          "character": "HITS",
+          "parenthetical": "",
+          "text": "the car directly from above."
+        }
+      ],
+      "actionPreview": "It hurts like hell when she lands- She exhales into the grass- Alien hands reaching through the window uselessly for her. Brynn groans as she rolls onto her back. She doesn’t see the woods in the distance behind her. And she doesn’t hear the SECOND DADDY-LONG-LEG coming out of those woods- Galloping"
+    },
+    {
+      "number": 97,
+      "heading": "INT. THE FAMILY ROOM - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "She stumbles into the room when- That noise - Oh yeah. Bathroom abomination. 68. 69. Brynn takes a hard turn and scrambles up the stairs."
+    },
+    {
+      "number": 98,
+      "heading": "INT. UPSTAIRS HALLWAY - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "She hears them behind her- Her bedroom at the end of the hall. Not sure if she can make it in time. So she turns left. Into The Room."
+    },
+    {
+      "number": 99,
+      "heading": "INT. THE ROOM - NIGHT",
+      "characters": [
+        "MAUDE",
+        "STOPS"
+      ],
+      "dialogues": [
+        {
+          "character": "MAUDE",
+          "parenthetical": "",
+          "text": "."
+        },
+        {
+          "character": "STOPS",
+          "parenthetical": "",
+          "text": "mid-air-"
+        }
+      ],
+      "actionPreview": "It is quiet in here. Quieter than the rest of the house. Darker too. Shades and curtains drawn. Until the door is pushed open- Jussssst a little. The silhouette of a Grey peering through. Black eyes glisten. Pushes the door open more and- As light comes in the room- It sees what’s actually in here. "
+    },
+    {
+      "number": 100,
+      "heading": "INT. UPSTAIRS HALLWAY - NIGHT",
+      "characters": [
+        "EXPLODES OUT OF THE ROOM"
+      ],
+      "dialogues": [
+        {
+          "character": "EXPLODES OUT OF THE ROOM",
+          "parenthetical": "",
+          "text": "-"
+        }
+      ],
+      "actionPreview": "Brynn Smashing into the hall. She hits the floor. Coughs. Holy shit that was awful. She grabs her ribs. Something’s probably broken. Something must be broken. But she remains alive. For now. She looks into the room and sees The Alien standing there. 70. 71. Just... watching her. As the door slowly c"
+    },
+    {
+      "number": 101,
+      "heading": "INT. HER BEDROOM - CONTINUOUS",
+      "characters": [
+        "IT FLINGS HER UP.",
+        "CONVULSING"
+      ],
+      "dialogues": [
+        {
+          "character": "IT FLINGS HER UP.",
+          "parenthetical": "",
+          "text": "Pinning her against the ceiling."
+        },
+        {
+          "character": "CONVULSING",
+          "parenthetical": "",
+          "text": "oveshecantmoveshecantmoveshecantmoveshecant moveshecantmoveshec ."
+        }
+      ],
+      "actionPreview": "Can hear the shower running in her bathroom still. Reaches for the bed to lean o- THWUMMMPPPP! Brynn is CAUGHT IN THE LIGHT- Blasting through her bedroom window- Paralyzed by it when- She trembles in place- Can’t even move her mouth when- That awful droning the only thing she hears. She can move her"
+    },
+    {
+      "number": 102,
+      "heading": "INT. BEDROOM - MORNING",
+      "characters": [
+        "SCREAMS"
+      ],
+      "dialogues": [
+        {
+          "character": "SCREAMS",
+          "parenthetical": "",
+          "text": "when she wakes up in her bed."
+        }
+      ],
+      "actionPreview": "Brynn Hair a mess from the nightmare. The... nightmare? It takes her a few seconds to calm down. There’s no one else in her room. It’s morning. She’s in her bed. In her nightgown. Birds chirp outside. She grasps at her back- It’s dry. No cuts. She jumps out of bed- Still alarmed- But starting to slo"
+    },
+    {
+      "number": 103,
+      "heading": "INT. UPSTAIRS HALLWAY - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Her house just the way it always was. 73. 74."
+    },
+    {
+      "number": 104,
+      "heading": "INT. THE FAMILY ROOM - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Her LeMax village just the way it always was. She looks at it for a moment before- She hears that sound again- Humming. Coming from the kitchen. Nervously, she walks towards the room. Bare feet on the floor as-"
+    },
+    {
+      "number": 105,
+      "heading": "INT. KITCHEN - DAY",
+      "characters": [
+        "A WOMAN",
+        "MAUDE"
+      ],
+      "dialogues": [
+        {
+          "character": "A WOMAN",
+          "parenthetical": "",
+          "text": "at the stove."
+        },
+        {
+          "character": "MAUDE",
+          "parenthetical": "",
+          "text": "awwws"
+        }
+      ],
+      "actionPreview": "Brynn sees Cooking. Humming. She wears a dress. The one Brynn was making. She turns and smiles at Brynn. Brynn chokes out a joyous, shocked cry at seeing her. At seeing her face. and hurries to Brynn- Wrapping her in a hug. Brynn doesn’t hug back for a beat- Eyes wide with surprised tears. Until fin"
+    },
+    {
+      "number": 106,
+      "heading": "INT. THE FAMILY ROOM - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Brynn comes to- Lying on the floor of the family room. Right where the Alien corpse was. She spits up fluid as her hand comes out of her mouth- That blood-clot thing in her hand. It screeches in panic at Brynn- Before she slams her hand down on the ground- Bringing her other hand over to it- Squishi"
+    },
+    {
+      "number": 107,
+      "heading": "INT. HALLWAY - CONTINUOUS",
+      "characters": [
+        "BRINGS",
+        "SHE",
+        "JABS"
+      ],
+      "dialogues": [
+        {
+          "character": "BRINGS",
+          "parenthetical": "",
+          "text": "the chunk down violently on its head-"
+        },
+        {
+          "character": "SHE",
+          "parenthetical": "",
+          "text": "looks like Brynn if you weren’t wearing glasses."
+        },
+        {
+          "character": "JABS",
+          "parenthetical": "",
+          "text": "her box cutter into its neck."
+        }
+      ],
+      "actionPreview": "A GREY IS RIGHT THERE! Before it can react- She It tumbles to the ground- Tries to get up but- Before it can do anything- Brynn is wailing on it- Bashing it again and again- Roaring. It reaches out its hand- Trying to do something to save its life- The fire from the stove ERUPTS- Sending the boiling"
+    },
+    {
+      "number": 108,
+      "heading": "EXT. ROAD - NIGHT",
+      "characters": [
+        "TRUCK",
+        "DRIVER"
+      ],
+      "dialogues": [
+        {
+          "character": "TRUCK",
+          "parenthetical": "",
+          "text": "that passed her earlier."
+        },
+        {
+          "character": "DRIVER",
+          "parenthetical": "",
+          "text": "gets out."
+        },
+        {
+          "character": "DRIVER",
+          "parenthetical": "",
+          "text": "H-"
+        }
+      ],
+      "actionPreview": "Grunting with determination- Brynn grips her stomach and shuffles down the road. Fire in the background until- THWUMMMPPPP! The light blasts down from above the house- Snuffing out all of the fire and then- It’s gone. Brynn doesn’t stop or look back. THWUMMMPPPP! Not even when the light hits farther"
+    },
+    {
+      "number": 109,
+      "heading": "EXT. THE WOODS - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Two twelve year old girls in skirts go into the woods. One of them is Brynn. One of them is Maude."
+    },
+    {
+      "number": 110,
+      "heading": "EXT. THE WOODS - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Brynn leaves the woods. There is blood on her clothes."
+    },
+    {
+      "number": 111,
+      "heading": "INT. BRYNN’S HOUSE - NIGHT",
+      "characters": [
+        "MOTHER"
+      ],
+      "dialogues": [
+        {
+          "character": "MOTHER",
+          "parenthetical": "",
+          "text": "reacts in alarm when she sees her daughter."
+        }
+      ],
+      "actionPreview": "Brynn’s When she sees the blood."
+    },
+    {
+      "number": 112,
+      "heading": "EXT. BRYNN’S HOUSE - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Brynn’s mother cries alone. Brynn watches from the backseat of a squad car. The blue flashing lights are almost pretty."
+    },
+    {
+      "number": 113,
+      "heading": "INT. COURT ROOM - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Mrs. Collins and the Police Chief cry in relief as Brynn is sentenced. She looks at them as she’s escorted away."
+    },
+    {
+      "number": 114,
+      "heading": "INT. JUVENILE DETENTION - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Brynn moves in. Brynn eats meals. Brynn’s mom visits. Brynn sleeps. Brynn reads books."
+    },
+    {
+      "number": 115,
+      "heading": "INT. THERAPY - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The faces of smiling therapists. The faces of the people that helped her understand. 83. 84. Eventually Brynn breaks down into tears. Processes. Progress."
+    },
+    {
+      "number": 116,
+      "heading": "INT. BUNK - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Brynn writes a letter. Dear Maude,"
+    },
+    {
+      "number": 117,
+      "heading": "EXT. FUNERAL - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Brynn gets to attend her mother’s funeral. A guard is nearby. All eyes on Brynn. Her eyes on the casket. A headstone that says Mother of Brynn."
+    },
+    {
+      "number": 118,
+      "heading": "EXT. PARKING LOT - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Brynn is released. Older and healthier and wiser and stronger. There’s no one waiting for her. EXT./INT. BRYNN’S HOUSE - DAY Brynn gets home. The house in a state of disrepair. Boxes of backed-up mail. All of the letters to Maude, mailed here."
+    },
+    {
+      "number": 119,
+      "heading": "EXT. TOWN - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Brynn walks down Main Street. Everyone watches her. Everyone hates her. Her hands shake. 84. 85."
+    },
+    {
+      "number": 120,
+      "heading": "INT. BRYNN’S HOUSE - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Brynn cleans her house. Makes it her own. Makes it perfect."
+    },
+    {
+      "number": 121,
+      "heading": "EXT. BRYNN’S HOUSE - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Brynn scrubs “Murderer” off the side of her house."
+    },
+    {
+      "number": 122,
+      "heading": "INT. BRYNN’S HOUSE - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Brynn gets her first LeMax house. Sets it up proudly."
+    },
+    {
+      "number": 123,
+      "heading": "INT. BRYNN’S HOUSE - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The LeMax village grows. And grows."
+    },
+    {
+      "number": 124,
+      "heading": "INT. THE ROOM - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The collection of letters grows. And grows."
+    },
+    {
+      "number": 125,
+      "heading": "INT. THE FAMILY ROOM - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Brynn sets the fateful LeMax building down. You know the one. She smiles."
+    },
+    {
+      "number": 126,
+      "heading": "EXT. ROAD - NIGHT",
+      "characters": [
+        "ALIEN LIGHTS"
+      ],
+      "dialogues": [
+        {
+          "character": "ALIEN LIGHTS",
+          "parenthetical": "",
+          "text": "return."
+        }
+      ],
+      "actionPreview": "Brynn’s eyes snap back to focus- As the Grey before her- Lowers its hand. Brynn not growling anymore. Just long- Deep- Breaths. As the two regard each other. Some kind of clarity between them. And then- 85. 86. The light from above disappears- And Brynn falls to the ground. Ooomf. She stays there, f"
+    },
+    {
+      "number": 127,
+      "heading": "EXT. RECORD PLAYER - EVENING",
+      "characters": [
+        "WALTZ",
+        "MAIN STREET.",
+        "SHE DID ALL OF THIS",
+        "DANCING",
+        "PEOPLE",
+        "ALL OF THEM.",
+        "MAN",
+        "WOMAN",
+        "THE END."
+      ],
+      "dialogues": [
+        {
+          "character": "WALTZ",
+          "parenthetical": "",
+          "text": "begins."
+        },
+        {
+          "character": "MAIN STREET.",
+          "parenthetical": "",
+          "text": "Newly painted. Newly manicured."
+        },
+        {
+          "character": "SHE DID ALL OF THIS",
+          "parenthetical": "",
+          "text": "."
+        },
+        {
+          "character": "DANCING",
+          "parenthetical": "",
+          "text": "-"
+        },
+        {
+          "character": "PEOPLE",
+          "parenthetical": "",
+          "text": "-"
+        },
+        {
+          "character": "ALL OF THEM.",
+          "parenthetical": "",
+          "text": "As if they were all getting used to their new bodies. 88."
+        },
+        {
+          "character": "MAN",
+          "parenthetical": "",
+          "text": "is waiting in front of her-"
+        },
+        {
+          "character": "WOMAN",
+          "parenthetical": "",
+          "text": "is waiting for them-"
+        },
+        {
+          "character": "THE END.",
+          "parenthetical": "",
+          "text": "89."
+        }
+      ],
+      "actionPreview": "Two gloved hands place a record on the player. Brings down the needle. The audio crackles and then- The Brynn moves away. Looking classy as hell in a winter coat and a dress. She smiles to herself, swaying with the music, revealing that- She’s in the middle of the road. On Christmas lights twinkling"
+    }
+  ]
+}

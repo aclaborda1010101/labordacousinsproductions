@@ -1,0 +1,22 @@
+{
+  "slug": "a-most-violent-year",
+  "title": "A Most Violent Year",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 29289,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                 A MOST VIOLENT YEAR </b> Written by J.C. Chandor This film is set in New York City, 1981: Murders: 2,228 Forcible Rape: 5,405 Violent Crime: 180,235 Aggravated Assault: 60,329 Property: 1,029,749 Vehicle Theft: 133,041 Robbery: 112,273 Burglary: 360,925 Larceny-Theft: 535,783 Crime Index: 1,209,984 1981 was the most violent year in NYC history as recorded by overall Crime Index in relation to population. <b>                          2 </b> <b>          JANUARY",
+      "dialogue_count": 0,
+      "word_count": 29289
+    }
+  ]
+}

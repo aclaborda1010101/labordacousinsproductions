@@ -1,0 +1,22 @@
+{
+  "slug": "cars-2",
+  "title": "Cars 2",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 27558,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                          CARS 2 </b> <b>                          WRITTEN BY </b> <b>                          BEN QUEEN </b> A sleek British sports car talks directly to us in a pixilated, garbled video. He's OUT OF BREATH. Crates are visible behind him. We're in the shadowy bowels of a steel room. <b>                          LELAND TURBO </b>           This is Agent Leland Turbo. I have a flash transmission for Agent Finn McMissile. <b>          SUPERIMPOSE OVER BLACK: WALT DISNEY PICTURE",
+      "dialogue_count": 0,
+      "word_count": 27558
+    }
+  ]
+}

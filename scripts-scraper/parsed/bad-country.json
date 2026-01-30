@@ -1,0 +1,22 @@
+{
+  "slug": "bad-country",
+  "title": "Bad Country",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 24842,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                  BAD COUNTRY </b> (aka WHISKEY BAY) Written by Jonathan Hirschbein <b>                                                              MAY 2012 </b> TEXT OVER BLACK: \"Before all else, be armed\" - Niccolo Machiavelli <b>            FADE IN: </b> <b>            LANDSCAPES </b> A rusted Chevy El Camino drives against dissolving Louisiana landscapes - broad, barren, pounded by the rain. <b>            I/E. EL CAMINO, TRAVELING - DUSK </b> Occasional oncoming headligh",
+      "dialogue_count": 0,
+      "word_count": 24842
+    }
+  ]
+}

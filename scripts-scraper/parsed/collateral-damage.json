@@ -1,0 +1,26 @@
+{
+  "slug": "collateral-damage",
+  "title": "Collateral Damage",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 1,
+  "characters": [
+    "COLLATERAL DAMAGE"
+  ],
+  "total_words": 31255,
+  "total_dialogue": 1,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "COLLATERAL DAMAGE"
+      ],
+      "action_text": "COLLATERAL DAMAGE by Ronald Roose Revisions by Nicholas Meyer David Griffiths and Peter Griffiths Terry George Current revisions by Channing Gibson No portion of this script may be performed, reproduced, or used by any means, or quoted or published in any medium without the prior written consent of Warner Bros. <b>                                      PRODUCTION DRAFT </b> April 14, 2000 <b>WARNER BROS.                          � 2000 </b>4000 Warner Boulevard                 WARNER BROS. Burban",
+      "dialogue_count": 1,
+      "word_count": 31255
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "slug": "all-the-kings-men",
+  "title": "All the King's Men",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 24928,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                    ALL THE KING'S MEN </b> Written by Robert Rossen Based on the novel by Robert Penn Warren <b>                                      SHOOTING DRAFT </b> <b>                                           1949 </b> <b> </b> Interior: Jack Burden's Desk, The Chronicle, Day Jack Burden is looking over the morning edition of \"The Chronicle.\" He reads the society page. A man enters and leans across his desk. <b>                                     MAN </b>",
+      "dialogue_count": 0,
+      "word_count": 24928
+    }
+  ]
+}

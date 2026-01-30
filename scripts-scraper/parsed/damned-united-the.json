@@ -1,0 +1,44 @@
+{
+  "slug": "damned-united-the",
+  "title": "Damned United, The",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 10,
+  "characters": [
+    "REVIE",
+    "CLOUGH",
+    "CUSSINS",
+    "TAYLOR",
+    "BARBARA",
+    "BREMNER",
+    "LONGSON",
+    "JIMMY",
+    "ARCHER",
+    "MITCHELL"
+  ],
+  "total_words": 22785,
+  "total_dialogue": 86,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "REVIE",
+        "CLOUGH",
+        "CUSSINS",
+        "TAYLOR",
+        "BARBARA",
+        "BREMNER",
+        "LONGSON",
+        "JIMMY",
+        "ARCHER",
+        "MITCHELL"
+      ],
+      "action_text": "<b>                         THE DAMNED UNITED </b> Written by Peter Morgan From the novel by David Peace <b>1   EXT. ELLAND ROAD - DAY - (1974)                                1 </b> Heavy leaden skies over the arachnoid stands and floodlights of Elland Road stadium: home to Leeds United football club. And rain. Sheets of angry, Yorkshire rain. <b>    TITLE: \"THE DAMNED UNITED\" </b> <b>2   INT. BOARDROOM - ELLAND ROAD - DAY - (1974)                    2 </b> Flashlights pop as DON REVIE, (late 40",
+      "dialogue_count": 86,
+      "word_count": 22785
+    }
+  ]
+}

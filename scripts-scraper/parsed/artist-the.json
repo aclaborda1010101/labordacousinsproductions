@@ -1,0 +1,22 @@
+{
+  "slug": "artist-the",
+  "title": "Artist, The",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 15304,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                            THE ARTIST </b> Written by Michel Hazanavicius Silent film, illustrated musically, with some title cards to indicate the dialogues, with actors whose lips move when they speak although we never hear their voices. The images are in black and white, in format 1.33. <b>1   TITLES                                                       1 </b> The letters of the titles come up on a title card typical of the 1920s. Elegant motifs around the edge of the frame, and, in the b",
+      "dialogue_count": 0,
+      "word_count": 15304
+    }
+  ]
+}

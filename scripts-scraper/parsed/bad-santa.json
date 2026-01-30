@@ -1,0 +1,22 @@
+{
+  "slug": "bad-santa",
+  "title": "Bad Santa",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 17717,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "\"BAD SANTA\" by Glenn Ficarra & John Requa Revisions by Ethan Coen & Joel Coen Polish by Terry Zwigoff Dimension Films Production Draft - WHITE February 1, 2002 <b> </b> <b>               FADE IN: </b> Snow flakes falling against a black sky. <b>               CAMERA FOLLOWS THEM DOWNWARD TO REVEAL </b> <b>               EXT. MILWAUKEE BAR - NIGHT </b> It looks like a warm cozy place out of \"It's A Wonderful Life\". The window is flocked with fake snow, and hung with colorful Christmas lights, wre",
+      "dialogue_count": 0,
+      "word_count": 17717
+    }
+  ]
+}

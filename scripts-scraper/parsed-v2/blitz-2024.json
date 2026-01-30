@@ -1,0 +1,4454 @@
+{
+  "slug": "blitz-2024",
+  "title": "Blitz",
+  "parsedWith": "v2",
+  "parsedAt": "2026-01-29T22:09:04.944Z",
+  "stats": {
+    "scenes": 121,
+    "dialogues": 592,
+    "characters": 93
+  },
+  "characters": [
+    {
+      "name": "GEORGE",
+      "dialogueLines": 96,
+      "totalWords": 429
+    },
+    {
+      "name": "RITA",
+      "dialogueLines": 77,
+      "totalWords": 518
+    },
+    {
+      "name": "IFE",
+      "dialogueLines": 39,
+      "totalWords": 335
+    },
+    {
+      "name": "JACK",
+      "dialogueLines": 27,
+      "totalWords": 189
+    },
+    {
+      "name": "ALBERT",
+      "dialogueLines": 27,
+      "totalWords": 270
+    },
+    {
+      "name": "JESS",
+      "dialogueLines": 23,
+      "totalWords": 145
+    },
+    {
+      "name": "TOMMY",
+      "dialogueLines": 21,
+      "totalWords": 117
+    },
+    {
+      "name": "TILDA",
+      "dialogueLines": 20,
+      "totalWords": 154
+    },
+    {
+      "name": "GERALD",
+      "dialogueLines": 19,
+      "totalWords": 123
+    },
+    {
+      "name": "BERYL",
+      "dialogueLines": 16,
+      "totalWords": 78
+    },
+    {
+      "name": "MICKEY",
+      "dialogueLines": 13,
+      "totalWords": 208
+    },
+    {
+      "name": "DORIS",
+      "dialogueLines": 11,
+      "totalWords": 147
+    },
+    {
+      "name": "WOMAN",
+      "dialogueLines": 8,
+      "totalWords": 82
+    },
+    {
+      "name": "CLIVE",
+      "dialogueLines": 8,
+      "totalWords": 75
+    },
+    {
+      "name": "THOMAS CLARK",
+      "dialogueLines": 7,
+      "totalWords": 33
+    },
+    {
+      "name": "AGNES",
+      "dialogueLines": 6,
+      "totalWords": 27
+    },
+    {
+      "name": "CAPTAIN",
+      "dialogueLines": 6,
+      "totalWords": 52
+    },
+    {
+      "name": "ARTHUR",
+      "dialogueLines": 6,
+      "totalWords": 27
+    },
+    {
+      "name": "TICKET INSPECTOR",
+      "dialogueLines": 6,
+      "totalWords": 43
+    },
+    {
+      "name": "STEWARD",
+      "dialogueLines": 5,
+      "totalWords": 60
+    },
+    {
+      "name": "ARCHIE",
+      "dialogueLines": 5,
+      "totalWords": 90
+    },
+    {
+      "name": "YOUNG WOMAN",
+      "dialogueLines": 5,
+      "totalWords": 38
+    },
+    {
+      "name": "AIR RAID WARDEN ONE",
+      "dialogueLines": 5,
+      "totalWords": 26
+    },
+    {
+      "name": "AIR RAID WARDEN TWO",
+      "dialogueLines": 5,
+      "totalWords": 21
+    },
+    {
+      "name": "FEMALE OFFICIAL",
+      "dialogueLines": 5,
+      "totalWords": 40
+    },
+    {
+      "name": "RUBY",
+      "dialogueLines": 5,
+      "totalWords": 38
+    },
+    {
+      "name": "REGISTRAR",
+      "dialogueLines": 4,
+      "totalWords": 36
+    },
+    {
+      "name": "GODFREY",
+      "dialogueLines": 4,
+      "totalWords": 47
+    },
+    {
+      "name": "MARCUS",
+      "dialogueLines": 4,
+      "totalWords": 19
+    },
+    {
+      "name": "BUS CONDUCTOR",
+      "dialogueLines": 4,
+      "totalWords": 80
+    },
+    {
+      "name": "HARVEY",
+      "dialogueLines": 4,
+      "totalWords": 12
+    },
+    {
+      "name": "MALE OFFICIAL",
+      "dialogueLines": 4,
+      "totalWords": 45
+    },
+    {
+      "name": "CROWD",
+      "dialogueLines": 3,
+      "totalWords": 13
+    },
+    {
+      "name": "BOY ONE",
+      "dialogueLines": 3,
+      "totalWords": 13
+    },
+    {
+      "name": "GUARD ONE",
+      "dialogueLines": 3,
+      "totalWords": 14
+    },
+    {
+      "name": "MAN ONE",
+      "dialogueLines": 3,
+      "totalWords": 25
+    },
+    {
+      "name": "MAN TWO",
+      "dialogueLines": 3,
+      "totalWords": 34
+    },
+    {
+      "name": "WARDEN",
+      "dialogueLines": 3,
+      "totalWords": 5
+    },
+    {
+      "name": "DAVIES",
+      "dialogueLines": 3,
+      "totalWords": 22
+    },
+    {
+      "name": "CAMPBELL",
+      "dialogueLines": 3,
+      "totalWords": 4
+    },
+    {
+      "name": "WHITE MAN",
+      "dialogueLines": 3,
+      "totalWords": 36
+    },
+    {
+      "name": "SHOP OWNER",
+      "dialogueLines": 3,
+      "totalWords": 8
+    },
+    {
+      "name": "POLICEMAN",
+      "dialogueLines": 3,
+      "totalWords": 34
+    },
+    {
+      "name": "VOICES",
+      "dialogueLines": 3,
+      "totalWords": 14
+    },
+    {
+      "name": "BOY TWO",
+      "dialogueLines": 2,
+      "totalWords": 12
+    },
+    {
+      "name": "IAN",
+      "dialogueLines": 2,
+      "totalWords": 7
+    },
+    {
+      "name": "POLICEMAN ONE",
+      "dialogueLines": 2,
+      "totalWords": 23
+    },
+    {
+      "name": "BETTY",
+      "dialogueLines": 2,
+      "totalWords": 23
+    },
+    {
+      "name": "SIKH MAN",
+      "dialogueLines": 2,
+      "totalWords": 36
+    },
+    {
+      "name": "WARDEN ONE",
+      "dialogueLines": 2,
+      "totalWords": 15
+    }
+  ],
+  "scenes": [
+    {
+      "number": 1,
+      "heading": "EXT. LONDON - NIGHT",
+      "characters": [
+        "BBC NEWSREADER",
+        "CATHEDRAL"
+      ],
+      "dialogues": [
+        {
+          "character": "BBC NEWSREADER",
+          "parenthetical": "",
+          "text": "Insert BBC news coverage of London bombings and UK’s position in WWII."
+        }
+      ],
+      "actionPreview": "1 1 Black crosses litter the sky, a sky full of German bombers. The hum of the engines is deafening now. We are inside the cockpit of one of the bombers. A photograph of the pilot’s sweetheart is stuck on the side window. The scrambling sound of radio waves take over our aural attention. The GERMAN "
+    },
+    {
+      "number": 2,
+      "heading": "INT. HANWAY HOUSE - BEDROOM - CLIFFORD LANE, EAST LONDON -",
+      "characters": [
+        "EARLY MORNING"
+      ],
+      "dialogues": [
+        {
+          "character": "EARLY MORNING",
+          "parenthetical": "",
+          "text": "We are in a small bedroom with two windows, curtains drawn, neat with wooden cupboards, a chest of drawers, a small bookshelf cluttered with books and children’s magazines."
+        }
+      ],
+      "actionPreview": "2 2 A round mirror reflects RITA (white, 27) and GEORGE (biracial, 10) lying sound asleep, semi-dressed, on top of the made bed. On their faces, traces of grime and dirt from the rough night before. A cat is curled asleep beside George. From the ground floor below, the sound of a piano playing Pack "
+    },
+    {
+      "number": 3,
+      "heading": "INT. FRONT ROOM, HANWAY HOUSE - MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "3 3 GERALD HANWAY, 50’s, Rita’s dad and George’s grandfather, at the upright piano, humming along. There’s a happy-go-lucky quality to him but he wears scars from his past on his face. He gazes up at a photograph of a young woman, his beloved wife, who has since died. Rita and George are his solace,"
+    },
+    {
+      "number": 4,
+      "heading": "INT. BEDROOM, HANWAY HOUSE - MORNING",
+      "characters": [
+        "RITA"
+      ],
+      "dialogues": [
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "What’s the use of worrying"
+        }
+      ],
+      "actionPreview": "4 4 Rita opens her eyes. Sees a small packed leather suitcase on the floor. A tear seeps from the corner of her eye, trails down into her ear. George stirs in his sleep. She kisses him on the back of the head, sings softly and sweetly along to the piano music. It never was worth while. So pack up yo"
+    },
+    {
+      "number": 5,
+      "heading": "INT. HANWAY HOUSE - KITCHEN - MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "5 5 Gerald whistles as he cooks breakfast at the stove."
+    },
+    {
+      "number": 6,
+      "heading": "INT. HANWAY HOUSE - BEDROOM - MORNING",
+      "characters": [
+        "RITA",
+        "GEORGE"
+      ],
+      "dialogues": [
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "These two?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "(CONT'D)",
+          "text": "(glancing at George)"
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "Why can’t you come with me?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Sweetheart, it’s an adventure for children only. Grownups not allowed. It’s going to be great, you’ll make new friends-"
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "- My friends are here-"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "- you’ll play games in the countryside, there’ll be cows and horses and sheep..."
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "But they smell. I want to stay with you."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "It’s only until all this is over."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "(CONT'D)",
+          "text": "The schools will open again and life will get back to normal."
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "(low, pitiful)"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Your dad would want you to have it."
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "How do you know?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Because that’s the kind of man he was. Because you’re his son, and this belongs to you now. It will keep you safe from harm."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "(CONT'D)",
+          "text": "Find your cap and come downstairs."
+        }
+      ],
+      "actionPreview": "6 6 George is dressing in his best. Grey shorts, white shirt and jacket. Rita at the bookcase selects a couple of magazines. Head bent fastening his shirt buttons, George doesn’t look up, doesn’t respond. She puts the magazines in the suitcase and snaps it closed. Your buttons are all skewy. She ben"
+    },
+    {
+      "number": 7,
+      "heading": "EXT. LANDING - MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "7 7 Rita stands on the landing, suitcase in hand, pausing to compose herself. She touches her neck where the chain used to hang, and swipes at tears."
+    },
+    {
+      "number": 8,
+      "heading": "INT. HANWAY HOUSE - KITCHEN - MORNING",
+      "characters": [
+        "GERALD"
+      ],
+      "dialogues": [
+        {
+          "character": "GERALD",
+          "parenthetical": "",
+          "text": "We don’t have a choice love. Look what happened last night."
+        },
+        {
+          "character": "GERALD",
+          "parenthetical": "(CONT'D)",
+          "text": "Breakfast! Hurry up, it’s getting cold!"
+        }
+      ],
+      "actionPreview": "8 8 Gerald serves up bacon and eggs from a frying pan. Rita comes in. Gerald gets a glimpse of the tracks of her tears. She nods. He opens the kitchen door, shouts up for George. 5. 6. We hear the sound of George’s feet descending the stairs."
+    },
+    {
+      "number": 9,
+      "heading": "EXT. HANWAY HOUSE - FRONT DOOR - MORNING",
+      "characters": [
+        "GERALD",
+        "JACK",
+        "RITA",
+        "GEORGE"
+      ],
+      "dialogues": [
+        {
+          "character": "GERALD",
+          "parenthetical": "",
+          "text": "Do you want some breakfast?"
+        },
+        {
+          "character": "JACK",
+          "parenthetical": "",
+          "text": "No thanks Gerald. I need to clean up and catch thirty winks. I’m back on duty in a few hours."
+        },
+        {
+          "character": "GERALD",
+          "parenthetical": "",
+          "text": "I’m going to help out on Maple"
+        },
+        {
+          "character": "JACK",
+          "parenthetical": "",
+          "text": "There’s a lot of damage. The houses are very unstable. Be careful."
+        },
+        {
+          "character": "GERALD",
+          "parenthetical": "",
+          "text": "Always."
+        },
+        {
+          "character": "JACK",
+          "parenthetical": "",
+          "text": "You’re off then, are you George?"
+        },
+        {
+          "character": "JACK",
+          "parenthetical": "(CONT'D)",
+          "text": "God sp...sp...Godspeed, and good luck."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Say thank you George."
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "(low)"
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "(CONT'D)",
+          "text": "Goodbye Olly."
+        },
+        {
+          "character": "JACK",
+          "parenthetical": "",
+          "text": "(out of ear-shot of"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Not really."
+        },
+        {
+          "character": "JACK",
+          "parenthetical": "",
+          "text": "Do you want co...co...company?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "You need your kip, Jack. We’ll be fine."
+        },
+        {
+          "character": "JACK",
+          "parenthetical": "",
+          "text": "Alright then."
+        },
+        {
+          "character": "GERALD",
+          "parenthetical": "",
+          "text": "Look after yourself, my boy, and don’t forget: be brave and stand up to bullies. What do we say about them?"
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "(low)"
+        },
+        {
+          "character": "GERALD",
+          "parenthetical": "",
+          "text": "I beg your pardon, I didn’t hear what you said. Speak up please."
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "(louder)"
+        },
+        {
+          "character": "GERALD",
+          "parenthetical": "",
+          "text": "Correct! Come here."
+        },
+        {
+          "character": "GERALD",
+          "parenthetical": "(CONT'D)",
+          "text": "This is for emergencies."
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "Thank you, Grandad."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Dad, don’t do anything heroic on"
+        },
+        {
+          "character": "GERALD",
+          "parenthetical": "",
+          "text": "I’ll do my best."
+        }
+      ],
+      "actionPreview": "9 9 George comes out with Rita and Gerald. The cat follows on behind. Rita is holding the suitcase. Next door neighbour firefighter JACK is returning home. His clothes are grimy and ripped, his face and hands covered in soot, his eyes red- rimmed from smoke and exhaustion. Jack is a man whose physic"
+    },
+    {
+      "number": 10,
+      "heading": "INT. ST. PANCRAS TRAIN STATION - MORNING",
+      "characters": [
+        "REGISTRAR",
+        "RITA"
+      ],
+      "dialogues": [
+        {
+          "character": "REGISTRAR",
+          "parenthetical": "",
+          "text": "Where is the child’s mother?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "I’m his mother."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "(CONT'D)",
+          "text": "(firmly)"
+        },
+        {
+          "character": "REGISTRAR",
+          "parenthetical": "",
+          "text": "You’re late. They’re already boarding. Make your way to platform number 3."
+        }
+      ],
+      "actionPreview": "10 10 Rita and George enter the station. 8. 9. The scene is one of chaos and pandemonium, the sound is deafening as desperate parents throng to put their children on the train. REGISTRARS and ASSISTANTS dotted along the concourse, clipboards in hand, trying to assert some order. Trains stationary at"
+    },
+    {
+      "number": 11,
+      "heading": "INT. ST. PANCRAS STATION - PLATFORM - MORNING",
+      "characters": [
+        "RITA",
+        "GEORGE",
+        "AGNES"
+      ],
+      "dialogues": [
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "(bending to George)"
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "I hate you."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "(loud)"
+        },
+        {
+          "character": "AGNES",
+          "parenthetical": "",
+          "text": "Rita, calm yourself."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "I’ve changed my mind, I want him back!"
+        },
+        {
+          "character": "AGNES",
+          "parenthetical": "",
+          "text": "Rita, stop!"
+        }
+      ],
+      "actionPreview": "11 11 Children are boarding the train. Rita holds George tightly by the hand. At the next carriage, Rita’s fellow worker and acquaintance AGNES, late 20’s, escorts her two young children onto the train. She waves at Rita, Rita waves back. Don’t forget to be a good boy and don’t wipe your nose on you"
+    },
+    {
+      "number": 12,
+      "heading": "INT. TRAIN - MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "12 12 George slumps in a window seat, looks straight ahead."
+    },
+    {
+      "number": 13,
+      "heading": "INT. PLATFORM - MORNING",
+      "characters": [
+        "STEWARD"
+      ],
+      "dialogues": [
+        {
+          "character": "STEWARD",
+          "parenthetical": "",
+          "text": "He’ll be alright love, some nice family will be taking care of him, don’t you worry -"
+        }
+      ],
+      "actionPreview": "13 13 Rita tries to board the train. A STEWARD intercepts her. A loud gush of steam escapes from the train’s engine as Rita’s gaze is partly obscured. He holds her back. Agnes arrives and tries to comfort her as steam loudly rises from the train as it begins to pull away from the platform. 10. 11."
+    },
+    {
+      "number": 14,
+      "heading": "INT. TRAIN - MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "14 14 George stubbornly keeps his gaze locked forward and pretends not to hear as a heartbroken Rita screaming his name is lost from view."
+    },
+    {
+      "number": 15,
+      "heading": "EXT. MUNITIONS FACTORY, EAST END - MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "15 15 A BBC Outside Broadcast truck and other BBC vehicles are parked outside. Technicians snake cabling into the factory, Assistants scurry about with clipboards, broadcast equipment is wheeled on carts inside. The ubiquitous English tea and sweets cart is set up nearby."
+    },
+    {
+      "number": 16,
+      "heading": "INT. MUNITIONS FACTORY - MORNING",
+      "characters": [
+        "AGNES",
+        "TILDA",
+        "DORIS"
+      ],
+      "dialogues": [
+        {
+          "character": "AGNES",
+          "parenthetical": "",
+          "text": "(at Rita)"
+        },
+        {
+          "character": "AGNES",
+          "parenthetical": "(CONT'D)",
+          "text": "I know it’s bloody hard. Keep your chin up Rita."
+        },
+        {
+          "character": "TILDA",
+          "parenthetical": "",
+          "text": "Come on love cheer up. Look on the bright side, you get to be on your own. You can enjoy yourself!"
+        },
+        {
+          "character": "DORIS",
+          "parenthetical": "",
+          "text": "He’ll be well looked after otherwise they wouldn’t have evacuated them. He has all those terrors to play with. It will be like going to Blackpool. Better!"
+        },
+        {
+          "character": "DORIS",
+          "parenthetical": "(CONT'D)",
+          "text": "I guess you’re saving your voice for later eh? I imagine you’re a bit nervous, I would be. Are you sure you’re up to it?"
+        },
+        {
+          "character": "TILDA",
+          "parenthetical": "",
+          "text": "(dismissively)"
+        },
+        {
+          "character": "DORIS",
+          "parenthetical": "",
+          "text": "It’s her decision. Everyone in the country will be listening. She doesn’t have to do anything that she doesn’t want to do."
+        }
+      ],
+      "actionPreview": "16 16 Cabling is tacked to the floor, a BBC sound cart is wheeled through the vast, cavernous interior. The sound is deafening, the atmosphere thick with toxic chemicals. Sparks fly. A large assembly line of mostly women snakes around the factory floor. They work in repetitive motions. In the sea of"
+    },
+    {
+      "number": 17,
+      "heading": "EXT. CLIFFORD LANE, EAST LONDON - THE PREVIOUS NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "17 17 The sound of the AIR-RAID SIREN is loud and disorientating. Gerald, George and Rita, hurry out of the house with bundles and bags. George carries Olly in a cat carrier, the handle squeaking with every jolt."
+    },
+    {
+      "number": 18,
+      "heading": "EXT. BOTTOM OF THE ROAD - THE PREVIOUS NIGHT",
+      "characters": [
+        "WOMAN",
+        "RITA"
+      ],
+      "dialogues": [
+        {
+          "character": "WOMAN",
+          "parenthetical": "",
+          "text": "(at the queue)"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "(to Gerald)"
+        }
+      ],
+      "actionPreview": "18 18 They hurry towards two elongated igloo-like bomb shelters, surrounded by sandbags. A large crowd gathered, others converging, everyone desperate to take shelter inside. All this in the midst of nearby explosions and distant heavy anti-aircraft fire. A family turns away from one of the shelters"
+    },
+    {
+      "number": 19,
+      "heading": "EXT. UNDERGROUND STATION - THE PREVIOUS NIGHT",
+      "characters": [
+        "CAPTAIN",
+        "MAN IN CROWD",
+        "WOMAN IN CROWD",
+        "CROWD MEMBER",
+        "CROWD",
+        "RITA",
+        "STATION INSPECTOR"
+      ],
+      "dialogues": [
+        {
+          "character": "CAPTAIN",
+          "parenthetical": "",
+          "text": "Move back! This station is not an authorized air raid shelter."
+        },
+        {
+          "character": "MAN IN CROWD",
+          "parenthetical": "",
+          "text": "The shelters are full!"
+        },
+        {
+          "character": "CAPTAIN",
+          "parenthetical": "",
+          "text": "If you have shelters at home, you can take cover there."
+        },
+        {
+          "character": "WOMAN IN CROWD",
+          "parenthetical": "",
+          "text": "A sheet of corrugated iron to put in your garden if you’ve got one."
+        },
+        {
+          "character": "CAPTAIN",
+          "parenthetical": "",
+          "text": "Move back or someone is going to get hurt!"
+        },
+        {
+          "character": "CROWD MEMBER",
+          "parenthetical": "",
+          "text": "The only one who’s going to get hurt mate is you if you don’t let us in."
+        },
+        {
+          "character": "CROWD",
+          "parenthetical": "",
+          "text": "(chanting)"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "For God’s sake, open the gates!"
+        },
+        {
+          "character": "CAPTAIN",
+          "parenthetical": "",
+          "text": "(at the soldiers)"
+        },
+        {
+          "character": "CAPTAIN",
+          "parenthetical": "(CONT'D)",
+          "text": "(at the STATION INSPECTOR)"
+        },
+        {
+          "character": "STATION INSPECTOR",
+          "parenthetical": "",
+          "text": "Captain, it’s against the law!"
+        },
+        {
+          "character": "CROWD",
+          "parenthetical": "",
+          "text": "Open the gates! Open the gates!"
+        },
+        {
+          "character": "CAPTAIN",
+          "parenthetical": "",
+          "text": "These people are hopelessly exposed. I’m ordering you one last time: unlock the gates."
+        }
+      ],
+      "actionPreview": "19 19 A line of ARMED SOLDIERS, bayonets at the ready, guard the closed gates to the station. Rita, Gerald and George join a large crowd clamoring to be let in. Where are we supposed to go? You’re having a laugh! The crowd heaves forward. Rita tries to shield George from the crush. The soldiers are "
+    },
+    {
+      "number": 20,
+      "heading": "INT. UNDERGROUND STATION - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "20 20 The crowd funnels down slippery steps to safety, Rita, Gerald and George in their midst. A YOUNG GIRL, an OLD MAN, others, are knocked over in the crush. Others not breaking their stride step over them in their blind panic to reach safety."
+    },
+    {
+      "number": 21,
+      "heading": "INT. PLATFORM, UNDERGROUND STATION NIGHT",
+      "characters": [
+        "GEORGE",
+        "GERALD",
+        "END FLASHBACK."
+      ],
+      "dialogues": [
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "(low)"
+        },
+        {
+          "character": "GERALD",
+          "parenthetical": "",
+          "text": "(out of earshot)"
+        }
+      ],
+      "actionPreview": "21 21 There’s a scramble to find space to bed down for the night. Rita, George and Gerald find a position towards the end of the platform. Rita lays out blankets, takes out a box of biscuits and a thermos. 14. 15. George props the cat carrier on the ground beside him. He lifts Olly out, holds him an"
+    },
+    {
+      "number": 22,
+      "heading": "INT. MUNITIONS FACTORY - MORNING",
+      "characters": [
+        "CLIVE"
+      ],
+      "dialogues": [
+        {
+          "character": "CLIVE",
+          "parenthetical": "",
+          "text": "Ladies, can we stop the chit-chat and get on with it please."
+        },
+        {
+          "character": "CLIVE",
+          "parenthetical": "(CONT'D)",
+          "text": "There are boys out there,"
+        }
+      ],
+      "actionPreview": "22 22 Factory Foreman CLIVE, 39, faux Clarke Gable look, right down to the trimmed mustache and razor-sharp side parting, inspects the line. A pointed look at Doris and Tilda. our boys, relying on you, God help them!. He walks on. Behind his back, Tilda lifts her jumper to reveal a 1940’s over-shoul"
+    },
+    {
+      "number": 23,
+      "heading": "INT. TRAIN CARRIAGE - MORNING",
+      "characters": [
+        "STEWARD",
+        "BOY ONE",
+        "BOY TWO"
+      ],
+      "dialogues": [
+        {
+          "character": "STEWARD",
+          "parenthetical": "",
+          "text": "No feet on the seats, boys and girls."
+        },
+        {
+          "character": "STEWARD",
+          "parenthetical": "(CONT'D)",
+          "text": "Get down from there immediately, son. It’s not safe."
+        },
+        {
+          "character": "BOY ONE",
+          "parenthetical": "",
+          "text": "Temper, temper."
+        },
+        {
+          "character": "BOY TWO",
+          "parenthetical": "",
+          "text": "You look like a dog. Where’s your tail?"
+        },
+        {
+          "character": "BOY ONE",
+          "parenthetical": "",
+          "text": "Aww he’s crying?"
+        },
+        {
+          "character": "BOY TWO",
+          "parenthetical": "",
+          "text": "Missing mummy are you?"
+        },
+        {
+          "character": "BOY ONE",
+          "parenthetical": "",
+          "text": "What’s it to you? Is he your fella?"
+        },
+        {
+          "character": "STEWARD",
+          "parenthetical": "",
+          "text": "That’s enough!"
+        },
+        {
+          "character": "STEWARD",
+          "parenthetical": "(CONT'D)",
+          "text": "If I hear another word from you or anyone else you’ll be sitting in the guard’s compartment for the rest of the journey. Understood?"
+        }
+      ],
+      "actionPreview": "23 23 Children of all ages crammed in the seats. A STEWARD walks through, inspecting the carriage. A boy is curled up in the overhead luggage rack. The boy scrambles down. The Steward walks through to the next compartment. George looks out of the window as the train rapidly gathers speed, looking ou"
+    },
+    {
+      "number": 24,
+      "heading": "INT. BBC RADIO STUDIO, BROADCASTING HOUSE - MORNING",
+      "characters": [
+        "PRESENTER"
+      ],
+      "dialogues": [
+        {
+          "character": "PRESENTER",
+          "parenthetical": "",
+          "text": "Now over to The East London"
+        }
+      ],
+      "actionPreview": "24 24 A smartly dressed bespectacled man sits behind a large BBC microphone, briefing papers in hand. He speaks with a cut glass received pronunciation English accent. Munitions factory where Godfrey Basely is waiting to introduce the show. The sound of instruments striking up takes us to... CUT TO:"
+    },
+    {
+      "number": 25,
+      "heading": "INT. MUNITIONS FACTORY - MORNING",
+      "characters": [
+        "RADIO PRODUCER",
+        "CONDUCTOR.",
+        "GODFREY",
+        "TILDA",
+        "RITA",
+        "CLOSE ON AGNES",
+        "AGNES",
+        "CROWD"
+      ],
+      "dialogues": [
+        {
+          "character": "RADIO PRODUCER",
+          "parenthetical": "",
+          "text": "(to factory workers)"
+        },
+        {
+          "character": "CONDUCTOR.",
+          "parenthetical": "",
+          "text": "A 20-strong BRASS BAND, dressed in military style uniform, play a rousing tune. There are trumpets, trombones and big wheel sized drums all keeping time to the baton wielding conductor."
+        },
+        {
+          "character": "GODFREY",
+          "parenthetical": "",
+          "text": "Well that was the Work’s Brass"
+        },
+        {
+          "character": "TILDA",
+          "parenthetical": "",
+          "text": "Go on Rita! Go on girl! Give it some!"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "This is for all the parents whose children have been evacuated, and for my boy George."
+        },
+        {
+          "character": "CLOSE ON AGNES",
+          "parenthetical": "",
+          "text": "Her eyes fill with tears."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "(CONT'D)",
+          "text": "Grab your coat,"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "(CONT'D)",
+          "text": "... On the sunny side of the street."
+        },
+        {
+          "character": "AGNES",
+          "parenthetical": "",
+          "text": "We need shelters! Open up the underground!"
+        },
+        {
+          "character": "AGNES",
+          "parenthetical": "(CONT'D)",
+          "text": "(mouths to Rita)"
+        },
+        {
+          "character": "CROWD",
+          "parenthetical": "",
+          "text": "We need shelters! We need shelters!"
+        },
+        {
+          "character": "GODFREY",
+          "parenthetical": "",
+          "text": "And now ladies and gentlemen we head back to Broadcasting House."
+        }
+      ],
+      "actionPreview": "25 25 The factory has been transformed into a kind of make-shift studio and the place is packed to the rafters with WORKERS gathered wherever they can find space. Some perch on work benches, others on crates. There are happy, excited smiles all around, everyone welcoming the distraction. 17. 18. Spa"
+    },
+    {
+      "number": 26,
+      "heading": "INT. MUNITIONS FACTORY - DAY",
+      "characters": [
+        "GODFREY",
+        "CLIVE"
+      ],
+      "dialogues": [
+        {
+          "character": "GODFREY",
+          "parenthetical": "",
+          "text": "How did you let that happen? This is totally disorderly and unacceptable. Don’t you have control over your staff? We’re at war man!"
+        },
+        {
+          "character": "CLIVE",
+          "parenthetical": "",
+          "text": "I’m terribly sorry sir, this should never have happened and those responsible will be disciplined."
+        },
+        {
+          "character": "GODFREY",
+          "parenthetical": "",
+          "text": "Well I should jolly well hope so!"
+        },
+        {
+          "character": "CLIVE",
+          "parenthetical": "",
+          "text": "Get your things and come with me."
+        }
+      ],
+      "actionPreview": "26 26 The last of the outside broadcast paraphernalia has been removed and the floor is back to normal full operating status and deafening sound. And you’d be darn lucky if we ever come to this sorry factory again. Godfrey exits. Clive the foreman marches down the assembly line towards Agnes and the"
+    },
+    {
+      "number": 27,
+      "heading": "EXT. ENGLISH COUNTRYSIDE - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "27 27 The train transporting the evacuee children winds its way through verdant countryside."
+    },
+    {
+      "number": 28,
+      "heading": "INT. TRAIN CARRIAGE - DAY",
+      "characters": [
+        "GEORGE"
+      ],
+      "dialogues": [
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "Okay. Who wants to fight?"
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "(CONT'D)",
+          "text": "(at the boys)"
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "(CONT'D)",
+          "text": "Which one of you has got the balls?"
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "(CONT'D)",
+          "text": "I thought so. All mouth and no trousers."
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "(reluctantly)"
+        }
+      ],
+      "actionPreview": "28 28 Kids in their seats argue about football teams, play cards, or sit in silence, homesickness and fear of the unknown. George stares out the window. Suddenly, a paper ball hits him on the side of the head, lobbed by the trio of bully boys in the seats behind. George gets to his feet. He stands i"
+    },
+    {
+      "number": 29,
+      "heading": "EXT. HANWAY HOUSE. STREET - DAY",
+      "characters": [
+        "RITA",
+        "GEORGE",
+        "ARTHUR",
+        "TWO OF THE BOYS"
+      ],
+      "dialogues": [
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "George! Tea! Five minutes!"
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "Okay!"
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "(CONT'D)",
+          "text": "(at Arthur)"
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "Hold your horses!"
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "(CONT'D)",
+          "text": "(waving his arm)"
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "Come on, come on!"
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "Alright, you asked for it."
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "(CONT'D)",
+          "text": "Catch it! Catch it!"
+        },
+        {
+          "character": "TWO OF THE BOYS",
+          "parenthetical": "",
+          "text": "(Shouting in unison) I’ve got it! I’ve got it!"
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "Six!"
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "(to the two boys)"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "(from the house)"
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "Go home to Mummy, you black bastard you."
+        }
+      ],
+      "actionPreview": "29 29 It’s the previous summer. We see a cricket bat tapping on the ground. George holds it tightly in front of a makeshift wicket (a kitchen chair). He is playing cricket with FRIENDS, including Arthur, in the middle of the street. From the front gate of the Hanway house, Rita appears in her apron."
+    },
+    {
+      "number": 30,
+      "heading": "INT. HANWAY HOUSE - PARLOUR - EVENING",
+      "characters": [
+        "GERALD",
+        "GEORGE",
+        "RITA",
+        "END FLASHBACK"
+      ],
+      "dialogues": [
+        {
+          "character": "GERALD",
+          "parenthetical": "",
+          "text": "No one to talk with, All by myself"
+        },
+        {
+          "character": "GERALD",
+          "parenthetical": "(CONT'D)",
+          "text": "Ain't misbehavin' I'm savin' my love for you ."
+        },
+        {
+          "character": "GERALD",
+          "parenthetical": "(CONT'D)",
+          "text": "What’s up?"
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "Nothing."
+        },
+        {
+          "character": "GERALD",
+          "parenthetical": "",
+          "text": "Doesn’t look like nothing to me."
+        },
+        {
+          "character": "GERALD",
+          "parenthetical": "(CONT'D)",
+          "text": "Like Jack Horner"
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "Ugh. Mum!"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Come on sourpuss, join in! GERALD & RITA"
+        }
+      ],
+      "actionPreview": "30 30 Gerald’s fingers glide across the keys playing the Fats Waller number Ain’t Misbehaving. 23. 24. No one to walk with, But I'm happy on the shelf. George comes in, eyes downcast, dragging his feet. Come on George, let’s hear ya! George shakes his head. Arthur’s insult is still resonating in his"
+    },
+    {
+      "number": 31,
+      "heading": "INT. TRAIN CARRIAGE - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "31 31 George snaps out of his memory. Across from him, Cathy is asleep. He makes a decision. He gets up, grabs his suitcase and crosses down the aisle to the connecting door. The few who notice assume George has thrown a wobbly and is going to sit somewhere else. The sound of the clunk of the carria"
+    },
+    {
+      "number": 32,
+      "heading": "EXT. COUNTRYSIDE - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "32 32 The train winds its way through the countryside. A signal up ahead. The train slows, wheels squealing."
+    },
+    {
+      "number": 33,
+      "heading": "INT. TRAIN - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "33 33 As the train slows, George throws his suitcase out and jumps down after it."
+    },
+    {
+      "number": 34,
+      "heading": "EXT. COUNTRYSIDE - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "34 34 George tumbles for a while bruising himself as he falls but is unhurt as he picks himself up. Finding his suitcase he looks back at the train to find Cathy waving from the window. He waves back as the train picks up speed."
+    },
+    {
+      "number": 35,
+      "heading": "EXT. TRAIN TRACKS - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "35 35 George emerges from a train tunnel into bright sunshine. 25. 26. The sound of stillness and bird song as he runs to a clearing beside the track."
+    },
+    {
+      "number": 36,
+      "heading": "EXT. CLEARING BESIDE THE TRAIN TRACKS - DAY",
+      "characters": [
+        "INT."
+      ],
+      "dialogues": [
+        {
+          "character": "INT.",
+          "parenthetical": "",
+          "text": "FREIGHT CARRIAGE - DAY 37"
+        }
+      ],
+      "actionPreview": "36 36 George pulls the tag from around his neck and hurls it into the bushes. He rummages through the suitcase discarding a gas mask and bits of clothing. He stuffs a wrapped sandwich into his jacket pocket. In the distance, a slow-moving beat-up freight train approaches. Discarding the suitcase, cr"
+    },
+    {
+      "number": 37,
+      "heading": "EXT. COUNTRYSIDE - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "38 38 The train chugs through green landscape, smoke trailing from its funnel."
+    },
+    {
+      "number": 38,
+      "heading": "INT. FREIGHT TRAIN CARRIAGE - DAY",
+      "characters": [
+        "TOMMY",
+        "GEORGE",
+        "ARCHIE",
+        "IAN"
+      ],
+      "dialogues": [
+        {
+          "character": "TOMMY",
+          "parenthetical": "",
+          "text": "(surprising everyone)"
+        },
+        {
+          "character": "TOMMY",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "George..."
+        },
+        {
+          "character": "TOMMY",
+          "parenthetical": "",
+          "text": "(sing-song)"
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "(sing-song)"
+        },
+        {
+          "character": "TOMMY",
+          "parenthetical": "",
+          "text": "These are my brothers, Archie and"
+        },
+        {
+          "character": "ARCHIE",
+          "parenthetical": "",
+          "text": "Do you want to see my beetle?"
+        },
+        {
+          "character": "ARCHIE",
+          "parenthetical": "(CONT'D)",
+          "text": "It’s name’s Gerry. Do you wanna hold it?"
+        },
+        {
+          "character": "IAN",
+          "parenthetical": "",
+          "text": "Tommy, I’m hungry."
+        },
+        {
+          "character": "TOMMY",
+          "parenthetical": "",
+          "text": "Stop whining. (at George)"
+        },
+        {
+          "character": "TOMMY",
+          "parenthetical": "(CONT'D)",
+          "text": "28."
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "I’ve got a sandwich."
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "(CONT'D)",
+          "text": "We can share it."
+        },
+        {
+          "character": "IAN",
+          "parenthetical": "",
+          "text": "Strawberry jam. My favourite."
+        },
+        {
+          "character": "TOMMY",
+          "parenthetical": "",
+          "text": "(mouth full, at George)"
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "I jumped off the train."
+        },
+        {
+          "character": "TOMMY",
+          "parenthetical": "",
+          "text": "Jeepers!"
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "My mum sent me away... At the station, I told her I hated her and I didn’t even say goodbye."
+        },
+        {
+          "character": "TOMMY",
+          "parenthetical": "",
+          "text": "She’s your mum, she’ll forgive you."
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "(low) I just want to say sorry."
+        },
+        {
+          "character": "ARCHIE",
+          "parenthetical": "",
+          "text": "Do you know what happens if we get caught, George?"
+        },
+        {
+          "character": "TOMMY",
+          "parenthetical": "(CONT'D)",
+          "text": "28."
+        },
+        {
+          "character": "ARCHIE",
+          "parenthetical": "(CONT'D)",
+          "text": "I’ll tell ya. They march you to the nearest station and stick you on the next train and then they gag you and tie you to the seat with straps. They don’t give you anything to eat or anything and they hang a sign around your neck that says ‘DANGEROUS ESCAPEE’ so you can’t escape again."
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "What happens if you want to go to the bog?"
+        },
+        {
+          "character": "ARCHIE",
+          "parenthetical": "",
+          "text": "I dunno, I suppose they let you wet yourself."
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "Maybe they give you a nappy or something."
+        },
+        {
+          "character": "TOMMY",
+          "parenthetical": "",
+          "text": "Let’s play dares."
+        },
+        {
+          "character": "TOMMY",
+          "parenthetical": "(CONT'D)",
+          "text": "Alright, rock paper scissors. First up me and George."
+        },
+        {
+          "character": "TOMMY",
+          "parenthetical": "(CONT'D)",
+          "text": "One, two, three. Paper wraps rock. I win! Ian and Archie next. (to George)"
+        },
+        {
+          "character": "TOMMY",
+          "parenthetical": "(CONT'D)",
+          "text": "Archie, you play George. The loser has to do a dare. Alright, here we go! One, two, three. (beat)"
+        },
+        {
+          "character": "TOMMY",
+          "parenthetical": "(CONT'D)",
+          "text": "(pointing at George) I dare you.. I dare you to climb up onto the roof of the train."
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "Easy."
+        },
+        {
+          "character": "TOMMY",
+          "parenthetical": "",
+          "text": "Go on then!"
+        }
+      ],
+      "actionPreview": "39 39 Some time has passed now. The three boys joke around loudly, laughing and teasing each other. George is apprehensive and keeps himself to himself at the opposite corner of the carriage, pretending not to be interested in what they are doing. TOMMY, the boldest and the oldest of the three, roug"
+    },
+    {
+      "number": 39,
+      "heading": "INT. FREIGHT TRAIN CARRIAGE - DAY",
+      "characters": [
+        "TOMMY",
+        "GUARDS",
+        "GUARD ONE"
+      ],
+      "dialogues": [
+        {
+          "character": "TOMMY",
+          "parenthetical": "",
+          "text": "London! Wake up!"
+        },
+        {
+          "character": "TOMMY",
+          "parenthetical": "(CONT'D)",
+          "text": "We’ve stopped but we’re not at a station."
+        },
+        {
+          "character": "GUARDS",
+          "parenthetical": "",
+          "text": "(O.S)"
+        },
+        {
+          "character": "GUARD ONE",
+          "parenthetical": "",
+          "text": "Well, well, well. What do we have here."
+        },
+        {
+          "character": "GUARD ONE",
+          "parenthetical": "(CONT'D)",
+          "text": "Ron! Bruiser! Over here!"
+        },
+        {
+          "character": "TOMMY",
+          "parenthetical": "",
+          "text": "Let go of my brothers! Let go of my brothers!"
+        },
+        {
+          "character": "TOMMY",
+          "parenthetical": "(CONT'D)",
+          "text": "(hardly audible)"
+        },
+        {
+          "character": "GUARD ONE",
+          "parenthetical": "",
+          "text": "(to George)"
+        },
+        {
+          "character": "TOMMY",
+          "parenthetical": "",
+          "text": "(O.S)"
+        }
+      ],
+      "actionPreview": "40 40 Time has passed and the boys are back in the carriage asleep in a heap. The train slows, creaks loudly to a halt. Tommy is instantly awake. He climbs up and peers out from a hatch on the side of the train. His vantage point is obscured by the connecting carriage, pieces of the London skyline i"
+    },
+    {
+      "number": 40,
+      "heading": "EXT. SUBURBAN HOUSE - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "41 41 George climbs over a brick wall and enters the back garden of a suburban house. He opens a side-gate and walks down an alleyway onto a deserted suburban street."
+    },
+    {
+      "number": 41,
+      "heading": "EXT. SUBURBAN STREET - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "42 42 Traumatized and fearful, George presses on. An ambulance and a fire truck whizz by, sirens blaring, George ducks out of view. A bus comes to a halt nearby, picking up passengers. From afar George looks at the front of the bus which says Trafalgar Square. He sprints and jumps on at the last min"
+    },
+    {
+      "number": 42,
+      "heading": "INT. MUNITIONS FACTORY, LOCKER ROOM - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "43 43 Rita removes her head scarf and takes off her grey overalls before making her way to a large sink where she joins other women and begins her routine of scrubbing her hands and arms with a brush and soap. There’s a lot of noise and chat with women in various states of undress, applying make-up "
+    },
+    {
+      "number": 43,
+      "heading": "INT. COMMUNITY CENTRE - 1930 - NIGHT",
+      "characters": [
+        "MARCUS"
+      ],
+      "dialogues": [
+        {
+          "character": "MARCUS",
+          "parenthetical": "",
+          "text": "(sing-song Grenadian accent)"
+        }
+      ],
+      "actionPreview": "44 44 Small, intimate, a nondescript space that has been converted into a makeshift night club, festooned with Chinese lanterns. A RAG TAG BAND play swing jazz music. Young MEN and WOMEN, a mix of East End Londoners and SEAMEN on shore leave, mainly black, throng the dance floor. Others seated at ta"
+    },
+    {
+      "number": 44,
+      "heading": "EXT. COMMUNITY CENTRE - 1930 - NIGHT",
+      "characters": [
+        "RITA",
+        "MAN ONE",
+        "MARCUS",
+        "MAN TWO",
+        "POLICEMAN ONE",
+        "POLICEMAN TWO",
+        "END FLASHBACK"
+      ],
+      "dialogues": [
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Oi watch it!"
+        },
+        {
+          "character": "MAN ONE",
+          "parenthetical": "",
+          "text": "What you say?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "I said watch it! You did that on purpose."
+        },
+        {
+          "character": "MARCUS",
+          "parenthetical": "",
+          "text": "(a warning)"
+        },
+        {
+          "character": "MAN ONE",
+          "parenthetical": "",
+          "text": "What kind of man are you what needs a woman to defend him?"
+        },
+        {
+          "character": "MAN TWO",
+          "parenthetical": "",
+          "text": "(at Rita)"
+        },
+        {
+          "character": "MARCUS",
+          "parenthetical": "",
+          "text": "Hey. Watch your mouth."
+        },
+        {
+          "character": "POLICEMAN ONE",
+          "parenthetical": "",
+          "text": "What’s all this ruckus about?"
+        },
+        {
+          "character": "MAN ONE",
+          "parenthetical": "",
+          "text": "He tried to attack me! He’s a savage, Officer!"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "He’s lying. They started the fight!"
+        },
+        {
+          "character": "MAN TWO",
+          "parenthetical": "",
+          "text": "I saw it with me own two eyes. He was like an animal. He came at us for no reason."
+        },
+        {
+          "character": "POLICEMAN TWO",
+          "parenthetical": "",
+          "text": "Alright mate, you’re coming with us!"
+        },
+        {
+          "character": "MAN TWO",
+          "parenthetical": "",
+          "text": "Too right! He should be locked away! He’s a menace to society!"
+        },
+        {
+          "character": "MARCUS",
+          "parenthetical": "",
+          "text": "Officers, they threw the first punch. I was defending myself!"
+        },
+        {
+          "character": "POLICEMAN ONE",
+          "parenthetical": "",
+          "text": "Well you’ll have a little bit more defending to do when we take you down to the station."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "(hysterical at the injustice)"
+        },
+        {
+          "character": "END FLASHBACK",
+          "parenthetical": "",
+          "text": "."
+        }
+      ],
+      "actionPreview": "45 45 The evening has drawn to a close. There’s still a buzz in the air as people exit the makeshift dance hall into the cold night air, including Rita and Marcus, hand in hand. The group of four white middle-aged men, spotting the couple, cross over to them. One of them bumps Marcus hard on the sho"
+    },
+    {
+      "number": 45,
+      "heading": "INT. MUNITIONS FACTORY, LOCKER ROOM - DAY",
+      "characters": [
+        "TILDA",
+        "RITA",
+        "DORIS"
+      ],
+      "dialogues": [
+        {
+          "character": "TILDA",
+          "parenthetical": "",
+          "text": "Rita? Rita?"
+        },
+        {
+          "character": "TILDA",
+          "parenthetical": "(CONT'D)",
+          "text": "Oh good you’re back with us then."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Sorry."
+        },
+        {
+          "character": "DORIS",
+          "parenthetical": "",
+          "text": "Hurry up, you two."
+        }
+      ],
+      "actionPreview": "46 46 At her locker, Rita is lost in the memory. Rita snaps to. Doris sticks her head around the door. Rita and Tilda grab their coats and make their way out of the locker room."
+    },
+    {
+      "number": 46,
+      "heading": "INT. LONDON BUS - EARLY EVENING",
+      "characters": [
+        "BUS CONDUCTOR",
+        "GEORGE"
+      ],
+      "dialogues": [
+        {
+          "character": "BUS CONDUCTOR",
+          "parenthetical": "",
+          "text": "Tickets please!"
+        },
+        {
+          "character": "BUS CONDUCTOR",
+          "parenthetical": "(CONT'D)",
+          "text": "Next stop Piccadilly Circus!"
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "(to bus conductor)"
+        },
+        {
+          "character": "BUS CONDUCTOR",
+          "parenthetical": "",
+          "text": "That depends where home is, doesn’t it."
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "Clifford Lane. Stepney."
+        },
+        {
+          "character": "BUS CONDUCTOR",
+          "parenthetical": "",
+          "text": "Well, you are and you’re not. What you need to do is get off at the next stop, cross over the road and catch the 14 and go three stops back where you come from. And what you do is get off that bus, take a right and then a left, cross over the street and then you’ll see the bus stop for the 64 heading to"
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "Thank you."
+        }
+      ],
+      "actionPreview": "47 47 Our view is the top of a double decker bus entering into Central London. George sits at the front of the top deck, his blank eyes staring forward. 37. 38. George digs into his front pocket, hands him the coin Gerald slipped to him. The Conductor gives him a ticket and some change. Sir am I on "
+    },
+    {
+      "number": 47,
+      "heading": "EXT. CENTRAL LONDON - EARLY EVENING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "48 48 George is dirty and unkempt, his knees are scuffed and his shoelaces untied. He walks on, unaware of the looks in his direction, dazed by the noise and the mass of people, and the shops he has never seen before, distracted by all that London has to offer. Across the busy main road, he sees the"
+    },
+    {
+      "number": 48,
+      "heading": "EXT. HAMLEY’S TOY SHOP - EARLY EVENING",
+      "characters": [
+        "SECURITY GUARD"
+      ],
+      "dialogues": [
+        {
+          "character": "SECURITY GUARD",
+          "parenthetical": "",
+          "text": "Get along with you, boy. Loitering is not permitted. Go on, scat!"
+        }
+      ],
+      "actionPreview": "49 49 Mechanical toys set up in the window display. George’s eyes caught by a mechanized train set which moves through a picturesque papier-mâché mountain-scape past other toys on display. He imagines himself, Tommy, Archie and Ian sitting on top of the carriage, hands in the air, whizzing through t"
+    },
+    {
+      "number": 49,
+      "heading": "EXT. LONDON STREET - EARLY EVENING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "50 50 George strolls aimlessly around the busy streets, hopelessly lost. Ahead, a large BOMBED-OUT BOOKSHOP with the front entrance completely blown out. Shards of glass everywhere. A well- dressed GENTLEMAN exits through the shattered doorway, tipping his bowler hat as he passes George, feet crunch"
+    },
+    {
+      "number": 50,
+      "heading": "INT. BOMBED-OUT BOOKSHOP - EARLY EVENING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "51 51 George enters through a blasted out window. He looks around in wonder, he can hardly believe his eyes. Dust hangs in the air, shelves crisscross the space, it’s like entering a labyrinth. Half the ceiling is missing, the darkening sky clearly visible. Surreally, the bookshop is still open for "
+    },
+    {
+      "number": 51,
+      "heading": "EXT. LONDON STREET - EARLY EVENING",
+      "characters": [
+        "WARDEN",
+        "IFE",
+        "GEORGE"
+      ],
+      "dialogues": [
+        {
+          "character": "WARDEN",
+          "parenthetical": "",
+          "text": "Gotcha."
+        },
+        {
+          "character": "IFE",
+          "parenthetical": "",
+          "text": "What’s your hurry?"
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "Just getting some shopping for me mum."
+        },
+        {
+          "character": "IFE",
+          "parenthetical": "",
+          "text": "What’s your name?"
+        },
+        {
+          "character": "IFE",
+          "parenthetical": "(CONT'D)",
+          "text": "Where do you live?"
+        },
+        {
+          "character": "IFE",
+          "parenthetical": "(CONT'D)",
+          "text": "Come with me."
+        }
+      ],
+      "actionPreview": "52 52 George strolls aimlessly around busy streets, not knowing which way to go. As night descends we see the silhouette of an AIR RAID WARDEN emerge from the mist. He spots George from across the street. They lock eyes. All George knows is that this is a man in uniform and that he must make his esc"
+    },
+    {
+      "number": 52,
+      "heading": "INT. WARDEN’S OFFICE - EVENING",
+      "characters": [
+        "IFE",
+        "GEORGE"
+      ],
+      "dialogues": [
+        {
+          "character": "IFE",
+          "parenthetical": "",
+          "text": "Slow down or you’ll choke."
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "(through a mouthful)"
+        },
+        {
+          "character": "IFE",
+          "parenthetical": "",
+          "text": "Say again?"
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "What’s your name?"
+        },
+        {
+          "character": "IFE",
+          "parenthetical": "",
+          "text": "I asked you first."
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "(beat)"
+        },
+        {
+          "character": "IFE",
+          "parenthetical": "",
+          "text": "Pleased to meet you, George. My name is Ife."
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "Ife?"
+        },
+        {
+          "character": "IFE",
+          "parenthetical": "",
+          "text": "Ife is Nigerian for love."
+        },
+        {
+          "character": "IFE",
+          "parenthetical": "(CONT'D)",
+          "text": "Where do you live, George?"
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "(beat)"
+        },
+        {
+          "character": "IFE",
+          "parenthetical": "",
+          "text": "How did you end up here?"
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "(barely audible) I jumped off the train because I didn’t want to go."
+        },
+        {
+          "character": "IFE",
+          "parenthetical": "",
+          "text": "Finish your tea. Then you can come with me on my rounds. Afterwards, I’ll take you home to Clifford"
+        }
+      ],
+      "actionPreview": "53 53 We see George’s worn shoes dangling as he sits on a stool in the warden’s office. MAPS, CHARTS and DATA dress the walls. Ravenous, George gobbles a sandwich. He laughs. What’s your name? George swallows. George. He giggles. George giggles again. Stepney. Clifford Lane. 41. 42. George’s head si"
+    },
+    {
+      "number": 53,
+      "heading": "INT. HANWAY HOUSE - FRONT ROOM - EVENING",
+      "characters": [
+        "DORIS",
+        "TILDA",
+        "RITA"
+      ],
+      "dialogues": [
+        {
+          "character": "DORIS",
+          "parenthetical": "",
+          "text": "Oh for goodness sake, keep still."
+        },
+        {
+          "character": "TILDA",
+          "parenthetical": "",
+          "text": "Sorry, it tickles."
+        },
+        {
+          "character": "DORIS",
+          "parenthetical": "",
+          "text": "Ok, I think I’m done."
+        },
+        {
+          "character": "TILDA",
+          "parenthetical": "",
+          "text": "You haven’t gone nearly high enough!"
+        },
+        {
+          "character": "DORIS",
+          "parenthetical": "",
+          "text": "So what? No one’s going to be looking up there."
+        },
+        {
+          "character": "TILDA",
+          "parenthetical": "",
+          "text": "Well, I must have higher hopes for the night than you do."
+        },
+        {
+          "character": "DORIS",
+          "parenthetical": "",
+          "text": "What about Dave?"
+        },
+        {
+          "character": "TILDA",
+          "parenthetical": "",
+          "text": "What about Dave. He’s far away in"
+        },
+        {
+          "character": "TILDA",
+          "parenthetical": "(CONT'D)",
+          "text": "Don’t you look nice when you let us at you!"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "I’m really not in the mood."
+        },
+        {
+          "character": "TILDA",
+          "parenthetical": "",
+          "text": "Nothing that a drink or two won’t cure. And I gave you the last of my lippy, don’t make me regret that!"
+        },
+        {
+          "character": "TILDA",
+          "parenthetical": "(CONT'D)",
+          "text": "Come on, let’s get there before all the good ones are gone...what’s left of them."
+        },
+        {
+          "character": "DORIS",
+          "parenthetical": "",
+          "text": "I know what’s on your mind. At least George is safe, it was the right thing to do. A night out is exactly what you need, exactly what we all need."
+        }
+      ],
+      "actionPreview": "54 54 Stardust Memories by Louis Armstrong plays from the wireless. We find Tilda, her skirt hitched up to her waist, white knickers exposed, and Doris kneeling down behind her, black coloring pencil in hand, trying to draw two straight lines down the back of her legs. Doris stands and surveys her h"
+    },
+    {
+      "number": 54,
+      "heading": "EXT. STREET - EVENING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "55 55 The three women link arms, the sound of their high heels click-clacking along the street as they cross to the pub. 43. 44."
+    },
+    {
+      "number": 55,
+      "heading": "INT. EAST END PUB - EVENING",
+      "characters": [
+        "TILDA",
+        "DORIS",
+        "RITA",
+        "SERVICEMAN ONE",
+        "SERVICEMAN TWO",
+        "SERVICEMAN",
+        "DAVIES",
+        "CAMPBELL",
+        "JACK"
+      ],
+      "dialogues": [
+        {
+          "character": "TILDA",
+          "parenthetical": "",
+          "text": "Bingo."
+        },
+        {
+          "character": "DORIS",
+          "parenthetical": "",
+          "text": "The tall good-looking one is giving you the eye, Rita. Most definitely."
+        },
+        {
+          "character": "TILDA",
+          "parenthetical": "",
+          "text": "My round."
+        },
+        {
+          "character": "TILDA",
+          "parenthetical": "(CONT'D)",
+          "text": "More of the same?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "I’m alright. I think I’m going to leave. I might go over to help out that Mickey Davies, at that new shelter."
+        },
+        {
+          "character": "TILDA",
+          "parenthetical": "",
+          "text": "What? Mickey the midget? Well you know what they say... (winking)"
+        },
+        {
+          "character": "DORIS",
+          "parenthetical": "",
+          "text": "(at Tilda)"
+        },
+        {
+          "character": "TILDA",
+          "parenthetical": "",
+          "text": "(unremorseful)"
+        },
+        {
+          "character": "SERVICEMAN ONE",
+          "parenthetical": "",
+          "text": "What’s your name, doll?"
+        },
+        {
+          "character": "TILDA",
+          "parenthetical": "",
+          "text": "Tilda with a T."
+        },
+        {
+          "character": "SERVICEMAN TWO",
+          "parenthetical": "",
+          "text": "What’s your poison, Tilda with a T?"
+        },
+        {
+          "character": "TILDA",
+          "parenthetical": "",
+          "text": "We’ve all got jobs now, we can buy our own drinks thanks very much."
+        },
+        {
+          "character": "SERVICEMAN",
+          "parenthetical": "",
+          "text": "Ah, come on, doll. We’re gentlemen from the old school, where chivalry is alive and kicking. Let us treat you and your friends."
+        },
+        {
+          "character": "TILDA",
+          "parenthetical": "",
+          "text": "(no hesitation)"
+        },
+        {
+          "character": "DAVIES",
+          "parenthetical": "",
+          "text": "Looks like you missed your chance again, Jackie boy."
+        },
+        {
+          "character": "CAMPBELL",
+          "parenthetical": "",
+          "text": "(slurred)"
+        },
+        {
+          "character": "JACK",
+          "parenthetical": "",
+          "text": "On your feet, Campbell."
+        },
+        {
+          "character": "CAMPBELL",
+          "parenthetical": "",
+          "text": "You what?"
+        },
+        {
+          "character": "JACK",
+          "parenthetical": "",
+          "text": "Get up. Let’s take this outside."
+        },
+        {
+          "character": "DAVIES",
+          "parenthetical": "",
+          "text": "Sit down, Jack. He’s had too much to drink. He’s pissed, man."
+        },
+        {
+          "character": "CAMPBELL",
+          "parenthetical": "",
+          "text": "(slurred)"
+        }
+      ],
+      "actionPreview": "56 56 A busy East End pub filled with locals, mostly elderly and middle-aged, drowning their sorrows. There’s a familiarity and ease and cosiness with everyone as if we’ve arrived in someone’s living room. People gathered around Gerald at the piano, leading a sing-song over the racket of voices and "
+    },
+    {
+      "number": 56,
+      "heading": "INT. FRUIT AND WOOL EXCHANGE SHELTER - NIGHT",
+      "characters": [
+        "MICKEY"
+      ],
+      "dialogues": [
+        {
+          "character": "MICKEY",
+          "parenthetical": "",
+          "text": "...This is not a Government sanctioned shelter, and due to the overcrowding of official shelters we decided to open our doors, not just to the injured or the homeless but also to people simply trying to find refuge. And there have to be rules put in place due to the squalid unsanitary situation which occurred last night. Please use the buckets which have now been provided. There will be another bucket going round for a collection to help fund this facility. We are here for your wellbeing and to "
+        },
+        {
+          "character": "MICKEY",
+          "parenthetical": "(CONT'D)",
+          "text": "God bless us all and our brave servicemen and women that are fighting for our liberty. And thank you for your support. And don’t mix up the buckets!"
+        }
+      ],
+      "actionPreview": "57 57 We hear the click-clack of high heels descending a concrete staircase. Rita emerges into a large basement. The walls are of open brick with structural columns planted every five meters. The low ceilinged, squat space is dimly lit by industrial metal lamps. 46. 47. It’s a shelter for 2000 peopl"
+    },
+    {
+      "number": 57,
+      "heading": "INT. FRUIT AND WOOL EXCHANGE SHELTER - NIGHT",
+      "characters": [
+        "RITA",
+        "MICKEY",
+        "BETTY"
+      ],
+      "dialogues": [
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Excuse me."
+        },
+        {
+          "character": "MICKEY",
+          "parenthetical": "",
+          "text": "One second. (at a Volunteer)"
+        },
+        {
+          "character": "MICKEY",
+          "parenthetical": "(CONT'D)",
+          "text": "Make sure she takes it, she’s in a bad way."
+        },
+        {
+          "character": "MICKEY",
+          "parenthetical": "(CONT'D)",
+          "text": "(at Rita)"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "I’m Rita Hanway. I’d like to volunteer. I can make beds, clean floors, I don’t mind doing anything."
+        },
+        {
+          "character": "MICKEY",
+          "parenthetical": "",
+          "text": "How’s your First Aid?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "I did a course three months ago."
+        },
+        {
+          "character": "MICKEY",
+          "parenthetical": "",
+          "text": "Are you alright?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "(beat) I evacuated my son this morning. I’m really missing him."
+        },
+        {
+          "character": "MICKEY",
+          "parenthetical": "",
+          "text": "Right decision, Rita. The bombing is not stopping any time soon. Come with me."
+        },
+        {
+          "character": "MICKEY",
+          "parenthetical": "(CONT'D)",
+          "text": "Hello Betty. I’ve got a new friend of mine I want you to meet. Her name is Rita."
+        },
+        {
+          "character": "MICKEY",
+          "parenthetical": "(CONT'D)",
+          "text": "She’s going to change your dressing."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "What happened to your arm, Betty?"
+        },
+        {
+          "character": "BETTY",
+          "parenthetical": "",
+          "text": "I don’t know. (beat) I want my mum."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Do you want a cuddle?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "(CONT'D)",
+          "text": "Let’s get you fixed up. I’m going to disinfect your arm and then give you a nice clean bandage."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "(CONT'D)",
+          "text": "Have you got pets at home? A dog or a cat or a goldfish?"
+        },
+        {
+          "character": "BETTY",
+          "parenthetical": "",
+          "text": "I’ve got a rabbit. We thought it was a girl so I called her Daisy."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Hold still. This might hurt a tiny tiny bit."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "(CONT'D)",
+          "text": "Brave girl. All done."
+        }
+      ],
+      "actionPreview": "58 58 Rita crosses to where Mickey sits at a make-shift desk, shifting paperwork and allocating tasks. We’ve sourced some insulin for Sheila Mason in Bed 17. He hands her a bag. The Volunteer nods, leaves with the bag. How can I help? He regards her. 48. 49. He leads her past volunteers making up be"
+    },
+    {
+      "number": 58,
+      "heading": "EXT. LONDON STREETS - NIGHT",
+      "characters": [
+        "GEORGE",
+        "IFE"
+      ],
+      "dialogues": [
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "Ife, where do you come from?"
+        },
+        {
+          "character": "IFE",
+          "parenthetical": "",
+          "text": "Nigeria. Do you know where that is?"
+        },
+        {
+          "character": "IFE",
+          "parenthetical": "(CONT'D)",
+          "text": "It’s in Africa."
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "That’s where lions are from."
+        },
+        {
+          "character": "IFE",
+          "parenthetical": "",
+          "text": "Well yes, in some places there are lions. Not where I come from though."
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "What about crocodiles?"
+        },
+        {
+          "character": "IFE",
+          "parenthetical": "",
+          "text": "Yes, there are crocodiles. But the only thing you really have to look out for in the city are the buses, motorcycles and cars. Nigerians drive like crazy people."
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "Are you black?"
+        },
+        {
+          "character": "IFE",
+          "parenthetical": "",
+          "text": "(laughs)"
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "I’m not black."
+        },
+        {
+          "character": "IFE",
+          "parenthetical": "",
+          "text": "Are you not?"
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "No. My father was. He was born in"
+        },
+        {
+          "character": "IFE",
+          "parenthetical": "",
+          "text": "What’s his name?"
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "Marcus, but I never knew him...my mum said people took him away from us before I was born."
+        },
+        {
+          "character": "IFE",
+          "parenthetical": "",
+          "text": "Why was that?"
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "I don’t know."
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "(CONT'D)",
+          "text": "I told my mum I hated her."
+        },
+        {
+          "character": "IFE",
+          "parenthetical": "",
+          "text": "Why did you say that?"
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "Because she made me go."
+        },
+        {
+          "character": "IFE",
+          "parenthetical": "",
+          "text": "She did it to keep you safe."
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "(low) I know."
+        },
+        {
+          "character": "IFE",
+          "parenthetical": "",
+          "text": "Wait here."
+        },
+        {
+          "character": "IFE",
+          "parenthetical": "(CONT'D)",
+          "text": "(Knocking)"
+        },
+        {
+          "character": "IFE",
+          "parenthetical": "(CONT'D)",
+          "text": "Good evening, sir."
+        },
+        {
+          "character": "IFE",
+          "parenthetical": "(CONT'D)",
+          "text": "It’s black-out after 8pm. Please pull your curtains closed."
+        },
+        {
+          "character": "IFE",
+          "parenthetical": "(CONT'D)",
+          "text": "Do you know what I do when I’m afraid of the dark?"
+        },
+        {
+          "character": "IFE",
+          "parenthetical": "(CONT'D)",
+          "text": "I sing. Singing helps me feel brave and strong."
+        }
+      ],
+      "actionPreview": "59 59 George with Ife on his nightly patrol. The streets are dark and the soft light of Ife’s lantern is all they have to guide them. Their shadows appear like giants projected on the walls of houses. George shakes his head. Ife laughs. 50. 51. George looks confused. Yes. Grenada. My mum says he liv"
+    },
+    {
+      "number": 59,
+      "heading": "EXT. AIR-RAID SHELTER - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "60 60 Ife and George arrive at a government shelter. Busy lines have already started forming. Women with rollers in their hair, children bundled up in blankets, people in all sorts of disarray. As one of the wardens is trying to maintain order in the frenzy to take shelter, another spots Ife and ush"
+    },
+    {
+      "number": 60,
+      "heading": "INT. AIR RAID SHELTER - NIGHT",
+      "characters": [
+        "GEORGE",
+        "IFE",
+        "WHITE MAN",
+        "FAMILIES.",
+        "WHITE WOMAN",
+        "SIKH MAN",
+        "JEWISH MAN"
+      ],
+      "dialogues": [
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "(to Ife) I need to pee."
+        },
+        {
+          "character": "IFE",
+          "parenthetical": "",
+          "text": "(indicating)"
+        },
+        {
+          "character": "WHITE MAN",
+          "parenthetical": "",
+          "text": "If you don’t move there is going to be trouble."
+        },
+        {
+          "character": "WHITE WOMAN",
+          "parenthetical": "",
+          "text": "This is for English people, move over."
+        },
+        {
+          "character": "SIKH MAN",
+          "parenthetical": "",
+          "text": "(Politely)"
+        },
+        {
+          "character": "WHITE MAN",
+          "parenthetical": "",
+          "text": "(cutting him off)"
+        },
+        {
+          "character": "JEWISH MAN",
+          "parenthetical": "",
+          "text": "Sir he wasn’t raising his voice. We have every right to settle where we choose."
+        },
+        {
+          "character": "WHITE MAN",
+          "parenthetical": "",
+          "text": "And I definitely wasn't talking to you lot mate, so you better shut up and sit down or I’ll give you what’s for."
+        },
+        {
+          "character": "IFE",
+          "parenthetical": "",
+          "text": "What seems to be the problem?"
+        },
+        {
+          "character": "SIKH MAN",
+          "parenthetical": "",
+          "text": "This gentleman has put up this sheet to contain us. To put us in a prison within a prison. I have no interest in looking at him but I do not want to be concealed."
+        },
+        {
+          "character": "IFE",
+          "parenthetical": "",
+          "text": "Sir, there is no segregation here."
+        },
+        {
+          "character": "IFE",
+          "parenthetical": "(CONT'D)",
+          "text": "This is exactly how Hitler came to power, by dividing man against man, and race against race. We are in a situation of war, banded together, asked to do our best. This will be the making or the breaking of us and I would like to think we can step up to the occasion and see our fellow human beings as equals, and that we treat each other with compassion and respect."
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "Ife, you could be my dad."
+        },
+        {
+          "character": "IFE",
+          "parenthetical": "",
+          "text": "(wry) I think your mother might have something to say about that."
+        },
+        {
+          "character": "IFE",
+          "parenthetical": "(CONT'D)",
+          "text": "Get some sleep. I’m on duty, I’ve got to finish my rounds. I’ll be back in the morning."
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "Take me with you!"
+        },
+        {
+          "character": "IFE",
+          "parenthetical": "",
+          "text": "It’s too dangerous."
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "Please!"
+        },
+        {
+          "character": "IFE",
+          "parenthetical": "",
+          "text": "I’ll be back in a few hours. And I’ll teach you another song when I take you home."
+        }
+      ],
+      "actionPreview": "61 61 A large but cramped concrete cavern, low ceilings supported by old wooden beams. It’s cold and crumbling. The light coming from the broken fixtures distorts faces, illuminating some and casting shadows on others. Inhabitants in corners concealed in darkness. Makeshift beds on upturned crates a"
+    },
+    {
+      "number": 61,
+      "heading": "INT. CINEMA - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "62 62 We are now in a large grand cinema, seated with 200 people. Walt Disney’s Pinocchio is on view. Rita and George are sitting in the middle of a row of seats, light flickering off their faces, engrossed in the action on screen. The soundtrack is Rita, Gerald and George singing AIN’T MISBEHAVIN’ "
+    },
+    {
+      "number": 62,
+      "heading": "EXT. CINEMA - DAY",
+      "characters": [
+        "END DREAM"
+      ],
+      "dialogues": [],
+      "actionPreview": "63 63 The singing continues. GERALD & RITA & GEORGE (singing) I don’t stay out late Don’t care to go I’m home about eight Just me and my radio Ain’t misbehavin I’m savin’ my love for you Rita and George exit the cinema, swinging their joined hands, joyous. The colours of the scene are hyper-real, as"
+    },
+    {
+      "number": 63,
+      "heading": "INT. AIR RAID SHELTER - DAWN",
+      "characters": [
+        "GEORGE",
+        "WARDEN"
+      ],
+      "dialogues": [
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "Excuse me, sir, have you seen Ife?"
+        },
+        {
+          "character": "WARDEN",
+          "parenthetical": "",
+          "text": "Wait here lad."
+        },
+        {
+          "character": "WARDEN",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        }
+      ],
+      "actionPreview": "64 64 The all-clear siren sounds. George startles awake. He gets up, looks around. There is no sign of Ife. The wardens usher people out of the shelter. George plucks up the courage and approaches one of them. The warden hesitates. He crosses to his colleague nearby. The all clear siren continues to"
+    },
+    {
+      "number": 64,
+      "heading": "INT. BOMBED OUT HOUSE - THE PREVIOUS NIGHT",
+      "characters": [
+        "IFE",
+        "VOICE"
+      ],
+      "dialogues": [
+        {
+          "character": "IFE",
+          "parenthetical": "",
+          "text": "Anyone there? Come towards the light! Come towards the light!"
+        },
+        {
+          "character": "VOICE",
+          "parenthetical": "(O.S)",
+          "text": "Help! Help!"
+        },
+        {
+          "character": "IFE",
+          "parenthetical": "",
+          "text": "Hold on! I’m coming! Keep calling!"
+        }
+      ],
+      "actionPreview": "65 65 Flames and smoke disorientate us. We have no idea of the scale or danger. We see what looks like a lantern. A spot in the mist. We hear Ife’s voice... We are now with Ife. Each turn of his lantern illuminates the wreckage of a house. Sometimes familiar and sometimes unrecognizable. The sound o"
+    },
+    {
+      "number": 65,
+      "heading": "EXT. BOMBED OUT HOUSE - NIGHT",
+      "characters": [
+        "WOMAN",
+        "IFE",
+        "END FLASHBACK."
+      ],
+      "dialogues": [
+        {
+          "character": "WOMAN",
+          "parenthetical": "",
+          "text": "(her distress)"
+        },
+        {
+          "character": "IFE",
+          "parenthetical": "",
+          "text": "(without a second thought)"
+        }
+      ],
+      "actionPreview": "66 66 Ife emerges from the bombed out house, coughing, his face and clothes covered with soot. The rescued man is draped around his shoulders. He makes his way down to the street, hands him over to waiting AMBULANCE WORKERS. Exhausted, his breath is visible in the cold night air. 58. 59. A GROUP OF "
+    },
+    {
+      "number": 66,
+      "heading": "INT. AIR-RAID SHELTER - DAWN",
+      "characters": [
+        "WARDEN ONE",
+        "WARDEN TWO"
+      ],
+      "dialogues": [
+        {
+          "character": "WARDEN ONE",
+          "parenthetical": "",
+          "text": "And that was it. Poor sod, he didn’t think twice about himself."
+        },
+        {
+          "character": "WARDEN TWO",
+          "parenthetical": "",
+          "text": "We’ve got to see about getting that runaway boy back on a train."
+        },
+        {
+          "character": "WARDEN ONE",
+          "parenthetical": "",
+          "text": "Hey! Come back!"
+        },
+        {
+          "character": "WARDEN TWO",
+          "parenthetical": "",
+          "text": "Not our problem mate. We’ve got enough on our hands."
+        }
+      ],
+      "actionPreview": "67 67 The all clear siren continues to moan. The two wardens glance at George. They are speaking softly, but George can overhear them. He turns on his heel and takes off. George runs at lightning speed to the exit. 59. 60. On these words, we stay on George’s face as he makes his way to the street. T"
+    },
+    {
+      "number": 67,
+      "heading": "EXT. LONDON STREETS - DAWN",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "68 68 George is met by the devastation of crushed, smoldering buildings from the previous night’s onslaught. As he passes through the destruction all around he suddenly feels more alone than he ever has in his life. He stumbles along the uneven terrain with no direction to go. We move along building"
+    },
+    {
+      "number": 68,
+      "heading": "EXT. RESIDENTIAL STREET - MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "69 69 Rita, now dressed for work, walks down the near-empty street. The pavements are still soaked from the night’s fire fighting efforts. Fronts of houses wiped clean away. Snapshots of how people live their lives exposed, like dolls’ houses, for all to see. A WOMAN with a broom pathetically tries "
+    },
+    {
+      "number": 69,
+      "heading": "EXT. ALLEYWAY - MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "70 70 Rita passes an alleyway, A serviceman (his back to us) is having sex standing up against a wall. The woman is obscured from view. The obscured WOMAN catches Rita’s eye. It’s Tilda, still dressed in her clothes from the night before. The Serviceman is one of the three Servicemen from the pub. U"
+    },
+    {
+      "number": 70,
+      "heading": "EXT. MUNITIONS FACTORY - MORNING",
+      "characters": [
+        "RITA",
+        "WORKER"
+      ],
+      "dialogues": [
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "What’s going on?"
+        },
+        {
+          "character": "WORKER",
+          "parenthetical": "",
+          "text": "They say there’s a bomb or something."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "In the factory?"
+        },
+        {
+          "character": "WORKER",
+          "parenthetical": "",
+          "text": "We don’t know."
+        }
+      ],
+      "actionPreview": "71 71 Rita approaches. A crowd gathered at the end of the street, shift workers and onlookers held-back by air raid wardens."
+    },
+    {
+      "number": 71,
+      "heading": "EXT. BUILDING ADJACENT TO MUNITIONS FACTORY - MORNING",
+      "characters": [
+        "THOMAS CLARK",
+        "COLLEAGUE",
+        "JACK",
+        "WOMAN IN THE CROWD"
+      ],
+      "dialogues": [
+        {
+          "character": "THOMAS CLARK",
+          "parenthetical": "",
+          "text": "Over here, my good man. I need you to assist."
+        },
+        {
+          "character": "THOMAS CLARK",
+          "parenthetical": "(CONT'D)",
+          "text": "Hold this."
+        },
+        {
+          "character": "THOMAS CLARK",
+          "parenthetical": "(CONT'D)",
+          "text": "It’s not ticking yet but it’s a"
+        },
+        {
+          "character": "THOMAS CLARK",
+          "parenthetical": "(CONT'D)",
+          "text": "The slightest vibration could set it off."
+        },
+        {
+          "character": "COLLEAGUE",
+          "parenthetical": "",
+          "text": "It’s going to be impossible to move, Sir."
+        },
+        {
+          "character": "THOMAS CLARK",
+          "parenthetical": "",
+          "text": "(bellows)"
+        },
+        {
+          "character": "COLLEAGUE",
+          "parenthetical": "",
+          "text": "(to Thomas Clark)"
+        },
+        {
+          "character": "JACK",
+          "parenthetical": "",
+          "text": "What’s happening?"
+        },
+        {
+          "character": "THOMAS CLARK",
+          "parenthetical": "",
+          "text": "We’re steaming out the explosive."
+        },
+        {
+          "character": "JACK",
+          "parenthetical": "",
+          "text": "Yes sir."
+        },
+        {
+          "character": "THOMAS CLARK",
+          "parenthetical": "",
+          "text": "Now!"
+        },
+        {
+          "character": "WOMAN IN THE CROWD",
+          "parenthetical": "",
+          "text": "Is it a bomb?"
+        },
+        {
+          "character": "JACK",
+          "parenthetical": "",
+          "text": "Just move away from this area,"
+        }
+      ],
+      "actionPreview": "72 72 A stethoscope is being pressed against a metal object. Every time it’s replaced onto the surface we hear a gentle ping. 61. 62. THOMAS CLARK (an officer of the Royal Engineers, mid 40’s, mustache , sleep deprived) and two colleagues are carefully examining the unexploded bomb which has formed "
+    },
+    {
+      "number": 72,
+      "heading": "EXT. MUNITIONS FACTORY, EAST END - MORNING",
+      "characters": [
+        "JACK",
+        "RITA"
+      ],
+      "dialogues": [
+        {
+          "character": "JACK",
+          "parenthetical": "",
+          "text": "You alright?"
+        },
+        {
+          "character": "JACK",
+          "parenthetical": "(CONT'D)",
+          "text": "I b...b...I better get back."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Thanks."
+        }
+      ],
+      "actionPreview": "73 73 An almighty explosion rocks the air. The bomb has prematurely detonated and taken Thomas Clark and his team with it. Munitions workers and spectators race away in confusion through a massive dust cloud. A gust of wind changes direction and a great cloud of dust from the explosion swirls, Rita "
+    },
+    {
+      "number": 73,
+      "heading": "EXT. LONDON STREET - MORNING",
+      "characters": [
+        "LAVENDER MERCHANT"
+      ],
+      "dialogues": [
+        {
+          "character": "LAVENDER MERCHANT",
+          "parenthetical": "",
+          "text": "(singing)"
+        }
+      ],
+      "actionPreview": "74 74 We now find George looking worse for wear and walking purposefully down a market street. We hear the beautiful song of a LAVENDER MERCHANT as George passes. Won’t you buy my sweet blooming lavender, sixteen branches one penny, Ladies fair make no delay, I have your lavender fresh today. Buy it"
+    },
+    {
+      "number": 74,
+      "heading": "EXT. BAKERY - MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "75 75 A long queue outside. George stands peering in longingly at the bread and pastries on display."
+    },
+    {
+      "number": 75,
+      "heading": "INT. BAKERY - MORNING",
+      "characters": [
+        "SHOP OWNER",
+        "YOUNG WOMAN"
+      ],
+      "dialogues": [
+        {
+          "character": "SHOP OWNER",
+          "parenthetical": "",
+          "text": "Oi!"
+        },
+        {
+          "character": "SHOP OWNER",
+          "parenthetical": "(CONT'D)",
+          "text": "(returning to the counter)"
+        },
+        {
+          "character": "YOUNG WOMAN",
+          "parenthetical": "",
+          "text": "(paying up)"
+        },
+        {
+          "character": "SHOP OWNER",
+          "parenthetical": "",
+          "text": "How dare you."
+        }
+      ],
+      "actionPreview": "76 76 Inside, at the counter, a beautiful YOUNG WOMAN (bi-racial) is being served. The SHOP-OWNER spots George salivating at the window. He crosses over, knocks loudly on the glass, shooing George away. The Young Woman looks at George, taking him in. 65. 66. They should get rid of the lot of them. B"
+    },
+    {
+      "number": 76,
+      "heading": "EXT. LONDON STREET - MORNING",
+      "characters": [
+        "YOUNG WOMAN",
+        "GEORGE",
+        "JESS"
+      ],
+      "dialogues": [
+        {
+          "character": "YOUNG WOMAN",
+          "parenthetical": "",
+          "text": "Hey!"
+        },
+        {
+          "character": "YOUNG WOMAN",
+          "parenthetical": "(CONT'D)",
+          "text": "You hungry?"
+        },
+        {
+          "character": "YOUNG WOMAN",
+          "parenthetical": "(CONT'D)",
+          "text": "Hold your horses, boy. When did you last have something to eat?"
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "I can’t remember."
+        },
+        {
+          "character": "YOUNG WOMAN",
+          "parenthetical": "",
+          "text": "Let’s go get you a glass of milk and a sandwich and you can be on your way. I’m Jess. You?"
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "What’s your name?"
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "(CONT'D)",
+          "text": "No name, no sandwich. Your choice."
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "George."
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "Nice to meet you George."
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "Can I have a sausage sandwich?"
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "I don’t see why not."
+        }
+      ],
+      "actionPreview": "77 77 George walks forlornly down the street. The young woman shouts after him. She speeds up to catch up with him. George is suspicious. The young woman breaks off a small piece of pastry from a brown paper bag and hands it to him. He hesitates for a nano-second and then grabs it and gobbles it dow"
+    },
+    {
+      "number": 77,
+      "heading": "INT. LONDON PUB - DAY",
+      "characters": [
+        "BERYL",
+        "ALBERT",
+        "JESS",
+        "GEORGE"
+      ],
+      "dialogues": [
+        {
+          "character": "BERYL",
+          "parenthetical": "",
+          "text": "Well, he’s small enough, that’s for sure."
+        },
+        {
+          "character": "ALBERT",
+          "parenthetical": "",
+          "text": "You done good, Jess. What’s his name?"
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "George."
+        },
+        {
+          "character": "ALBERT",
+          "parenthetical": "",
+          "text": "He’s a runaway. I can smell them a mile off."
+        },
+        {
+          "character": "ALBERT",
+          "parenthetical": "(CONT'D)",
+          "text": "Come here, nipper, let’s take a proper look at you."
+        },
+        {
+          "character": "ALBERT",
+          "parenthetical": "(CONT'D)",
+          "text": "How was the sandwich?"
+        },
+        {
+          "character": "BERYL",
+          "parenthetical": "",
+          "text": "Albert asked you a question,"
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "(beat)"
+        },
+        {
+          "character": "BERYL",
+          "parenthetical": "",
+          "text": "What do you say George?"
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "(beat)"
+        },
+        {
+          "character": "ALBERT",
+          "parenthetical": "",
+          "text": "Alright son, time to get to work."
+        }
+      ],
+      "actionPreview": "78 78 Smokey, dusty, a scattering of punters, mainly older men, drinking and smoking in silence. At the bar, legs dangling from a high stool, George is scoffing milk and a sandwich. Nearby, huddled at a table, Jess is with THREE WHITE MEN, ALBERT, HARVEY and FRED, 40’s, and a white woman in her fift"
+    },
+    {
+      "number": 78,
+      "heading": "EXT. BOMBED OUT STREET CORNER - DAY",
+      "characters": [
+        "NEWS VENDOR",
+        "ALBERT",
+        "BERYL",
+        "HARVEY"
+      ],
+      "dialogues": [
+        {
+          "character": "NEWS VENDOR",
+          "parenthetical": "",
+          "text": "Cheers, Albert."
+        },
+        {
+          "character": "ALBERT",
+          "parenthetical": "",
+          "text": "There’s a hole in the wall behind here. What you need to do is make yourself as small as possible and crawl through."
+        },
+        {
+          "character": "BERYL",
+          "parenthetical": "",
+          "text": "Take this."
+        },
+        {
+          "character": "ALBERT",
+          "parenthetical": "",
+          "text": "Inside, take as much as you can, everything you can see. Speed is of the essence, Georgie."
+        },
+        {
+          "character": "ALBERT",
+          "parenthetical": "(CONT'D)",
+          "text": "Understood?"
+        },
+        {
+          "character": "ALBERT",
+          "parenthetical": "(CONT'D)",
+          "text": "If you try that again, I will personally thrash you until you are black and blue. After that, if you’re still breathing, we will chuck your body into the River"
+        },
+        {
+          "character": "HARVEY",
+          "parenthetical": "",
+          "text": "Cheers Al."
+        },
+        {
+          "character": "BERYL",
+          "parenthetical": "",
+          "text": "Fred, it’s upside down, you stupid git."
+        }
+      ],
+      "actionPreview": "79 79 The group walk briskly and purposefully down the street, Harvey dragging George along. A newspaper hoarding attended by a scrawny looking NEWS VENDOR leans against a wall. The headline reads ‘LONDON CAN TAKE IT’. Albert nods at the vendor and hands him a note. He scurries away. Albert bends to"
+    },
+    {
+      "number": 79,
+      "heading": "INT. BOMBED OUT BUILDING - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "80 80 George clambers through the dark hole. 69. 70."
+    },
+    {
+      "number": 80,
+      "heading": "INT. BOMBED-OUT JEWELERS - DAY",
+      "characters": [
+        "AIR RAID WARDEN ONE",
+        "AIR RAID WARDEN TWO",
+        "BERYL"
+      ],
+      "dialogues": [
+        {
+          "character": "AIR RAID WARDEN ONE",
+          "parenthetical": "",
+          "text": "Out the way!"
+        },
+        {
+          "character": "AIR RAID WARDEN TWO",
+          "parenthetical": "",
+          "text": "Let’s get out of here."
+        },
+        {
+          "character": "AIR RAID WARDEN ONE",
+          "parenthetical": "",
+          "text": "Wait a minute."
+        },
+        {
+          "character": "AIR RAID WARDEN TWO",
+          "parenthetical": "",
+          "text": "Jim, take a look at this."
+        },
+        {
+          "character": "AIR RAID WARDEN ONE",
+          "parenthetical": "",
+          "text": "Any scallawag off the street could come in here and help himself."
+        },
+        {
+          "character": "AIR RAID WARDEN ONE",
+          "parenthetical": "(CONT'D)",
+          "text": "Let’s go. We’ve done what we can."
+        },
+        {
+          "character": "AIR RAID WARDEN TWO",
+          "parenthetical": "",
+          "text": "(putting back the ring)"
+        },
+        {
+          "character": "AIR RAID WARDEN ONE",
+          "parenthetical": "",
+          "text": "(scared)"
+        },
+        {
+          "character": "AIR RAID WARDEN TWO",
+          "parenthetical": "",
+          "text": "One second..."
+        },
+        {
+          "character": "AIR RAID WARDEN TWO",
+          "parenthetical": "(CONT'D)",
+          "text": "Too right. Let’s go."
+        },
+        {
+          "character": "BERYL",
+          "parenthetical": "",
+          "text": "(urgent whisper)"
+        }
+      ],
+      "actionPreview": "81 81 George drops to the floor. He picks himself up. He is covered in dust and debris and his knees and hands are scuffed. He coughs, rubs at his eyes, tries to make sense of where he is. His eyes caught by a large cabinet, shattered in two, broken glass everywhere. Inside the cabinet, precious and"
+    },
+    {
+      "number": 81,
+      "heading": "INT. WAREHOUSE - DAY",
+      "characters": [
+        "ALBERT",
+        "GEORGE",
+        "JESS",
+        "BERYL"
+      ],
+      "dialogues": [
+        {
+          "character": "ALBERT",
+          "parenthetical": "",
+          "text": "Well done my boy. You did good."
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "Can I go home now?"
+        },
+        {
+          "character": "ALBERT",
+          "parenthetical": "",
+          "text": "All in good time."
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "No. Now."
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "(to Albert)"
+        },
+        {
+          "character": "BERYL",
+          "parenthetical": "",
+          "text": "(a warning to Jess)"
+        },
+        {
+          "character": "ALBERT",
+          "parenthetical": "",
+          "text": "(at George)"
+        },
+        {
+          "character": "BERYL",
+          "parenthetical": "",
+          "text": "(well-worn words)"
+        },
+        {
+          "character": "ALBERT",
+          "parenthetical": "",
+          "text": "(still breathing heavily)"
+        },
+        {
+          "character": "ALBERT",
+          "parenthetical": "(CONT'D)",
+          "text": "He’s a slippery little tyke, make sure you keep hold of him."
+        }
+      ],
+      "actionPreview": "82 82 Now in a makeshift den in an abandoned warehouse, the gang empty the bag and look at the spoils of the robbery on an improvised table. The elegant, crafted jewels are a huge contrast to the surroundings. George is sat, surrounded, Jess beside him. 72. 73. Albert backhands him hard across the f"
+    },
+    {
+      "number": 82,
+      "heading": "EXT. WAREHOUSE - DAY",
+      "characters": [
+        "JESS",
+        "GEORGE"
+      ],
+      "dialogues": [
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "(angry)"
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "Why do you stay with him?"
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "(CONT'D)",
+          "text": "He’s a nasty, horrible man."
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "He’s my dad."
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "(CONT'D)",
+          "text": "He’s the only family I got."
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "Why is he so mean?"
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "He wasn’t always like this, he doesn’t mean it."
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "(CONT'D)",
+          "text": "He fought in the Great War. He was a young boy when he enlisted."
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "(CONT'D)",
+          "text": "Does it hurt?"
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "Just a little. Does it hurt where he hit you?"
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "Just a little."
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "(CONT'D)",
+          "text": "I think it might be time for a sausage sandwich. What do you say?"
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "Yum."
+        }
+      ],
+      "actionPreview": "83 83 Jess holds on to George’s hand tightly as she pulls him down the street. Her cheek is inflamed and there is dried blood caked around George’s nose. You see what happens? Don’t you ever dare cross him again! She doesn’t respond. George takes that in. She hesitates. 74. 75. Something happened. H"
+    },
+    {
+      "number": 83,
+      "heading": "INT. MUNITIONS FACTORY - DAY",
+      "characters": [
+        "CLIVE"
+      ],
+      "dialogues": [
+        {
+          "character": "CLIVE",
+          "parenthetical": "",
+          "text": "(over tannoy)"
+        }
+      ],
+      "actionPreview": "84 84 Production is in full swing, workers, including Rita, Doris, and Tilda, bent to their tasks. The loudspeaker tannoy squawks and crackles into life. On the landing above, Clive makes an announcement, oozing with self- importance. Calling Rita Hanway. Calling Rita Hanway. Will you make your way "
+    },
+    {
+      "number": 84,
+      "heading": "INT. MANAGER’S OFFICE - DAY",
+      "characters": [
+        "CLIVE",
+        "MALE OFFICIAL",
+        "FEMALE OFFICIAL",
+        "WOMAN",
+        "RITA"
+      ],
+      "dialogues": [
+        {
+          "character": "CLIVE",
+          "parenthetical": "",
+          "text": "Take a seat, Rita."
+        },
+        {
+          "character": "MALE OFFICIAL",
+          "parenthetical": "",
+          "text": "Mrs. Hanway, I’m Timothy Ashdown, and this is my colleague Brenda"
+        },
+        {
+          "character": "FEMALE OFFICIAL",
+          "parenthetical": "",
+          "text": "We’re from the Department of"
+        },
+        {
+          "character": "WOMAN",
+          "parenthetical": "",
+          "text": "It has been brought to our attention that your son George"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "(beat)"
+        },
+        {
+          "character": "MALE OFFICIAL",
+          "parenthetical": "",
+          "text": "We found out that about an hour or so into the journey, he absconded."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "He absconded? What does that mean?"
+        },
+        {
+          "character": "FEMALE OFFICIAL",
+          "parenthetical": "",
+          "text": "A child who befriended him told us that he jumped from the train."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "He jumped!?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "(CONT'D)",
+          "text": "(choked)"
+        },
+        {
+          "character": "CLIVE",
+          "parenthetical": "",
+          "text": "Now, Rita, this must be a shock, please contain yourself-"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "(strangled, at the"
+        },
+        {
+          "character": "FEMALE OFFICIAL",
+          "parenthetical": "",
+          "text": "We don’t know."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Where is my boy?"
+        },
+        {
+          "character": "MALE OFFICIAL",
+          "parenthetical": "",
+          "text": "All the relevant authorities, and the police, have been informed."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "You were meant to be looking after him-"
+        },
+        {
+          "character": "MALE OFFICIAL",
+          "parenthetical": "",
+          "text": "All the protocols were followed in accordance with the law."
+        },
+        {
+          "character": "FEMALE OFFICIAL",
+          "parenthetical": "",
+          "text": "Here are our details, Mrs Hanway."
+        },
+        {
+          "character": "FEMALE OFFICIAL",
+          "parenthetical": "(CONT'D)",
+          "text": "We are truly sorry. If he comes back home, please let us know."
+        }
+      ],
+      "actionPreview": "85 85 Inside, waiting, are two OFFICIALS, a woman and a man. Pumped up with a sense of his own importance, Clive leads Rita inside. Filled with foreboding, she stays standing where she is. Watson. Children Evacuees. Rita is suddenly filled with dread. Hanway did not arrive at his destination. What d"
+    },
+    {
+      "number": 85,
+      "heading": "INT. MUNITIONS FACTORY - DAY",
+      "characters": [
+        "CLIVE",
+        "RITA"
+      ],
+      "dialogues": [
+        {
+          "character": "CLIVE",
+          "parenthetical": "",
+          "text": "I know you’re upset, Rita, and that’s understandable, given the circumstances, but you are in the middle of a shift-"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "My George is missing and all you can think about is your flipping shifts. Who do you think you are?"
+        }
+      ],
+      "actionPreview": "86 86 Doris and Tilda and others watch as Rita strides out of Clive’s office and descends to the floor. Clive follows on, close behind. 77. 78. She pulls off her protective clothing and throws it on the ground. Well you can shove your job up your jaxy! I’ll be back when I’ve found my boy! The eclips"
+    },
+    {
+      "number": 86,
+      "heading": "EXT. HANWAY HOUSE, FRONT DOOR - DAY",
+      "characters": [
+        "GERALD",
+        "RITA"
+      ],
+      "dialogues": [
+        {
+          "character": "GERALD",
+          "parenthetical": "",
+          "text": "(softly to himself)"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "(turns, shouting) I don’t know Dad, no one knows."
+        },
+        {
+          "character": "GERALD",
+          "parenthetical": "",
+          "text": "Where are you going?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "I’m going to find George. I can’t stay here twiddling my thumbs."
+        },
+        {
+          "character": "GERALD",
+          "parenthetical": "",
+          "text": "(getting up) I’ll get my coat, I’m coming with you-"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "No!"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "(CONT'D)",
+          "text": "(on the verge of tears)"
+        }
+      ],
+      "actionPreview": "87 87 Rita, coat on, back turned facing the window above the sink. Gerald stares at her in disbelief. Why did he jump? She picks up her purse and door key. Gerald stares at her. 78. 79. What if he comes home and there’s nobody here? She leaves. Gerald sits down heavily. Olly the cat comes into the r"
+    },
+    {
+      "number": 87,
+      "heading": "EXT. FIRE STATION - LONDON - DAY",
+      "characters": [
+        "RITA",
+        "DAVIES"
+      ],
+      "dialogues": [
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Is Jack here?"
+        },
+        {
+          "character": "DAVIES",
+          "parenthetical": "",
+          "text": "(indicating)"
+        }
+      ],
+      "actionPreview": "88 88 Davies and Campbell and other firefighters are washing down vehicles and prepping for the inevitable evening raids. Rita walks into view. He’s inside. As she crosses inside, Campbell raises his eyebrows and smirks at Davies."
+    },
+    {
+      "number": 88,
+      "heading": "EXT. BUSY LONDON STREET - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "89 89 Jess crosses the street to the bakery where she and George first met, she’s holding tightly on to his hand."
+    },
+    {
+      "number": 89,
+      "heading": "INT. BAKERY - DAY",
+      "characters": [
+        "JESS"
+      ],
+      "dialogues": [
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "Pick a cake George."
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "(CONT'D)",
+          "text": "Come back!"
+        }
+      ],
+      "actionPreview": "90 90 They enter and stand in line. George points. She loosens her grip on him to open her purse and at that moment George makes a run for it. She shouts after him. 79. 80."
+    },
+    {
+      "number": 90,
+      "heading": "EXT. BUSY LONDON STREET - DAY",
+      "characters": [
+        "POLICEMAN",
+        "JESS",
+        "GEORGE"
+      ],
+      "dialogues": [
+        {
+          "character": "POLICEMAN",
+          "parenthetical": "",
+          "text": "What’s your hurry, young fella?"
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "(out of breath)"
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "She’s lying! She’s not my mum... they make me steal for them-"
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "He’s supposed to evacuate this week. He doesn’t want to go."
+        },
+        {
+          "character": "POLICEMAN",
+          "parenthetical": "",
+          "text": "Listen, lad, you evacuating is for your own safety, and we have more important things to do than minding scallywags like you."
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "What did you just say? He’s not a scallywag, he’s my son!"
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "I am not, she’s lying to you-"
+        },
+        {
+          "character": "POLICEMAN",
+          "parenthetical": "",
+          "text": "Apologies, ma’am. I didn’t mean to offend."
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "If you ever try that again, it won’t be Albert giving you a good belting, it will be me!"
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "(CONT'D)",
+          "text": "I thought we were friends!"
+        }
+      ],
+      "actionPreview": "91 91 George runs as fast as he can, as if his life depends on it. He looks back, Jess is gaining on him. Suddenly, strong arms grab hold of him. A POLICEMAN looks down at him. Jess catches up. Thank you officer. He’s my son. He’s a bit of a tearaway. There is more than a hint of racism in his tone."
+    },
+    {
+      "number": 91,
+      "heading": "INT. ST PANCRAS STATION - EVENING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "92 92 From the rafters we see the scale of the station as Rita and Jack, smartly dressed in his dark blue uniform, sash and soft cap, arrive at St Pancras station - a dramatic contrast to how we first experienced the location. The only real movement and sound is the night-mail being loaded onto nois"
+    },
+    {
+      "number": 92,
+      "heading": "INT. ST PANCRAS STATION - EVENING",
+      "characters": [
+        "JACK",
+        "REGISTRAR"
+      ],
+      "dialogues": [
+        {
+          "character": "JACK",
+          "parenthetical": "",
+          "text": "(at the REGISTRAR)"
+        },
+        {
+          "character": "JACK",
+          "parenthetical": "(CONT'D)",
+          "text": "A 10 year old boy, name of George"
+        },
+        {
+          "character": "REGISTRAR",
+          "parenthetical": "",
+          "text": "This is lost property, not lost children! Read the sign."
+        },
+        {
+          "character": "JACK",
+          "parenthetical": "",
+          "text": "(level) I can read the sign. I’m asking whether you’ve heard anything-"
+        },
+        {
+          "character": "REGISTRAR",
+          "parenthetical": "",
+          "text": "I can’t help you. Nothing has been reported here."
+        },
+        {
+          "character": "JACK",
+          "parenthetical": "",
+          "text": "(sarcastic)"
+        }
+      ],
+      "actionPreview": "93 93 Jack and Rita stand at the lost property booth. Excuse me. The Registrar looks up peeking over his glasses. Hanway, was evacuated from this station yesterday morning. He’s gone missing. Jack shows him a photograph of George. You have a nice day mate. 81. 82."
+    },
+    {
+      "number": 93,
+      "heading": "INT. PLATFORM 3, ST PANCRAS STATION - EVENING",
+      "characters": [
+        "JACK",
+        "RITA"
+      ],
+      "dialogues": [
+        {
+          "character": "JACK",
+          "parenthetical": "",
+          "text": "Wh...what ever happened to Marcus?"
+        },
+        {
+          "character": "JACK",
+          "parenthetical": "(CONT'D)",
+          "text": "I’m sorry, I don’t mean to pry."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "After they took him away...the next day I went to the police station."
+        },
+        {
+          "character": "JACK",
+          "parenthetical": "",
+          "text": "Big breaths. In, out, in, out."
+        }
+      ],
+      "actionPreview": "94 94 Jack with Rita as she walks slowly down the platform. Did you..did you ever hear from him again? She hesitates. They told me they had released him without charge. A few days later, one of his ship-mates gave me a letter from him. He said he’d been deported back to Grenada, and that he would do"
+    },
+    {
+      "number": 94,
+      "heading": "EXT. SPITALFIELDS - LONDON - NIGHT",
+      "characters": [
+        "RITA",
+        "WOMAN",
+        "JACK"
+      ],
+      "dialogues": [
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Sorry Madam, my son George is gone missing. He’s got dark hair..."
+        },
+        {
+          "character": "WOMAN",
+          "parenthetical": "",
+          "text": "Sorry love, no."
+        },
+        {
+          "character": "JACK",
+          "parenthetical": "",
+          "text": "The word is out. People know about"
+        },
+        {
+          "character": "JACK",
+          "parenthetical": "(CONT'D)",
+          "text": "You’re shivering. Here."
+        },
+        {
+          "character": "JACK",
+          "parenthetical": "(CONT'D)",
+          "text": "He’s a scrapper, Rita. He knows how to take care of himself."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "He told me he hated me."
+        },
+        {
+          "character": "JACK",
+          "parenthetical": "",
+          "text": "I suppose I would have said the same thing if I was him."
+        },
+        {
+          "character": "JACK",
+          "parenthetical": "(CONT'D)",
+          "text": "I would have wanted to stay with you ... I mean...I mean you’re his"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "No this way, let’s go to Mickey’s."
+        }
+      ],
+      "actionPreview": "95 95 It’s raining, murky water bounces off the pavement. We see Rita soaked, standing outside a greengrocers, approaching a passer-by. 82. 83. She looks through the condensated window of the greengrocers where Jack is waiting in a queue. Hearing laughter, she turns back to see a couple, man and wom"
+    },
+    {
+      "number": 95,
+      "heading": "INT. WAREHOUSE - NIGHT",
+      "characters": [
+        "ALBERT",
+        "JESS",
+        "BERYL",
+        "HARVEY"
+      ],
+      "dialogues": [
+        {
+          "character": "ALBERT",
+          "parenthetical": "",
+          "text": "You look different, girl. What’s all that stuff on your face?"
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "Beryl did me up. D’ya like it?"
+        },
+        {
+          "character": "BERYL",
+          "parenthetical": "",
+          "text": "She looks ‘très chic’ don’t you think? Very ‘à la mode.’"
+        },
+        {
+          "character": "HARVEY",
+          "parenthetical": "",
+          "text": "Classy."
+        },
+        {
+          "character": "ALBERT",
+          "parenthetical": "",
+          "text": "Shut it, Harvey."
+        },
+        {
+          "character": "HARVEY",
+          "parenthetical": "",
+          "text": "Sorry Al."
+        },
+        {
+          "character": "ALBERT",
+          "parenthetical": "",
+          "text": "I told you before, you keep your slutty hands off her-"
+        },
+        {
+          "character": "BERYL",
+          "parenthetical": "",
+          "text": "Alright just tryna see the potential."
+        },
+        {
+          "character": "ALBERT",
+          "parenthetical": "",
+          "text": "The only potential is you getting a smack."
+        },
+        {
+          "character": "ALBERT",
+          "parenthetical": "",
+          "text": "What? Spit it out. AIR-RAID WARDEN"
+        },
+        {
+          "character": "ALBERT",
+          "parenthetical": "",
+          "text": "Depending what we find, there might be some more for you. Now, get out of here. Scram!"
+        }
+      ],
+      "actionPreview": "96 96 Albert and the gang, Jess and George, scoff bowls of food. Jess hands out steaming mugs of tea. Everyone looks at her. There are splodges of rouge on her cheeks and a smear of red lipstick on her mouth. Jess is severely uncomfortable with this back and forth. Albert turns on Beryl. There’s a l"
+    },
+    {
+      "number": 96,
+      "heading": "INT. CAFÉ DE PARIS - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "97 97 We see George’s feet come into view from above. His hands hold tightly onto a thick rope which is tied around his waist, lowering him into total darkness."
+    },
+    {
+      "number": 97,
+      "heading": "EXT. CAFÉ DE PARIS - NIGHT",
+      "characters": [
+        "HARVEY",
+        "ALBERT",
+        "BERYL"
+      ],
+      "dialogues": [
+        {
+          "character": "HARVEY",
+          "parenthetical": "",
+          "text": "He’s taking his time. Maybe he’s stuck."
+        },
+        {
+          "character": "ALBERT",
+          "parenthetical": "",
+          "text": "Did you hear what I said? You keep away from Jess."
+        },
+        {
+          "character": "BERYL",
+          "parenthetical": "",
+          "text": "She needs to earn her keep, she’s growing up now, Albert. She needs a woman’s touch."
+        },
+        {
+          "character": "ALBERT",
+          "parenthetical": "",
+          "text": "Keep away from her or I’ll kick your ass to kingdom come."
+        },
+        {
+          "character": "BERYL",
+          "parenthetical": "",
+          "text": "(mild)"
+        },
+        {
+          "character": "ALBERT",
+          "parenthetical": "",
+          "text": "Good boy, Georgie. Good boy."
+        }
+      ],
+      "actionPreview": "98 98 Albert, Harvey and Beryl wait by a closed back door, smoking and pacing. Jess is on the lookout, out of earshot. Albert turns on Beryl again. He’s still seething. Harvey snorts. 85. 86. Whatever you say, Albert. She holds up her hands in a gesture of surrender. The door opens. George peers out"
+    },
+    {
+      "number": 98,
+      "heading": "INT. CAFÉ DE PARIS - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "99 99 As the gang, George in tow, descend either side of a grand double staircase, lanterns in hand, their image starts to dissolve as a raucous Café de Paris appears in full technicolor swing. BEGIN FLASHBACK:"
+    },
+    {
+      "number": 99,
+      "heading": "INT. CAFÉ DE PARIS - EARLIER THAT NIGHT",
+      "characters": [
+        "SNAKEHIPS",
+        "SOUS CHEFS",
+        "END FLASHBACK"
+      ],
+      "dialogues": [
+        {
+          "character": "SNAKEHIPS",
+          "parenthetical": "",
+          "text": "Now horns stand up please!"
+        },
+        {
+          "character": "SNAKEHIPS",
+          "parenthetical": "(CONT'D)",
+          "text": "Excuse my French."
+        },
+        {
+          "character": "SOUS CHEFS",
+          "parenthetical": "",
+          "text": "Yes Chef!"
+        }
+      ],
+      "actionPreview": "100 100 KEN ‘SNAKEHIPS’ JOHNSON (26) a tall, handsome black man, dressed in white morning suit. Tails flapping as he conducts the multi racial band with baton in hand. Everyone and everything is jumping. We swirl around to COUPLES DANCING as they laugh and jive to the rhythm. This is the upper crust"
+    },
+    {
+      "number": 100,
+      "heading": "INT. CAFÉ DE PARIS - NIGHT - PRESENT",
+      "characters": [
+        "FRED",
+        "ALBERT",
+        "BERYL"
+      ],
+      "dialogues": [
+        {
+          "character": "FRED",
+          "parenthetical": "",
+          "text": "That’s not coming off."
+        },
+        {
+          "character": "ALBERT",
+          "parenthetical": "",
+          "text": "Stop gawping and get to bloody work unless you want them to put you back on that train. Cos that’s what they’ll do."
+        },
+        {
+          "character": "ALBERT",
+          "parenthetical": "(CONT'D)",
+          "text": "See that bracelet. Get on with it!"
+        },
+        {
+          "character": "BERYL",
+          "parenthetical": "",
+          "text": "(laughing)"
+        },
+        {
+          "character": "BERYL",
+          "parenthetical": "(CONT'D)",
+          "text": "90."
+        }
+      ],
+      "actionPreview": "101 101 Harvey violently tugs at the ENGAGEMENT RING on the dead woman's finger. His lantern, now resting on the table, bathes light across the woman’s body as it jolts with every yank. Fred standing idle observes Harvey as he works. He picks up one of the crystal flutes on the table, still filled w"
+    },
+    {
+      "number": 101,
+      "heading": "INT. CAFÉ DE PARIS - NIGHT",
+      "characters": [
+        "ALBERT",
+        "BERYL"
+      ],
+      "dialogues": [
+        {
+          "character": "ALBERT",
+          "parenthetical": "",
+          "text": "(in a posh woman’s accent)"
+        },
+        {
+          "character": "BERYL",
+          "parenthetical": "",
+          "text": "Of course madam. (pouring Albert a glass)"
+        },
+        {
+          "character": "ALBERT",
+          "parenthetical": "",
+          "text": "Yes it seems that my ring was so heavy it couldn’t take the weight."
+        }
+      ],
+      "actionPreview": "102 102 From the other side of the dance-floor we see the gang are enjoying emptying whatever bottles and glasses are left on the tables, joking, and mocking the dead. Waiter may I have a glass of champers? Ma’am, I happen to notice that you’ve lost a finger. The gang fall about laughing as Albert h"
+    },
+    {
+      "number": 102,
+      "heading": "EXT. CAFE DE PARIS - NIGHT",
+      "characters": [
+        "JESS",
+        "BERYL"
+      ],
+      "dialogues": [
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "What the bleedin’ hell are ya..! (realizing)"
+        },
+        {
+          "character": "BERYL",
+          "parenthetical": "(CONT'D)",
+          "text": "90."
+        }
+      ],
+      "actionPreview": "103 103 George is out in the open air, he runs at pace. Turning a corner he bumps hard into someone. They both fall to the ground. It’s Jess. George is terrified. George? 91. She slowly gets to her feet and scuttles back to her corner and checks, there is no-one is sight. They look at each- other, n"
+    },
+    {
+      "number": 103,
+      "heading": "INT. FRUIT AND WOOL EXCHANGE - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "104 104 We see an accordion, its lungs being squeezed, old fingers pressing the keys. It’s the anthem My Old Man. A chorus of EAST END VOICES, men and women, young and old, all singing in harmony. People sit and lie haphazardly looking up at the improvised stage that has been prepared. A chuffed Mic"
+    },
+    {
+      "number": 104,
+      "heading": "INT. GEORGE’S HIDING PLACE - NIGHT",
+      "characters": [
+        "GEORGE",
+        "FEMALE GUNNER",
+        "INJURED GUNNER",
+        "UNDERGROUND STATION."
+      ],
+      "dialogues": [
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "(singing)"
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "(CONT'D)",
+          "text": "One, two, three, four..."
+        },
+        {
+          "character": "FEMALE GUNNER",
+          "parenthetical": "",
+          "text": "(to George)"
+        },
+        {
+          "character": "FEMALE GUNNER",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "INJURED GUNNER",
+          "parenthetical": "",
+          "text": "Get to the underground like everyone else! Run! Go on, off with ya! GEORGE runs as fast as he can. In the distance he sees the warm glow of light escaping from behind a barricade of sand bags."
+        },
+        {
+          "character": "UNDERGROUND STATION.",
+          "parenthetical": "",
+          "text": "FIRETRUCKS come into view. FIREMEN disembark. Gigantic jets of water pelt into burning buildings."
+        }
+      ],
+      "actionPreview": "105 105 We hear the far off hum of GERMAN BOMBERS. We find George hiding, but it’s not clear where. No one to talk with, All by myself No one to walk with, But I'm happy on the shelf, Ain't misbehavin' I'm savin' my love for you . 91. 92. He swipes away the tarpaulin which has been covering him, all"
+    },
+    {
+      "number": 105,
+      "heading": "INT. TEMPLE UNDERGROUND STATION - NIGHT",
+      "characters": [
+        "TICKET INSPECTOR",
+        "WOMAN",
+        "MAN",
+        "WOMAN TWO"
+      ],
+      "dialogues": [
+        {
+          "character": "TICKET INSPECTOR",
+          "parenthetical": "",
+          "text": "(shouting)"
+        },
+        {
+          "character": "TICKET INSPECTOR",
+          "parenthetical": "(CONT'D)",
+          "text": "Alright, everybody out! There are no more trains running tonight."
+        },
+        {
+          "character": "WOMAN",
+          "parenthetical": "",
+          "text": "(holding up a ticket) I’ve got a right to be here, I’ve paid for a ticket!"
+        },
+        {
+          "character": "TICKET INSPECTOR",
+          "parenthetical": "",
+          "text": "It’s a ticket to travel madam, not to stay overnight."
+        },
+        {
+          "character": "WOMAN",
+          "parenthetical": "",
+          "text": "Well I’m waiting for me train until it gets here."
+        },
+        {
+          "character": "MAN",
+          "parenthetical": "",
+          "text": "Me too."
+        },
+        {
+          "character": "TICKET INSPECTOR",
+          "parenthetical": "",
+          "text": "But there won’t be a train for 8 hours!"
+        },
+        {
+          "character": "WOMAN TWO",
+          "parenthetical": "",
+          "text": "We’re early. We don’t mind waiting."
+        },
+        {
+          "character": "TICKET INSPECTOR",
+          "parenthetical": "",
+          "text": "Look, the rules are the rules, I didn’t make ‘em..."
+        },
+        {
+          "character": "TICKET INSPECTOR",
+          "parenthetical": "(CONT'D)",
+          "text": "(at his Colleagues)"
+        }
+      ],
+      "actionPreview": "106 106 As soon as George reaches the bottom of the stairs into the empty ticket hall, there is a strong smell of urine. In one of the corners he spots a woman squatting, about to defecate. There’s one station attendant at the far end of the ticket hall. George sneaks past and ducks under a barrier "
+    },
+    {
+      "number": 106,
+      "heading": "INT. FRUIT AND WOOL EXCHANGE - NIGHT",
+      "characters": [
+        "RITA",
+        "MICKEY"
+      ],
+      "dialogues": [
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "(to Betty) I’ll be back."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "(CONT'D)",
+          "text": "(speaking loudly above the applause)"
+        },
+        {
+          "character": "MICKEY",
+          "parenthetical": "",
+          "text": "You can sing?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Yeah, a little. Is that alright?"
+        },
+        {
+          "character": "MICKEY",
+          "parenthetical": "",
+          "text": "(smiling) I’ll get the microphone."
+        },
+        {
+          "character": "MICKEY",
+          "parenthetical": "(CONT'D)",
+          "text": "Ladies and gentlemen I have someone here who’d like to sing for us. May I introduce to you, Rita Hanway!"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "This is for Betty, and for my son"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "(CONT'D)",
+          "text": "Please look out for him. (beat) I hope he can hear me wherever he is."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "(CONT'D)",
+          "text": "There's a somebody I'm longin' to see."
+        }
+      ],
+      "actionPreview": "107 107 The crowd applauds as the song My Old Man reaches its stunning climax, bringing us back to the shelter. Rita looks down at Betty. Something has stirred inside of her. She kisses Betty on the forehead. She crosses to Mickey. 95. 96. Mickey, can I sing something? Mickey hurries a microphone to"
+    },
+    {
+      "number": 107,
+      "heading": "INT. TEMPLE UNDERGROUND STATION - SOME TIME LATER",
+      "characters": [
+        "VOICES"
+      ],
+      "dialogues": [
+        {
+          "character": "VOICES",
+          "parenthetical": "",
+          "text": "Pack up your troubles in your old kit-bag and smile, smile, smile."
+        },
+        {
+          "character": "VOICES",
+          "parenthetical": "(CONT'D)",
+          "text": "98."
+        }
+      ],
+      "actionPreview": "108 108 George stirs... alerted to something. He leaves his blanket and clambers over sleeping bodies. Wading carefully through the quiet of people bedded down on the tracks, some see him passing but pay no mind. George moves with URGENCY as if something is PULLING him forward into the darkness of t"
+    },
+    {
+      "number": 108,
+      "heading": "INT. TEMPLE UNDERGROUND SHELTER - NIGHT",
+      "characters": [
+        "VOICES",
+        "ELDERLY ATHLETIC MAN"
+      ],
+      "dialogues": [
+        {
+          "character": "VOICES",
+          "parenthetical": "(CONT'D)",
+          "text": "98."
+        },
+        {
+          "character": "ELDERLY ATHLETIC MAN",
+          "parenthetical": "",
+          "text": "See if you can fit through and get help."
+        }
+      ],
+      "actionPreview": "109 109 George is startled awake and finds himself in the same position he fell asleep in (he has been dreaming). He is soaking wet and the tunnel is awash with rapidly flowing muddy water. A bomb has exploded at the far end of the platform tearing a gaping hole in the ceiling of the station fractur"
+    },
+    {
+      "number": 109,
+      "heading": "EXT. HANWAY STREET - NIGHT",
+      "characters": [
+        "JACK",
+        "RITA"
+      ],
+      "dialogues": [
+        {
+          "character": "JACK",
+          "parenthetical": "",
+          "text": "We are going to find him, Rita. We are going to find him and bring him back home."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Jack..."
+        }
+      ],
+      "actionPreview": "110 110 Jack and Rita arrive home. At the gate to his house, he stops and looks at her. 99. 100. She looks at him. She hesitates."
+    },
+    {
+      "number": 110,
+      "heading": "INT. BEDROOM, JACK’S HOUSE - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "111 111 Rita and Jack are both engaged in a passionate kiss. There is a desperation in their engagement. Their breath and panting signal a yearning, they give each other life. Both are immersed and oblivious. Lips, tongues, hands and hips are miraculously in unison in the chaotic sight of passion. T"
+    },
+    {
+      "number": 111,
+      "heading": "INT. SMALL BEDROOM, EAST LONDON - MORNING",
+      "characters": [
+        "WOMAN",
+        "GEORGE",
+        "RUBY"
+      ],
+      "dialogues": [
+        {
+          "character": "WOMAN",
+          "parenthetical": "",
+          "text": "Our little hero’s waking up. You saved a lot of lives you know. How are you feeling love?"
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "Where am I? Where’s my St."
+        },
+        {
+          "character": "WOMAN",
+          "parenthetical": "",
+          "text": "It’s here love on the dresser. Your clothes are drying on the rack. My name’s Ruby. Now drink this."
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "Can I have my chain please?"
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "(CONT'D)",
+          "text": "I want to go home."
+        },
+        {
+          "character": "RUBY",
+          "parenthetical": "",
+          "text": "You’re George Hanway, aren’t you."
+        },
+        {
+          "character": "RUBY",
+          "parenthetical": "(CONT'D)",
+          "text": "A lot of people have been looking for you, do you know that?"
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "I want to go home."
+        },
+        {
+          "character": "RUBY",
+          "parenthetical": "",
+          "text": "I won’t be long."
+        }
+      ],
+      "actionPreview": "112 112 George opens his eyes and finds himself staring at the ceiling of a small bedroom. The door opens and a woman in her forties, dressed in a white blouse and dark blue skirt, enters with a tray of tea. George sits up and feels for his chain. 100. 101. Christopher? The woman retrieves the St. C"
+    },
+    {
+      "number": 112,
+      "heading": "INT. FRONT ROOM, EAST LONDON - MORNING",
+      "characters": [
+        "RUBY"
+      ],
+      "dialogues": [
+        {
+          "character": "RUBY",
+          "parenthetical": "",
+          "text": "Come inside. I’m just getting him up and ready."
+        }
+      ],
+      "actionPreview": "113 113 Ruby opens the front door to the man and woman from Children’s Evacuation. They exchange greetings. 101. 102."
+    },
+    {
+      "number": 113,
+      "heading": "INT. STAIRWAY - MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "114 114 Ruby carries a steaming bowl of water carefully upstairs."
+    },
+    {
+      "number": 114,
+      "heading": "INT. SMALL BEDROOM - MORNING",
+      "characters": [
+        "RUBY"
+      ],
+      "dialogues": [
+        {
+          "character": "RUBY",
+          "parenthetical": "",
+          "text": "Alright, George. Let’s get you cleaned up."
+        }
+      ],
+      "actionPreview": "115 115 Ruby comes in with the bowl of water. She looks around the room. There is no sign of him."
+    },
+    {
+      "number": 115,
+      "heading": "EXT. HOUSE - EAST LONDON - MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "116 116 Cut to George shimmying down a drainpipe and running down the cobblestone alleyways behind the terraced houses."
+    },
+    {
+      "number": 116,
+      "heading": "EXT. EAST LONDON STREET - MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "117 117 From a distance George spots the RED BRICK CLOCK-TOWER a few streets away. He recognizes some of the surroundings and landmarks from the beginning of his journey. Some are gone, some are damaged, some have survived. A smile beams across his face. He’s near home. His pace quickens."
+    },
+    {
+      "number": 117,
+      "heading": "EXT. CLIFFORD LANE -",
+      "characters": [
+        "GEORGE",
+        "RESCUE WORKER",
+        "NURSE",
+        "AIR RAID WARDEN",
+        "SECOND AIR RAID WARDEN"
+      ],
+      "dialogues": [
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "(strangled)"
+        },
+        {
+          "character": "RESCUE WORKER",
+          "parenthetical": "",
+          "text": "Somebody come and get this nipper!"
+        },
+        {
+          "character": "NURSE",
+          "parenthetical": "",
+          "text": "Come, dear. You’re not safe here."
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "Where’s my mum?"
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "(CONT'D)",
+          "text": "Don’t let anyone take my cat away!"
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "(CONT'D)",
+          "text": "Mum? Mum?"
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "(CONT'D)",
+          "text": "Mum!"
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "(CONT'D)",
+          "text": "(panting with certainty and hope)"
+        },
+        {
+          "character": "AIR RAID WARDEN",
+          "parenthetical": "",
+          "text": "(with pity on his face)"
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "(manic now)"
+        },
+        {
+          "character": "AIR RAID WARDEN",
+          "parenthetical": "",
+          "text": "The opening is too small. We’ll never get in there."
+        },
+        {
+          "character": "SECOND AIR RAID WARDEN",
+          "parenthetical": "",
+          "text": "If we shift any of this the whole thing will collapse."
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "Let me. I can get down there, I know I can."
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "My mum ain’t dying! I’m going down, and nobody can stop me. Get me a rope."
+        }
+      ],
+      "actionPreview": "EAST LONDON - MORNING 118 118 George now runs with baited anticipation. As he turns the corner to his own street, we see total devastation. The houses have all gone... obliterated. The only thing that has survived is the RED BRICK CLOCK- TOWER. Miraculously, the only damage it has suffered is to the"
+    },
+    {
+      "number": 118,
+      "heading": "INT. RUBBLE - MORNING",
+      "characters": [
+        "GEORGE",
+        "RITA"
+      ],
+      "dialogues": [
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "Mum!"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "(O.S)",
+          "text": "(hardly audible)"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "(CONT'D)",
+          "text": "George?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "(CONT'D)",
+          "text": "(hardly audible)"
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "I didn’t mean what I said."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "(a whisper) I know, sweetheart, I’m sorry I let you go."
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "I’m going to get you out of here."
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "(CONT'D)",
+          "text": "I’m coming, mum. Just wait for me."
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "(CONT'D)",
+          "text": "(shouting up)"
+        }
+      ],
+      "actionPreview": "119 119 Two of the men lower George down slowly, a rope tied around his ankles, torch in hand, into the crumbling cavity below. It’s tight, claustrophobic and dark. George hears Rita’s voice again, this time much clearer. He unties the rope around his ankles as he’s now at the bottom of the cavity a"
+    },
+    {
+      "number": 119,
+      "heading": "INT. RUBBLE - MORNING (A SHORT TIME LATER)",
+      "characters": [
+        "GEORGE",
+        "AIR RAID WARDENS"
+      ],
+      "dialogues": [
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "Pull!"
+        },
+        {
+          "character": "AIR RAID WARDENS",
+          "parenthetical": "",
+          "text": "One, two, three - heave..."
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "",
+          "text": "Mum! Mum!"
+        },
+        {
+          "character": "GEORGE",
+          "parenthetical": "(CONT'D)",
+          "text": "Keep pulling!"
+        }
+      ],
+      "actionPreview": "120 120 We see George crawling again, digging as much as he can around Rita before tying the rope around her chest and arms. He tugs on the rope and shouts. With a heave, we see the air wardens above brace and pull. Rita screams in pain as the rope tightens around her ribs, she stretches her arms ou"
+    },
+    {
+      "number": 120,
+      "heading": "INT. ST PANCRAS TRAIN STATION - PLATFORM - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "121 121 We see a stationary train beginning to leave a platform. Tilda and Doris stand waving as it pulls away. Rita and George wave back from the train."
+    },
+    {
+      "number": 121,
+      "heading": "INT. TRAIN - DAY",
+      "characters": [
+        "END"
+      ],
+      "dialogues": [
+        {
+          "character": "END",
+          "parenthetical": "",
+          "text": "*"
+        }
+      ],
+      "actionPreview": "122 122 Rita looks at George with a sense of pride. Her expression cannot eclipse the sadness which is deep inside her. George responds with a smile. He is also contemplating the recent past, his face is motionless as he turns to look at Olly the cat sat beside him in his cage. As the train fleets b"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "slug": "break",
+  "title": "Break",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 1,
+  "characters": [
+    "BREAK"
+  ],
+  "total_words": 27550,
+  "total_dialogue": 1,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "BREAK"
+      ],
+      "action_text": "BREAK <b>   OLIVER   STONE </b> Copyright @ 1969 <b> </b>Anthony's trip through three moods/locations: 1.   The City -- Speed and Fear 2.   The Forest --Decreasing Speed Fading Into Dream 3.   Prison -- Silence (The Death of Words) Freedom (End of Movie) <b> </b>1.          Small, student's     French-type    garret    decorated in deep-red, suitcase on bed.         Anthony to his desk, hurriedly examining his thick papers and books, and throwing them on the floor.          Takes a book (closeup",
+      "dialogue_count": 1,
+      "word_count": 27550
+    }
+  ]
+}

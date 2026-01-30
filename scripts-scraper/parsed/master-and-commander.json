@@ -1,0 +1,52 @@
+{
+  "slug": "master-and-commander",
+  "title": "Master and Commander",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 14,
+  "characters": [
+    "JACK",
+    "KILLICK",
+    "BLAKENEY",
+    "SLADE",
+    "WARLEY",
+    "HOLLAR",
+    "DAVIES",
+    "CREW",
+    "QUARTERMASTER",
+    "HIGGINS",
+    "STEPHEN",
+    "DOUDLE",
+    "MOWETT",
+    "MEN"
+  ],
+  "total_words": 25961,
+  "total_dialogue": 35,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "JACK",
+        "KILLICK",
+        "BLAKENEY",
+        "SLADE",
+        "WARLEY",
+        "HOLLAR",
+        "DAVIES",
+        "CREW",
+        "QUARTERMASTER",
+        "HIGGINS",
+        "STEPHEN",
+        "DOUDLE",
+        "MOWETT",
+        "MEN"
+      ],
+      "action_text": "<b>       MASTER AND COMMANDER: THE FAR SIDE OF THE WORLD </b> Written by John Collee & Peter Weir <b>   1. THE OCEAN - DUSK </b> From blackness, a pattern slowly emerges - shimmering, abstract lines form into waves cresting above steep-sided valleys of water. Finally the picture settles into a high, wide shot of the ocean and an adjacent coastline. In a corner of the screen, the last rays of sunlight touch a small, dark shape causing it to glow in the gathering darkness: A three-masted sailing",
+      "dialogue_count": 35,
+      "word_count": 25961
+    }
+  ]
+}

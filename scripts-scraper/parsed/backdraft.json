@@ -1,0 +1,22 @@
+{
+  "slug": "backdraft",
+  "title": "Backdraft",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 29466,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "\"BACKDRAFT\" Screenplay by Gregory Widen <b>                                      SHOOTING DRAFT </b> <b> </b> <b>               INT. FIRE STATION 17 - STORAGE ROOM - 20 YRS. EARLIER </b> Darkness. Then the GLINT of a flashlight. Its beam rocks crazily to and fro across the inside of a small storage room as we hear two children arguing. <b>                                     OLDER KID </b>                         You're doing it wrong. <b>                                     YOUNGER KID </b>",
+      "dialogue_count": 0,
+      "word_count": 29466
+    }
+  ]
+}

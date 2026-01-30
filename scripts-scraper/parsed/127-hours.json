@@ -1,0 +1,38 @@
+{
+  "slug": "127-hours",
+  "title": "127 Hours",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 3,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 20151,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                   127 HOURS </b> Written by Simon Beaufoy & Danny Boyle <b>          EXT. CROWD SCENES. VARIOUS. </b> A massive crowd, it could be a sports stadium, a u2 farewell show or new year's eve on copacabana beach, but whatever it is there are thousands and thousands of us. A mexican wave erupts success, celebration, with so many involved it's impossible to pick out anyone individually. Critical mass cyclists, easter crowds at st. Peter's basilica, nyc marathon, 4,000",
+      "dialogue_count": 0,
+      "word_count": 1001
+    },
+    {
+      "scene_number": 2,
+      "slugline": "EXT. DESERT. CU on ARON.",
+      "characters": [],
+      "action_text": "Wearing a pair of beat-up running shoes and thick wool-blend socks, Lycra biking shorts and a Phish tee shirt he has a back pack with equipment but hydrates through a gallon of water stored in an insulated three litre CamelBak hydration pouch which he sucks on without stopping. <b>                          CUT TO: </b> <b>          EXT. DESERT. DAY. </b> His bike pummels the canyon landscape and you get a sense of the exhilaration this man gets from pitting himself alone against what nature can",
+      "dialogue_count": 0,
+      "word_count": 14039
+    },
+    {
+      "scene_number": 3,
+      "slugline": "INT. GARAGE. DAY. going like crazy [WE HEAR himself. The",
+      "characters": [],
+      "action_text": "We're in the IT POUNDING IN CONTRAST spots in his doorway of a TO HIS SLURRING DELIVERY] eyes bleed garage with I swear it's like 3 x what across into friends in the it should be... other shots background gathered and change around Rana who colour. is working on one Rewinded video - of the giant Megan and Kristi Easter Island masks and back through for Burning Man. his life in the She chats away, canyon and then carefree, some of him she's in baggy climbing in snow dungarees or that existed on o",
+      "dialogue_count": 0,
+      "word_count": 5111
+    }
+  ]
+}

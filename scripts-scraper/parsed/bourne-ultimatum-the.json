@@ -1,0 +1,26 @@
+{
+  "slug": "bourne-ultimatum-the",
+  "title": "Bourne Ultimatum, The",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 1,
+  "characters": [
+    "WILLS"
+  ],
+  "total_words": 21755,
+  "total_dialogue": 1,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "WILLS"
+      ],
+      "action_text": "<b>                  THE BOURNE ULTIMATUM </b> Written by Tony Gilroy, Scott Z. Burns & George Nolfi Based on the novels by Robert Ludlum <b>                                            FINAL SHOOTING SCRIPT </b>                                                    June 20, 2007 Notice: This material is the property of Beach City Productions LLC (A wholly owned subsidiary of Universal City Studios, Inc.) and is intended and restricted solely for studio use by studio personnel. Distribution or discl",
+      "dialogue_count": 1,
+      "word_count": 21755
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "slug": "brothers-bloom-the",
+  "title": "Brothers Bloom, The",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 7,
+  "characters": [
+    "NARRATOR",
+    "MCGUIRE",
+    "STEPHEN",
+    "BLOOM",
+    "THE CURATOR",
+    "PENELOPE",
+    "DIAMOND DOG"
+  ],
+  "total_words": 26194,
+  "total_dialogue": 79,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "NARRATOR",
+        "MCGUIRE",
+        "STEPHEN",
+        "BLOOM",
+        "THE CURATOR",
+        "PENELOPE",
+        "DIAMOND DOG"
+      ],
+      "action_text": "<b>                         THE BROTHERS BLOOM </b> Written by Rian Johnson <b> </b><b>1   EXT. DIRT ROAD - SUNRISE                                      1 </b> Dawn with her rose-red fingers rises over a dusty country road. A car chugs over the horizon. <b>                        NARRATOR </b>              As far as con man stories go, I think I've heard them all. Of grifters, ropers, faro fixers, tales drawn long and tall. But if one bears a bookmark in the confidence man's tome, twould be that",
+      "dialogue_count": 79,
+      "word_count": 26194
+    }
+  ]
+}

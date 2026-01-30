@@ -1,0 +1,3047 @@
+{
+  "slug": "the-zone-of-interest-2023",
+  "title": "The Zone Of Interest",
+  "parsedWith": "v2",
+  "parsedAt": "2026-01-29T22:09:24.844Z",
+  "stats": {
+    "scenes": 141,
+    "dialogues": 325,
+    "characters": 34
+  },
+  "characters": [
+    {
+      "name": "RUDOLF",
+      "dialogueLines": 113,
+      "totalWords": 421
+    },
+    {
+      "name": "HEDWIG",
+      "dialogueLines": 102,
+      "totalWords": 372
+    },
+    {
+      "name": "LINNA",
+      "dialogueLines": 33,
+      "totalWords": 109
+    },
+    {
+      "name": "CLAUS",
+      "dialogueLines": 6,
+      "totalWords": 12
+    },
+    {
+      "name": "PRUFER",
+      "dialogueLines": 6,
+      "totalWords": 19
+    },
+    {
+      "name": "SANDER",
+      "dialogueLines": 6,
+      "totalWords": 32
+    },
+    {
+      "name": "HEIDERAUD",
+      "dialogueLines": 5,
+      "totalWords": 8
+    },
+    {
+      "name": "ELFRYDA",
+      "dialogueLines": 5,
+      "totalWords": 12
+    },
+    {
+      "name": "BISCHOFF",
+      "dialogueLines": 4,
+      "totalWords": 9
+    },
+    {
+      "name": "HANS",
+      "dialogueLines": 4,
+      "totalWords": 11
+    },
+    {
+      "name": "POHL",
+      "dialogueLines": 4,
+      "totalWords": 27
+    },
+    {
+      "name": "SOPHIE",
+      "dialogueLines": 3,
+      "totalWords": 19
+    },
+    {
+      "name": "GERMAN WOMAN FRIEND",
+      "dialogueLines": 3,
+      "totalWords": 3
+    },
+    {
+      "name": "MALE CCI TANNOY ANNOUNCER",
+      "dialogueLines": 3,
+      "totalWords": 4
+    },
+    {
+      "name": "MAURER",
+      "dialogueLines": 3,
+      "totalWords": 17
+    },
+    {
+      "name": "SS DOCTOR",
+      "dialogueLines": 3,
+      "totalWords": 5
+    },
+    {
+      "name": "ANIELA",
+      "dialogueLines": 2,
+      "totalWords": 3
+    },
+    {
+      "name": "INT.",
+      "dialogueLines": 2,
+      "totalWords": 11
+    },
+    {
+      "name": "VOICE OF BRACHT",
+      "dialogueLines": 2,
+      "totalWords": 7
+    },
+    {
+      "name": "PRESENT",
+      "dialogueLines": 2,
+      "totalWords": 2
+    },
+    {
+      "name": "ALL",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "SS OFFICERS",
+      "dialogueLines": 1,
+      "totalWords": 2
+    },
+    {
+      "name": "KAPO",
+      "dialogueLines": 1,
+      "totalWords": 5
+    },
+    {
+      "name": "MARTA",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "VOICES",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "WANDA",
+      "dialogueLines": 1,
+      "totalWords": 3
+    },
+    {
+      "name": "JOSEPH WULF",
+      "dialogueLines": 1,
+      "totalWords": 3
+    },
+    {
+      "name": "WI",
+      "dialogueLines": 1,
+      "totalWords": 5
+    },
+    {
+      "name": "SO PHIE",
+      "dialogueLines": 1,
+      "totalWords": 3
+    },
+    {
+      "name": "MALE CCI ANNOUNCER",
+      "dialogueLines": 1,
+      "totalWords": 6
+    },
+    {
+      "name": "S S DOCTOR",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "BLACK SPACE",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "CUT TO BLACK",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "END",
+      "dialogueLines": 1,
+      "totalWords": 1
+    }
+  ],
+  "scenes": [
+    {
+      "number": 1,
+      "heading": "EXT. COUNTRYSIDE, LAKESIDE - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "2 2 ...a family picnicking in a sloping meadow by the sparkling * shore of a lake. Bright sunlight. * Sat on a picnic blanket under a tree, is HEDWIG, (early 40’s), unassuming, wearing a swimming costume. She’s feeding tiny slices of apple to their ten-month-old baby, ANNAGRET. Her TWO DAUGHTERS, HE"
+    },
+    {
+      "number": 2,
+      "heading": "EXT. SILVER BIRCH WOODLAND - DAY, LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "3 3 * The Höss family, dressed now, amble up the meadow and into a * glade of birch trees. Midges and butterflies dart and glint * in the sun. * The boys share the weight of the hamper. Hedwig in her straw * hat walks playfully with the girls behind. * Rudolf, dressed now, walks at the front, cradli"
+    },
+    {
+      "number": 3,
+      "heading": "EXT. COUNTRY ROAD - SHORT WHILE LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "4 4 * Two 1940’s cars wind their way along a forest road. * They turn onto a country road."
+    },
+    {
+      "number": 4,
+      "heading": "EXT. HÖSS’ CAR, COUNTRY ROAD - DUSK TO NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "5 5 * HEADLIGHTS POV: * The glare from his headlights illuminates a rushing, black ribbon of road, and tall pine trees towering on either side, as dusk turns to night. The sound of the children play-singing and giggling in the * back seat of the car. *"
+    },
+    {
+      "number": 5,
+      "heading": "EXT. LOOKING AT HÖSS VILLA - NIGHT, L ATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "6 6 * The back of a two-story family house. Upstairs and * downstairs rooms are lit by lights inside. Homely. * Rudolf is visible through the window in a downstairs room. * He turns off its light, and walks through its door. * The lit windows go dark one by one as Rudolf moves from * downstairs to u"
+    },
+    {
+      "number": 6,
+      "heading": "INT. MASTER BEDROOM, HÖSS VILLA - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "7 7 * Rudolf and Hedwig lie in p arallel but separate beds. Hedwig * turns off her bedside lamp, lays her head on her pillow, and * looks at her husband. * Rudolf lies on his back in his bed, hands folded on his * chest, with an air of quiet contentment. * Revision 2. Revision 3."
+    },
+    {
+      "number": 7,
+      "heading": "INT. HALL, STAIRWELL HÖSS VILLA - DAY, NEXT MORNING",
+      "characters": [
+        "CLAUS"
+      ],
+      "dialogues": [
+        {
+          "character": "CLAUS",
+          "parenthetical": "",
+          "text": "* (guiding him towards the"
+        }
+      ],
+      "actionPreview": "8 8 * Empty hall with the back of a staircase leading down to it. * At the top of the bannister a hand is supporting someone * climbing tentatively down, as we hear off-screen the sound of * three pairs of feet doing the same. * RUDOLF’S VOICE (O.S.) * You’d better not throw a bucket of * water over"
+    },
+    {
+      "number": 8,
+      "heading": "EXT. BACK GARDEN, HÖSS VILLA - CONTINUOUS",
+      "characters": [
+        "CLAUS",
+        "ALL",
+        "RUDOLF",
+        "HEIDERAUD",
+        "HEDWIG",
+        "ELFRYDA"
+      ],
+      "dialogues": [
+        {
+          "character": "CLAUS",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "CLAUS",
+          "parenthetical": "",
+          "text": "* (CONT’D)"
+        },
+        {
+          "character": "ALL",
+          "parenthetical": "",
+          "text": "Surprise!"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "HEIDERAUD",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "* (embracing him)"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "* (pointing at the canoe)"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "* (CONT’D) (points at Annagret)"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "* (CONT’D)"
+        },
+        {
+          "character": "ELFRYDA",
+          "parenthetical": "",
+          "text": "* (calling from the patio)"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "(CONT’D) (sing song, lifting baby"
+        }
+      ],
+      "actionPreview": "9 9 The boys help their unsighted father through the back porch * towards patio steps that go down to the back garden. * In the full daylight we can see now Rudolf’s uniform is that * of a senior SS Officer with insignia. * Watch out for the steps. * (beat) * Feel for it. And down. Perfect. * The gr"
+    },
+    {
+      "number": 9,
+      "heading": "EXT. TOP GARDEN, HÖSS VILLA - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "10 10 Polish PRISONER-GARDENER BRONEK, (40’s ), wearing ill-fitting civilian clothes, pushes a new wheelbarrow along a stepping * stone garden path parallel to the concrete garden wall, * topped with barbed wire and security palisades, the other * side of which is an imposing Auschwitz building. * R"
+    },
+    {
+      "number": 10,
+      "heading": "EXT. BACK GARDEN, HÖSS VILLA - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "11 11 ..along the path and up to the house. Past A YOUNG POLISH * MAID (17) hanging the Höss family’s underwear on the line. * From afar, we watch him par k the wheelbarrow, climb the few steps to the porch and knock on the back door. SOPHIE (40s) the German housekeeper, appears in the doorway.A * b"
+    },
+    {
+      "number": 11,
+      "heading": "INT. HALL, HÖSS VILLA - CONTINUOUS",
+      "characters": [
+        "SOPHIE",
+        "HEDWIG"
+      ],
+      "dialogues": [
+        {
+          "character": "SOPHIE",
+          "parenthetical": "",
+          "text": "* (Calling out to Hedwig)"
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "* (Calling out)"
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "* (CONT’D) (Handing her the sack)"
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "* (CONT’D) (Beckoning)"
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "* (CONT’D) (to the housemaid, without"
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "* (CONT’D)"
+        }
+      ],
+      "actionPreview": "12 12 * Sophie carries everything down the hall.. * * Bronek. * ...and enters the pantry where she starts to set down some of * the jars on shelves. * Responding to Sophie, Hedwig, now wearing an apron, walks * past heading to the back door where Bronek hands her the * sack . She looks inside, grabs"
+    },
+    {
+      "number": 12,
+      "heading": "INT. MASTER BEDROOM, HÖSS VILLA - SHORT WHILE LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "13 13 * The bag Bronek gave her is on the bed. Hedwig opens it, * revealing an exquisite full-length brown fur coat. She lifts * it out, drapes it in front of her body and walks to the * mirror. * She swings it over her shoulders, and puts it on. Her hands * goes into the pock ets and she immediatel"
+    },
+    {
+      "number": 13,
+      "heading": "INT. STAIRS, HÖSS VILLA - MOMENTS LATER",
+      "characters": [
+        "HEDWIG",
+        "ANIELA"
+      ],
+      "dialogues": [
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "This one needs mending please."
+        },
+        {
+          "character": "ANIELA",
+          "parenthetical": "",
+          "text": "*"
+        }
+      ],
+      "actionPreview": "14 14 * Hedwig is on the stairs handing the fur coat to Aniela below * her. * * The lining’s come away bottom left. * Be very careful with it. * Yes. *"
+    },
+    {
+      "number": 14,
+      "heading": "INT. MASTER BEDROOM, HÖSS VILLA - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "15 15 * Hedwig re-enters the bedroom and sits down at the dressing * table. * Opens the tube of lipstick, and draws a little on the back of * her hand. Uses her finger to apply a couple of test dabs to * her lips. Satisfied, she applies it from the tube. Presses * her lips back and forth in the mirr"
+    },
+    {
+      "number": 15,
+      "heading": "EXT. CAMP ENTRANCE BY HÖSS GARDEN PATH - DAY",
+      "characters": [
+        "BISCHOFF",
+        "PRUFER",
+        "SANDER"
+      ],
+      "dialogues": [
+        {
+          "character": "BISCHOFF",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "PRUFER",
+          "parenthetical": "",
+          "text": "Long, but we’re here."
+        },
+        {
+          "character": "BISCHOFF",
+          "parenthetical": "",
+          "text": "So not too bad."
+        },
+        {
+          "character": "SANDER",
+          "parenthetical": "",
+          "text": "Easier than last time actually."
+        },
+        {
+          "character": "BISCHOFF",
+          "parenthetical": "",
+          "text": "Excellent. Welcome back."
+        },
+        {
+          "character": "PRUFER",
+          "parenthetical": "",
+          "text": "We’re glad to be here."
+        },
+        {
+          "character": "PRUFER",
+          "parenthetical": "",
+          "text": "* (CONT’D) (to Bischoff)"
+        },
+        {
+          "character": "BISCHOFF",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "PRUFER",
+          "parenthetical": "",
+          "text": "*"
+        }
+      ],
+      "actionPreview": "16 16 * Rudolf, S S officer KARL BISCHOFF (40’s, in uniform), and * civilian engineers FRITZ SANDER (50’s)and KURT PRÜFER (50’s), * both wearing suits and fedoras, enter through the garden * gate. * Sander carries a briefcase and a large rolled up paper, * Prufer, just a briefcase. Rudolf leads the "
+    },
+    {
+      "number": 16,
+      "heading": "INT. KITCHEN, HÖSS VILLA - CONTINUOUS",
+      "characters": [
+        "GERMAN WOMAN FRIEND",
+        "HEDWIG"
+      ],
+      "dialogues": [
+        {
+          "character": "GERMAN WOMAN FRIEND",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "The same thing happened when Helga"
+        },
+        {
+          "character": "GERMAN WOMAN FRIEND",
+          "parenthetical": "",
+          "text": "*"
+        }
+      ],
+      "actionPreview": "17 17 * Hedwig, now in an almond white dress, and TWO GERMAN WOMEN * FRIENDS (30’s and 50s), wives of an SS officer and IG Farben * executive, nicely dressed, chat over coffee at the table. * Yes of course. * GERMAN WOMAN FRIEND 2 * It’s an easy mistake. * Revision 9. Revision 10. * Palitsch came wi"
+    },
+    {
+      "number": 17,
+      "heading": "INT. DINING ROOM, HÖSS VILLA - CONTINUOUS",
+      "characters": [
+        "HEDWIG"
+      ],
+      "dialogues": [
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "How do you know that? GERMAN WOMAN FRIEND 2"
+        }
+      ],
+      "actionPreview": "18 18 * While they speak behind her, Aniela is taking a small silver * tray, a bottle of schnapps, and a shot glass from a drinks * cabinet, and carefully filling the glas s. * GERMAN WOMAN FRIEND 2 * Helga Palitsch’s husband only adopted that little Polish boy to keep her at home. That’s what she t"
+    },
+    {
+      "number": 18,
+      "heading": "INT. KITCHEN/HALLWAY HÖSS VILLA - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "19 19 * Aniela walks past them carrying the tray. We watch her * walking slowly along the hallw ay so as not to spill it, * toward the back door, while the women continue. * Revision 10. Revision 11. GERMAN WOMAN FRIEND’S VOICE (O.S.) * Oh I forgot to tell you something. * Guess where I found this? "
+    },
+    {
+      "number": 19,
+      "heading": "EXT. BACK GARDEN PATIO/HALLWAY/KITCHEN, HÖSS VILLA -",
+      "characters": [
+        "HEDWIG",
+        "GERMAN WOMAN FRIEND"
+      ],
+      "dialogues": [
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "GERMAN WOMAN FRIEND",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "*"
+        }
+      ],
+      "actionPreview": "20 20 * CONTINUOUS * Aniela puts the bottle and glass on the patio table, then * collects Rudolf’s boots, now clean in the porch, and goes * back inside with them. * Black shapes in the garden, with boots and hats, all coming * from the garden gate. * In groups, fives, tens then more. Fifty or so no"
+    },
+    {
+      "number": 20,
+      "heading": "INT. LIVING ROOM, HÖSS VILLA - CONTINUOUS",
+      "characters": [
+        "SANDER",
+        "RUDOLF",
+        "PRUFER"
+      ],
+      "dialogues": [
+        {
+          "character": "SANDER",
+          "parenthetical": "",
+          "text": "The other side of it is the next"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "In how long?"
+        },
+        {
+          "character": "SANDER",
+          "parenthetical": "",
+          "text": "Seven hours. Four to five hundred at once."
+        },
+        {
+          "character": "PRUFER",
+          "parenthetical": "",
+          "text": "Closer to five hundred."
+        },
+        {
+          "character": "SANDER",
+          "parenthetical": "",
+          "text": "(points)"
+        },
+        {
+          "character": "SANDER",
+          "parenthetical": "",
+          "text": "* (CONT’D)"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "So these chambers are cooling and these are heating up."
+        },
+        {
+          "character": "SANDER",
+          "parenthetical": "",
+          "text": "Correct. The process moves one chamber over, counterclockwise."
+        },
+        {
+          "character": "PRUFER",
+          "parenthetical": "",
+          "text": "Continuously."
+        }
+      ],
+      "actionPreview": "21 21 Rudolf, in his socks, Bischoff, Prufer and Sander are sat * around the coffee table, on top of which the roll of paper * has been unfurled. It shows a technical drawing and * Sander is in mid-flow, using his pen to point as he explains * the design to Rudolf. * * * chamber. In here is the next"
+    },
+    {
+      "number": 21,
+      "heading": "INT. HALL, HÖSS VILLA - CONTINUOUS",
+      "characters": [
+        "INT."
+      ],
+      "dialogues": [
+        {
+          "character": "INT.",
+          "parenthetical": "",
+          "text": "KITCHEN, HÖSS VILLA 23"
+        }
+      ],
+      "actionPreview": "22 22 * Aniela walks to the living room and stops in front of the closed glass doors. Sh e puts the boots down. Knocks on the glass politely then leaves. 23 * The sound of applause outside as Hedwig and her friends part * net curtains to watch through the kitchen window. *"
+    },
+    {
+      "number": 22,
+      "heading": "EXT. BACK GARDEN, HÖSS VILLA - CONTINUOUS",
+      "characters": [
+        "RUDOLF",
+        "SS OFFICERS"
+      ],
+      "dialogues": [
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "SS OFFICERS",
+          "parenthetical": "",
+          "text": "(as one)"
+        }
+      ],
+      "actionPreview": "24 24 * Rudolf with the schnapps glass raised as the 50 or so SS * officers gathered around the bottom of the patio are * applauding. * Prost! Revision 13. Revision 14. Prost! He knocks it back. They hip! hip! him as he walks down the few steps to shake many hands. * Lots of “Happy birthday Herr Com"
+    },
+    {
+      "number": 23,
+      "heading": "INT. BOYS BEDROOM, HÖSS VILLA - LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "25 25 * Claus and Hans are in their bedroom, back from school. Claus * is changing out of his school uniform into his pint-sized SS * one. Buttoning his trousers, then pulling on a pair of black * boots and stomping in them. * Hans, still wearing his, is sitting on the floor using a book * about tra"
+    },
+    {
+      "number": 24,
+      "heading": "EXT. REEDS, AUSCHWITZ REGION - LATER",
+      "characters": [
+        "RUDOLF"
+      ],
+      "dialogues": [
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "* (cocks his head)"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "* (CONT’D)"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "* (CONT’D) (mimicking)"
+        }
+      ],
+      "actionPreview": "26 26 * Rudolf and Claus on horses, flanks steamings, walk along an * embankment that cuts between two vast fields of bullrushes. * In the distance we can hear indistinct male voices yelling * one-word orders in a hodgepodge of German and Polish. * * You hear that? * Then the sound of a marsh bird. "
+    },
+    {
+      "number": 25,
+      "heading": "EXT. REEDS, AUSCHWITZ REGION - SHORT WHILE LATER",
+      "characters": [
+        "KAPO"
+      ],
+      "dialogues": [
+        {
+          "character": "KAPO",
+          "parenthetical": "",
+          "text": "* (Yelling in German and"
+        }
+      ],
+      "actionPreview": "27 27 * Close on apples strewn about on grass in front of long marsh * reeds. * They look like they’ve been discarded. * A surging noise of heavy splashing and then suddenly the legs * of a horse thunder out of the marsh reeds onto the * embankment, hooves trampling the apples. * A MOUNTED SS OFFICE"
+    },
+    {
+      "number": 26,
+      "heading": "INT. DINING ROOM, HÖSS VILLA - AFTERNOON",
+      "characters": [
+        "HEDWIG",
+        "RUDOLF",
+        "HANS"
+      ],
+      "dialogues": [
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "* (to Hans)"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "* (of Annagret)"
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "HANS",
+          "parenthetical": "",
+          "text": "Make a wish."
+        }
+      ],
+      "actionPreview": "28 28 * Rudolf sits at the dining room table, charmed by the candles * on his birthday cake. Hedwig, Claus, Heideraud, Inge-Brigit, and Hans round the * table. Hedwig holds Annagret on her lap, who’s crying. * * You cried like this too. You were * even louder. * Revision 15. Revision 16. * What’s go"
+    },
+    {
+      "number": 27,
+      "heading": "INT. BOYS’ BEDROOM, HÖSS VILLA - NIGHT",
+      "characters": [
+        "HANS",
+        "CLAUS"
+      ],
+      "dialogues": [
+        {
+          "character": "HANS",
+          "parenthetical": "",
+          "text": "(quietly)"
+        },
+        {
+          "character": "CLAUS",
+          "parenthetical": "",
+          "text": "I’m looking."
+        },
+        {
+          "character": "HANS",
+          "parenthetical": "",
+          "text": "At what?"
+        },
+        {
+          "character": "CLAUS",
+          "parenthetical": "",
+          "text": "*"
+        }
+      ],
+      "actionPreview": "30 30 Claus and Hans lie in their bunk beds in the dark. Both have * pocket torches. Claus on top, is propped up on his elbows * on his belly pointing the light at something in front of him. * What are you doing? * * * Revision 16. Revision 17. Teeth. * Close on him holding three gold teeth to the t"
+    },
+    {
+      "number": 28,
+      "heading": "EXT. LOOKING AT HÖSS VILLA - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "31 31 * Rudolf walks up the steps of the porch back into the house. * The downstairs and two of the upstairs windows are lit by * interior lights. *"
+    },
+    {
+      "number": 29,
+      "heading": "INT. KITCHEN, HÖSS VILLA - SAME",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "32 32 * Rudolf is locking up for the night, bolt ing the back door of the house and turning off lights. The family dogs Dilla is * around. Rudolf goes to the kitchen windows and locks those, and turns * off the light. *"
+    },
+    {
+      "number": 30,
+      "heading": "INT. LIVING ROOM, HÖSS VILLA - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "33 33 * Rudolf locks the glass doors to the dining room. Rudolf draws the curtains and turns off the light. *"
+    },
+    {
+      "number": 31,
+      "heading": "INT. HALL, HÖSS VILLA - MOMENTS LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "34 34 Rudolf secures the locks on the front door and t urns off the * light. * The house is quiet."
+    },
+    {
+      "number": 32,
+      "heading": "INT. LANDING, HÖSS VILLA - SHORT WHILE LATER",
+      "characters": [
+        "RUDOLF"
+      ],
+      "dialogues": [
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "(softly)"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "* (softly)"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "* (softly)"
+        }
+      ],
+      "actionPreview": "35 35 Rudolf walks up the stairs towards his bedroom. He stops on the landing and turns off the light. * The darkness reveals plumes of red-haloed smoke in the * distant background through the balcony door at the end of the * landing, before he suddenly turns the light back on. * His eye caught by I"
+    },
+    {
+      "number": 33,
+      "heading": "EXT. DITCH - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "36 36 * THERMAL NIGHT VISION: * A YOUNG POLISH GIRL (15), holding a sack. She takes an apple * out of it and presses it into the wall of earth until only a * patch of it remains visible. * Moves along a meter and does the same. Takes another apple * from her sack and pushes it into the earth. * And "
+    },
+    {
+      "number": 34,
+      "heading": "INT. GIRLS' BEDROOM, HÖSS VILLA -CONTINUOUS",
+      "characters": [
+        "RUDOLF"
+      ],
+      "dialogues": [
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "..They called to it."
+        }
+      ],
+      "actionPreview": "37 37 * Rudolf lies next to Inge-Brigit on top of her bed reading her * Hansel and Gretel . She’s under the sheet, her cheek resting * on his shoulder as he reads, eyes closed. Flickering red * light from outside dapples the bedroom wall. “Oh beautiful * swan, please be our boat”. The * swan bent it"
+    },
+    {
+      "number": 35,
+      "heading": "EXT. DITCH - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "38 38 * The Polish Girl is at the far end of the ditch. Empty sack in * her hand. A trail of partially buried apples in the wall of * the ditch behind her. She climbs out onto higher ground and * into the pitch black night. *"
+    },
+    {
+      "number": 36,
+      "heading": "INT. MASTER BEDROOM , HÖSS VILLA - SHORT WHILE LATER",
+      "characters": [
+        "HEDWIG",
+        "RUDOLF"
+      ],
+      "dialogues": [
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "Bracht phoned the house."
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "Oh."
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "While you were outside for your toast. I forgot to tell you. He said he’d call back tomorrow."
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "Ah."
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "All that pampering. And the walks."
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "(pictures it)"
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "It was so funny."
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "(pulls a cow face)"
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "Take me back there."
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "Yes Mutzi."
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "When?"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "I don’t know when. (cuddles up to her)"
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "Mm."
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "You smell nice."
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "(In a cod-French accent)"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "Oo-la-la."
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "Chocolate. If you see it. Any goodies."
+        }
+      ],
+      "actionPreview": "39 39 * Rudolf and Hedwig lie in their parallel but separate beds. * * Midday. Rudolf nods. Will you take me to that Spa in Italy again? Revision 19. Revision 20. And that nice couple we met. I was just thinking about it. And remember the man playing accordion to the cows? They loved it. All looking"
+    },
+    {
+      "number": 37,
+      "heading": "EXT. RAILWAY SPUR, AUSCHWITZ STATION - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "40 40 * OFF SCREEN: the slamming clank of a train carriage cattle * truck door opening. * Looking up at Rudolf, he must be mounted on his horse, just * sky above, black smoke whips around him. * OFF SCREEN: Sounds of women, children, a nd babies screaming * in panic. Mothers being forcibly separated"
+    },
+    {
+      "number": 38,
+      "heading": "EXT. FRONT OF HÖSS VILLA - DAY",
+      "characters": [
+        "VOICE OF BRACHT"
+      ],
+      "dialogues": [
+        {
+          "character": "VOICE OF BRACHT",
+          "parenthetical": "(O.S.)",
+          "text": "*"
+        }
+      ],
+      "actionPreview": "41 41 * Heideraud and then Inge-Brigit, dressed for school with * satchels on their backs, emerge from the front door and walk * along the garden path. Hans follows, and then Claus, putting * his satchel on. * Over this we hear: * To the head of the Party * Chancellery, Reichsleiter Bormann. * Perso"
+    },
+    {
+      "number": 39,
+      "heading": "INT. LIVING ROOM, HÖSS VILLA - DAY (CONTINUOUS)",
+      "characters": [
+        "VOICE OF BRACHT"
+      ],
+      "dialogues": [
+        {
+          "character": "VOICE OF BRACHT",
+          "parenthetical": "(O.S.)",
+          "text": "* ..I have learned that the"
+        }
+      ],
+      "actionPreview": "42 42 * Rudolf is at his desk methodically desk counting and sorting * bills of different currencies - French Francs, American * dollars, Czech kronen - into separate piles. We hear this as * he sorts: * * commandant of the gigantic K.L. * Auschwitz. Obersturmbannführer * Höss, also well known to yo"
+    },
+    {
+      "number": 40,
+      "heading": "EXT. SOLA RIVER - MORNING",
+      "characters": [
+        "RUDOLF"
+      ],
+      "dialogues": [
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "(CONT’D) (pointing)"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "More"
+        }
+      ],
+      "actionPreview": "43 43 * Rudolf paddles his canoe down the middle of the Sola River. Kneeling between his legs, his young passengers, Hans and Inge-Brigit. A light breeze rustles the tall bulrushes on either bank. Sunlight glistens off the water. Revision 22. Revision 23. Did you know that storks fly as far * as Afr"
+    },
+    {
+      "number": 41,
+      "heading": "EXT. HALL, HÖSS VILLA, BACK GARDEN - MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "44 44 * Hedwig, Claus and Heideraud are gardening in the flowerbeds nearest the house. Hedwig is ben t over with her hands in the earth, showing Claus what is a weed and what isn’t."
+    },
+    {
+      "number": 42,
+      "heading": "EXT. ROCKY INLET, SOLA RIVER - MORNING",
+      "characters": [
+        "RUDOLF"
+      ],
+      "dialogues": [
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "Come on out. Out."
+        }
+      ],
+      "actionPreview": "45 45 The canoe is moored on a small beach. Hans and Inge-Brigit splash in the shallows nearby, teasing * each other. * Rudolf stands waist deep in the river upstream, a fishing rod in his hand. He stands very still, focusing on his float in hope of a bite. He flinches suddenly. Looks d own at the w"
+    },
+    {
+      "number": 43,
+      "heading": "EXT. SOLA RIVER - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "46 46 Rudolf is paddling back the way they came. The weather has changed and the children are shivering in front of him. Playfully making sounds through chattering teeth. He paddles hard through the choppy water."
+    },
+    {
+      "number": 44,
+      "heading": "INT. BATHROOM, HÖSS VILLA - SHORT WHILE LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "47 47 Hans and Inge-Brigit are in the tub together, protesting as Hedwig kneels in front of them, scrubbing them with soap and brushes. Elfryda sings to distract them."
+    },
+    {
+      "number": 45,
+      "heading": "INT. LIVING ROOM, HÖSS VILLA - SAME",
+      "characters": [
+        "RUDOLF"
+      ],
+      "dialogues": [
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "* (into phone)"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "* (CONT’D) (into phone)"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "* (CONT’D) (into phone)"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "* (CONT’D)"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "* (CONT’D)"
+        }
+      ],
+      "actionPreview": "48 48 Rudolf, wearing casual, Sunday clothes, is ly ing on the sofa * reading a book. But he seems distracted. In the background * the radio is on playing a German sports report. We watch him * for w while. * The telephone on his desk rings. He glances at his watch, * then goes to answer it. * Yes *"
+    },
+    {
+      "number": 46,
+      "heading": "INT. KITCHEN, HÖSS VILLA - DAY (SHORT WHILE LATER)",
+      "characters": [
+        "RUDOLF",
+        "LINNA",
+        "HEDWIG"
+      ],
+      "dialogues": [
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "Hello Linna."
+        },
+        {
+          "character": "LINNA",
+          "parenthetical": "",
+          "text": "Rudolf! Congratulations. (an awkward embrace)"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "Isn’t she. How are you?"
+        },
+        {
+          "character": "LINNA",
+          "parenthetical": "",
+          "text": "Good."
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "How was the journey?"
+        },
+        {
+          "character": "LINNA",
+          "parenthetical": "",
+          "text": "We stopped for ages at Krakow."
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "That’s annoying."
+        },
+        {
+          "character": "LINNA",
+          "parenthetical": "",
+          "text": "And hot! A lady fainted next to me."
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "Ah, yes, that’s possible."
+        },
+        {
+          "character": "LINNA",
+          "parenthetical": "",
+          "text": "‘All the big companies are here’ he said."
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "(distracted)"
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "Don’t you need to get on?"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "* I’ll show mum to the girls room."
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "(CONT’D) I can’t believe you’re here."
+        },
+        {
+          "character": "LINNA",
+          "parenthetical": "",
+          "text": "Finally."
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "Come."
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LINNA",
+          "parenthetical": "",
+          "text": "Of course not."
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "The house looks big but it actually isn’t."
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LINNA",
+          "parenthetical": "",
+          "text": "Really?"
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "Yes."
+        }
+      ],
+      "actionPreview": "49 49 * Hedwig’s mother, LINNA HENSEL (early 70’s), is sat at the * kitchen table, hot, sweaty and clutching a cool glass of lemonade. What a strong little thing she is. Revision 25. Revision 26. She’s moving here with her husband who’s an engineer, he’s a lot older. They’ve both got jobs at a new f"
+    },
+    {
+      "number": 47,
+      "heading": "INT. GIRLS BEDROOM, HÖSS VILLA - CONTINUOUS",
+      "characters": [
+        "HEDWIG",
+        "LINNA"
+      ],
+      "dialogues": [
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "LINNA",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "The top two drawers are for you. I hope they’ll be enough."
+        },
+        {
+          "character": "LINNA",
+          "parenthetical": "",
+          "text": "More than enough."
+        },
+        {
+          "character": "LINNA",
+          "parenthetical": "",
+          "text": "* (CONT’D)"
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "LINNA",
+          "parenthetical": "",
+          "text": "*"
+        }
+      ],
+      "actionPreview": "50 50 * Hedwig shows Linna into the girl’s room. Linna scans the room a pprovingly. Goes over to the window. * This is Heideraud’s bed here. * This is lovely. Truly. Such a * lovely room. * Hedwig watches, gratified. Linna smells the freshly cut flowers displayed in a vase by the bed. * Such beautif"
+    },
+    {
+      "number": 48,
+      "heading": "INT. DINING ROOM, HÖSS VILLA - SHORT WHILE LATER",
+      "characters": [
+        "HEDWIG",
+        "LINNA"
+      ],
+      "dialogues": [
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "LINNA",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "* (of the cinnamon rolls)"
+        },
+        {
+          "character": "LINNA",
+          "parenthetical": "",
+          "text": "* (takes one)"
+        }
+      ],
+      "actionPreview": "51 51 * Hedwig and Linna are watching Sophie and Marta busily preparing plates of party sandwiches and cakes. Elfryda and Aniela can be seen in the kitchen doing the same. * That’s spinach strudel, apple * strudel, potato s alad. And your * cinnamon rolls. * My recipe? Very nice. * Aniela enters and"
+    },
+    {
+      "number": 49,
+      "heading": "INT. LIVING ROOM, HÖSS VILLA - SAME",
+      "characters": [
+        "RUDOLF"
+      ],
+      "dialogues": [
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "* (dictating)"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "* (CONT’D) (dictating)"
+        }
+      ],
+      "actionPreview": "52 52 * Rudolf sits at his desk on the phone. * * Subject - Lilac tree by the * Commandant guard barracks.. * He drains a glass of water. * Revision 28. Revision 29. * The SS members who pick from the * lilac tree in an almost * incomprehensible and radical manner * so that the tree bleeds will be *"
+    },
+    {
+      "number": 50,
+      "heading": "EXT. BACK GARDEN, HÖSS VILLA - CONTINUOUS",
+      "characters": [
+        "LINNA",
+        "HEDWIG"
+      ],
+      "dialogues": [
+        {
+          "character": "LINNA",
+          "parenthetical": "",
+          "text": "* (to Hedwig)"
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "The Jews are over the other side of"
+        },
+        {
+          "character": "LINNA",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "* (of the garden)"
+        }
+      ],
+      "actionPreview": "53 53 They walk down the steps to the main garden. Inge-Brigit and * Hans are playing there in a kid-size metal pedal car. * * Jews in the house? * * the wall. They’re lo cal girls. * (to Inge-Brigit and Hans) * Say hello to Grandma. * LINNA greets Hans with a hug and a kiss. * My God. He’s got so b"
+    },
+    {
+      "number": 51,
+      "heading": "EXT. TOP GARDEN, HÖSS VILLA - CONTINUOUS",
+      "characters": [
+        "LINNA",
+        "HEDWIG"
+      ],
+      "dialogues": [
+        {
+          "character": "LINNA",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "LINNA",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "LINNA",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "LINNA",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "LINNA",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "LINNA",
+          "parenthetical": "",
+          "text": "* (CONT’D)"
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "LINNA",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "Which one was she?"
+        },
+        {
+          "character": "LINNA",
+          "parenthetical": "",
+          "text": "The one I used to clean for. She was the one who had the book readings."
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "Oh, yes."
+        },
+        {
+          "character": "LINNA",
+          "parenthetical": "",
+          "text": "God know what they were up to."
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "Bolshevik stuff."
+        },
+        {
+          "character": "LINNA",
+          "parenthetical": "",
+          "text": "Bolshevik stuff. Jewish stuff. (disappointed)"
+        },
+        {
+          "character": "LINNA",
+          "parenthetical": "",
+          "text": "* (CONT’D)"
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "LINNA",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "* (CONT’D)"
+        },
+        {
+          "character": "LINNA",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "Yes, he’s fine. Working non-stop."
+        },
+        {
+          "character": "LINNA",
+          "parenthetical": "",
+          "text": "He’s a busy bee."
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "He is. Non-stop. And pressure like"
+        },
+        {
+          "character": "LINNA",
+          "parenthetical": "",
+          "text": "And you’re okay?"
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "Do I look okay?"
+        },
+        {
+          "character": "LINNA",
+          "parenthetical": "",
+          "text": "You do."
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "Rudi calls me the queen of"
+        },
+        {
+          "character": "LINNA",
+          "parenthetical": "",
+          "text": "Honestly . To have all this. (surveying the full ‘glory’ of it)"
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "(CONT’D)",
+          "text": "Revision"
+        }
+      ],
+      "actionPreview": "54 54 * They turn past where the wall corners, and Linna sees the top * garden for the first time. * Revision 29. Revision 30. It’s huge. I’m speechless. * It’s all my design. All the * planting and everything. The * greenhouse, the gazebo at the end. * Is that a pool? * Yes. I have gardeners. I cou"
+    },
+    {
+      "number": 52,
+      "heading": "EXT. BACK GARDEN, HÖSS VILLA - DAY (CONTINUOUS)",
+      "characters": [
+        "HEDWIG"
+      ],
+      "dialogues": [
+        {
+          "character": "HEDWIG",
+          "parenthetical": "(CONT’D)",
+          "text": "Revision"
+        }
+      ],
+      "actionPreview": "55 55 * MONTAGE OF FLOWERS: * A bed of red petunias in bloom * Climbing roses on a wall trellis * Closer on the roses * Bees crawling on orpines in bloom * Marigolds * Sunflowers * CLOSE UP on a white dahlia * CLOSE UP a purple dahlia * As off-screen we start to hear a voice over the wall crying * o"
+    },
+    {
+      "number": 53,
+      "heading": "EXT. BACK GARDEN, HÖSS VILLA",
+      "characters": [
+        "HEIDERAUD"
+      ],
+      "dialogues": [
+        {
+          "character": "HEIDERAUD",
+          "parenthetical": "(PRE-LAP)",
+          "text": "* (reading)"
+        }
+      ],
+      "actionPreview": "56 56 * The Höss children and a group of school friends - some in * swimming costumes - are gathered around a garden table where * a MAN is showing them a stork. Garden party entertainment. * The stork flaps its big wings, and the children laugh with * excitement. * * The heartfelt time we spent in "
+    },
+    {
+      "number": 54,
+      "heading": "INT. LOBBY, HÖSS VILLA - DAY",
+      "characters": [
+        "HEIDERAUD"
+      ],
+      "dialogues": [
+        {
+          "character": "HEIDERAUD",
+          "parenthetical": "",
+          "text": "(reading)"
+        },
+        {
+          "character": "HEIDERAUD",
+          "parenthetical": "",
+          "text": "* (CONT’D) (reading)"
+        }
+      ],
+      "actionPreview": "57 57 * Heideraud and her female SCHOOLFRIEND, (12), are by the lobby table, leant over the Höss House Guestbook. They are in their * bathing suits, dripping wet from the pool. Heideraud is reading aloud. * ...will always be among our most * beautiful, holiday memories. In the * East lies our tomorr"
+    },
+    {
+      "number": 55,
+      "heading": "EXT. BACK GARDEN, HÖSS VILLA - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "58 58 * Rudolf, now wearing a white suit with white shoes, is pacing * up and down the patio, and smoking a cigarette agitatedly. The sound of splashing and laughter can be heard. Heideraud and her Schoolfriend, deep in chitchat, walk out the house and past him towards the upper garden. He grinds th"
+    },
+    {
+      "number": 56,
+      "heading": "EXT. TOP GARDEN, HÖSS VILLA - CONTINUOUS",
+      "characters": [
+        "HEDWIG",
+        "RUDOLF"
+      ],
+      "dialogues": [
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "Hans says you have his sandals."
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "We have to leave Mutzi."
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "Leave where?"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "Here. We have to go. We’re being transferred."
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "(lifts her sunglasses)"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "We’re being transferred."
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "To where?"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "Oranienburg."
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "..What?"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "They want to swap me for Arthur"
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "So why tell me that now?"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "There was no good moment to say it."
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "You’ve said it now."
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "To get the sandals."
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "When d id you know about this?"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "Pohl told me last week. I’ve been trying to make it go away."
+        }
+      ],
+      "actionPreview": "59 59 * Picnic tables and deckchairs facing the pool where the Höss children and A FEW OF THEIR SCHOOL FRIENDS frolic and swim. * Outdoor toys are strewn about. A big wooden train set lines * one side of the pool. A child-siz ed teepee is pitched on the * lawn. * Rudolf walks over to the pool. Watch"
+    },
+    {
+      "number": 57,
+      "heading": "INT. KITCHEN, HÖSS VILLA - CONTINUOUS",
+      "characters": [
+        "HEDWIG",
+        "RUDOLF"
+      ],
+      "dialogues": [
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "Then call Bormann."
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "I’ve tried Bormann. Short of going to Hitler, I’m fucked."
+        }
+      ],
+      "actionPreview": "60 60 Hedwig follows him through the kitchen. Marta and Aniela are tidying away the picnic food. Revision 36. Revision 37."
+    },
+    {
+      "number": 58,
+      "heading": "INT. LOBBY, HÖSS VILLA - CONTINUOUS",
+      "characters": [
+        "HEDWIG",
+        "RUDOLF",
+        "MARTA"
+      ],
+      "dialogues": [
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "(shouting at his back)"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "It’s what’s happening."
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "(calls)"
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MARTA",
+          "parenthetical": "",
+          "text": "(perplexed)"
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "(mocks her accent)"
+        }
+      ],
+      "actionPreview": "61 61 Rudolf walks down the corridor, opens the front door and exits. Hedwig stands in the open doorway, watching him quicken his step towards the front gate. Rudolf! She slams the front door. And slips in the same moment. Water on the floor by the lobby table in front of her. Marta! Marta hurries f"
+    },
+    {
+      "number": 59,
+      "heading": "EXT. FRONT GARDEN, HÖSS VILLA - SHORT WHILE LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "62 62 Hedwig, in shoes and cardigan now, walks purposefully down the front path t o the gate. She opens it. Crosses the road, then takes the wooden steps down to the river.. Revision 37. Revision 38."
+    },
+    {
+      "number": 60,
+      "heading": "EXT. RIVER BANK, AUSCHWITZ - CONTINUOUS",
+      "characters": [
+        "HEDWIG",
+        "RUDOLF"
+      ],
+      "dialogues": [
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "Why are they moving you?"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "Structural changes."
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "What does that mean?"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "They haven’t bee n specific. But I’m not the only one being moved. There are lots of us."
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "When?"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "Soon."
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "How soon?"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "I’m waiting to be told."
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "If it’s to do with the investigation, they should speak to"
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "It’s politics."
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "Then go to Hitler."
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "Don’t be ridiculous."
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "Why not? You’re the one who actually carries out his orders."
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "We have to face facts. We have to leave."
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "You have to leave."
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "Well. (gobsmacked)"
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "Your work is in Oranienburg now."
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "I never thought that you wouldn’t be with me . Never crossed my mind."
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "(defiant)"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "Yes, I heard you."
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "So?"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "So. I’ll, I’ll ask, I’ll speak to"
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "You’ll be working all the time."
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "We’d never see you."
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "I’ll miss you of course. But you’ll come home when you can. (puts her hand to her heart) I’ll be with you. Just like you’ll be with me."
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "63 63 Rudolf stands on the bank. Hans’s and Inge-Brigit’s sodden sandals next to him. The canoe is moored to a small jetty nearby. He is throwing stones into the fast-flowing river. Hedwig arrives, goes over and stands next to him. Folds her arms. Looks around. Himmler. He encouraged us. Rudolf shak"
+    },
+    {
+      "number": 61,
+      "heading": "EXT. TOP GARDEN, HÖSS VILLA - DUSK",
+      "characters": [
+        "VOICES"
+      ],
+      "dialogues": [
+        {
+          "character": "VOICES",
+          "parenthetical": "(O.S.)",
+          "text": "*"
+        }
+      ],
+      "actionPreview": "64 64 Linna, left dozing, wakes in her deckchair to find the swimming party over. The guests have all gone and the staff * have cleared up around her. Aniela and Marta are up by the gazebo bringing the last of the crockery back to the house. Linna takes in the peace and quiet of the garden. And a ta"
+    },
+    {
+      "number": 62,
+      "heading": "INT. DINING ROOM WINDOW, HÖSS VILLA - EVENING",
+      "characters": [
+        "RUDOLF",
+        "HEDWIG"
+      ],
+      "dialogues": [
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "So, I’ll be missing Hans’s birthday. And maybe even our anniversary. Depending on how long I’ll be gone. So, those are some of the things th at definitely add to the struggle. But the life we enjoy is very much worth the sacrifice."
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "*"
+        }
+      ],
+      "actionPreview": "65 65 * The Höss family are sat at a dinner of turtle soup. Rudolf at the head of the table. Hedwig stood behind him. Her arm resting on the back of his chair. Sullen faces all round. A pregnant pause. * It’s time for bed. * Murmurs as the family rise from the table and start to clear * up. *"
+    },
+    {
+      "number": 63,
+      "heading": "INT. GIRL’S BEDROOM, HÖSS VILLA - NIGHT, LATER.",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "66 66 * Heideraud is asleep in her bed. Inge-Brigit is absent. A * flickering red light dapples the walls. * Linna lies in bed, but her eyes are open looking towards the * window. * Faint sound of crying baby above... *"
+    },
+    {
+      "number": 64,
+      "heading": "INT. ELFRYDA’S ATTIC ROOM, HÖSS VILLA, CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "67 67 * Which is loud in Elfryda’s room. * She is sat, blind drunk, in her nightdress on the edge of her * bed, pouring from a bottle of vodka. Anesthetizing herself. * Annagret screams in her cot in the corner. * Revision 41. Revision 42."
+    },
+    {
+      "number": 65,
+      "heading": "EXT. WINDOW, GIRLS BEDROOM, HÖSS VILLA, CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "68 68 * We look back at Linna, in her nightgown, through glass, the * distant red flames of the crematorium chimney reflected in * the glass. * She looks at it quickly, then lets the curtain drop. *"
+    },
+    {
+      "number": 66,
+      "heading": "INT. GIRL’S BEDROOM, HÖSS VILLA, CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "69 69 * Linna is by the now-shaded window, looking down pensively. * She turns and walks back to the bed. Picks up a ha ndkerchief * from it and holds it to her as nose as she sits down on the * edge of her bed. * BOYS' BEDROOM, HÖSS VILLA, CONTINUOUS 70 70 * Hans, in bed, holds his torch out, makin"
+    },
+    {
+      "number": 67,
+      "heading": "INT. MASTER BEDROOM, HÖSS VILLA, CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "71 71 * Hedwig lies in bed, fast asleep. Undisturbed by hellish * sounds from the camp. *"
+    },
+    {
+      "number": 68,
+      "heading": "INT. STABLES AUSCHWITZ - NIGHT, LATER",
+      "characters": [
+        "RUDOLF"
+      ],
+      "dialogues": [
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "*"
+        }
+      ],
+      "actionPreview": "72 72 * Alone, in the dark quiet of the stables, Rudolf, wearing * white trousers and shirt, stands in his horse Merer’s stall * feeding her carrots. * Good girl. There you go.. There you * go. It’ll be hard for you too. I * know that. Don’t you think I know * that? I know that. I love you my * girl"
+    },
+    {
+      "number": 69,
+      "heading": "INT. RUDOLF’S OFFICE , COMMANDANT BUILDING AUSCHWITZ - NIGHT,",
+      "characters": [
+        "RUDOLF"
+      ],
+      "dialogues": [
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "* (into phone to his"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "* (CONT’D)"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "* (CONT’D) SS-Obersturmbannführer Bischoff and"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "* (CONT’D)"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "* (CONT’D)"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "* (CONT’D) (towards the door)"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "* (CONT’D) (Back into the phone)"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "* (CONT’D)"
+        }
+      ],
+      "actionPreview": "73 73 * LATER * Rudolf stands by his desk holding a phone receiver to his * ear. * Revision 42. Revision 43. * adjutant) * Call Walter Durrfeld first thing * and see if he can join us at * selection. Tell him they’re Dutch * and he can have his pick. Otherwise * I’ll see him at the IG lunch. * (dict"
+    },
+    {
+      "number": 70,
+      "heading": "INT. BASEMENT TUNNEL - NIGHT, L ATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "74 74 * A faint, pin prick of light approaches through the darkness. It’s Rudolf, lurching in his white suit down a long, underground tunnel from the camp. * We hear his voice dictating another letter to his adjutant as * he walks. * RUDOLF’S VOICE (O.S.) * Letter to Gruppenführer Glücks, * IKL. Sub"
+    },
+    {
+      "number": 71,
+      "heading": "INT. BASEMENT, HÖSS VILLA, CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "75 75 * His dictation continues as he emerges through a door in the * mouth of the tunnel and into the basement of the Höss house. * Grey-white clammy skin. He locks the door behind him. * RUDOLF’S VOICE (O.S.) * ..It would be a great favour to me * for this to be permitted. * (beat) * I must stress"
+    },
+    {
+      "number": 72,
+      "heading": "INT. MASTER BEDROOM, HÖSS VILLA - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "76 76 * Hedwig lies in bed fast asleep, next to Rudolf’s still-made * empty bed. *"
+    },
+    {
+      "number": 73,
+      "heading": "INT. BASEMENT, HÖSS VILLA - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "77 77 * Rudolf does up his trousers, and pushes his hair i nto shape * in the mirror. *"
+    },
+    {
+      "number": 74,
+      "heading": "INT. HALL, HÖSS VILLA - SHORT WHILE LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "78 78 Rudolf, dressed now, emerges from the basement. He turns a * light on, to find Inge-Brigit sleepwalking in the pantry, * gazing at nothing in particular. Revision 45. Revision 46."
+    },
+    {
+      "number": 75,
+      "heading": "INT. PANTRY, HÖSS VILLA - CONTINUOUS",
+      "characters": [
+        "RUDOLF"
+      ],
+      "dialogues": [
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "Sshh."
+        }
+      ],
+      "actionPreview": "79 79 He picks her up gently and walks to the corridor, her hands * instinctively holding onto her father’s back. * INGE-BRIGIT (half-asleep) * Sweaty."
+    },
+    {
+      "number": 76,
+      "heading": "EXT. ORCHARD, BRZESZCZE - NIGHT (CONTINUOUS)",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "80 80 * THERMAL NIGHT VISION: * No light outside. The open mouth of a sack flat on the * ground strewn with pears. * A couple more are thrown in. * Now we see the Polish Girl we saw placing apples at the ditch * earlier, ALEKSANDRA, throwing the low-hanging pears she’s * gathered from a tree. * Thro"
+    },
+    {
+      "number": 77,
+      "heading": "EXT. ORCHARD/CONSTRUCTION SITE, BRZESZCZE - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "81 81 * Aleksandra carries a now bulging sa ck of pears as a sling * over one shoulder. * She walks up past an SS warning sign in German and Polish * (’ Camp area KL Auschwitz/ Entry is forbidden! Violators will * be shot on sight! / The Camp Commandant ) which she * disregards... * RUDOLF’S VOICE ("
+    },
+    {
+      "number": 78,
+      "heading": "EXT. CONSTRUCTION SITE, BRZESZCZE - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "82 82 * ...And onto the black slag of an empty construction site. * RUDOLF’S VOICE (O.S.) * And said, “Please show me first, I * don’t know how to do that.” The * witch sat on the shovel and Gretel * pushed her into the oven, as deep * as she could. Then she closed the * iron door of the oven and se"
+    },
+    {
+      "number": 79,
+      "heading": "INT. MASTER BEDROOM, HÖSS VILLA - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "83 83 * Rudolf is unbuttoning his white shirt, undressing for bed. * Hedwig still fast asleep in the other bed. *"
+    },
+    {
+      "number": 80,
+      "heading": "EXT. CONSTRUCTION SITE, BRZESZCZE - CONTINUO US",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "84 84 * THERMAL NIGHT VISION: * Aleksandra pauses every few yards to deposit pears in the * earth near the spades planted planted in the ground. * As she does so, she spots a small, circular tin can pressed * into the earth. * She removes it and opens the lid. Peers inside. * Revision 47. Revision 4"
+    },
+    {
+      "number": 81,
+      "heading": "EXT. COUNTRY ROADSIDE, BRZESZCZE - LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "85 85 * Aleksandra is stock still astride a bicycle set furtively * back from the road among trees. She’s looking intently out * from her hiding place at two SS MEN, and a huge pig, passing * nearby. * She waits for her moment, then cycle silently across the * street and drops down into another. *"
+    },
+    {
+      "number": 82,
+      "heading": "EXT. BACK-STREETS, BRZESZCZE OUTSKIRTS - SHORT WHILE LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "86 86 * Aleksandra turns onto a narrow track and freewheels down it * towards the houses below. * She stops at the bottom, dismounts, then pushes her bicycle * through a back yard. *"
+    },
+    {
+      "number": 83,
+      "heading": "EXT. ALEKSANDRA’S STREET, BRZESZCZE OUTSKIRTS - SHORT WHILE",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "87 87 * LATER * She r ests it at the back of her apartment building, walks * down the side passage, skips up the front steps and hurries * inside. * THERMAL NIGHT VISION ENDS: *"
+    },
+    {
+      "number": 84,
+      "heading": "INT. HALLWAY, ALEKSANDRA’S APARTMENT BUILDING, BRZESZCZE -",
+      "characters": [
+        "WANDA"
+      ],
+      "dialogues": [
+        {
+          "character": "WANDA",
+          "parenthetical": "",
+          "text": "* (in Polish)"
+        }
+      ],
+      "actionPreview": "88 88 * MOMENTS LATER * A woman, her mother WANDA (40’s) opens the door for * Aleksandra. * * Here you are at last. *"
+    },
+    {
+      "number": 85,
+      "heading": "INT. LIVING ROOM. ALEKSANDRA’S APARTMENT, BRZESZCZE - LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "89 89 * Wanda is sat embroidering by kerosene light. In the * background Aleksandra is asleep in a bedroom. * Revision 48. Revision 49. Then the smell comes. Foul. Overpowering. Wanda stands and * hurries to the curtained living room windows, which overlook * the street. Draws them, revealing an ope"
+    },
+    {
+      "number": 86,
+      "heading": "INT. ALEKSANDRA’S BEDROOM, APARTMENT, BRZESZCZE - CONTINUOUS",
+      "characters": [
+        "JOSEPH WULF"
+      ],
+      "dialogues": [
+        {
+          "character": "JOSEPH WULF",
+          "parenthetical": "",
+          "text": "* (in Yiddish)"
+        }
+      ],
+      "actionPreview": "90 90 * The kerosene reading light from Aleksandra’s bedside table * flickers in the draft. Wanda hurries over to the open * bedroom window, where the same view is glimpsed, and closes * that too. * Over this we hear a real archive recording of a MAN’S VOICE, * JOSEPH WULF speaking in Yiddish * * Wo"
+    },
+    {
+      "number": 87,
+      "heading": "INT. CORRIDOR, ALEKSANDRA’S APARTMENT - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "91 91 * * Wanda carries the light, and walks upstairs * * Radiant and warm *"
+    },
+    {
+      "number": 88,
+      "heading": "INT. 2ND FLOOR LANDING, ALEKSANDRA’S APARTMENT - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "92 92 * Wanda opens a door to the balcony. *"
+    },
+    {
+      "number": 89,
+      "heading": "EXT. BALCONY, ALEKSANDRA’S APARTMENT, BRZESZCZE - SAME",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "93 93 * THERMAL NIGHT VISION: * Shutters clatter in the wind out here as Wanda emerges and * hurriedly rescues washing on the line from swirling ash, * putting it into a basket. * Human bodies * Young and old * And we * Who are imprisoned here * Our hearts * Are not yet cold *"
+    },
+    {
+      "number": 90,
+      "heading": "INT. LIVING ROOM, OLUSIA’S APARTMENT, O",
+      "characters": [
+        "WI"
+      ],
+      "dialogues": [
+        {
+          "character": "WI",
+          "parenthetical": "",
+          "text": "Ę CIM - DAWN 94"
+        }
+      ],
+      "actionPreview": "Ś 94 * Close on Aleksandra’s hand on a piano keyboard playing the * notes we are hearing. * She is sitting at a piano in the living room sight-reading * the hand-drawn music written on the paper she found, which * rests on the music rack, still curling from its folds. * Opened out on the music rack "
+    },
+    {
+      "number": 91,
+      "heading": "INT. LOBBY, HÖSS VILLA - MORNING",
+      "characters": [
+        "ELFRYDA"
+      ],
+      "dialogues": [
+        {
+          "character": "ELFRYDA",
+          "parenthetical": "",
+          "text": "(to Heideraud)"
+        },
+        {
+          "character": "ELFRYDA",
+          "parenthetical": "",
+          "text": "(CONT’D) (to Claus)"
+        }
+      ],
+      "actionPreview": "95 95 * The four eldest Höss children, dressed for school, are buttoning up their coats. Elfryda stands by the open front door holding their satchels. Shwarzer is waiting outside to drive them. As each of the children pass on their way out, they reach up, straight-armed, and she hooks their satchel "
+    },
+    {
+      "number": 92,
+      "heading": "INT. DINING ROOM, HÖSS VILLA - MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "96 96 * Hedwig is sat at the dining table, leans forward to better smell her pike and potatoe s. Two place settings; one for her, one for Linna opposite. A little time passes. Then she gets up. Goes to the stairs."
+    },
+    {
+      "number": 93,
+      "heading": "INT. HALL, HÖSS VILLA - CONTINUOUS",
+      "characters": [
+        "HEDWIG",
+        "SOPHIE"
+      ],
+      "dialogues": [
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "(calling up the stairs)"
+        },
+        {
+          "character": "SOPHIE",
+          "parenthetical": "",
+          "text": "She’s not here. And her case has gone."
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "97 97 Sophie! It’s getting cold tell her. Revision 51. Revision 52. Sophie appears at the top of the stairs. Hedwig skips upstairs. Sophie walks down. Mum?"
+    },
+    {
+      "number": 94,
+      "heading": "INT. GIRLS' BEDROOM, HÖSS VILLA - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "98 98 Hedwig enters the girls bedroom. Linna’s case is gone and the bed’s been made."
+    },
+    {
+      "number": 95,
+      "heading": "INT. HALL, HÖSS VILLA - CONTINUOUS",
+      "characters": [
+        "HEDWIG",
+        "SO PHIE",
+        "SOPHIE"
+      ],
+      "dialogues": [
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "Did she leave a note?"
+        },
+        {
+          "character": "SO PHIE",
+          "parenthetical": "",
+          "text": "I don’t know."
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "(frustrated)"
+        },
+        {
+          "character": "SOPHIE",
+          "parenthetical": "",
+          "text": "Well, no. I hadn’t thought to."
+        }
+      ],
+      "actionPreview": "99 99 Hedwig comes back downstairs. Sophie waiting at the bottom. Well, have you looked? Hedwig walks to the lobby."
+    },
+    {
+      "number": 96,
+      "heading": "INT. LOBBY, HÖSS VILLA - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "100 100 Hedwig goes to the lobby table to see if there’s anything * there. There is. A folded paper, with ‘Hedwig Höss’ written * on it, tucked into the corner of the guest book. * She unfolds it. Stands there reading. Then re-folds it. Opens the front doo r. Looks out. Walks back to the dining room"
+    },
+    {
+      "number": 97,
+      "heading": "INT. DINING ROOM, HÖSS VILLA - CONTINUOUS",
+      "characters": [
+        "HEDWIG",
+        "ANIELA"
+      ],
+      "dialogues": [
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "Aniela!"
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "* (CONT’D) (gestures to Linna’s"
+        },
+        {
+          "character": "ANIELA",
+          "parenthetical": "",
+          "text": "* (perplexed)"
+        },
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "(eating, as Aniela takes"
+        }
+      ],
+      "actionPreview": "101 101 Hedwig enters, throws the note into the wood-fired ceramic heater. Then plonks herself down in the chair. * Aniela enters from the kitchen. * * uneaten breakfast) * Take it away. * (as Aniela picks it up) * Was that here to spite me? * No, Mrs. Höss? * * the plate away) * I could hav e my hu"
+    },
+    {
+      "number": 98,
+      "heading": "INT. BATHROOM, HÖSS VILLA - LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "102 102 * Hedwig is stretched out in the bathtub. *"
+    },
+    {
+      "number": 99,
+      "heading": "EXT. OPEN COUNTRY, AUSCHWITZ REGION - DAY",
+      "characters": [
+        "RUDOLF",
+        "CLAUS"
+      ],
+      "dialogues": [
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "CLAUS",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "* I’ll be head of all the"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "(CONT’D)",
+          "text": "Revision"
+        }
+      ],
+      "actionPreview": "103 103 * Rudolf and Claus trot along the edge of a field, then drop * down onto lower ground. * Relax. Let her find it. * They trot past strip fields where Polish farm LABOURERS are * working. Bonfire smoke washes over the land scape. * Are you not going to be a * commandant anymore? * * commandant"
+    },
+    {
+      "number": 100,
+      "heading": "EXT. BACK GARDEN, HÖSS VILLA - DAY, LATER",
+      "characters": [
+        "ELFRYDA",
+        "HEIDERAUD"
+      ],
+      "dialogues": [
+        {
+          "character": "ELFRYDA",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "HEIDERAUD",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "ELFRYDA",
+          "parenthetical": "",
+          "text": "*"
+        }
+      ],
+      "actionPreview": "104 104 * Elfryda, Heideraud and Inge-Brigit sit at the patio table. The heads of different species of flowers are strewn across it. The girls are immortalizing them , one by one, into flower presses. * It has a great name. It’s girl’s * eye, or tickseed. * Girl’s eye? * Girl’s eye, yes. I guess tha"
+    },
+    {
+      "number": 101,
+      "heading": "EXT. GREENHOUSE, TOP GARDEN, HÖSS VILLA - SHORT WHILE LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "105 105 * A KAPO, BÖHNER (30’s) is repairing the greenhouse roof with * wooden planks he’s carry ing from inside, under Hedwig’s * supervision. She walks into the greenhouse. *"
+    },
+    {
+      "number": 102,
+      "heading": "INT. GREENHOUSE, TOP GARDEN, HOSS VILLA - MOMENTS LATER",
+      "characters": [
+        "INT.",
+        "RUDOLF",
+        "HANS"
+      ],
+      "dialogues": [
+        {
+          "character": "INT.",
+          "parenthetical": "",
+          "text": "BOYS' BEDROOM, HÖSS VILLA - LATER 107"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "(CONT’D)",
+          "text": "Revision"
+        },
+        {
+          "character": "HANS",
+          "parenthetical": "",
+          "text": "* (under his breath to"
+        }
+      ],
+      "actionPreview": "106 106 * Hedwig leans against a shelf surrounded by big green leaves * from potted plants and small shrubs. Smoking a cigarette now. * Her smoker’s corner. * Böhner comes back in for another plank. Hedwig offers him a * cigarette from her pack, and her lighter, which he takes an d * lights. He bend"
+    },
+    {
+      "number": 103,
+      "heading": "EXT. BANDSTAND, TOWN PARK, ORANIENBURG - MORNING, WINTER",
+      "characters": [
+        "RUDOLF",
+        "MALE CCI TANNOY ANNOUNCER"
+      ],
+      "dialogues": [
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "* (to the dog)"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "* (CONT’D)"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "* (CONT’D) I had a black one when I was little."
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "* (CONT’D)"
+        },
+        {
+          "character": "MALE CCI TANNOY ANNOUNCER",
+          "parenthetical": "(O.S.)",
+          "text": "*"
+        }
+      ],
+      "actionPreview": "108 108 * A GERMAN VETERAN MILITARY BRASS BAND dressed in winter coats, * hats and boots. * The CONDUCTOR - his back to us facing his band - swings his * arms and launches t hem into a bouncy traditional march. * We look the other way at a city park covered in snow, below a * grey sky. SS OFFICERS W"
+    },
+    {
+      "number": 104,
+      "heading": "INT. CORRIDOR, CONCENTRATION CAMPS INSPECTORATE (CCI),",
+      "characters": [
+        "MALE CCI ANNOUNCER"
+      ],
+      "dialogues": [
+        {
+          "character": "MALE CCI ANNOUNCER",
+          "parenthetical": "(O.S.)",
+          "text": "* ..Junior Squ ad Leader Johann"
+        }
+      ],
+      "actionPreview": "109 109 * ORANIENBURG, NEAR BERLIN - DAY * The announcement continues over a GROUP OF CONCENTRATION CAMP * COMMANDANTS approaching from one end of a long corporate * office building white corridor. * In the foreground TWO SS OFFICERS stand by the open double * doors of a large office. The tannoy ann"
+    },
+    {
+      "number": 105,
+      "heading": "INT. BOARDROOM, CCI, ORANIENBURG - DAY, CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "110 110 * An SS WAITER wheels out an empty trolley through the doors. * Inside there are coffee pots on an end table, and glasses and * water jugs down either side of a boardroom table, around * which are twenty empty chairs. * One of HÖSS’S ADJUT ANTS is going round placing a file folder * in front"
+    },
+    {
+      "number": 106,
+      "heading": "INT. CORRIDOR, CCI, ORANIENBURG - DAY, CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "111 111 * Many CAMP COMMANDANTS and their ADJUTANTS are gathered and * chit-chatting while they wait for the meeting to begin. * HÖSS’S ADJUTANT (O.S.) CONT’D * ...Schnabel, Vaivara. * Herbert, Warsaw. * Apologies for absence, Förschner, * Mittelbau-Dora. Sauer, Riga- * Kaiserwald. * *"
+    },
+    {
+      "number": 107,
+      "heading": "INT. BOARDROOM, CCI, ORANIENBURG - DAY, SHORT WHILE LATER",
+      "characters": [
+        "POHL",
+        "MAURER",
+        "RUDOLF"
+      ],
+      "dialogues": [
+        {
+          "character": "POHL",
+          "parenthetical": "",
+          "text": "The Führer has approved the deportation of"
+        },
+        {
+          "character": "POHL",
+          "parenthetical": "",
+          "text": "(CONT’D) I get fan mail from CEOs for this man."
+        },
+        {
+          "character": "MAURER",
+          "parenthetical": "",
+          "text": "Thank you Sir."
+        },
+        {
+          "character": "POHL",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "MAURER",
+          "parenthetical": "",
+          "text": "As I’ve said before, I’m grateful for your leadership."
+        },
+        {
+          "character": "POHL",
+          "parenthetical": "",
+          "text": "Thank you. You have said that. I appreciate that."
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "* (CONT’D)"
+        }
+      ],
+      "actionPreview": "112 112 * The camp commandants are sat either side of the boardroom * table. * OBERGRUPPENFÜHRER OSWALD POHL, (50’s), is sat commandingly at * the centre. SS GRUPPENFÜHRER RICHARD GLÜCKS, (50’s), Inspector of Concentration Camps, is sat to his left. Revision 58. Revision 59. Rudolf is sat at opposit"
+    },
+    {
+      "number": 108,
+      "heading": "EXT. TOWN PARK, ORANIENBURG - DUSK",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "113 113 * Rudolf walks home from work carrying his briefcase through * the snowy park, along with OTHER SS OFFICERS. *"
+    },
+    {
+      "number": 109,
+      "heading": "INT. BEDROOM, RUDOLF’S LODGING, ORANIENBURG - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "114 114 * Rudolf on his back in his pyjamas, in bed, head propped on a * pillow, but fast asleep. * One arm hangs out over the edge of the bed and work papers * are strewn around on the floor, and a pen. * A small ba r heater is on at the foot of the bed. A painting * of a bird on the wall and a pho"
+    },
+    {
+      "number": 110,
+      "heading": "EXT. TOWN PARK, ORANIENBURG - DAY, MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "115 115 * Rudolf walks to work through the park again, carrying his * briefcase, past the empty bandstand. OTHER CCI SS STAFF * walking to work too, and some NURSES. * In the far background black smoke rises, the aftermath of a * night bombing raid on Berlin. *"
+    },
+    {
+      "number": 111,
+      "heading": "INT. RUDOLF'S OFFICE, CCI ORANIENBURG, NEAR BERLIN - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "116 116 * Rudolf, in some kind of reverie, stands at his office window. * Typewriters clack away behind him. He’s gazing out. *"
+    },
+    {
+      "number": 112,
+      "heading": "EXT. TOP GARDEN, HÖSS VILLA - DAY",
+      "characters": [
+        "MALE CCI TANNOY ANNOUNCER"
+      ],
+      "dialogues": [
+        {
+          "character": "MALE CCI TANNOY ANNOUNCER",
+          "parenthetical": "(O.S.)",
+          "text": "*"
+        }
+      ],
+      "actionPreview": "117 117 * * The garden is all fallen leaves, frosted paths and bare * winter trees. The pool is frozen over. Snow on the roof of * the guard tower and camp building roof behind the garden * wal l. * Claus and Hans play. Claus holds a wooden club. * Their play, conversation and scuffle will be improv"
+    },
+    {
+      "number": 113,
+      "heading": "INT. WAITING ROOM, OUTSIDE GLÜCK’S OFFICE, CCI, ORANIENBURG -",
+      "characters": [
+        "MALE CCI TANNOY ANNOUNCER"
+      ],
+      "dialogues": [
+        {
+          "character": "MALE CCI TANNOY ANNOUNCER",
+          "parenthetical": "(O.S.)",
+          "text": "* CONT’D"
+        }
+      ],
+      "actionPreview": "118 118 DAY Rudolf is stood, with SS-Sturmbannführer, WILLHELM BURGER, * (40’S) sat in a chair. Nearby, an OFFICE ADJUTANT (20’s) sits * at a reception desk . The announcement continues above the * sound of typewriters from the office beyond, as they wait. * * ...of the Air Force School who died * i"
+    },
+    {
+      "number": 114,
+      "heading": "INT. RICHARD GLÜCKS OFFICE, CCI, ORANIENBURG - CONTINUOUS",
+      "characters": [
+        "RUDOLF",
+        "MAURER"
+      ],
+      "dialogues": [
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "(a single nod)"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "Perfect. GLÜCKS"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "I will."
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "Thank you. GLÜCKS"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "Good. GLÜCKS"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "Yes. When in bloom."
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "I will. Thank you. I appreciate the trust and confide nce you have in me. (half-bows)"
+        },
+        {
+          "character": "MAURER",
+          "parenthetical": "",
+          "text": "* I’m not sure yet."
+        }
+      ],
+      "actionPreview": "119 119 * Glücks is standing in the middle of the room holding a * telegram. * Maurer looks up from a sofa in the corner. Documents on his lap and in front of him. Good. * GLÜCKS (looking at the telegram) * I’ve just received this. * Obergruppenführer Pohl met with Reichsführer Himmler to assess the"
+    },
+    {
+      "number": 115,
+      "heading": "INT. SS SURGERY, ORANIENBURG - DAY",
+      "characters": [
+        "SS DOCTOR",
+        "RUDOLF",
+        "S S DOCTOR"
+      ],
+      "dialogues": [
+        {
+          "character": "SS DOCTOR",
+          "parenthetical": "",
+          "text": "* (sensing something)"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "S S DOCTOR",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "SS DOCTOR",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "SS DOCTOR",
+          "parenthetical": "",
+          "text": "*"
+        }
+      ],
+      "actionPreview": "120 120 * Rudolf, mid-medical exam, laying in his underpants, on a * gurney in a white doctors office. * A white-coated SS DOCTOR, (50’s), is examining him, * stethoscope in ears. He finishes with the stethoscope and * moves on to palpation, tapping on the back of his own hand * across Rudolf’s midr"
+    },
+    {
+      "number": 116,
+      "heading": "INT. CORRIDOR NEAR SS SURGERY, CCI, ORANIENBURG - LATER",
+      "characters": [
+        "RUDOLF"
+      ],
+      "dialogues": [
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "* (beat, waiting for the"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "(CONT’D)",
+          "text": "(MORE)"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "* (CONT’D)"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "* (CONT’D)"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "(CONT’D)",
+          "text": "(MORE)"
+        },
+        {
+          "character": "RUDOLF",
+          "parenthetical": "(CONT’D)",
+          "text": "Revision"
+        }
+      ],
+      "actionPreview": "121 121 * Rudolf comes through a door and approaches a wall-mounted * telephone by a main stairwell. * Corridor comings and goings through the following. * Rudolf picks up the receiver and huddles into the phone. * * operator) * This is Höss. * (beat) * (MORE) Revision 65. Revision 66. Long-distance"
+    },
+    {
+      "number": 117,
+      "heading": "EXT. COURTYARD, POHL RESIDENCE, BERLIN - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "122 122 * Rudolf stands alone smoking a Swiss cheroot by a table laden * with champagne in ice buckets, glasses, and a centrepiece ice * sculpture swastika. Three SS MEN and a woman in a fur coat * chat in a group nearb y. * HEDWIG’S VOICE (O.S.) CONT’D * ...when she receives her parcel, to look in "
+    },
+    {
+      "number": 118,
+      "heading": "INT. ANTLER ROOM, POHL RESIDENCE, BERLIN - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "123 123 Rudolf enters high walled room covered with antler trophies * and an imposing fireplace, through which PARTY GUESTS are * still arriving. Some have stopped to watch the string * quartet. WHITE-JACKETED WAITERS with trays pass to and fro. * Rudolf ambles through. *"
+    },
+    {
+      "number": 119,
+      "heading": "INT. SALON, POHL RESIDENCE, BERLIN - CONTINUOUS",
+      "characters": [
+        "RUDOLF"
+      ],
+      "dialogues": [
+        {
+          "character": "RUDOLF",
+          "parenthetical": "(CONT’D)",
+          "text": "Revision"
+        }
+      ],
+      "actionPreview": "124 124 * NAZI DIGNITARIES, SS, ARMY OFFICERS, WAR WOUNDED, VETERANS, * IG FARBEN EXECUTIVES, WIVES and other CIVILIANS, of all ages, * shapes and sizes, mingle. Uniforms, black tie, evening gowns. * WHITE-SUITED WAITERS come and go. * A party in full flow. * He enters awkwardly. Small groups of par"
+    },
+    {
+      "number": 120,
+      "heading": "INT. PIANO ROOM, POHL RESIDENCE, BERLIN - MOMENTS LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "125 125 * A grand piano plays. Guests pass through to and from the * ballroom beyond. * Rudolf is being greeted by Dr Meindl from Steyer-Daimler- * Puch, now wearing black tie , with a group of senior SS * OFFICERS, including EICHMANN (30’s). Drinks and smiles all * round. * An older SS MAN interrup"
+    },
+    {
+      "number": 121,
+      "heading": "INT. GRAND HALLWAY, POHL RESIDENCE - SHORT WHILE LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "126 126 * R udolf, drink-less, makes his way along the hallway, which * leads to the huge internal French windows of the ballroom. * He stands looking in, people watching. Then looks up and * around at what must be the impressively-high ceiling within. * After a short contemplation of it, he turns a"
+    },
+    {
+      "number": 122,
+      "heading": "INT. BALCONY, POHL RESIDENCE - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "127 127 H e walks out onto it, and peers over the ledge at the ballroom below. * The huge windows of a ballroom. Chandeliers blaze inside. * Revision 68. Revision 69. A throng of guests. He surveys them. Most stand in groups socializing. Others, in the centre, waltz. He looks up at the gilded ceilin"
+    },
+    {
+      "number": 123,
+      "heading": "INT. RUDOLF'S OFFICE, HÖSS VILLA - NIGHT (CONTINUOUS)",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "128 128 * Hedwig stands by Rudolf’s desk holding the phone. She’s * wearing a winter nightdress, slippers, and her hairs down. * She’s obviously been called to the phone from bed. * HEDWIG’S VOICE * Well, It’s the middle of the night * and I need to be in bed. * * Revision 69. Revision 70."
+    },
+    {
+      "number": 124,
+      "heading": "INT. RUDOLF’S OFFICE, CCI, ORANIENBURG - NIGHT",
+      "characters": [
+        "RUDOLF"
+      ],
+      "dialogues": [
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "* I shouldn’t have called so late. I was"
+        }
+      ],
+      "actionPreview": "129 129 * Rudolf is sitting at his desk, speaking on the phone with * Hedwig. His feet are up on the window sill. He looks at the * snow falling outside. * * just excited to tell you the name."
+    },
+    {
+      "number": 125,
+      "heading": "INT. RUDOLF'S OFFICE, HÖSS VILLA - NIGHT (CONTINUOUS)",
+      "characters": [
+        "HEDWIG"
+      ],
+      "dialogues": [
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "*"
+        }
+      ],
+      "actionPreview": "130 130 * You can tell me about it when * you’re back. *"
+    },
+    {
+      "number": 126,
+      "heading": "INT. RUDOLF’S OFFI CE, CCI, ORANIENBURG - NIGHT",
+      "characters": [
+        "RUDOLF"
+      ],
+      "dialogues": [
+        {
+          "character": "RUDOLF",
+          "parenthetical": "",
+          "text": "(beat)"
+        }
+      ],
+      "actionPreview": "131 131 * * You have told them Daddy’s coming * home? *"
+    },
+    {
+      "number": 127,
+      "heading": "INT. RUDOLF'S OFFICE, HÖSS VILLA - NIGHT (CONTINUOUS)",
+      "characters": [
+        "HEDWIG"
+      ],
+      "dialogues": [
+        {
+          "character": "HEDWIG",
+          "parenthetical": "",
+          "text": "*"
+        }
+      ],
+      "actionPreview": "132 132 * Yes. * Goodnight. She puts down the phone and starts to walk away. *"
+    },
+    {
+      "number": 128,
+      "heading": "INT. RUDOLF’S OFFICE, CCI, ORANIENBURG - NIGHT (CONTINUOUS)",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "133 133 * He hangs up. Then walks out of his office."
+    },
+    {
+      "number": 129,
+      "heading": "INT. HALLWAY, HÖSS VILLA - NIGHT (CONTINUOUS)",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "134 134 * Hedwig enters and turns off the li ght on her way to bed. *"
+    },
+    {
+      "number": 130,
+      "heading": "INT. CORRIDOR/STAIRS, CCI , ORANIENBURG - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "135 135 * Rudolf, in his overcoat, locks the office door behind him and * walks down a long corridor towards the stairs. Pumping his * little fists in self-congratulation. A smile grows, ever so * slowly, across his face. A skip in his step. If he could * dance he would. * Revision 70. Revision 71. "
+    },
+    {
+      "number": 131,
+      "heading": "INT. LOWER CORRIDOR, CCI, ORANIENBURG - CONTINUOUS",
+      "characters": [
+        "INT.",
+        "BLACK SPACE"
+      ],
+      "dialogues": [
+        {
+          "character": "BLACK SPACE",
+          "parenthetical": "",
+          "text": "137"
+        }
+      ],
+      "actionPreview": "136 136 * But then convulses again. * A final long wretch, and spit. It’s all gone. * He cautiou sly straightens up. SS officer’s hat in hand by his * side. * Looks one way down the long empty dark corridor. No one * around. * Then the other way, towards camera. * 137 * A white pin prick of light in"
+    },
+    {
+      "number": 132,
+      "heading": "EXT. CREMATORIUM 1, AUSCHWITZ-BIRKENAU STATE MUSEUM - DAWN,",
+      "characters": [
+        "PRESENT"
+      ],
+      "dialogues": [
+        {
+          "character": "PRESENT",
+          "parenthetical": "",
+          "text": "*"
+        }
+      ],
+      "actionPreview": "138 138 * Above Crematorium 1, the other side of the chimney we saw * previously from the Hoss’s garden and house. * Revision 71. Revision 72. There is museum signage outside for visitors. The cleaners * bring in their materials. *"
+    },
+    {
+      "number": 133,
+      "heading": "INT. GAS CHAMBER, CREMATORIUM 1, AUSCHWITZ-BIRKENAU STATE",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "139 139 * MUSEUM - DAWN, PRESENT * One cleaner sweeps the concrete floor. *"
+    },
+    {
+      "number": 134,
+      "heading": "INT. CREMATORIUM 1, AUSCHWITZ-BIRKENAU STATE MUSEUM - DAWN,",
+      "characters": [
+        "PRESENT"
+      ],
+      "dialogues": [
+        {
+          "character": "PRESENT",
+          "parenthetical": "",
+          "text": "*"
+        }
+      ],
+      "actionPreview": "140 140 * The other cleaner wipes the black cast iron corpse delivery * trolleys and brick furnaces designed and built by Topf an d * Sons. *"
+    },
+    {
+      "number": 135,
+      "heading": "INT. EXHIBIT ROOM, BLOCK 5, AUSCHWITZ-BIRKENAU STATE MUSEUM -",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "141 141 * DAWN, PRESENT * A wall of 1930’s battered suitcases piled high behind glass * across the screen. * Their owners family names and addresses scrawled in different * hands on most of them in white letters. * ANOTHER CLEANER carries a vacuum cleaner past the length of * them. * We’re in Block "
+    },
+    {
+      "number": 136,
+      "heading": "INT. EXH IBIT CORRIDOR BLOCK 5, AUSCHWITZ-BIRKENAU STATE",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "142 142 * MUSEUM - DAWN, PRESENT * Along the length of the corridor now a vast pile of more old * shoes behind glass on either side. * TWO OTHER CLEANERS wipe the glass, one on either side, while * Another Cleaner vacuums the floor. * Looking up at the floor to ceiling mountain of shoes. * Revision "
+    },
+    {
+      "number": 137,
+      "heading": "INT. EXHIBIT ROOM BLOCK 5, AUSCHWITZ-BIRKENAU STATE MUSEUM -",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "143 143 * DAWN, PRESENT * Another cleaner vacuums in front of a display case of * 1930/1940’s prosthetic limbs, crutches and supports. *"
+    },
+    {
+      "number": 138,
+      "heading": "INT. EXHIBIT ROOM BLOCK 6, AUSCHWITZ-BIRKENAU STATE MUSEUM -",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "144 144 * DAWN, PRESENT * ANOTHER CLEANER wipes the glass of a display case of blue and * white striped prisoner uniforms in Block 6, the exhibit of * ‘The life of the prisoners’. *"
+    },
+    {
+      "number": 139,
+      "heading": "INT. EXHIBIT CORRIDOR BLOCK 6, AUSCHWITZ-BIRKENAU STATE",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "145 145 * MUSEUM - DAWN, PRESENT * A long, corridor lined on either side with three rows of * black and white framed photographs. * A CLEANER noisily vacuums the floor, and in the distance TWO * CLEANERS wipe photographs on either side. * In the foreground we can make out the photographs are shaved-"
+    },
+    {
+      "number": 140,
+      "heading": "INT. LOWER CORRIDOR, CCI, ORANIENBURG - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "146 146 * We’re suddenly back to Rudolf on that landing in the empty * CCI building, exactly as we left him in Scene 136 after he * vomited. * He’s still looking down the corridor towards camera. Silence. * Almost as if at the Museum corridor we were just looking * down. * SS officer’s cap in his ha"
+    },
+    {
+      "number": 141,
+      "heading": "INT. STAIRWELL. CCI, ORANIENBURG - CONTINUOUS",
+      "characters": [
+        "CUT TO BLACK",
+        "END"
+      ],
+      "dialogues": [
+        {
+          "character": "CUT TO BLACK",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "END",
+          "parenthetical": "",
+          "text": "Revision"
+        }
+      ],
+      "actionPreview": "147 147 * We watch him descend another floor, and another, his steps * more confident now. * Revision 73. Revision 74. He puts his cap on his head. * Down another until we can’t see him, but the sound of his * footsteps continue. * His footsteps carry until he’s gone too far to hear them any * more."
+    }
+  ]
+}

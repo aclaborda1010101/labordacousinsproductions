@@ -1,0 +1,22 @@
+{
+  "slug": "burning-annie",
+  "title": "Burning Annie",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 23228,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                           BURNING ANNIE </b> art imitates life imitates art imitates life Written by Zack Ordynans <b>                                                      PRODUCTION DRAFT </b><b>                                                               1-12-02 </b> <b>                          FADE IN: </b> Abrupt CLOSE UP on MAX, a plain wall behind him. <b>          1 INT. LIMBO RADIO 1 </b> He is 20, normal looking, not too nebbish, punkish, bookish, or stylish. He is a high-strung",
+      "dialogue_count": 0,
+      "word_count": 23228
+    }
+  ]
+}

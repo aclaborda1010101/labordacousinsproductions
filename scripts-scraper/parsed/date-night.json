@@ -1,0 +1,30 @@
+{
+  "slug": "date-night",
+  "title": "Date Night",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 2,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 24013,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                 DATE NIGHT </b> Written by Josh Klausner June 11, 2008 <b>          FADE IN: </b> <b>          INT. BACHELOR APARTMENT BEDROOM - NIGHT </b> A modest city bedroom. Suitcases and half-unpacked boxes sit on one side of the room. Sc_-orLe's -moving in. In his bathrobe, PHIL FOSTER, a good looking guy in his mid-20's, hums to himself as he looks through stacks of WEDDING PICTURES organized all over the bed. Just as he finishes up a pile and starts another, beautifu",
+      "dialogue_count": 0,
+      "word_count": 15232
+    },
+    {
+      "scene_number": 2,
+      "slugline": "INT. KITCHEN - C vUOUS",
+      "characters": [],
+      "action_text": "Clara peeks out through the double door windows. Frank and Harry continue through the crowd, unaware. <b>          VOICE (O.S.) </b>          Watch it! Clara quickly hugs a large bulletin board covered with pictures and time schedules as a WAITER carries a large tray of food past her. <b>          68. </b>          As she moves off the wall, some papers drop. Clara pins them back on, when something else on the bulletin board catches her eye... .Among all the snapshots of staff scattered on the b",
+      "dialogue_count": 0,
+      "word_count": 8781
+    }
+  ]
+}

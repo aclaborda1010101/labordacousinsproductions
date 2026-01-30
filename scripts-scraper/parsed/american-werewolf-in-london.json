@@ -1,0 +1,22 @@
+{
+  "slug": "american-werewolf-in-london",
+  "title": "American Werewolf in London",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 18471,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<html> <head> <title>\"An American Werewolf in London\" -- by John Landis</title> <body> <pre> <b>     FADE IN </b> <b>1    MAN'S FOOTPRINT </b> on the moon. <b>     EXT. MOON </b> Camera begins to pull back slowly, straight up - the song \"Moon Shadow\" by Cat Stevens begins.  Once we are high enough to see the entire moon, the main title is superimposed. An American Werewolf in London We continue to retreat from the moon, looking on as it grows farther from us, continuing credits until the full mo",
+      "dialogue_count": 0,
+      "word_count": 18471
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "slug": "12-years-a-slave",
+  "title": "12 Years a Slave",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 33612,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                             12 YEARS A SLAVE </b> Written by John Ridley <b>                              CARD: 1841 </b> <b>                               FADE IN: </b> <b>          1 INT. TOWNHOUSE/STUDY - DAY 1 </b> <b>           -EARLY APRIL, 1841- </b>           We are close on a PAIR OF BLACK HANDS as they open A <b>           FINELY WRAPPED PACKET OF VIOLIN STRINGS. </b> WE CUT TO the hands stringing a VIOLIN. It's not a high end piece, but it is quite nice. WE CUT TO a wide shot of t",
+      "dialogue_count": 0,
+      "word_count": 33612
+    }
+  ]
+}

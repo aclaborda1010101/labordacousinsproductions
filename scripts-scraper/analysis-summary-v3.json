@@ -1,0 +1,43 @@
+{
+  "version": "3.0",
+  "totalScreenplays": 525,
+  "processedAt": "2026-01-29T20:38:54.623Z",
+  "qualityMetrics": {
+    "withCharacters": 158,
+    "withDialogue": 0,
+    "withMultipleScenes": 377,
+    "estimatedComplete": 3,
+    "highConfidence": 0,
+    "mediumConfidence": 4,
+    "lowConfidence": 521,
+    "withCharactersPercent": 30,
+    "withDialoguePercent": 0,
+    "withMultipleScenesPercent": 72,
+    "highConfidencePercent": 0
+  },
+  "avgMetrics": {
+    "avgScenes": 11,
+    "avgRuntime": 21,
+    "avgCharacters": 0.7,
+    "avgDialogues": 0,
+    "avgLocations": 9,
+    "avgDialogueRatio": 0,
+    "avgIntRatio": 0.63,
+    "avgNightRatio": 0.54
+  },
+  "genreDistribution": {
+    "action": 53,
+    "drama": 109,
+    "romance": 34,
+    "thriller": 234,
+    "horror": 68,
+    "comedy": 4,
+    "scifi": 23
+  },
+  "formatDistribution": {
+    "film": 350,
+    "series": 175
+  },
+  "topExamples": [],
+  "errors": []
+}

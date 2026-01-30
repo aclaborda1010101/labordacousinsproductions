@@ -1,0 +1,26 @@
+{
+  "slug": "american-psycho",
+  "title": "American Psycho",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 1,
+  "characters": [
+    "DAISY"
+  ],
+  "total_words": 20356,
+  "total_dialogue": 1,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "DAISY"
+      ],
+      "action_text": "<html> <head> <script> <b><!-- </b>if (window!= top) top.location.href=location.href <b>// --> </b></script> <title>AMERICAN PSYCHO by Mary Harron and Guinevere Turner</title> </head> <body> <pre> <b> </b><b>AMERICAN PSYCHO</b> by Mary Harron and Guinevere Turner Based on the novel by Bret Easton Ellis Fourth Draft November 1998 <b>INT. PASTELS RESTAURANT- NIGHT </b> An insanely expensive restaurant on the Upper East Side. The decor is a mixture of chi-chi and rustic, with swagged silk curtains,",
+      "dialogue_count": 1,
+      "word_count": 20356
+    }
+  ]
+}

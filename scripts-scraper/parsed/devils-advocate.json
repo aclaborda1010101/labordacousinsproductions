@@ -1,0 +1,22 @@
+{
+  "slug": "devils-advocate",
+  "title": "Devil's Advocate",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 29390,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                     THE DEVIL'S ADVOCATE </b> screenplay by Jonathan Lemkin and Tony Gilroy based on the novel by Andrew Neiderman <b>                   REVISED SHOOTING DRAFT </b> January 18, 1997 <b>               FOR EDUCATIONAL PURPOSES ONLY </b> <b> </b>    DEVIL'S ADVOCATE - Rev. 11/2/96 <b>    FADE IN: </b> <b>1   INT. FLORIDA COURTROOM - DAY                                  1 </b> Northern Florida in the midst of a heat wave. Air conditioners fighting a losing battle. The gallery is",
+      "dialogue_count": 0,
+      "word_count": 29390
+    }
+  ]
+}

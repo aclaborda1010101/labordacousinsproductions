@@ -1,0 +1,26 @@
+{
+  "slug": "arctic-blue",
+  "title": "Arctic Blue",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 1,
+  "characters": [
+    "ARCTIC BLUE"
+  ],
+  "total_words": 29201,
+  "total_dialogue": 1,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "ARCTIC BLUE"
+      ],
+      "action_text": "ARCTIC BLUE by Ross LaManna <b>FADE IN: </b> <b>1\tEXT.  BOREAL FOREST - ALASKA - (AERIAL SHOT) - DAY </b> Flying.  Not at the intangible height of a jet, but at spitting distance from the treetops.  We're in central Alaska, the Big Lonely, just north of the Arctic Circle. A thick forest follows the contours of mountain foothills like a deep-pile carpet.  Up at treeline the forest thins to tundra, a grassy scruff turning red and yellow with the coming of autumn. On the horizon, the hills rise to",
+      "dialogue_count": 1,
+      "word_count": 29201
+    }
+  ]
+}

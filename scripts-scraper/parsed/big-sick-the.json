@@ -1,0 +1,22 @@
+{
+  "slug": "big-sick-the",
+  "title": "Big Sick, The",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 22282,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                           THE BIG SICK </b> Written by Emily V. Gordon & Kumail Nanjiani <b>1 </b> <b>    OVER BLACK. </b> We hear audience laughter. <b>                           ANDY DODD (V.O.) </b>              Give it up for my man, Mr. Kumail Nanjiani! <b>                           KUMAIL (V.O.) </b>              Hello. I grew up in Pakistan. And people are always asking me, what was that like? Really not that different from here. I mean we played cricket, which is just a spicier versi",
+      "dialogue_count": 0,
+      "word_count": 22282
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "slug": "black-swan",
+  "title": "Black Swan",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 20065,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                   BLACK SWAN </b> Written by Mark Heyman, Andres Heinz & John McLaughlin January 11, 2010 <b>          1 INT. DARK STAGE - NIGHT 1 </b> <b>                          OPENING CREDITS: </b> A SPOTLIGHT slices black space. In its beam, a DANCER materializes. She is fair-skinned. Beautiful and pure. The maiden twirls on pointe, a smile on her face, light as air and carefree. She pauses, her face grows worried. Sensing someone watching. Scared, she peers into the da",
+      "dialogue_count": 0,
+      "word_count": 20065
+    }
+  ]
+}

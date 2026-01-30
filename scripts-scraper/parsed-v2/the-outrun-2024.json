@@ -1,0 +1,3891 @@
+{
+  "slug": "the-outrun-2024",
+  "title": "The Outrun",
+  "parsedWith": "v2",
+  "parsedAt": "2026-01-29T22:09:22.557Z",
+  "stats": {
+    "scenes": 172,
+    "dialogues": 443,
+    "characters": 29
+  },
+  "characters": [
+    {
+      "name": "RONA",
+      "dialogueLines": 242,
+      "totalWords": 2724
+    },
+    {
+      "name": "DAYNIN",
+      "dialogueLines": 28,
+      "totalWords": 219
+    },
+    {
+      "name": "ANDREW",
+      "dialogueLines": 23,
+      "totalWords": 245
+    },
+    {
+      "name": "ANNIE",
+      "dialogueLines": 22,
+      "totalWords": 171
+    },
+    {
+      "name": "JULIE",
+      "dialogueLines": 17,
+      "totalWords": 75
+    },
+    {
+      "name": "ELENA",
+      "dialogueLines": 15,
+      "totalWords": 152
+    },
+    {
+      "name": "SAMIR",
+      "dialogueLines": 13,
+      "totalWords": 118
+    },
+    {
+      "name": "GLORIA",
+      "dialogueLines": 9,
+      "totalWords": 89
+    },
+    {
+      "name": "OMITTED",
+      "dialogueLines": 9,
+      "totalWords": 9
+    },
+    {
+      "name": "CALUM",
+      "dialogueLines": 9,
+      "totalWords": 94
+    },
+    {
+      "name": "DOCTOR",
+      "dialogueLines": 8,
+      "totalWords": 53
+    },
+    {
+      "name": "POLICEMAN",
+      "dialogueLines": 8,
+      "totalWords": 75
+    },
+    {
+      "name": "YOUNG MAN",
+      "dialogueLines": 7,
+      "totalWords": 44
+    },
+    {
+      "name": "IVAN",
+      "dialogueLines": 5,
+      "totalWords": 19
+    },
+    {
+      "name": "SIMON",
+      "dialogueLines": 5,
+      "totalWords": 55
+    },
+    {
+      "name": "AMANDA",
+      "dialogueLines": 5,
+      "totalWords": 68
+    },
+    {
+      "name": "SUPERVISOR",
+      "dialogueLines": 3,
+      "totalWords": 38
+    },
+    {
+      "name": "CATRINA",
+      "dialogueLines": 2,
+      "totalWords": 20
+    },
+    {
+      "name": "EDWARD",
+      "dialogueLines": 2,
+      "totalWords": 33
+    },
+    {
+      "name": "YOUNG FARMER COUPLE",
+      "dialogueLines": 2,
+      "totalWords": 18
+    },
+    {
+      "name": "ORCADIAN BOY",
+      "dialogueLines": 1,
+      "totalWords": 13
+    },
+    {
+      "name": "LUKAS",
+      "dialogueLines": 1,
+      "totalWords": 6
+    },
+    {
+      "name": "SHOP OWNER",
+      "dialogueLines": 1,
+      "totalWords": 5
+    },
+    {
+      "name": "YOUNG WOMAN",
+      "dialogueLines": 1,
+      "totalWords": 17
+    },
+    {
+      "name": "RITA",
+      "dialogueLines": 1,
+      "totalWords": 21
+    },
+    {
+      "name": "JACK",
+      "dialogueLines": 1,
+      "totalWords": 6
+    },
+    {
+      "name": "RONA AND GROUP MEMBERS",
+      "dialogueLines": 1,
+      "totalWords": 13
+    },
+    {
+      "name": "YOUNG ANDREW",
+      "dialogueLines": 1,
+      "totalWords": 36
+    },
+    {
+      "name": "YOUNG ARTIST",
+      "dialogueLines": 1,
+      "totalWords": 9
+    }
+  ],
+  "scenes": [
+    {
+      "number": 1,
+      "heading": "INT. DARK INDUSTRIAL SPACE - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "1 1 Abstract fragments of people dancing in the dark. Metallic wall structures are barely visible in the dark background. Ecstatic bodies, sweating skin and bizarre postures, lit and captured in flashes reminiscent of lightning, appear much slower than stratospheric light in a club usually does. The"
+    },
+    {
+      "number": 2,
+      "heading": "INT. DARK INDUSTRIAL SPACE / UNDERWATER - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "2 2 In flashes it seems that the bodies are dancing underwater and that their hair and clothes are floating."
+    },
+    {
+      "number": 3,
+      "heading": "INT. UNDERWATER - NIGHT",
+      "characters": [
+        "RONA"
+      ],
+      "dialogues": [
+        {
+          "character": "RONA",
+          "parenthetical": "(V.O.)",
+          "text": "In Orkney it is Samir that people who have drowned turn into seals."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(V.O.)",
+          "text": "The Selkies return to the sea at dawn unless they are seen by a person, then they are trapped in their human body and cannot return – and they will always remain discontent on land, because they belong to the sea."
+        }
+      ],
+      "actionPreview": "3 3 Glimpses of grey animal skin in dark water passing by closely. There is no music, only the wind and a female voice. NERD LAYER / SELKIES N1 N1 We call them Selkies. At the highest tides they slip off their seal skins for the night, come to the shore as beautiful people and dance together naked i"
+    },
+    {
+      "number": 4,
+      "heading": "EXT. ORKNEY / ANDREWS FARM / CLIFF BY STACK O’ROO - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "4 4 Top shot on dark waves crashing heavily against massive rocks. Extreme wide. Rona’s feet in wellies, on the edge of an extremely high cliff, dangling down above the violent waves. Smoking a cigarette, as if the drop beneath her were nothing. 2. She looks at a sandstone monolith that stands alone"
+    },
+    {
+      "number": 5,
+      "heading": "EXT. ORKNEY / ANDREWS FARM - LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "6 6 Rona takes a few pictures with her phone. She looks at a weird goose. A group of chicken passes. A farm dog runs by and obeys Rona’s commands. Andrew is repairing an old tractor. She brings him a coffee."
+    },
+    {
+      "number": 6,
+      "heading": "EXT. ORKNEY / ANDREWS FARM - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "7 7 Rona smokes a cigarette at night, the light of the caravan in the background. We hear loud music coming out of it. A flashlight in the dark. Rona walks over a field at night. Many sheep appear in the light, their eyes eerily reflected by the light. Rona finds an ewe with a newborn lamb."
+    },
+    {
+      "number": 7,
+      "heading": "EXT. ORKNEY / ANDREWS FARM - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "8 8 She walks over a field towards the shore, carrying a dead lamb in her hand, throws it unemotionally into a big metal tank. She stops at a cliff and lights another cigarette. Extreme wide: with the massive cliff underneath her, Rona seems tiny. TITLE: THE OUTRUN 2. Buff Rev. (mm/dd/yy) 3."
+    },
+    {
+      "number": 8,
+      "heading": "INT. ORKNEY KIRKWALL / ANNIES PLACE / LIVING ROOM - DAY",
+      "characters": [
+        "ANNIE",
+        "RONA"
+      ],
+      "dialogues": [
+        {
+          "character": "ANNIE",
+          "parenthetical": "",
+          "text": "How is dad?"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Fine."
+        },
+        {
+          "character": "ANNIE",
+          "parenthetical": "",
+          "text": "Says that somebody mentioned weird"
+        },
+        {
+          "character": "ANNIE",
+          "parenthetical": "(CONT'D)",
+          "text": "Asks how the lambing is going."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Answers that one more ewe is due, they made it all on time before she leaves."
+        },
+        {
+          "character": "ANNIE",
+          "parenthetical": "",
+          "text": "I went for a walk at the beach"
+        },
+        {
+          "character": "ANNIE",
+          "parenthetical": "(CONT'D)",
+          "text": "(pointing at the"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Snaps back that she does have a life to get back to."
+        },
+        {
+          "character": "ANNIE",
+          "parenthetical": "",
+          "text": "(calmly)"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "(interrupts)"
+        }
+      ],
+      "actionPreview": "9 9 A well-kempt house in Kirkwall. Rona sits with her MUM ANNIE (57) in the living room. On the table an Orcadian newspaper with job offers. * Facebook posts. / I heard he´s been * putting his rants on Facebook * again. * * * Rona shrugs, thinks he is doing well. Annie wants to say something more, "
+    },
+    {
+      "number": 9,
+      "heading": "INT. ORKNEY KIRKWALL / ANNIE PLACE / LITTLE ROOM - DAY",
+      "characters": [
+        "RONA"
+      ],
+      "dialogues": [
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Sure, later. I’m packing!"
+        }
+      ],
+      "actionPreview": "10 10 An arm chair has been turned into a makeshift bed. Rona is packing her belongings into a big backpack. There is a drawing pinned on the wall of a dog with a burning tail. She carefully takes it off and puts it in a large magazine for protection. When finished, Rona sits on her bed, motionless."
+    },
+    {
+      "number": 10,
+      "heading": "EXT. ORKNEY KIRKWALL / BAR - NIGHT",
+      "characters": [
+        "JULIE",
+        "RONA",
+        "IVAN",
+        "ORCADIAN BOY",
+        "ANDREW"
+      ],
+      "dialogues": [
+        {
+          "character": "JULIE",
+          "parenthetical": "",
+          "text": "Rona? Hi!"
+        },
+        {
+          "character": "JULIE",
+          "parenthetical": "(CONT'D)",
+          "text": "Long time no see! How long are you"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Yeah, I’ve just been up for three"
+        },
+        {
+          "character": "JULIE",
+          "parenthetical": "",
+          "text": "Good to see you."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Good to see you too."
+        },
+        {
+          "character": "JULIE",
+          "parenthetical": "",
+          "text": "Asks about Rona’s life in London."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Says it’s all going well. Nothing special."
+        },
+        {
+          "character": "IVAN",
+          "parenthetical": "",
+          "text": "Is curious what she is doing?"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Mentions a PHD but that she is taking a break."
+        },
+        {
+          "character": "IVAN",
+          "parenthetical": "",
+          "text": "How long since you lived here?"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Ten years."
+        },
+        {
+          "character": "IVAN",
+          "parenthetical": "",
+          "text": "Did it change a lot?"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "(slightly dismissive)"
+        },
+        {
+          "character": "IVAN",
+          "parenthetical": "",
+          "text": "(smiles)"
+        },
+        {
+          "character": "JULIE",
+          "parenthetical": "",
+          "text": "That’s because you met me here."
+        },
+        {
+          "character": "JULIE",
+          "parenthetical": "(CONT'D)",
+          "text": "Who would have thought I end up with a French birdyman."
+        },
+        {
+          "character": "JULIE",
+          "parenthetical": "",
+          "text": "* (CONT'D)"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Says that she is leaving tomorrow morning."
+        },
+        {
+          "character": "JULIE",
+          "parenthetical": "",
+          "text": "(points to the bar)"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Says that she unfortunately still needs to pack."
+        },
+        {
+          "character": "JULIE",
+          "parenthetical": "",
+          "text": "Come on, it’ll be fine."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Says that she really has to prepare for tomorrow’s journey."
+        },
+        {
+          "character": "JULIE",
+          "parenthetical": "",
+          "text": "Look at us! When did we get so"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "JULIE",
+          "parenthetical": "",
+          "text": "(now serious)"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(V.O.)",
+          "text": "Home. Home is off the north coast of Scotland, at 59 degrees north, where the Atlantic Ocean meets the"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(V.O.)",
+          "text": "The neolithic village of Skara Brae or the stone circle The Ring of"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(V.O.)",
+          "text": "The origin of the isles is told in the legend..."
+        },
+        {
+          "character": "ORCADIAN BOY",
+          "parenthetical": "(V.O.)",
+          "text": "...tells the story of when a huge sea monster - the Mester Muckle"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(V.O.)",
+          "text": "Some say that the Stoorworm’s liver is still burning in the volcanoes of Iceland and its presence stays alive in the ‘tremors’, low rumbles felt by some people in Orkney."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Dad?"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Hey Dad, I wanted to say good-bye. I’m gonna head off this afternoon."
+        },
+        {
+          "character": "ANDREW",
+          "parenthetical": "",
+          "text": "Already? Hold on. I want to show you something."
+        },
+        {
+          "character": "ANDREW",
+          "parenthetical": "(CONT'D)",
+          "text": "Asks if she has ever heard about ambergris?"
+        },
+        {
+          "character": "ANDREW",
+          "parenthetical": "(CONT'D)",
+          "text": "Says that he hadn’t either. Until today when he learned that Geordie from the Breck farm, his wife Annie found ambergris on the beach and got a huge amount of money for it."
+        },
+        {
+          "character": "ANDREW",
+          "parenthetical": "(CONT'D)",
+          "text": "Don’t look at me like that. Google it, come on!"
+        }
+      ],
+      "actionPreview": "11 11 Rona walks through Kirkwall at night. She stops in front of a bar, watching people enjoying themselves. Then she moves on. Rona turns around. JULIE (28), heavy Orcadian accent, approaches her, joined by a man whom she introduces as IVAN (32). * home for? * * weeks. Helping dad with lambing. Ro"
+    },
+    {
+      "number": 11,
+      "heading": "INT. ORKNEY / ANDREWS FARM / CARAVAN - CONTINUOUS",
+      "characters": [
+        "RONA",
+        "ANDREW"
+      ],
+      "dialogues": [
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "(reads out on her phone online descriptions and definitions of ambergris) \"Ambergris is a rare and highly valuable substance produced in the stomach of sperm whales, either vomited or excreted and found floating on the sea or washed up on the shore\""
+        },
+        {
+          "character": "ANDREW",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "ANDREW",
+          "parenthetical": "(CONT'D)",
+          "text": "Suggests they send it to a laboratory because this seemingly worthless lump might be worth 100,000 pounds."
+        },
+        {
+          "character": "ANDREW",
+          "parenthetical": "(CONT'D)",
+          "text": "(suddenly very soft)"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Says she’s been here too long already. She asks if he could lend her some money."
+        },
+        {
+          "character": "ANDREW",
+          "parenthetical": "",
+          "text": "Says that it’s tight right now. Has she asked mum?"
+        },
+        {
+          "character": "ANDREW",
+          "parenthetical": "(CONT'D)",
+          "text": "She wants to protect you."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Says that mum is already praying every day for her, isn´t that enough?"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(CONT'D)",
+          "text": "Tells him to fix the windows or the next gale will blow them all out."
+        }
+      ],
+      "actionPreview": "14 14 The weird lump now lies on the table of the caravan, it looks like a giant bowl of rotten beeswax. Rona and her dad are fascinated by this thing. It feels like one of the Nerdlayers is coming to life between them: 8. Buff Rev. (mm/dd/yy) 9. Adds that it is used for perfume, has a bad smell, a "
+    },
+    {
+      "number": 12,
+      "heading": "EXT. ORKNEY STROMNESS / HARBOUR / FERRY - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "15 15 Stromness harbour. Bleak and Industrial. Rona boards the large ferry that goes South with her big backpack."
+    },
+    {
+      "number": 13,
+      "heading": "INT. ORKNEY STROMNESS / HARBOUR / FERRY - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "16 16 Rona walks on the ferry with many other passengers, she looks for a seat but can’t find the right spot, she enters the eating area but turns around, she passes a bar and glances at the bottles. The sound of the ferry becomes louder and louder and turns into an aggressive rumble. She goes to th"
+    },
+    {
+      "number": 14,
+      "heading": "EXT. ORKNEY STROMNESS / STREET AT HARBOUR - CONTINUOUS",
+      "characters": [
+        "RONA"
+      ],
+      "dialogues": [
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Calls somebody in London, saying that she couldn’t come back because she still has to help her dad with dyking. Apparently he really needs her here. It’s very urgent. She promises she’ll get her things out of his place as soon as she can."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(CONT'D)",
+          "text": "Well. Throw it all away then."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(V.O.)",
+          "text": "Stratus Nebulosus. The grey featureless layer of clouds that often covers the sky. It is the lowest-forming type of cloud and when present at ground level is called fog or mist."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(V.O.)",
+          "text": "Cumulonimbus, the towering rainclouds that bring a storm."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(V.O.)",
+          "text": "Nimbostratus, the thick grey layers that mean rain. Cumulus. The low fluffy clouds of settled weather."
+        }
+      ],
+      "actionPreview": "17 17 Rona smokes a cigarette while watching the ferry depart. She clicks through her phone, scrolls through contacts. Slightly begging. The person on the other end of the line seems to get upset. 10. Goldenrod Rev. (07/18/2022) 11. She hangs up. Around her people are moving, but Rona is still. A da"
+    },
+    {
+      "number": 15,
+      "heading": "EXT. LONDON / CANAL NEXT TO HOUSE BOATS - 7 YEARS EARLIER",
+      "characters": [
+        "GLORIA",
+        "RONA"
+      ],
+      "dialogues": [
+        {
+          "character": "GLORIA",
+          "parenthetical": "",
+          "text": "Wants to know what she’s doing."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Checking where home is."
+        }
+      ],
+      "actionPreview": "18 18 A little compass comes into the frame and gets turned so it points north. A warm and sunny afternoon. Young people chill in groups all over the park. Goldenrod Rev. (07/18/2022) 11. Goldenrod Rev. (07/18/2022) 12. A younger Rona lies in the grass, her hair dyed in vibrant light blue, holding t"
+    },
+    {
+      "number": 16,
+      "heading": "EXT. LONDON / STREETS AT CANAL - DUSK",
+      "characters": [
+        "RONA"
+      ],
+      "dialogues": [
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Yells at Daynin to hurry up a bit."
+        }
+      ],
+      "actionPreview": "19 19 Sunset. Fast and drunk, the group rides their bikes through Hackney. Rona rides a bike with Gloria on the back, birthday balloons tied to it. Rona is the loudest and fastest, not really in control of the bike. Gloria is too drunk to really care. Daynin is on a bike next to them, a friend of hi"
+    },
+    {
+      "number": 17,
+      "heading": "INT. LONDON / INDUSTRIAL CLUB / TOILET - NIGHT",
+      "characters": [
+        "RONA",
+        "GLORIA",
+        "LUKAS"
+      ],
+      "dialogues": [
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Tells Gloria how very fucking special she is and how thankful she is that Gloria’s parents had sex and that she was born because of that. What a crazy coincidence that this one sperm and this one egg create this one human being."
+        },
+        {
+          "character": "GLORIA",
+          "parenthetical": "",
+          "text": "Tells Rona that she is the weirdest and most amazing woman she has ever met."
+        },
+        {
+          "character": "LUKAS",
+          "parenthetical": "",
+          "text": "Adds that he loves them both."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Come on, everybody!"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(CONT'D)",
+          "text": "Oh, sorry."
+        }
+      ],
+      "actionPreview": "20 20 In a toilet booth of a nightclub, Rona and Gloria are dabbing MDMA. Lukas and Daynin are in the booth aswell. Rona hugs Gloria, super close. Goldenrod Rev. (07/18/2022) 12. 13. Starts improvising a poem that veers off course. Lukas touches Rona’s blue hair and says how much he loves it. He wan"
+    },
+    {
+      "number": 18,
+      "heading": "EXT. LONDON / INDUSTRIAL CLUB / DANCE FLOOR - NIGHT",
+      "characters": [
+        "DAYNIN",
+        "RONA"
+      ],
+      "dialogues": [
+        {
+          "character": "DAYNIN",
+          "parenthetical": "",
+          "text": "Sorry, I just couldn’t help it."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "I just have to go to the sea."
+        },
+        {
+          "character": "DAYNIN",
+          "parenthetical": "",
+          "text": "Which sea?"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "(whispering in his ear)"
+        }
+      ],
+      "actionPreview": "21 21 Rona and Gloria are dancing on a cube in the middle of a weird industrial club (reminds of scene 1), above the crowd in full ecstasy. A constantly turning lighthouse light is in the middle of the space. Rona clings on to Gloria, has trouble standing straight. They are laughing their heads off."
+    },
+    {
+      "number": 19,
+      "heading": "EXT. LONDON / VARIOUS LOCATIONS - DAWN",
+      "characters": [
+        "SHOP OWNER",
+        "RONA"
+      ],
+      "dialogues": [
+        {
+          "character": "SHOP OWNER",
+          "parenthetical": "",
+          "text": "Invites her for a smoke."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Not today, mate. I gotta go."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(V.O.)",
+          "text": "In Hackney, thousands of people live in the same area of an average farm on Orkney - 150 acres."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(V.O.)",
+          "text": "Some say the tremors come from experiments of testing ammunition over on the military site on"
+        }
+      ],
+      "actionPreview": "22 22 The sun is rising. Electrified, Rona walks through London. This is HER night. Through her headphones we hear electronic music. The city is waking up. A montage: Rona passes a canal with house boats and crosses a bridge. A drunk guy with a massive hat is sleeping in a bus station. She walks pas"
+    },
+    {
+      "number": 20,
+      "heading": "EXT. ORKNEY KIRKWALL / STREETS - DUSK",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "25 25 We see Rona walking through grey Kirkwall. Alone. With her large backpack. Lighting a cigarette and continuing her walk. She passes narrow streets and a park with lots of rooks yelling from the trees."
+    },
+    {
+      "number": 21,
+      "heading": "EXT. ORKNEY KIRKWALL / ANNIES PLACE - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "26 26 All in a quiet wide shot: Goldenrod Rev. (07/18/2022) 15. Goldenrod Rev. (07/18/2022) 16. Rona arrives at her mum’s house, lights are on inside and she reluctantly rings the bell. ANNIE opens the door of a round wintergarden and hugs Rona. Rona tries to get out of the embrace and enters the ho"
+    },
+    {
+      "number": 22,
+      "heading": "INT. ORKNEY KIRKWALL / CAFE POMONA - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "27 27 Rona sits in a café in Kirkwall. Everything is red and blue. Little flags with Union Jacks are on the tables. A few older people are having afternoon tea. In her London-influenced fashion and with her laptop Rona doesn’t quite fit in. An empty can gets exchanged for a new can of Coca Cola. On "
+    },
+    {
+      "number": 23,
+      "heading": "EXT. ORKNEY KIRKWALL / CAFE POMONA - DAY",
+      "characters": [
+        "YOUNG MAN",
+        "RONA"
+      ],
+      "dialogues": [
+        {
+          "character": "YOUNG MAN",
+          "parenthetical": "",
+          "text": "Says that he doesn’t smoke, sorry."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Not many smokers around anymore…"
+        },
+        {
+          "character": "YOUNG MAN",
+          "parenthetical": "",
+          "text": "Asks if she is visiting?"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Answers that she is from here actually."
+        },
+        {
+          "character": "YOUNG MAN",
+          "parenthetical": "",
+          "text": "Asks which school she went to."
+        },
+        {
+          "character": "YOUNG MAN",
+          "parenthetical": "(CONT'D)",
+          "text": "Interesting hat."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Cool, innit?"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(CONT'D)",
+          "text": "Asks if he wants to join her for a cup of tea."
+        },
+        {
+          "character": "YOUNG MAN",
+          "parenthetical": "",
+          "text": "Says that unfortunately he needs to be somewhere. Another time, he’d love to."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Rona says she understands."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(CONT'D)",
+          "text": "(while shaking)"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(CONT'D)",
+          "text": "What are you up to today?"
+        },
+        {
+          "character": "YOUNG MAN",
+          "parenthetical": "",
+          "text": "Ah not much. I have to get going."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Yeah sure, no problem."
+        },
+        {
+          "character": "YOUNG MAN",
+          "parenthetical": "",
+          "text": "Nice to meet you."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "You too."
+        }
+      ],
+      "actionPreview": "28 28 Rona goes outside to smoke a cigarette. Another grey street, not much going on. A couple passes with two ferrets on a leash. She tries to light it, but her lighter doesn’t work. She stops a YOUNG ORCADIAN MAN (24), a few years younger than her, and asks him for a lighter. He smiles. They chat "
+    },
+    {
+      "number": 24,
+      "heading": "INT. ORKNEY / LITTLE PLANE - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "28A 28A Rona sits in a tiny plane with Ivan and Julie, who are very excited that Rona is joining them. There are only six people on the plane. The pilot turns around and gives the safety instruction and * that they are going to Papay. * As they fly, below them we see Orkney islands passing by."
+    },
+    {
+      "number": 25,
+      "heading": "EXT. ORKNEY PAPAY / AIRPORT - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "28B 28B The tiny plane lands on an airfield with just one lane. They exit the plane and are greeted by a few locals, among them is ELENA (50´s), the local RSPB volunteer."
+    },
+    {
+      "number": 26,
+      "heading": "EXT. ORKNEY HOLM OF PAPAY / MOVING BOAT - DAY",
+      "characters": [
+        "SIMON",
+        "RONA"
+      ],
+      "dialogues": [
+        {
+          "character": "SIMON",
+          "parenthetical": "",
+          "text": "Tells her about the Holmie Sheep who live over on the Holm and eat seaweed. They're left to themselves most of time apart from a few times in the year like when they bring a ram over or go to shear them."
+        },
+        {
+          "character": "SIMON",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "I’m from here, actually."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(CONT'D)",
+          "text": "I live in London now."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(CONT'D)",
+          "text": "(in slang words)"
+        },
+        {
+          "character": "SIMON",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "SIMON",
+          "parenthetical": "",
+          "text": "Says that he has never left Orkney."
+        },
+        {
+          "character": "SIMON",
+          "parenthetical": "(CONT'D)",
+          "text": "No no. (he smirks)"
+        }
+      ],
+      "actionPreview": "29 29 A small boat in full motion on the water. Rona, Julie and Ivan are being brought over to the holm of Papay by fisherman SIMON (50s). A ram is riding with them in the boat. He just got this very expensive top ram from mainland Scotland to improve his flock. It is supposed to be the ram of rams."
+    },
+    {
+      "number": 27,
+      "heading": "EXT. ORKNEY HOLM OF PAPAY - CONTINUOUS",
+      "characters": [
+        "JULIE",
+        "RONA"
+      ],
+      "dialogues": [
+        {
+          "character": "JULIE",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "JULIE",
+          "parenthetical": "",
+          "text": "says she’s always liked birds, grew"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Says that she really has to get back to London soon."
+        }
+      ],
+      "actionPreview": "30 30 The group gets off the boat. Simon and his ram walk along the shore towards some sheep. * Rona follows Julie & Ivan up to a grassy hill with a chimney. * She watches them carefully plotting and counting the number * of birds, nests and chicks on the cliff next to the hill. Says that everybody "
+    },
+    {
+      "number": 28,
+      "heading": "EXT. ORKNEY HOLM OF PAPAY - DAY",
+      "characters": [
+        "RONA"
+      ],
+      "dialogues": [
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "PERVERTS! (more to herself)"
+        }
+      ],
+      "actionPreview": "31 31 Rona walks along the shore and pees near the beach. Down in the water she sees a seal pup and her mum looking at her. My piss is clean, don’t worry. As she continues her walk, the pup is still looking at her. Even when she goes further away, the pup doesn’t turn away. It’s slightly eerie."
+    },
+    {
+      "number": 29,
+      "heading": "EXT. ORKNEY HOLM OF PAPAY - CONTINUOUS",
+      "characters": [
+        "RONA"
+      ],
+      "dialogues": [
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Fuck off, dinosaurs."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(V.O.)",
+          "text": "'pickie ternos' or arctic ternos"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(V.O.)",
+          "text": "The last great auk in the UK was killed in 1813 on the island of"
+        }
+      ],
+      "actionPreview": "32 32 Rona walks to the end of the little island. All of a sudden, a bird swoops just inches from her head. Then another one. A whole group of Artic Terns is rising and warning Rona to go away. The sound of their wings and squeeks is getting very loud. Buff Rev. (mm/dd/yy) 20. Buff Rev. (mm/dd/yy) 2"
+    },
+    {
+      "number": 30,
+      "heading": "EXT. LONDON / PUB - NIGHT",
+      "characters": [
+        "RONA"
+      ],
+      "dialogues": [
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Curses and yells at him aggressively."
+        }
+      ],
+      "actionPreview": "33 33 From a perspective of drunken memory. Adult Rona with blonde hair and eyebrows dyed purple, falls to the ground on a night street in London. She gets up, tries to get in a fight with the bouncer. She really goes in with all the force she has, but can barely hold herself up straight. He shoves "
+    },
+    {
+      "number": 31,
+      "heading": "EXT. LONDON / STREET OUTSIDE PUB - CONTINUOUS",
+      "characters": [
+        "RONA"
+      ],
+      "dialogues": [
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Asks if he knows where Daynin lives."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Thank you."
+        }
+      ],
+      "actionPreview": "34 34 Rona stumbles along the street outside the pub, holding her purse tight to her chest while leaving a voicemail to Daynin that she is on the way, but got lost and can’t find his house. A car stops next to her. MIDDLE-AGED MAN You need a ride? MIDDLE-AGED MAN Yes, get in. I’ll take you there. Ro"
+    },
+    {
+      "number": 32,
+      "heading": "INT. ORKNEY KIRKWALL / ANNIES PLACE / LIVING ROOM - EVENING",
+      "characters": [
+        "RONA",
+        "YOUNG WOMAN"
+      ],
+      "dialogues": [
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "She is not very hungry today."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Says she’ll think about it."
+        },
+        {
+          "character": "YOUNG WOMAN",
+          "parenthetical": "",
+          "text": "Says that they do really lovely group meetings every Thursday for people who need a little support."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "I’m fine. Thank you."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "(sharp)"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "(softer)"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(CONT'D)",
+          "text": "Adds that she is still thinking about it, because the job doesn´t"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "I am doing really great actually."
+        }
+      ],
+      "actionPreview": "35 35 The bible group, a few women from ANNIE’s Born Again church community has come over for dinner, females of very different ages. The atmosphere is warm and loving. They are sitting all together at the table, just having finished a plate of Mince and Tatties. Rona didn’t finish hers. BIBLE GROUP"
+    },
+    {
+      "number": 33,
+      "heading": "EXT. ORKNEY KIRKWALL / ANNIES PLACE / BACKYARD - CONTINUOUS",
+      "characters": [
+        "ANNIE",
+        "RONA"
+      ],
+      "dialogues": [
+        {
+          "character": "ANNIE",
+          "parenthetical": "",
+          "text": "Rona, please don’t..."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Don’t - what?"
+        },
+        {
+          "character": "ANNIE",
+          "parenthetical": "",
+          "text": "Nothing."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "I’m sober, mum!"
+        },
+        {
+          "character": "ANNIE",
+          "parenthetical": "",
+          "text": "(holds her guards up) I know."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "It’s for real this time! 4 1/2 months already. What else do you want? You clearly have no faith in me at all."
+        },
+        {
+          "character": "ANNIE",
+          "parenthetical": "",
+          "text": "I’m sorry. I believe you. Want to come back in?"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "I’ll be back in a bit. Please don’t start reading the bible without me."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(CONT'D)",
+          "text": "(whispers)"
+        }
+      ],
+      "actionPreview": "36 36 Rona storms out of the house to get some air. She stands in the backyard of the house, finally a moment of peace. She lights a cigarette. Annie follows her. Rona takes out a coke of her jacket and drinks it. Buff Rev. (mm/dd/yy) 24. Goldenrod Rev. (07/18/2022) 25. Annie takes in the coke. Reli"
+    },
+    {
+      "number": 34,
+      "heading": "INT. LONDON / DOCTORS OFFICE - DAY",
+      "characters": [
+        "RONA",
+        "DOCTOR"
+      ],
+      "dialogues": [
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "I need a referral for a rehab."
+        },
+        {
+          "character": "DOCTOR",
+          "parenthetical": "",
+          "text": "OK. Well. It might take a while until a place is free. There are also other ones…"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Whatever starts as soon as possible. Please."
+        },
+        {
+          "character": "DOCTOR",
+          "parenthetical": "",
+          "text": "How long would you say you’ve been drinking too much?"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Ten years. Or more. And more each year."
+        },
+        {
+          "character": "DOCTOR",
+          "parenthetical": "",
+          "text": "It’s good that you are here. A lot of people don’t get this far."
+        },
+        {
+          "character": "DOCTOR",
+          "parenthetical": "(CONT'D)",
+          "text": "Your age?"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "29"
+        },
+        {
+          "character": "DOCTOR",
+          "parenthetical": "",
+          "text": "Occupation?"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Unemployed."
+        },
+        {
+          "character": "DOCTOR",
+          "parenthetical": "",
+          "text": "Any medical family histories of cancer?"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "DOCTOR",
+          "parenthetical": "",
+          "text": "Diabetes?"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "DOCTOR",
+          "parenthetical": "",
+          "text": "Mental illness?"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(V.O.)",
+          "text": "Homo sapiens have about 50 per cent the same DNA as plants - a banana, a cucumber or seaweed. 60 per cent as jellyfish."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(V.O.)",
+          "text": "The names of jellyfish found around"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(V.O.)",
+          "text": "Mass ‘strandings’ of jellyfish happen when currents wash a swarm into shore, often in spring."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(V.O.)",
+          "text": "If you are a danger to yourself or others you can be sectioned under the mental health act. Restrained and sedated. The nearest psychiatric ward is on the Scottish mainland in Aberdeen. (MORE)"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(V.O.) (CONT'D)",
+          "text": "Buff Rev. (mm/dd/yy) 28."
+        }
+      ],
+      "actionPreview": "37 37 Heavily bruised and tired, Rona (with purple eyebrows) sits in front of a young female doctor. She seems defeated, but determined. Residential. You have to lock me up… Please. The doctor takes her in, concerned. Goldenrod Rev. (07/18/2022) 25. 26. She looks her in the eyes, but can’t hold it f"
+    },
+    {
+      "number": 35,
+      "heading": "EXT. ORKNEY / ANDREWS FARM - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "38 38 Rona and her dad sit squeezed next to each other on the old tractor, as they drive over the Outrun. The sky is dark blue, the sea crashes roughly below them and a heavy wind is blowing. They pass a long part of an old stone wall, the dyke. At a point where the wall has fallen down and has slow"
+    },
+    {
+      "number": 36,
+      "heading": "EXT. ORKNEY / ANDREWS FARM / DYKE - DAY",
+      "characters": [
+        "ANDREW",
+        "RONA"
+      ],
+      "dialogues": [
+        {
+          "character": "ANDREW",
+          "parenthetical": "",
+          "text": "The tremors are loud today, aren’t they?"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "ANDREW",
+          "parenthetical": "",
+          "text": "There's so much pressure, things"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Are you talking about the caves?"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(V.O.) (CONT'D)",
+          "text": "Buff Rev. (mm/dd/yy) 28."
+        },
+        {
+          "character": "ANDREW",
+          "parenthetical": "",
+          "text": "The ground beneath us is riddled"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Dad, have you been sleeping?"
+        },
+        {
+          "character": "ANDREW",
+          "parenthetical": "",
+          "text": "Of course, Rona. I’m just joking."
+        }
+      ],
+      "actionPreview": "39 39 Rona and Andrew work together. Rona spreads the stones out on the ground and he selects the ones to build with . It is hard work and takes a lot of time. When Rona takes a cigarette break, Andrew smokes one too and gives her some tea that he brought in a thermos. He starts playing on his harmo"
+    },
+    {
+      "number": 37,
+      "heading": "INT. LONDON / BIOLOGY LAB - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "40 40 Close up of plant seeds under a microscope. Rona with club stamps on her wrist working at the microscope. She changes the little glass plates and hides a yawn. Her hair is not blue anymore, but shining platinum blonde. She takes a break from the microscope as she doesn't seem to feel well at a"
+    },
+    {
+      "number": 38,
+      "heading": "INT. LONDON / BIOLOGY LAB / HALLWAY - CONTINUOUS",
+      "characters": [
+        "SUPERVISOR",
+        "RONA"
+      ],
+      "dialogues": [
+        {
+          "character": "SUPERVISOR",
+          "parenthetical": "",
+          "text": "Asks how things are going."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "(evasive)"
+        },
+        {
+          "character": "SUPERVISOR",
+          "parenthetical": "",
+          "text": "Mentions that some colleagues were complaining about Rona not handing in papers on time and missing meetings. Asks if everything is fine? Maybe she could lift her spirits at work a bit?"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "(interrupts her)"
+        },
+        {
+          "character": "SUPERVISOR",
+          "parenthetical": "",
+          "text": "(confused)"
+        }
+      ],
+      "actionPreview": "41 41 Rona and the supervisor are having a coffee in the hallway. Talks about her plant DNA research project. We can feel the supervisor does not like to have this conversation. Rona looks to the lab, taking in the other PhD students. She gets a text, reads it and smiles, while the supervisor is sti"
+    },
+    {
+      "number": 39,
+      "heading": "EXT. LONDON / BATHHOUSE - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "41A 41A Two people masked with balaclavas enter an old stone building towards a backdoor. One of them uses a makeshift lock pick. Both seem a bit nervous. It’s Rona and Daynin."
+    },
+    {
+      "number": 40,
+      "heading": "INT. LONDON / BATHHOUSE - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "42 42 They run through a narrow industrial looking basement with lots of pipes everywhere, then they run up small stairs. In a large dark room, they undress quickly and – naked with only the balaclavas still on - jump into the turquoise shining water of a public bath house. They chase each other thr"
+    },
+    {
+      "number": 41,
+      "heading": "INT. LONDON / RONA AND DAYNINS FLAT / LIVING ROOM - EVENING",
+      "characters": [
+        "RONA",
+        "DAYNIN"
+      ],
+      "dialogues": [
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Asks if he ever dreamt about controlling the weather."
+        },
+        {
+          "character": "DAYNIN",
+          "parenthetical": "",
+          "text": "Says that until today he hadn’t."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "I knew something was wrong with you."
+        }
+      ],
+      "actionPreview": "43 43 Rona’s hand is sliding over Daynin’s naked body without touching it. Floating maybe 3 cm above it. A white hand, a black chest. She pretends to kiss him without kissing him, just staying 3 cm away from his lips and his skin. Two naked bodies, comfortable in each other’s presence. We see that t"
+    },
+    {
+      "number": 42,
+      "heading": "EXT. ORKNEY / MOWED FIELD - DAY",
+      "characters": [
+        "RONA",
+        "JULIE",
+        "IVAN"
+      ],
+      "dialogues": [
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "* I don’t even know what they sound"
+        },
+        {
+          "character": "JULIE",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "IVAN",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "JULIE",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "JULIE",
+          "parenthetical": "",
+          "text": "* (CONT'D)"
+        },
+        {
+          "character": "JULIE",
+          "parenthetical": "(CONT'D)",
+          "text": "Thanks again for helping us out!"
+        }
+      ],
+      "actionPreview": "44 44 A little piece of tall unmowed grass on the edge of a freshly mowed field. Rona doesn’t look euphoric at all. JULIE & IVAN The hours of the survey are * midnight til 3am, everynight when * its not raining. You have to survey * every area of suitable habitat in * Orkney, from the car. You have "
+    },
+    {
+      "number": 43,
+      "heading": "EXT. ORKNEY / SHORE WITH LITTLE STONE CAIRNS - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "45 45 Rona walks along the shore all by herself. Aggressively knocking little stone cairns over, built by people with different sized stones and pebbles. One by one, she destroys them all. After having knocked all of them over, she lies back with headphones on a rock plateau next to the ocean."
+    },
+    {
+      "number": 44,
+      "heading": "EXT. ORKNEY / SHORE WITH SHIPWRECKS - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "46 46 Rona is sitting at the shore, wrapped in a coat, freezing and shivering. She smokes a cigarette. She watches her mum Annie and the Orkney Polar Bears – an Ocean Swimming Group consisting mostly of middle-aged women. * Some of them we know from the bible group. Everybody has their own technique"
+    },
+    {
+      "number": 45,
+      "heading": "INT/EXT. ORKNEY / RSPB CAR EMPTY ROAD - SUMMER NIGHT",
+      "characters": [
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "48"
+        }
+      ],
+      "actionPreview": "47 47 Rona is driving in an RSPB car (logo on the car), equipped with maps and pencils, through the vast landscape of Orkney during bright summer nights. The sky has bizarre colours, the sun hangs very low on the horizon. Nobody around but her. Buff Rev. (mm/dd/yy) 32. Goldenrod Rev. (07/18/2022) 33"
+    },
+    {
+      "number": 46,
+      "heading": "INT. LONDON / TREATMENT CENTER / BATHROOM - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "49 49 Rona (with purple eyebrows and light bruises) is peeing with the toilet door open. A COUNSELLOR AMANDA (50s) is standing close to her, looking the other way. When Rona is done, she hands the woman a urine sample with her name and date."
+    },
+    {
+      "number": 47,
+      "heading": "INT. LONDON / TREATMENT CENTER - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "50 50 In a large room, Rona gets handed different pills, pre-sorted for fourteen days. She is being warned that the first five days can be heavy on the body."
+    },
+    {
+      "number": 48,
+      "heading": "INT. LONDON / TREATMENT CENTER - CONTINUOUS",
+      "characters": [
+        "AMANDA"
+      ],
+      "dialogues": [
+        {
+          "character": "AMANDA",
+          "parenthetical": "",
+          "text": "Explains the rules of a 12-week full-time government funded therapy programme for alcoholics and drug addicts. Says that it is tough."
+        }
+      ],
+      "actionPreview": "51 51 Now sitting in a chair circle of around 13 people, Rona is scanning the group around her. Hackney rockers, gang members and young women with eccentric nail designs. Statistically only 10% of you will make it. Anyone who doesn’t show up without excuse will be kicked out. Same thing for a relaps"
+    },
+    {
+      "number": 49,
+      "heading": "EXT. LONDON / TREATMENT CENTER - DAY",
+      "characters": [
+        "SAMIR",
+        "RONA",
+        "CATRINA",
+        "EDWARD",
+        "YOUNG FARMER COUPLE"
+      ],
+      "dialogues": [
+        {
+          "character": "SAMIR",
+          "parenthetical": "",
+          "text": "Offers the counsellor a cigarette which she refuses."
+        },
+        {
+          "character": "SAMIR",
+          "parenthetical": "(CONT'D)",
+          "text": "Nice eyebrows."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Thank you. EXT/INT. ORKNEY STROMNESS / RSPB OFFICE BY HARBOUR - DAY 53"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Talks about how the corncrake, which is on the red list of threatened species, is losing its habitat rapidly – mowing is part of the problem."
+        },
+        {
+          "character": "CATRINA",
+          "parenthetical": "",
+          "text": "Wants to know how Rona’s parents are doing after the split?"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Says that it’s fine, been a couple of years already."
+        },
+        {
+          "character": "CATRINA",
+          "parenthetical": "",
+          "text": "Wants to know if her dad sold the farm."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Only the old house, and he is living in his caravan"
+        },
+        {
+          "character": "EDWARD",
+          "parenthetical": "",
+          "text": "Wants to know how long Rona is doing the job for, and if she talks to every farmer on the mainland?"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Adds that she drives over every single road on the mainland and is going to every single inhabited island."
+        },
+        {
+          "character": "EDWARD",
+          "parenthetical": "",
+          "text": "Offers a beer or a dram of whiskey, but she politely refuses."
+        },
+        {
+          "character": "YOUNG FARMER COUPLE",
+          "parenthetical": "",
+          "text": "Seem very open and tell her that they will adjust the pattern."
+        },
+        {
+          "character": "YOUNG FARMER COUPLE",
+          "parenthetical": "(CONT'D)",
+          "text": "Wants to know how many corncrakes"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Must admit the truth: none. She has had a few reports, but never found one herself."
+        }
+      ],
+      "actionPreview": "52 52 Rona smokes a cigarette outside with another participant, SAMIR (mid 40s). The counsellor is standing next to them. Goldenrod Rev. (07/18/2022) 33. Goldenrod Rev. (07/18/2022) 34. Jokes that he feels like a celebrity now, with his own bodyguard. The counsellor and Rona laugh. 53 At the harbour"
+    },
+    {
+      "number": 50,
+      "heading": "INT/EXT. ORKNEY / STREET AT RING OF BRODGAR - DUSK",
+      "characters": [
+        "RONA"
+      ],
+      "dialogues": [
+        {
+          "character": "RONA",
+          "parenthetical": "(V.O.)",
+          "text": "Because people rarely saw the corncrake fly, it used to be thought that they would go underground in winter, transform into other species or even ride on other bird’s backs to migrate."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(V.O.)",
+          "text": "Scientists now know that they do migrate all the way to central"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(V.O.)",
+          "text": "Recent studies have found that birds can see magnetic fields of the earth with their eyes via a process known as magnetoreception that helps them navigate."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(V.O.)",
+          "text": "Scientists are monitoring GPS travel routes not just for birds, but for all kinds of animals. 22 basking sharks around Scotland have been fitted with a live tracker. 36."
+        }
+      ],
+      "actionPreview": "54A 54A Extreme wide shot of the massive landscape with the Ring of Brodgar and the RSPB car driving and stopping again. NERD LAYER / GPS N7 N7 We see animated GPS maps of Rona’s driving routes over the mainland, seeing a pattern which marks all the roads that she has already driven on. We see the a"
+    },
+    {
+      "number": 51,
+      "heading": "EXT. LONDON / VICTORIA PARK - DAY",
+      "characters": [
+        "RONA",
+        "DAYNIN"
+      ],
+      "dialogues": [
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Says she is bored by her studies, maybe she should work in finance too."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(CONT'D)",
+          "text": "Maybe we should move somewhere exciting."
+        },
+        {
+          "character": "DAYNIN",
+          "parenthetical": "",
+          "text": "Anywhere with you."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Ah, come on. More specific."
+        },
+        {
+          "character": "DAYNIN",
+          "parenthetical": "",
+          "text": "That’s pretty specific. Maybe New"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Isn’t that a bit obvious?"
+        },
+        {
+          "character": "DAYNIN",
+          "parenthetical": "",
+          "text": "Yes, but probably a cool city."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "How come you never left London?"
+        },
+        {
+          "character": "DAYNIN",
+          "parenthetical": "",
+          "text": "Because he likes it here and also he was always working. And his parents never travelled."
+        }
+      ],
+      "actionPreview": "55 55 Rona and Daynin are lying on the grass in London Fields. Their bodies entangled. Rona is finishing her beer, opens a new one. She reads a biology book, he is studying Economics. She can’t really concentrate, he is more into it. She watches the trees above them and caresses his back, hoping to "
+    },
+    {
+      "number": 52,
+      "heading": "INT. LONDON / TREATMENT CENTER - DAY",
+      "characters": [
+        "AMANDA",
+        "RONA",
+        "SAMIR"
+      ],
+      "dialogues": [
+        {
+          "character": "AMANDA",
+          "parenthetical": "",
+          "text": "Asks what does she feel when she thinks about drinking?"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "I miss it."
+        },
+        {
+          "character": "AMANDA",
+          "parenthetical": "",
+          "text": "Honesty is good. Is there anything about drinking you don’t miss?"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "(reluctantly)"
+        },
+        {
+          "character": "SAMIR",
+          "parenthetical": "",
+          "text": "Shares about how he sometimes would shit the bed when totally drunk, which is so much worse."
+        }
+      ],
+      "actionPreview": "56 56 Group Therapy. Rona (with violet eyebrows) looks healthier than when she started the course. The bruises are almost gone. The counsellor encourages her to talk. Says that she has researched a phenomenon that is called “alcoholic neuropathy”. She actually did some research about it. She describ"
+    },
+    {
+      "number": 53,
+      "heading": "EXT. ORKNEY KIRKWALL / DANCE STUDIO - EVENING",
+      "characters": [
+        "RONA"
+      ],
+      "dialogues": [
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Apologizes for her overreaction last time, she wants to know if he still has her stuff."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(CONT'D)",
+          "text": "39."
+        }
+      ],
+      "actionPreview": "57 57 Rona walks through Kirkwall and passes a dance studio where little girls are practicing gymnastics. She watches them for a while. Then she leaves somebody in London a voicemail message: (MORE) Goldenrod Rev. (07/18/2022) 38. She has earned some money now over the summer and this time she is co"
+    },
+    {
+      "number": 54,
+      "heading": "EXT. ORKNEY / COUNTRY ROADS AT LOCH - NIGHT",
+      "characters": [
+        "POLICEMAN",
+        "RONA"
+      ],
+      "dialogues": [
+        {
+          "character": "POLICEMAN",
+          "parenthetical": "",
+          "text": "(in heavy Orcadian accent)"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Explains her work and they chat a bit about what it takes to convince a farmer to change his mowing routine."
+        },
+        {
+          "character": "POLICEMAN",
+          "parenthetical": "",
+          "text": "Apologizes, he just had to ask because it looks so lost - a car alone driving and stopping all the time, all over the island."
+        },
+        {
+          "character": "POLICEMAN",
+          "parenthetical": "(CONT'D)",
+          "text": "Thinks that he remembers her from 10 years ago."
+        },
+        {
+          "character": "POLICEMAN",
+          "parenthetical": "(CONT'D)",
+          "text": "She was driving so drunk that she had to spend the night in a cell."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Yeah, my mum called you."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(CONT'D)",
+          "text": "39."
+        },
+        {
+          "character": "POLICEMAN",
+          "parenthetical": "",
+          "text": "He is happy that she is doing well."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Thank you. Trying my best."
+        },
+        {
+          "character": "POLICEMAN",
+          "parenthetical": "",
+          "text": "You alright?"
+        },
+        {
+          "character": "POLICEMAN",
+          "parenthetical": "(CONT'D)",
+          "text": "Asks if she has heard a corncrake yet."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "POLICEMAN",
+          "parenthetical": "",
+          "text": "Well then. Fingers crossed."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(V.O.)",
+          "text": "The urge to drink can come out of nowhere. You think you are doing well, suddenly you want nothing more than a drink."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(V.O.)",
+          "text": "When people drink, alcohol, or more specifically ethanol, is absorbed into the stomach lining and enters the bloodstream. In the brain, alcohol confuses messages between neurotransmitters and acts as both an intoxicant and a depressant or relaxant. For those susceptible to addiction, alcohol quickly becomes the default way of alleviating anxiety and dealing with stressful situations. Through repeated use of the drug, neural pathways are scored so deeply they will never be repaired."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(V.O.)",
+          "text": "‘Cross addiction’ is the idea that, in the absence of drink, alcoholics will transfer their addictive behavior onto something else. It’s commonly seen with food, exercise, shopping, gambling or the internet."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(V.O.)",
+          "text": "Abstinence means that rather than trying to control the drinking, alcoholics don’t even pick up the first drink. After the first drink, the craving for more is unstoppable."
+        }
+      ],
+      "actionPreview": "58 58 Corncrake work. On a sheet of paper, Rona marks another cross next to many others. We can see that quite a bit of time has passed without her having heard a corncrake. She sets a two minute timer and when it is over, she doesn’t immediately continue to drive. She takes a moment to take in the "
+    },
+    {
+      "number": 55,
+      "heading": "INT. ORKNEY / ANDREWS FARM / CARAVAN - DAY",
+      "characters": [
+        "ANDREW",
+        "RONA"
+      ],
+      "dialogues": [
+        {
+          "character": "ANDREW",
+          "parenthetical": "",
+          "text": "How is the job?"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Says that it’s ok. Nightshifts. A bit boring. Two weeks and she is out of here."
+        },
+        {
+          "character": "ANDREW",
+          "parenthetical": "",
+          "text": "How is mum?"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Maybe you guys should just call each other."
+        },
+        {
+          "character": "ANDREW",
+          "parenthetical": "",
+          "text": "By the way, the result came back: it’s not ambergris."
+        },
+        {
+          "character": "ANDREW",
+          "parenthetical": "(CONT'D)",
+          "text": "Thanks for staying longer. 41."
+        }
+      ],
+      "actionPreview": "59 59 In Andrew’s caravan and without a lot of words, Rona and her father play backgammon. She yawns and seems very tired. He drinks a beer in front of her. She notices that. He is winning. She smiles, doesn’t say anything. Then he drops that: She shrugs, not without a smile. Goldenrod Rev. (07/18/2"
+    },
+    {
+      "number": 56,
+      "heading": "EXT. LONDON / CITY FARM - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "60 60 Group excursion. The rehab group is entering the city farm. The participants and counsellors together look like a weird school class of adults. People try not to stare at them."
+    },
+    {
+      "number": 57,
+      "heading": "EXT. LONDON / CITY FARM / PETTING ZOO - DAY",
+      "characters": [
+        "SAMIR",
+        "RONA"
+      ],
+      "dialogues": [
+        {
+          "character": "SAMIR",
+          "parenthetical": "",
+          "text": "Wants to know something about her life before therapy."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Tells him about her failed PhD in molecular biology and how she messed up her chances"
+        },
+        {
+          "character": "SAMIR",
+          "parenthetical": "",
+          "text": "Says that he knows all that from the course and that by the way it’s nonsense. She has more chances than anyone else here."
+        },
+        {
+          "character": "SAMIR",
+          "parenthetical": "(CONT'D)",
+          "text": "Tell me something about the real"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "(hard)"
+        },
+        {
+          "character": "SAMIR",
+          "parenthetical": "",
+          "text": "Tells the guy harshly to clean up his shit."
+        },
+        {
+          "character": "SAMIR",
+          "parenthetical": "(CONT'D)",
+          "text": "That’s the only language they understand."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Says she didn’t know he had family."
+        },
+        {
+          "character": "SAMIR",
+          "parenthetical": "",
+          "text": "Shares that they don’t really want anything to do with him right now."
+        },
+        {
+          "character": "SAMIR",
+          "parenthetical": "(CONT'D)",
+          "text": "So I am there when they need me."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Admits that she’s afraid she will never be happy sober."
+        },
+        {
+          "character": "SAMIR",
+          "parenthetical": "",
+          "text": "You’re so pretty, you know that?"
+        },
+        {
+          "character": "SAMIR",
+          "parenthetical": "(CONT'D)",
+          "text": "Sorry."
+        }
+      ],
+      "actionPreview": "61 61 Rona watches the other participants in the petting zoo, tough- looking gang members protecting themselves from hungry sheep and goats. Saíd joins Rona and they watch the spectacle for a while. – they basically kicked her out, asked her to go on sick-leave, after six years of not doing the work"
+    },
+    {
+      "number": 58,
+      "heading": "INT. LONDON / RONA AND DAYNINS FLAT / LIVING ROOM - DAY",
+      "characters": [
+        "DAYNIN",
+        "RONA"
+      ],
+      "dialogues": [
+        {
+          "character": "DAYNIN",
+          "parenthetical": "",
+          "text": "Says that he could use a hand. If she could hold the bike real quick."
+        },
+        {
+          "character": "DAYNIN",
+          "parenthetical": "(CONT'D)",
+          "text": "Complains about her taking so long."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Tells him about the selkies, about a woman called Ursilla and she was so bored in bed with her husband who didn’t want to love her, that she went to the sea, cried seven teardrops in the ocean and found herself a handsome selkie lover."
+        },
+        {
+          "character": "DAYNIN",
+          "parenthetical": "",
+          "text": "Asks if she is trying to tell him something?"
+        },
+        {
+          "character": "DAYNIN",
+          "parenthetical": "(CONT'D)",
+          "text": "Asks why she didn’t take him up to"
+        },
+        {
+          "character": "DAYNIN",
+          "parenthetical": "",
+          "text": "Sounds fun. Actually, I would love to meet your parents."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Says that she will be right back."
+        },
+        {
+          "character": "DAYNIN",
+          "parenthetical": "",
+          "text": "You prefer to buy booze over a shower with a handsome selkie man?"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "I’ll be right back and take both. 44."
+        }
+      ],
+      "actionPreview": "62 62 Daynin repairs his bicycle. The apartment looks like they have been living there for quite a while together. Rona’s hair has purple tips. Goldenrod Rev. (07/18/2022) 43. 44. Rona smokes at the balcony door, drinks beer and paints with the ash on her fingers a little seal figure on a china ball"
+    },
+    {
+      "number": 59,
+      "heading": "INT/EXT. ORKNEY / RING OF BRODGAR / RSPB CAR - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "63 63 Corncrake work. It’s a very foggy night. We can see that the survey paper is full of crosses - only one square is missing; not a single sign of a corncrake. Rona is listening to music . She comes to a halt next to the Ring of Brodgar."
+    },
+    {
+      "number": 60,
+      "heading": "EXT. ORKNEY / RING OF BRODGAR - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "64 64 Rona gets out to smoke a cigarette and listens into the fog. There is a sound that makes her turn around. Was it a corncrake? She is intrigued and follows the sound while the fog gets heavier, until she can’t see the car anymore. Rona starts wandering further through the mist. Losing sense of "
+    },
+    {
+      "number": 61,
+      "heading": "INT. DARK INDUSTRIAL SPACE / FANCY CLUB BAR- NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "65 65 The light flashes take us to people dancing in the fog, similar to the opening scene. Rona is one of them. Ecstatic. It’s like a weird dream. Daynin is dancing with her in a fancy bar in front of a LED wall. They dance together, close."
+    },
+    {
+      "number": 62,
+      "heading": "INT. LONDON / FANCY CLUB BAR - NIGHT",
+      "characters": [
+        "RONA"
+      ],
+      "dialogues": [
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Thanks for saving me!"
+        }
+      ],
+      "actionPreview": "66 66 The cheering of several beer glasses clinking together. Rona is with Daynin and his business friends in a club. Bass and fog in the background. All are dressed in suits, celebrating a successful meeting they had today. Gloria joins them, Rona hugs her tight. Says something dismissive about Day"
+    },
+    {
+      "number": 63,
+      "heading": "INT. LONDON / FANCY CLUB BAR - LATER",
+      "characters": [
+        "DAYNIN",
+        "RONA"
+      ],
+      "dialogues": [
+        {
+          "character": "DAYNIN",
+          "parenthetical": "",
+          "text": "(sharply)"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Tells him to chill out."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(CONT'D)",
+          "text": "Telling that if she and Daynin ever had babies and if she were to die, then Gloria should become the children’s step mum."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        }
+      ],
+      "actionPreview": "67 67 Rona orders more Vodka, now already very drunk. Asks her to slow it down a bit! Then Rona hugs Daynin and Gloria. They laugh, but Rona wants them to swear on it. Music plays and she tries to get everybody to dance a Ceilidh Dance with her. She falls on the ground, still laughing. Suddenly she "
+    },
+    {
+      "number": 64,
+      "heading": "INT. LONDON / FANCY CLUB BAR / BATHROOM - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "68 68 In the women’s toilet, Rona falls to the ground. Daynin tries to help her and sends Gloria away who is there to help as well. But Gloria stays. Rona crawls forward and starts crashing her head violently against the wall. Daynin and Gloria don’t know what to do. Rona smashes her head against th"
+    },
+    {
+      "number": 65,
+      "heading": "INT. LONDON / FANCY CLUB BAR - CONTINUOUS",
+      "characters": [
+        "DAYNIN",
+        "RONA"
+      ],
+      "dialogues": [
+        {
+          "character": "DAYNIN",
+          "parenthetical": "",
+          "text": "Gets mad at the bartenders for serving her more alcohol."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Yells at him to chill out."
+        }
+      ],
+      "actionPreview": "69 69 Back at the bar, Rona orders another vodka. Her eyeballs are turning into her head. Gloria is helpless. But then she loses control of her limbs again and starts spilling the vodka on the floor."
+    },
+    {
+      "number": 66,
+      "heading": "INT. LONDON / RONA AND DAYNINS FLAT - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "70 70 In an elliptic drunk memory: Daynin carries Rona into their flat. She stumbles into the kitchen and wants to get a bottle of wine out of the pantry. He takes it away and empties it into the sink. She starts a fight with him, ripping the bottle out of his hand. Glass is crashing on the ground, "
+    },
+    {
+      "number": 67,
+      "heading": "INT/EXT. ORKNEY / RING OF BRODGAR / RSPB CAR - DAWN",
+      "characters": [
+        "RONA"
+      ],
+      "dialogues": [
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "(disappointed)"
+        }
+      ],
+      "actionPreview": "71 71 Rona wakes up in the RSPB car, it’s the early morning light. She needs a moment to realize where she is. A look on the map, the last square is crossed out as well. The job is over. That’s it then, corncrakes! Not even this job she can do well. Rona starts the car."
+    },
+    {
+      "number": 68,
+      "heading": "INT. ORKNEY KIRKWALL / ANNIES PLACE - DAY",
+      "characters": [
+        "RONA"
+      ],
+      "dialogues": [
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Dad?"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(CONT'D)",
+          "text": "Here you are."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(CONT'D)",
+          "text": "I will let Mum know so she can organize help for the farm until you get better. Adds that she"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(CONT'D)",
+          "text": "Wish me luck, dad."
+        }
+      ],
+      "actionPreview": "72 72 Rona packs her stuff. Without any enthusiasm. She rolls up the picture of the dog with the burning tail. London doesn’t seem to be an exciting option for her. Goldenrod Rev. (07/18/2022) 47. 48. EXT/INT. ORKNEY / ANDREWS FARM / CARAVAN - DAY 73 73 Rona walks through the farm, calling for her d"
+    },
+    {
+      "number": 69,
+      "heading": "EXT. ORKNEY / ANDREWS FARM / CARAVAN - CONTINUOUS",
+      "characters": [
+        "RONA"
+      ],
+      "dialogues": [
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Saying that it’s been a while. She isn’t even sure if he will get this message. That he seems to be in"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(CONT'D)",
+          "text": "That she would be really happy if they could just talk one day. That she misses him so much. That she hasn’t been in London for a while, but is going back soon. That it’s summer soon, the best time for"
+        }
+      ],
+      "actionPreview": "74 74 Outside the caravan she comes to a halt. She breathes deeply, clenches her shaking hands and hears the tremors even louder. She looks left and right, doesn’t know where to go. Doesn’t move. She takes out her phone and calls a number. Nobody picks up. She leaves a message for Daynin. America no"
+    },
+    {
+      "number": 70,
+      "heading": "INT. LONDON / RONA AND DAYNINS FLAT / BEDROOM - MORNING",
+      "characters": [
+        "RONA",
+        "DAYNIN"
+      ],
+      "dialogues": [
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Good morning."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(CONT'D)",
+          "text": "What happened?"
+        },
+        {
+          "character": "DAYNIN",
+          "parenthetical": "",
+          "text": "You wanna tell me that you don’t remember?"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "(very insecure)"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(CONT'D)",
+          "text": "Asks him for a cigarette."
+        },
+        {
+          "character": "DAYNIN",
+          "parenthetical": "",
+          "text": "I’ve heard that before from you."
+        },
+        {
+          "character": "DAYNIN",
+          "parenthetical": "(CONT'D)",
+          "text": "I don’t know how to help you anymore."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Promises to never touch a drink again in her life."
+        },
+        {
+          "character": "DAYNIN",
+          "parenthetical": "",
+          "text": "(cold)"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Is begging him to believe her that this time it is for real."
+        },
+        {
+          "character": "DAYNIN",
+          "parenthetical": "",
+          "text": "Says he sometimes wishes she were somebody else."
+        },
+        {
+          "character": "DAYNIN",
+          "parenthetical": "(CONT'D)",
+          "text": "I don’t mean it like that literally. It’s ok. We’ve got this."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "I can’t live without you. I am not sure I will survive you leaving me."
+        },
+        {
+          "character": "DAYNIN",
+          "parenthetical": "",
+          "text": "I’m not leaving you."
+        }
+      ],
+      "actionPreview": "75 75 Early morning light. Rona wakes up, needs a moment and suddenly feels heavy pain in her body. She realizes that her hands, arms and back are full of cuts and wounds. Some infected and swollen. Some of the cuts are already taken care of and wrapped with bandages. Daynin stands on the balcony, i"
+    },
+    {
+      "number": 71,
+      "heading": "EXT. ORKNEY KIRKWALL / BAR - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "76 76 Through the window, we see Rona totally drunk in a bar. She is sitting together with several strangers, ordering Vodka shots as if they are good friends, being happy and loud - an everyday happy moment of drunkenness in a bar."
+    },
+    {
+      "number": 72,
+      "heading": "EXT. ORKNEY KIRKWALL / ANNIES PLACE / FRONT DOOR - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "77 77 Barely able to stand, Rona has a hard time opening her mum’s front door. After several missed attempts, she gets it open and stumbles into the hallway."
+    },
+    {
+      "number": 73,
+      "heading": "INT. ORKNEY KIRKWALL / ANNIES PLACE - CONTINUOUS",
+      "characters": [
+        "RONA"
+      ],
+      "dialogues": [
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Hi Mum, I’m just trying to… fucking apples… sorry…"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(CONT'D)",
+          "text": "They are fucking with your head, mum. It’s all brainwash. There is no god, there is no one who takes care of us…"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(CONT'D)",
+          "text": "You see, praying for me didn’t help."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(CONT'D)",
+          "text": "(whispers) I’m sorry, I’m so sorry."
+        }
+      ],
+      "actionPreview": "78 78 Rona closes the hallway door way too loudly, enters the kitchen and looks for something to eat, dropping a fruit bowl. While she tries to pick up the fruit we hear the hallway door. Annie stands in the kitchen, taken aback. In shock to see Rona like that. Annie doesn’t say anything. Rona passe"
+    },
+    {
+      "number": 74,
+      "heading": "INT. ORKNEY KIRKWALL / ANNIES PLACE / UPSTAIRS - MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "79 79 Next morning Rona wakes up with a massive hangover. Next to Annie’s bed, she sees a glass of water. Rona drinks it. Fuck, what has she done. The shell is hanging on the wall again. She turns around and lies still in the bed."
+    },
+    {
+      "number": 75,
+      "heading": "INT. ORKNEY KIRKWALL / ANNIES PLACE / BATHROOM - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "79A 79A Rona splashes cold water onto her face."
+    },
+    {
+      "number": 76,
+      "heading": "INT. ORKNEY KIRKWALL / ANNIES PLACE / KITCHEN - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "80 80 Rona enters the kitchen. Annie has gone and only left a note. Rona sees the written note, doesn’t even read it and starts crying. Goldenrod Rev. (07/18/2022) 52. (MORE) 53."
+    },
+    {
+      "number": 77,
+      "heading": "EXT. ORKNEY STROMNESS / STREETS - DAY",
+      "characters": [
+        "RONA"
+      ],
+      "dialogues": [
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Is this... AA MAN 1"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Many times."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(CONT'D)",
+          "text": "Hi. My name is Rona and I am an alcoholic."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(CONT'D)",
+          "text": "(MORE)"
+        }
+      ],
+      "actionPreview": "81 81 Rona walks defeated through the streets of Stromness. She looks on her phone, checks an address for a house. Nervously she smokes a cigarette. EXT./INT. ORKNEY STROMNESS / AA MEETING - DAY 82 82 Reluctantly, Rona enters a small house next to the waterside. She goes up narrow stairs and enters "
+    },
+    {
+      "number": 78,
+      "heading": "INT. ORKNEY KIRKWALL / ANNIES PLACE / LITTLE ROOM - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "82A 82A Rona sits on her bed, everything is packed. Staring at the wall. Apathetic and crunched together."
+    },
+    {
+      "number": 79,
+      "heading": "EXT. ORKNEY / AIRPORT - DAY",
+      "characters": [
+        "RONA",
+        "ELENA"
+      ],
+      "dialogues": [
+        {
+          "character": "RONA",
+          "parenthetical": "(V.O.)",
+          "text": "Britain is an island off Europe,"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(V.O.)",
+          "text": "Thieves Holm is an uninhabited skerry where witches and criminals were once banished. Faray used to have a population of 82 but is now home to only birds, sheep and a large colony of grey seals."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(V.O.)",
+          "text": "On Eynhallow, it is Samir, there is a stolen part from the magical island Hildaland, home to the mermaids and finmen and invisible to human eyes."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(CONT'D)",
+          "text": "(MORE)"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(V.O.) (CONT'D)",
+          "text": "Goldenrod Rev. (07/18/2022) 55."
+        },
+        {
+          "character": "ELENA",
+          "parenthetical": "",
+          "text": "Here we are!"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Thank you."
+        },
+        {
+          "character": "ELENA",
+          "parenthetical": "",
+          "text": "Are you sure about this? It’s quite rough here in winter."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "ELENA",
+          "parenthetical": "",
+          "text": "Wouldn’t it make more sense to go somewhere South? On a Canary island for instance?"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "This was the cheapest rent I could find anywhere."
+        },
+        {
+          "character": "ELENA",
+          "parenthetical": "",
+          "text": "Well - for a reason. The only warm thing about this house is the heated towel rail. (proudly) I installed it."
+        },
+        {
+          "character": "ELENA",
+          "parenthetical": "(CONT'D)",
+          "text": "Says that if she needs company, just reach out. It’s a small island, but there are quite a few local activities she could join."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Thanks her but says that right now she just needs to be alone."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(V.O.) (CONT'D)",
+          "text": "Goldenrod Rev. (07/18/2022) 55."
+        },
+        {
+          "character": "ELENA",
+          "parenthetical": "",
+          "text": "Alright then. You need anything, let me know."
+        }
+      ],
+      "actionPreview": "83 83 With her large backpack Rona enters the airport. NERD LAYER / ISLANDS N9 N9 Orkney is an island off Scotland, Westray is an island off Orkney, Papay is an island off Westray. Rona is sitting in that tiny plane again - looking at different Orkney islands beneath her. In a wide shot over the wat"
+    },
+    {
+      "number": 80,
+      "heading": "INT. ORKNEY PAPAY / ROSE COTTAGE - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "85 85 Rona watches Elena leave in a post car. She makes a fire at the fireplace in the kitchen. She looks out the windows, there is only one road she can see. It is leading towards a few farm buildings. It is a grey day. Nobody out there. Rona unpacks a sack of porridge and her laptop. She sits in t"
+    },
+    {
+      "number": 81,
+      "heading": "INT. ORKNEY PAPAY / ROSE COTTAGE - LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "86 86 She calls her mum who doesn’t pick up. Rona leaves a message saying that she arrived fine - and if they could maybe have a chat one of these days. Reception is bad. Then she hangs Saíd’s drawing of the dog with the burning tail over the fireplace. Rona looks around her new temporary home. She "
+    },
+    {
+      "number": 82,
+      "heading": "INT. LONDON / RONA AND DAYNINS FLAT / KITCHEN & LIVING ROOM -",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "87 87 DAY Rona watches Daynin in the living room through a window that connects the kitchen with the living room. She still has her jacket on, apparently she just came home. She grabs a coke and enters the living room and Daynin asks how she is doing. He wants to grab her hand, but Rona says she wil"
+    },
+    {
+      "number": 83,
+      "heading": "INT. LONDON / RONA AND DAYNINS FLAT / BATHROOM - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "88 88 Rona searches in the cupboard behind cosmetics, a hairdryer and other toiletries, for an old plastic bag. She opens it and gets a bottle of Vodka out. She drinks a few hectic drags. Then she pauses and drinks a few more. With quick movements, Rona brushes her teeth. She checks her breath and u"
+    },
+    {
+      "number": 84,
+      "heading": "INT. LONDON / RONA AND DAYNINS FLAT / LIVING ROOM -",
+      "characters": [
+        "DAYNIN",
+        "RONA"
+      ],
+      "dialogues": [
+        {
+          "character": "DAYNIN",
+          "parenthetical": "",
+          "text": "Says that he is proud of her."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Says that it’s not as hard as she thought."
+        }
+      ],
+      "actionPreview": "89 89 CONTINUOUS With the coke in her hand, Rona joins him on the sofa. She cheers his glass of orange juice with her coke. Cuddled up together on the sofa, they watch a comedy show. Rona tries to enjoy it, but hears the tremors."
+    },
+    {
+      "number": 85,
+      "heading": "INT. ORKNEY PAPAY / ROSE COTTAGE - DAY",
+      "characters": [
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "91"
+        }
+      ],
+      "actionPreview": "90 90 Rona lies in bed and stares out of the window. The sky seems bright and sunny. Despite the beautiful weather outside, she seems terribly sad and unable to move. 91 57. 58."
+    },
+    {
+      "number": 86,
+      "heading": "EXT. ORKNEY PAPAY / ROSE COTTAGE / SHED - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "92 92 In a shed outside Rose Cottage, Rona finds an old bike. She checks it and it seems to work fine. She starts to ride it to “town”."
+    },
+    {
+      "number": 87,
+      "heading": "EXT. ORKNEY PAPAY / ROAD - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "93 93 Halfway there the weather changes and the wind blows so heavily that the chain breaks. She lets out a loud curse and starts walking back."
+    },
+    {
+      "number": 88,
+      "heading": "INT. ORKNEY PAPAY / ROSE COTTAGE - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "94 94 In Rose Cottage she changes into pajamas, makes some noodles with butter, eats a banana. She checks social media on her laptop, sees her colleagues posting about a biology paper being published. She sees Lukas and boyfriend with a pregnant friend. She looks up Daynin’s instagram and sees pictu"
+    },
+    {
+      "number": 89,
+      "heading": "INT. LONDON / RONA AND DAYNINS FLAT - EVENING",
+      "characters": [
+        "DAYNIN",
+        "RONA"
+      ],
+      "dialogues": [
+        {
+          "character": "DAYNIN",
+          "parenthetical": "",
+          "text": "Says never again will he be able to trust her ."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Becomes mean, accusing him of just wanting to control her."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(CONT'D)",
+          "text": "Repeating in panic that she can’t live without him."
+        },
+        {
+          "character": "DAYNIN",
+          "parenthetical": "",
+          "text": "(while crying) saying that he can’t do this anymore."
+        }
+      ],
+      "actionPreview": "95 95 As a drunken memory: Rona walks up the stairs dripping wet and one shoe missing. But with more alcohol. Daynin can’t take it anymore. Daynin is crying on the bed. Rona next to him, drunk, still dripping wet and panicked. 58. Goldenrod Rev. (07/18/2022) 59."
+    },
+    {
+      "number": 90,
+      "heading": "INT/EXT. ORKNEY PAPAY / ROSE COTTAGE - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "96 96 Rona lies in bed, eyes wide open, her hand shaking. Tremors. Or is it the ocean? As her hand starts calming down, the sound of the tremors gets lower. It’s freezing cold. She puts more wood on the fire in the kitchen and gets under many blankets. The wood is empty. Covered in blankets she leav"
+    },
+    {
+      "number": 91,
+      "heading": "INT. LONDON / TREATMENT CENTER / ART ROOM - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "97 97 Amanda and JACK a second counsellor are leading the art therapy painting lesson. Rona is staring at the dog with the burning tail picture (half finished) on a table next to her. Saíd is drawing it. He smiles when he sees that she likes it. Rona is drawing a black and white scribble of a demon-"
+    },
+    {
+      "number": 92,
+      "heading": "INT. LONDON / TREATMENT CENTER - LATER",
+      "characters": [
+        "RITA",
+        "JACK",
+        "SAMIR",
+        "RONA",
+        "RONA AND GROUP MEMBERS",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Drew herself being pregnant and explains why her little baby boy is living with another family now until she gets sober."
+        },
+        {
+          "character": "JACK",
+          "parenthetical": "",
+          "text": "Asks everybody kindly to listen to"
+        },
+        {
+          "character": "SAMIR",
+          "parenthetical": "",
+          "text": "Gets angry because another participant is wearing a Jack"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Tries to deescalate and suggests they vote as a group."
+        },
+        {
+          "character": "RONA AND GROUP MEMBERS",
+          "parenthetical": "",
+          "text": "Cheer him up. Rona is sayin she will bring her heroin t-shirt tomorrow."
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "99"
+        }
+      ],
+      "actionPreview": "98 98 Everybody is supposed to say a few words about what they were painting. A thin young woman called RITA (34) is talking about her painting. It’s heartbreaking, but nobody is really listening. There is a parallel conversation going on in the room that is getting louder and louder. Rita. Daniels "
+    },
+    {
+      "number": 93,
+      "heading": "EXT. ORKNEY PAPAY / ELENAS CAR - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "100 100 Rona and Elena drive in Elena’s car and pass the little airport."
+    },
+    {
+      "number": 94,
+      "heading": "EXT. ORKNEY PAPAY / SHOP - DAY",
+      "characters": [
+        "ELENA"
+      ],
+      "dialogues": [
+        {
+          "character": "ELENA",
+          "parenthetical": "",
+          "text": "Our gas station."
+        }
+      ],
+      "actionPreview": "101 101 They stop next to a little shop. Rona takes in the absurd looking single fuel dispenser that Elena points at. A few farmers exit the shop and look curiously at Rona. She doesn’t seem comfortable with the attention."
+    },
+    {
+      "number": 95,
+      "heading": "INT. ORKNEY PAPAY / LOCAL SHOP - CONTINUOUS",
+      "characters": [
+        "ELENA",
+        "CALUM",
+        "RONA"
+      ],
+      "dialogues": [
+        {
+          "character": "ELENA",
+          "parenthetical": "",
+          "text": "Introduces the man who works behind the cashier in the shop as her brother Calum."
+        },
+        {
+          "character": "CALUM",
+          "parenthetical": "",
+          "text": "Is curious about Rona’s reason for spending a winter at Rose Cottage?"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Says she likes rough weather."
+        },
+        {
+          "character": "ELENA",
+          "parenthetical": "",
+          "text": "Tells him not to be so nosy."
+        },
+        {
+          "character": "CALUM",
+          "parenthetical": "",
+          "text": "Says he was the birdy man 40 years ago, spent three summers in Goury - before Rose Cottage was built. No running water and just an outhouse."
+        },
+        {
+          "character": "CALUM",
+          "parenthetical": "(CONT'D)",
+          "text": "You need anything else?"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "No thank you."
+        },
+        {
+          "character": "ELENA",
+          "parenthetical": "",
+          "text": "Wants to drive her back."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Prefers to walk."
+        }
+      ],
+      "actionPreview": "102 102 A stuffed little shop with everything one might need on white metal shelves. Calum (late 60´s) has a warmth to him, his face is marked with life. Rona buys things to fix the wheels of the bike, many big bottles of coke and lemonade, pasta and tobacco. Goldenrod Rev. (07/18/2022) 60. 61. But "
+    },
+    {
+      "number": 96,
+      "heading": "EXT. ORKNEY PAPAY / ROAD - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "103 103 Rona carries the heavy bottles in two plastic bags. She walks along the one road that goes over the island. She walks past the little airport. Elena passes by with her car and honks."
+    },
+    {
+      "number": 97,
+      "heading": "INT. ORKNEY PAPAY / ROSE COTTAGE - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "104 104 Rona is trying to meditate with an app, but can’t do it. Can’t concentrate. She inspects her body hair that is growing – but doesn’t cut it. She reads old bird books from the house, in the background we hear the Radio Orkney weather forecast warning about a gale coming up."
+    },
+    {
+      "number": 98,
+      "heading": "EXT. LONDON / RONA AND DAYNINS FLAT / BALCONY - MORNING",
+      "characters": [
+        "RONA",
+        "DAYNIN"
+      ],
+      "dialogues": [
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Complains about him taking pictures without asking."
+        },
+        {
+          "character": "DAYNIN",
+          "parenthetical": "",
+          "text": "Says that when she is unaware, she looks so incredibly sad, he just had to capture it."
+        }
+      ],
+      "actionPreview": "105 105 Morning. Rona sits on the lower balcony, smoking a cigarette. Hungover. Listening to the radio. A flash and the sound of a picture being taken. She startles, wasn’t aware that Daynin was photographing her from the upper balcony. 61. 62."
+    },
+    {
+      "number": 99,
+      "heading": "INT. LONDON / RONA AND DAYNINS FLAT - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "106 106 Rona comes home from work. In the kitchen, she takes out an apple and eats a bite. She enters the living room and realizes that the flat is weirdly empty. The TV is missing, just a mark on the wall where it had been. She runs upstairs to check the bedroom. Daynin has gone for good and with h"
+    },
+    {
+      "number": 100,
+      "heading": "INT. ORKNEY PAPAY / ROSE COTTAGE - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "107 107 A few hours later, Rona is still sitting at the same place. It has become dark now. There’s barely any light in her kitchen, just rain bursting against the window. She goes to the window and taps her fingers lightly against the glass as if repeating the rhythm of the rain."
+    },
+    {
+      "number": 101,
+      "heading": "EXT. ORKNEY PAPAY / ROSE COTTAGE - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "108 108 We see in a wide shot the little pink house and Rona at the window, tapping her fingers against the glass. 62. Goldenrod Rev. (07/18/2022) 63."
+    },
+    {
+      "number": 102,
+      "heading": "INT. LONDON / RONA AND DAYNINS FLAT - DAY/NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "109 109 MONTAGE - INTERCUT WITH ROSE COTTAGE - similar shots between the loneliness in both places: Rona’s apartment is a mess, the apple is rotted where it had landed. Rona lies on the floor of the living room, hears the tremors… in between bottles and cans, she whispers to Daynin - even though he "
+    },
+    {
+      "number": 103,
+      "heading": "EXT. LONDON / DAYNINS NEW HOUSE - DAY",
+      "characters": [
+        "RONA"
+      ],
+      "dialogues": [
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Yells Daynin’s name up the building, down the whole street – that she knows he lives there!!"
+        }
+      ],
+      "actionPreview": "110 110 As a drunken flash memory: Rona rings the bell of a house in London, but nobody opens. She rings like crazy. People shout out of their windows telling her to shut up. Finally, she sits down on the steps in front of his house. While drinking, she leaves messages on his voicemail that he is a "
+    },
+    {
+      "number": 104,
+      "heading": "EXT. ORKNEY PAPAY / OLD GRAVEYARD BY TINY CHURCH - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "111 111 With her headphones, listening to music, Rona inspects an old graveyard next to a tiny old church. The graves are partly overgrown with algae and lichen."
+    },
+    {
+      "number": 105,
+      "heading": "EXT. ORKNEY PAPAY / KNAP OF HOWAR - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "112 112 She reaches an old stone settlement. She inspects the place, humans must have been tiny back then. The old door barely reaches Rona’s belly. She sits in front of the two entrances and smokes a cigarette. Calum combs by with a long stick and is combing the beach. Rona watches him for a little"
+    },
+    {
+      "number": 106,
+      "heading": "EXT. ORKNEY PAPAY / GLASSHOUSE AT NORTH HILL - MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "113 113 Rona continues her walk alone. Headphones on, listening to music. She passes a little glass house on a hill. Goldenrod Rev. (07/18/2022) 63. Goldenrod Rev. (07/18/2022) 64. Doesn’t pay attention to it."
+    },
+    {
+      "number": 107,
+      "heading": "EXT. ORKNEY PAPAY / NATURAL POOL NORTH - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "113A 113A She puts a foot in the water. It’s freezing. She puts her shoes back on and goes walking along the layered stone ground."
+    },
+    {
+      "number": 108,
+      "heading": "EXT. ORKNEY PAPAY / ROSE COTTAGE / SHED - DAY",
+      "characters": [
+        "YOUNG ANDREW",
+        "RONA"
+      ],
+      "dialogues": [
+        {
+          "character": "YOUNG ANDREW",
+          "parenthetical": "",
+          "text": "I love you, you hear me? You will always be my girl! Don’t listen to them. I’m not crazy. They just don’t have the power to understand it all. Don’t you ever believe what they say!"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(V.O.)",
+          "text": "The original Beaufort scale didn’t give wind speed in miles per hour but, rather, in terms of its effects on sailing ships, from ‘just sufficient to give steerage’ to ‘that which no canvas sails could withstand’."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(V.O.)",
+          "text": "In 1952 there were winds in Orkney so strong they blew away hen houses, killing 70,000 chickens and effectively ending the islands’ poultry industry. An account of the storm Samir ‘tethered cows had been flying in the air like kites’. At primary school, on the windiest days, the smallest children are not allowed outside at playtimes."
+        }
+      ],
+      "actionPreview": "114 114 Back at Rose Cottage, she puts the big wood pieces in the shed to dry. She takes the wood that is already dried and uses a saw to cut it into small pieces for the fire. She looks very clumsy, is sweating and cursing. EXT/INT. ORKNEY PAPAY / ROSE COTTAGE - DUSK 115 115 It’s getting dark. The "
+    },
+    {
+      "number": 109,
+      "heading": "INT. ORKNEY PAPAY / ROSE COTTAGE - DARK WINTER DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "116 116 Rona in Rose Cottage, puts the doll on her desk and sorts a few seaweed examples that she took from the beach."
+    },
+    {
+      "number": 110,
+      "heading": "EXT. ORKNEY PAPAY / SHORE WITH SEALS - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "116A 116A Rona sits at the shore watching a group of seals near an old mill. Goldenrod Rev. (07/18/2022) 65. 66. A group of people come walking by. A mix of conservative Orcadians and eccentric South folk. One lady has blue hair, another one has very colourful clothes on. One of them is Elena. She i"
+    },
+    {
+      "number": 111,
+      "heading": "EXT. ORKNEY PAPAY / SHORE AT GREAT AUK STATUE - DAY",
+      "characters": [
+        "RONA"
+      ],
+      "dialogues": [
+        {
+          "character": "RONA",
+          "parenthetical": "(V.O.)",
+          "text": "All things come from the ocean and the ocean takes them back, and eventually - one day - they might come back again to the land."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(V.O.)",
+          "text": "Telling the stories about locals from different Orkney islands and their finds, naming the people and the islands."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(V.O.)",
+          "text": "There are shipwrecks scattered around the coast of Orkney. The natural harbour at Scapa Flow was the UK naval base in the world wars. Scuba divers from around the world come to dive on the wrecks of the scuttled German fleet."
+        }
+      ],
+      "actionPreview": "117 117 Rona walks along the shore. Again. Her daily routine. As always, her headphones are on her head, she listens to electronic music walking very carefully as she cannot see far. She passes a statue that commemorates the killing of the last great Auk. Near a steep geo Rona comes to a halt. She l"
+    },
+    {
+      "number": 112,
+      "heading": "INT. ORKNEY PAPAY / COMMUNITY HALL - NIGHT",
+      "characters": [
+        "CALUM",
+        "RONA",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "CALUM",
+          "parenthetical": "",
+          "text": "Asks Rona for a dance."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Saying she doesn’t know the steps."
+        },
+        {
+          "character": "CALUM",
+          "parenthetical": "",
+          "text": "Knows that everybody learns the steps in school."
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "119"
+        }
+      ],
+      "actionPreview": "118 118 In the middle of “the Muckle Supper” – a local Papay dance event in late November. It seems like the whole island is there. There is food served, tables are being moved. The local band “The Poor Man’s Corner” is playing traditional Orkney music. Susie, the lady with blue hair from the Walkin"
+    },
+    {
+      "number": 113,
+      "heading": "EXT. ORKNEY PAPAY / COMMUNITY HALL - NIGHT",
+      "characters": [
+        "CALUM",
+        "RONA"
+      ],
+      "dialogues": [
+        {
+          "character": "CALUM",
+          "parenthetical": "",
+          "text": "How long have you been sober?"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "63 days."
+        },
+        {
+          "character": "CALUM",
+          "parenthetical": "",
+          "text": "14 years, 6 months and… (now he needs a moment) 17 days."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "How is it going?"
+        },
+        {
+          "character": "CALUM",
+          "parenthetical": "",
+          "text": "Like they say. Minute by minute."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "(after a moment)"
+        },
+        {
+          "character": "CALUM",
+          "parenthetical": "",
+          "text": "It´s not easy, but it does get less hard. The rest depends on you."
+        }
+      ],
+      "actionPreview": "120 120 Rona smokes a cigarette outside the community hall. Calum joins her. Rona is a bit surprised. He smiles. Day by day. Year by year. Rona thinks on that. Does it get any easier? 68. Goldenrod Rev. (07/18/2022) 69. Rona smiles at Calum - without much confidence."
+    },
+    {
+      "number": 114,
+      "heading": "INT. ORKNEY PAPAY / ROSE COTTAGE - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "121 121 Rona googles Daynin. She sees his picture as a junior executive of a financing company. He looks energetic and successful. The person he always wanted to be. Sadness on her face. She drinks her coke and smokes. Then she goes to his contact page and types a message to him, saying that she jus"
+    },
+    {
+      "number": 115,
+      "heading": "INT/EXT. LONDON / TAXI - DUSK",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "122 122 Rona is in a taxi, very drunk. When it stops, she runs off and hides behind a corner."
+    },
+    {
+      "number": 116,
+      "heading": "INT. LONDON / GLORIA’S FLAT - NIGHT",
+      "characters": [
+        "RONA",
+        "GLORIA"
+      ],
+      "dialogues": [
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Cries that Daynin is gone. That she only wants to see him once, you cannot delete somebody just like this and disappear without getting in touch at all."
+        },
+        {
+          "character": "GLORIA",
+          "parenthetical": "",
+          "text": "Tries to calm her down."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Begs for any information. She must know SOMETHING about him."
+        },
+        {
+          "character": "GLORIA",
+          "parenthetical": "",
+          "text": "Is running out of patience, saying that Rona needs to move on and concentrate on herself! Last time she was stalking him. She has to face reality - he has a new life now. She should get one too."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Becomes super mean to Gloria and accuses her of being a liar and a bad friend, and always on his side."
+        }
+      ],
+      "actionPreview": "123 123 In the middle of an art event, Lukas is in front of a bunch of people, doing a poetry reading. Gloria is hosting, there is a nice buffet with lots of drinks set up in a airy loft flat. Rona yells loud comments complimenting Lukas. They’re all nice things that she’s saying, but people are get"
+    },
+    {
+      "number": 117,
+      "heading": "INT. ORKNEY PAPAY / ROSE COTTAGE - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "124 124 Rona is eating warm porridge in front of Saíd’s drawing. She is stretching and warming up her body while listening to loud energizing rap."
+    },
+    {
+      "number": 118,
+      "heading": "EXT. ORKNEY PAPAY / SEA - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "125 125 Rona’s legs are slowly entering the cold sea. Goose bumps. The weather is harsh and windy. Nobody in sight anywhere. She swears in a low voice, each step forward is an extreme achievement in overcoming her personal limits. She scratches her feet and calves, blood enters the ocean. This time "
+    },
+    {
+      "number": 119,
+      "heading": "EXT. ORKNEY PAPAY / SHORE - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "126 126 Rona runs out of the ocean, getting to the shore as quickly as she can. Buff Rev. (mm/dd/yy) 70. 71. She dries her wet body with a towel and gets dressed as quickly as she possibly can to escape the wind."
+    },
+    {
+      "number": 120,
+      "heading": "INT. ORKNEY PAPAY / LOCAL SHOP - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "127 127 With wet hair, red skin and a huge frantic smile on her face, she buys groceries in the shop."
+    },
+    {
+      "number": 121,
+      "heading": "INT. ORKNEY PAPAY / ROSE COTTAGE - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "128 128 Rona takes a hot shower and cleans everything up."
+    },
+    {
+      "number": 122,
+      "heading": "INT. ORKNEY PAPAY / ROSE COTTAGE - DAY",
+      "characters": [
+        "ANDREW",
+        "RONA",
+        "ANNIE"
+      ],
+      "dialogues": [
+        {
+          "character": "ANDREW",
+          "parenthetical": "(O.S.)",
+          "text": "Talks about what got broken at the farm and that she was right:"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Dad?"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(CONT'D)",
+          "text": "(alerted)"
+        },
+        {
+          "character": "ANDREW",
+          "parenthetical": "(O.S.)",
+          "text": "Says that he can’t bother with this now, much greater things are waiting. She will see."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Dad, you are getting high. You have to be careful please."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(CONT'D)",
+          "text": "Fuck."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(CONT'D)",
+          "text": "Tells ANNIE that dad is getting high, if she can go and take a look. Offers that she can come over to look after him."
+        },
+        {
+          "character": "ANNIE",
+          "parenthetical": "(O.S.)",
+          "text": "Tries to calm Rona down. She will go and look for him tomorrow. There is nothing that Rona can do right now."
+        }
+      ],
+      "actionPreview": "129 129 Rona bakes bread while speaking on the phone (video call) with her dad. His voice feels frantic. He looks disheveled. There is loud music in the background. She asks him to lower it, so she can hear him better. He doesn’t lower the music, instead he just talks louder and in high speed. We se"
+    },
+    {
+      "number": 123,
+      "heading": "EXT. ORKNEY PAPAY / ROSE COTTAGE - NIGHT",
+      "characters": [
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "130"
+        }
+      ],
+      "actionPreview": "129A 129A Rona stands outside Rose Cottage and watches the night sky with millions of stars. 130"
+    },
+    {
+      "number": 124,
+      "heading": "INT. LONDON / TREATMENT CENTER - DAY",
+      "characters": [
+        "AMANDA",
+        "RONA"
+      ],
+      "dialogues": [
+        {
+          "character": "AMANDA",
+          "parenthetical": "",
+          "text": "Says that Saíd passed away last night, they got the news this morning. He overdosed from a fatal drug cocktail."
+        },
+        {
+          "character": "AMANDA",
+          "parenthetical": "(CONT'D)",
+          "text": "Says a blessing and comforting words."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "(when it is her turn)"
+        }
+      ],
+      "actionPreview": "131 131 It’s the last day of group therapy for Rona, Samir and the two other participants that started with them. Before the ceremony, Amanda takes Rona away from the group. She doesn’t want to announce that in front of everybody, but she feels like Rona should know that. Rona is in shock. Goldenrod"
+    },
+    {
+      "number": 125,
+      "heading": "EXT. LONDON / CANAL - CONTINUOUS",
+      "characters": [
+        "RONA",
+        "ANNIE"
+      ],
+      "dialogues": [
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Says she was thinking about coming up to Orkney – just for a few days."
+        },
+        {
+          "character": "ANNIE",
+          "parenthetical": "",
+          "text": "Of course. Is everything ok?"
+        },
+        {
+          "character": "ANNIE",
+          "parenthetical": "(CONT'D)",
+          "text": "Rona?"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "All good, mum. I just need some fresh air."
+        }
+      ],
+      "actionPreview": "133 133 With the drawing in her hand, she walks along the canal. She sees kids playing, everything seems bright and clear. The sound of the water, the birdsong. Everything weirdly sharp and crisp. She calls ANNIE, saying that she is 90 days sober today. She tries to sound happy, but can hardly hide "
+    },
+    {
+      "number": 126,
+      "heading": "INT. LONDON / MOVING TRAIN - DAY",
+      "characters": [
+        "RONA"
+      ],
+      "dialogues": [
+        {
+          "character": "RONA",
+          "parenthetical": "(V.O.)",
+          "text": "The past follows us. Energy never expires."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(V.O.)",
+          "text": "The energy of waves, carried across the ocean, changes into noise and heat and vibrations that are absorbed into the land and passed through the generations."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(V.O.)",
+          "text": "The Marine Traffic and Flight Radar websites show, in real time, the paths of all vessels at sea and all commercial aircraft in the sky. A light that moves above the cottage is a Lufthansa flight from Los"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(V.O.)",
+          "text": "Asteroids are monitored if they come too close to Earth. Currently 25 asteroids are at risk of coming close to Earth, but none of them is a real threat."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(V.O.) (CONT'D)",
+          "text": "75."
+        }
+      ],
+      "actionPreview": "134 134 Rona in the train towards Orkney. Headphones on. She stares through the window as the landscape starts to change. All her dreams broken. She closes her eyes, the music disappears - we hear the tremors getting louder and more aggressive. NERD LAYER / MANIC DEPRESSION N12 N12 We see little Ron"
+    },
+    {
+      "number": 127,
+      "heading": "EXT. ORKNEY PAPAY / ROSE COTTAGE - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "135 135 Rona stands alone outside Rose Cottage – smoking a cigarette and watching the night sky. She is freezing despite her warm jacket. The sky is bright, so full of stars. One of them moving. It’s the ISS. When we take a closer look we can see she is crying."
+    },
+    {
+      "number": 128,
+      "heading": "INT. ORKNEY PAPAY / CHURCH - DAY",
+      "characters": [
+        "RONA"
+      ],
+      "dialogues": [
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "(in marine terms, as if talking to a crew on a ship)"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(V.O.) (CONT'D)",
+          "text": "75."
+        }
+      ],
+      "actionPreview": "136 136 Rona joins a Wednesday Coffee Morning. Lots of Papay locals are eating homebakes and drinking tea and coffee. Lively chatter all around her. Rona is sitting and being a part of the group - still a bit shy, but she allows herself to engage in conversations. EXT/INT. ORKNEY PAPAY / NORTH HILL "
+    },
+    {
+      "number": 129,
+      "heading": "INT. ORKNEY PAPAY / ROSE COTTAGE - NIGHT",
+      "characters": [
+        "RONA",
+        "ANDREW"
+      ],
+      "dialogues": [
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Dad?"
+        },
+        {
+          "character": "ANDREW",
+          "parenthetical": "",
+          "text": "Says that they are keeping him there without his consent. That she needs to get him out immediately."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Says she is not sure if she can do that, because they have to keep him there until he is better. Like last time."
+        },
+        {
+          "character": "ANDREW",
+          "parenthetical": "",
+          "text": "Start accusing Rona of having called the police!"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "(distressed)"
+        },
+        {
+          "character": "ANDREW",
+          "parenthetical": "",
+          "text": "Gets mad, that she is lying and that everybody is teaming up against him, to keep him locked away."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "That´s not true, dad! Why would we?"
+        },
+        {
+          "character": "ANDREW",
+          "parenthetical": "",
+          "text": "I went for a climb and I knew what I was doing. You are only trying to control me! All of you are! And you are on their side."
+        }
+      ],
+      "actionPreview": "137 137 Rona works very concentrated on a biology paper about seaweed. Everything is full of notes and sketches. When one cigarette is about to die, she lights the second one with the first. Her phone rings. She stops working, not sure who is calling at that time of the night. It´s her dad, calling "
+    },
+    {
+      "number": 130,
+      "heading": "EXT. ORKNEY PAPAY / SHORE - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "138 138 Rona walks on the shore. No more headphones. She walks fast, breathes heavily. Suddenly she stops and bends over. The wood falls down. Her hand starts shaking, she closes her eyes and breathes deeply. She hears the tremors are even louder and heavier than before. She sits on the ground, puts"
+    },
+    {
+      "number": 131,
+      "heading": "INT. LONDON / RANDOM FLAT 1",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "139 139 We see glimpses, drunken memory flashes, rather than scenes: She is stripping for a couple in their apartment, so drunk that she almost passes out. They are laughing about it."
+    },
+    {
+      "number": 132,
+      "heading": "EXT. ORKNEY PAPAY / SHORE - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "140 140 Rona is still at the shore on her knees and slowly gets up."
+    },
+    {
+      "number": 133,
+      "heading": "INT. LONDON / RANDOM FLAT 2 - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "141 141 Rona is having sex with a random guy, one of Daynin´s work colleagues from the Fancy Club Bar. She is so drunk, her head is being knocked against the wall while the guy is having sex with her. She barely realizes."
+    },
+    {
+      "number": 134,
+      "heading": "EXT. LONDON / RANDOM FLAT 3 - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "142 142 Rona is sleeping fully dressed on the dirty floor outside an unknown door, next to a staircase."
+    },
+    {
+      "number": 135,
+      "heading": "EXT. ORKNEY PAPAY / SHORE - DAY",
+      "characters": [
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "144"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "145"
+        }
+      ],
+      "actionPreview": "143 143 Rona is at the waterside now, putting cold water on her face. 144 145"
+    },
+    {
+      "number": 136,
+      "heading": "INT. LONDON / NIGHT CLUB - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "146 146 We see a flash of Rona stumbling through a crowded dance floor. Falling on the ground between all the people. Goldenrod Rev. (07/18/2022) 77. (MORE) Goldenrod Rev. (07/18/2022) 78."
+    },
+    {
+      "number": 137,
+      "heading": "INT. ORKNEY PAPAY / ROSE COTTAGE - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "147 147 Rona falls into the bed. An exorcism is ending."
+    },
+    {
+      "number": 138,
+      "heading": "INT. ORKNEY PAPAY / ROSE COTTAGE - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "148 148 Much calmer now, Rona is printing out her biology paper and starts correcting it."
+    },
+    {
+      "number": 139,
+      "heading": "EXT. ORKNEY PAPAY / AIRPORT - DAY",
+      "characters": [
+        "ANNIE",
+        "RONA"
+      ],
+      "dialogues": [
+        {
+          "character": "ANNIE",
+          "parenthetical": "",
+          "text": "Likes the bread."
+        },
+        {
+          "character": "ANNIE",
+          "parenthetical": "(CONT'D)",
+          "text": "How much longer does Rona plan to stay?"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Until spring maybe."
+        }
+      ],
+      "actionPreview": "149 149 A little plane is landing on the one lane of the airport. A few people get off, one of them is ANNIE. Rona waits for her at the gate. EXT/INT. ORKNEY PAPAY / ROSE COTTAGE / KITCHEN - DAY 150 150 Annie and Rona eat freshly baked bread with jam. The little china doll is sitting on one of the s"
+    },
+    {
+      "number": 140,
+      "heading": "INT. ORKNEY PAPAY / ROSE COTTAGE - DAY",
+      "characters": [
+        "RONA",
+        "ANNIE"
+      ],
+      "dialogues": [
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Asks if mum knew that seaweed can change the world? Cows fed with seaweed produce less methane emissions."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(CONT'D)",
+          "text": "Goldenrod Rev. (07/18/2022) 79."
+        },
+        {
+          "character": "ANNIE",
+          "parenthetical": "",
+          "text": "Says she doesn’t really know much about seaweed."
+        }
+      ],
+      "actionPreview": "150A 150A ANNIE takes in all the paper and scribbles about seaweed. (MORE) Goldenrod Rev. (07/18/2022) 78. It grows much faster than onshore plants, requires no fresh water no fertilizers and can be used as a soil fertilizer and for absorbing carbon. ANNIE takes in her daughter, realizes that some s"
+    },
+    {
+      "number": 141,
+      "heading": "EXT. ORKNEY PAPAY / SHORE - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "151 151 Rona and Annie are walking along the shore, they find a dead bird. Everything full of seaweed around them."
+    },
+    {
+      "number": 142,
+      "heading": "EXT. ORKNEY PAPAY / NEAR KNAP OF HOWAR - DAY",
+      "characters": [
+        "ANNIE",
+        "RONA"
+      ],
+      "dialogues": [
+        {
+          "character": "ANNIE",
+          "parenthetical": "",
+          "text": "Says that Andrew is being released next week and coming back home. He has seen a psychiatrist and seems to be doing better."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Wants to know where he will be living."
+        },
+        {
+          "character": "ANNIE",
+          "parenthetical": "",
+          "text": "Back on the farm. You know him. He doesn’t want to be anywhere else."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "I can come to the mainland and help. Do groceries for him maybe."
+        },
+        {
+          "character": "ANNIE",
+          "parenthetical": "",
+          "text": "Try not to worry too much. He´s been there many times before. You need to concentrate on yourself,"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(CONT'D)",
+          "text": "Goldenrod Rev. (07/18/2022) 79."
+        },
+        {
+          "character": "ANNIE",
+          "parenthetical": "(CONT'D)",
+          "text": "I had to do the same, you know."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Says that she blamed religion as the reason for the divorce."
+        },
+        {
+          "character": "ANNIE",
+          "parenthetical": "",
+          "text": "It’s more complicated than that."
+        }
+      ],
+      "actionPreview": "152 152 Rona and Annie walk past the Knap of Howar. Annie sees that Rona is worried. Rona. Says that dad has dealt with this his whole life. You know that. And that she has to move on to make sure she gets better. Rona doesn’t know what to respond. Goldenrod Rev. (07/18/2022) 80. The atmosphere betw"
+    },
+    {
+      "number": 143,
+      "heading": "EXT. ORKNEY PAPAY / WHITE BEACH - CONTINUOUS",
+      "characters": [
+        "RONA",
+        "ANNIE"
+      ],
+      "dialogues": [
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "It must have been so hard for you, when Dad was ill when I was little, looking after me and the farm by yourself."
+        },
+        {
+          "character": "ANNIE",
+          "parenthetical": "",
+          "text": "He was away for months at a time, those winters..."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(V.O.)",
+          "text": "The physical laws of the ‘shoaling process’ explain how waves increase in height, then break as they reach shallower water near the shore."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(V.O.)",
+          "text": "I know about the power of wind and water, of erosion and corrosion. I grew up with it. Massive metal octagons used for renewable energy are being effortlessly broken by the sea. Thrown against the shore."
+        }
+      ],
+      "actionPreview": "153 153 Rona and Annie are coming too a magical beach with white sand. But God helped me through it. That was when he finally got through to me. That was when I found him. Rona looks at her Annie for a moment. This time she just lets her be. No judgement anymore. NERD LAYER / THE SHOALING PROCESS N1"
+    },
+    {
+      "number": 144,
+      "heading": "EXT. ORKNEY PAPAY / ROSE COTTAGE - NIGHT",
+      "characters": [
+        "RONA"
+      ],
+      "dialogues": [
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Lets out a loud “Bloody Hell”."
+        }
+      ],
+      "actionPreview": "154 154 It’s dark at Rose Cottage. Rona, wearing a beanie and gloves, puts a chair outside the cottage, and sets up a thermos with hot tea and several layers of blankets. She looks like she might be going to an open air movie. And then she watches the sky: it’s a magical night of shooting stars and "
+    },
+    {
+      "number": 145,
+      "heading": "EXT. ORKNEY PAPAY - DAY",
+      "characters": [
+        "ELENA"
+      ],
+      "dialogues": [
+        {
+          "character": "ELENA",
+          "parenthetical": "",
+          "text": "Tells Rona about her torch collection: she has 75 different torches at home."
+        }
+      ],
+      "actionPreview": "155 155 Rona walks with the Papay Walking Committee around the island. The whole group waves at every car that passes. Since it’s so windy they have to almost yell to understand each other. They point out Fair Isle to Rona, saying that on very clear days you can see it, but not today. WALKING COMMIT"
+    },
+    {
+      "number": 146,
+      "heading": "EXT. ORKNEY PAPAY - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "156 156 They walk for hours and when it’s dark we still see them walking with a few torches in a wide shot."
+    },
+    {
+      "number": 147,
+      "heading": "EXT. ORKNEY PAPAY / AIRPORT - DAY",
+      "characters": [
+        "ELENA",
+        "RONA"
+      ],
+      "dialogues": [
+        {
+          "character": "ELENA",
+          "parenthetical": "",
+          "text": "Wishes her Merry Christmas!"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Thanks but prefers to join them another day."
+        }
+      ],
+      "actionPreview": "157 157 On a foggy day, Rona heads to the airport with just a small backpack. But both the flight and the ferry are cancelled due to fog. No traveling to the mainland today. She invites her to come join her family dinner."
+    },
+    {
+      "number": 148,
+      "heading": "INT. ORKNEY PAPAY / ROSE COTTAGE - EVENING",
+      "characters": [
+        "RONA"
+      ],
+      "dialogues": [
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Starts talking to herself as if she were discussing cocktails with the bartender, but refusing to drink them because of the quality of ingredients. She is full of expert knowledge and seriously engaged in the conversation while in reality she is just drinking coke."
+        }
+      ],
+      "actionPreview": "158 158 Instead she “celebrates” by herself in Rose Cottage. Loud music on, she cooks fish."
+    },
+    {
+      "number": 149,
+      "heading": "INT. ORKNEY PAPAY / ROSE COTTAGE - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "159 159 Rona raves to electronic music by herself in her cottage. Out of breath, she chills in bed and watches old TV comedy on her laptop (Father Ted Christmas Special) laughing out loud at the silly humor. 82. 83."
+    },
+    {
+      "number": 150,
+      "heading": "INT. ORKNEY PAPAY / HOSTEL - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "160 160 A local meeting in the hostel. The island is getting ready for the big annual art event, the Papay Gyro Nights. An international art festival, held in the middle of winter. As they do every year, pretty much everyone on Papay is involved with some sort of work for the festival. One artist is"
+    },
+    {
+      "number": 151,
+      "heading": "INT. ORKNEY PAPAY / ROSE COTTAGE - DAY",
+      "characters": [
+        "GLORIA",
+        "RONA"
+      ],
+      "dialogues": [
+        {
+          "character": "GLORIA",
+          "parenthetical": "",
+          "text": "Wants to know how Rona is doing."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Tells her a bit about her life alone on the island."
+        },
+        {
+          "character": "GLORIA",
+          "parenthetical": "",
+          "text": "Wants to know if Rona is really doing ok?"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "(nods) she is probably better than she has been for a very long time."
+        },
+        {
+          "character": "GLORIA",
+          "parenthetical": "",
+          "text": "What happened?"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Tells that he climbed the church in"
+        },
+        {
+          "character": "GLORIA",
+          "parenthetical": "",
+          "text": "Will he be ok?"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Yeah, he is back on the farm. Says that he’ll probably have a depression soon. It’s the cycle."
+        },
+        {
+          "character": "GLORIA",
+          "parenthetical": "",
+          "text": "I’m sorry."
+        }
+      ],
+      "actionPreview": "161 161 Rona is in front of her laptop. She has a video call with Gloria. They haven’t spoken in a long time. The atmosphere is awkward, but warm. She tells Gloria about her dad who was in hospital. Kirkwall and yelled at the people that god doesn´t exist. Both have to laugh about the absurdity of i"
+    },
+    {
+      "number": 152,
+      "heading": "EXT. ORKNEY PAPAY / GYRO NIGHTS / VARIOUS LOCATIONS - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "162 162 MONTAGE: Harbour. Artists and other guests arrive on Papay. They come from all over the globe. Street outside shop and hostel. The island starts to become alive, more people walking around or riding bikes than usual. Outside the school a dadaistic performance is being held. Three geese watch"
+    },
+    {
+      "number": 153,
+      "heading": "INT. ORKNEY PAPAY / ROSE COTTAGE - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "163 163 Rona sits in Rose Cottage, her finished essay in her hands. Proudly she puts it in a big envelope. Ready to send. Something outside catches her interest. With her binoculars she watches a young artist putting up some giant canvasses around an old farm building. The canvasses get blown over b"
+    },
+    {
+      "number": 154,
+      "heading": "EXT. ORKNEY PAPAY / HOLLAND FARM - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "164 164 To finish the festival, all guests and locals gather in front of the big Holland farm and walk as one large group to the shore, everyone with torches in their hands. A cleansing ritual with an archaic touch to it. Rona walks in silence, staring at the flame. Through the fire she makes eye co"
+    },
+    {
+      "number": 155,
+      "heading": "INT. ORKNEY PAPAY / ROSE COTTAGE - NIGHT",
+      "characters": [
+        "RONA",
+        "YOUNG ARTIST"
+      ],
+      "dialogues": [
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Talks about how the different uses of fire are fascinating to her. Has he ever thought about bonfires being a controlled form of chaos?"
+        },
+        {
+          "character": "YOUNG ARTIST",
+          "parenthetical": "",
+          "text": "Asks what she misses most from the outside world."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Nothing."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(V.O.)",
+          "text": "In the time of the Viking earls, hilltop fires were used as beacons to warn of enemies approaching. In the past they were lit on the days of Yule, Beltane, Johnsmas and"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "My body is a continent. My grinding jaws are the tectonic plates, my teeth the clouds and when I orgasm it is an earthquake."
+        }
+      ],
+      "actionPreview": "165 165 Rona makes a fire in her kitchen at Rose Cottage. The young artist is there with her, standing shy in the corner, smiling, freezing – not really knowing where to sit. Her place isn’t set up for two people, she fetches a second chair from the bedroom that she normally uses as a bookshelf. The"
+    },
+    {
+      "number": 156,
+      "heading": "EXT. ORKNEY PAPAY / HARBOUR - MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "166 166 Next morning. Rona waves at a ferry that is just departing. There is a warmth and a glow on her face that we haven’t seen for a long time."
+    },
+    {
+      "number": 157,
+      "heading": "EXT. ORKNEY PAPAY / DYKE BY AIRPORT - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "167 167 As she walks home alone, a hint of a smile is crossing her face. She passes the airport and stops at a dyke. She sits on the old stone wall, watching a little bird close to her. She takes a photo of the bird. Elena stops by with the post car and hands her a package."
+    },
+    {
+      "number": 158,
+      "heading": "INT. ORKNEY PAPAY / ROSE COTTAGE - DAY",
+      "characters": [
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "169"
+        }
+      ],
+      "actionPreview": "168 168 With the opened package next to her, Rona uses what was inside to dye her hair orange. She looks at herself in the mirror, now her hair has a vibrant orange color. 169"
+    },
+    {
+      "number": 159,
+      "heading": "EXT. ORKNEY PAPAY / GROATIE BUCKIE SHORE - DAY",
+      "characters": [
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "171"
+        }
+      ],
+      "actionPreview": "170 170 Uplifted, Rona with orange hair, goes for a walk along the shore. No more headphones. Just her and the ocean. She is looking for Groatie Buckies (little shells) at the beach. Something catches her attention. She picks up a bottle of Finnish vodka between the seaweed. There is a little left i"
+    },
+    {
+      "number": 160,
+      "heading": "INT. LONDON / PUB - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "172 172 Rona is hammered in the pub we saw at the very beginning, drinking the leftovers from strangers’s glasses and getting kicked out by the bouncer."
+    },
+    {
+      "number": 161,
+      "heading": "EXT. LONDON / STREET OUTSIDE PUB - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "173 173 She walks along the street outside the pub leaving Daynin another message, saying that she got lost on the way to his house. The car appears and the stranger offers to bring her to Daynin."
+    },
+    {
+      "number": 162,
+      "heading": "INT/EXT. LONDON / STRANGERS CAR - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "174 174 In the car she leaves another voicemail message, saying that a nice man is giving her a lift and that she is coming to his house now. She hangs up. The man stops the car near a quiet spot by the canal. He takes a heavy boot from the backseat and hits Rona hard on the head with it. She scream"
+    },
+    {
+      "number": 163,
+      "heading": "EXT. LONDON / PARK - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "175 175 The guy runs right behind her. He is faster and pulls her to the ground. He rips her tights while violently hitting her head. People who heard her screams come running over a bridge towards them. He lets go and runs to his car."
+    },
+    {
+      "number": 164,
+      "heading": "EXT. LONDON / PARK - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "176 176 Next thing Rona sees are the lights of an ambulance reflected on the grass. We hear that her phone is ringing."
+    },
+    {
+      "number": 165,
+      "heading": "INT. LONDON / HOSPITAL / INVESTIGATION ROOM - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "177 177 In the hospital they examine her and take pictures of her bruises. 87. 88."
+    },
+    {
+      "number": 166,
+      "heading": "INT. LONDON / HOSPITAL / HALLWAY - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "178 178 When she leaves the investigation room, Daynin is there. Rona is so happy to see him, he just looks worried."
+    },
+    {
+      "number": 167,
+      "heading": "EXT. LONDON / HOSPITAL - NIGHT",
+      "characters": [
+        "RONA",
+        "DAYNIN"
+      ],
+      "dialogues": [
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "She says that he straight up managed to ignore all her messages."
+        },
+        {
+          "character": "DAYNIN",
+          "parenthetical": "",
+          "text": "It’s been quite a challenge to be honest."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Jokes if she had known that it takes this to get to see him, she would have tried that sooner."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(CONT'D)",
+          "text": "Asks if he wants to go to the pub?"
+        },
+        {
+          "character": "DAYNIN",
+          "parenthetical": "",
+          "text": "Says he must leave."
+        }
+      ],
+      "actionPreview": "179 179 They go and smoke a cigarette together outside the hospital. It’s the first time that she’s seen him since he left. It’s super weird, but very familiar at the same time. For two years in a row. They laugh together in this horrible situation. It’s super awkward - but there’s almost a flirtati"
+    },
+    {
+      "number": 168,
+      "heading": "EXT. ORKNEY PAPAY / GROATIE BUCKIE SHORE - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "180 180 Rona is still sniffing the vodka bottle. All the temptations. All the time she managed to stay sober. Nobody would ever find out. 88. Goldenrod Rev. (07/18/2022) 89. She looks around. The weird seal is watching her again. And then she throws the bottle back again into the ocean. We swim with"
+    },
+    {
+      "number": 169,
+      "heading": "EXT. ORKNEY PAPAY / EDGE OF NORTH HILL - DAY",
+      "characters": [
+        "RONA"
+      ],
+      "dialogues": [
+        {
+          "character": "RONA",
+          "parenthetical": "(V.O.)",
+          "text": "Whatever the tremors are, they will always be part of me."
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "(V.O.)",
+          "text": "The edge is where I come from, the edge is my home."
+        }
+      ],
+      "actionPreview": "181 181 We see Rona climbing down to a plateau, looking at the sea, staring at massive waves and heavy wind. The ocean seems wilder than before. She starts lifting her arms and moving them slowly as if she were conducting the ocean. She moves her body more and more secure and faster, the waves and a"
+    },
+    {
+      "number": 170,
+      "heading": "INT/EXT. ORKNEY PAPAY / ROSE COTTAGE - DAY",
+      "characters": [
+        "ELENA",
+        "RONA"
+      ],
+      "dialogues": [
+        {
+          "character": "ELENA",
+          "parenthetical": "",
+          "text": "Asks if she needs any help?"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "Says she is fine."
+        },
+        {
+          "character": "ELENA",
+          "parenthetical": "",
+          "text": "Insists on taking the backpack"
+        },
+        {
+          "character": "RONA",
+          "parenthetical": "",
+          "text": "(smiles)"
+        },
+        {
+          "character": "ELENA",
+          "parenthetical": "",
+          "text": "Well, see you at the airport. Lucky me, I have shift today!"
+        }
+      ],
+      "actionPreview": "182 182 In Rose Cottage, Rona packs up her stuff. This time for good. Sunbeams shine through the dirty windows. Winter is over and she is leaving. She leaves a picture with pressed seaweed and puts it on a shelf. Then she puts her little compass next to it. Her gifts for the house and the people who"
+    },
+    {
+      "number": 171,
+      "heading": "EXT. ORKNEY PAPAY / ROSE COTTAGE - CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "183 183 Rona shuts the door of Rose Cottage and leaves the key in the hiding spot. Then she puts her forehead against the door. An intimate moment of saying goodbye to the house. She lights a cigarette and with that same flame, she burns the drawing. Sets him free. We see the embers flying in the wi"
+    },
+    {
+      "number": 172,
+      "heading": "EXT. ORKNEY PAPAY - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "184 184 While walking to the airfield with her big backpack, she suddenly hears the Crex-Crex of a corncrake. She stops cold, can’t believe it, hadn’t thought about that sound for a while. Suddenly a corncrake runs across the street from left to right, just in front of her. A mix of happiness, surpr"
+    }
+  ]
+}

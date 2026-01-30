@@ -1,0 +1,22 @@
+{
+  "slug": "defiance",
+  "title": "Defiance",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 28573,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b> </b><b>                                      DEFIANCE </b> <b> </b>                                     Written by Clayton Frohman & Edward Zwick <b> </b> <b> </b> <b>          FADE IN: </b> <b>          1 NEW YORK CITY - PARK AVENUE - NIGHT - 1982 1 </b>          A TAXI pulls over to a curb where an ELDERLY MAN waits with his MIDDLE-AGED SON in THE RAIN. <b>          MIDDLE-AGED SON </b>          (as they climb in) 23rd and Lex. The CABBIE grunts a reply. <b>          MIDDLE-AGED SON (CONT'",
+      "dialogue_count": 0,
+      "word_count": 28573
+    }
+  ]
+}

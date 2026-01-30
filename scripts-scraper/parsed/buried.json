@@ -1,0 +1,22 @@
+{
+  "slug": "buried",
+  "title": "Buried",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 19715,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                    BURIED </b> Written by Chris Sparling <b>                         FADE IN: </b> <b>          INT. UNKNOWN ROOM - NIGHT </b> Darkness. Silence. After a long beat, we hear movement, confined and contained. We then hear the sound of a man, PAUL CONROY, groaning, making confused attempts at words. We hear his movement; short, abrupt shifting, ending almost immediately with the sound of his body banging against wood. He screams, though it's clear from the sound",
+      "dialogue_count": 0,
+      "word_count": 19715
+    }
+  ]
+}

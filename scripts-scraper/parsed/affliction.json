@@ -1,0 +1,22 @@
+{
+  "slug": "affliction",
+  "title": "Affliction",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 17991,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "\"AFFLICTION\" Screenplay by Paul Schrader Based on a novel by Russell Banks <b>                                           1997 </b> <b>                                      SHOOTING DRAFT </b> <b> </b> <b>               CREDITS </b> Still-life tableaus. Lawford, N.H., a town of fifty buildings on a glacial ridge, neither mountain nor plateau. Developed as 1880's forestland, discarded in the Depression. Winter has set in. Halloween day. Snowy fields yield to overcast skies: oppressive, horizonless",
+      "dialogue_count": 0,
+      "word_count": 17991
+    }
+  ]
+}

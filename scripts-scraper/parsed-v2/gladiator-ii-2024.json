@@ -1,0 +1,5414 @@
+{
+  "slug": "gladiator-ii-2024",
+  "title": "Gladiator Ii",
+  "parsedWith": "v2",
+  "parsedAt": "2026-01-29T22:09:09.991Z",
+  "stats": {
+    "scenes": 146,
+    "dialogues": 741,
+    "characters": 45
+  },
+  "characters": [
+    {
+      "name": "LUCIUS",
+      "dialogueLines": 140,
+      "totalWords": 653
+    },
+    {
+      "name": "MACRINUS",
+      "dialogueLines": 136,
+      "totalWords": 739
+    },
+    {
+      "name": "LUCILLA",
+      "dialogueLines": 76,
+      "totalWords": 468
+    },
+    {
+      "name": "GETA",
+      "dialogueLines": 65,
+      "totalWords": 280
+    },
+    {
+      "name": "CARACALLA",
+      "dialogueLines": 59,
+      "totalWords": 262
+    },
+    {
+      "name": "ACACIUS",
+      "dialogueLines": 38,
+      "totalWords": 241
+    },
+    {
+      "name": "FORTUNA",
+      "dialogueLines": 30,
+      "totalWords": 234
+    },
+    {
+      "name": "RAVI",
+      "dialogueLines": 26,
+      "totalWords": 99
+    },
+    {
+      "name": "MASTER OF CEREMONIES",
+      "dialogueLines": 24,
+      "totalWords": 175
+    },
+    {
+      "name": "VIGGO",
+      "dialogueLines": 24,
+      "totalWords": 86
+    },
+    {
+      "name": "THRAEX",
+      "dialogueLines": 20,
+      "totalWords": 129
+    },
+    {
+      "name": "OMITTED",
+      "dialogueLines": 18,
+      "totalWords": 18
+    },
+    {
+      "name": "JUGURTHA",
+      "dialogueLines": 15,
+      "totalWords": 178
+    },
+    {
+      "name": "GRACCHUS",
+      "dialogueLines": 9,
+      "totalWords": 51
+    },
+    {
+      "name": "GENERAL TEGULA",
+      "dialogueLines": 6,
+      "totalWords": 29
+    },
+    {
+      "name": "QUAESTOR",
+      "dialogueLines": 5,
+      "totalWords": 32
+    },
+    {
+      "name": "DORSO",
+      "dialogueLines": 5,
+      "totalWords": 19
+    },
+    {
+      "name": "DARIUS",
+      "dialogueLines": 4,
+      "totalWords": 32
+    },
+    {
+      "name": "BRENNOS",
+      "dialogueLines": 4,
+      "totalWords": 19
+    },
+    {
+      "name": "SAME",
+      "dialogueLines": 3,
+      "totalWords": 3
+    },
+    {
+      "name": "HYACINTHIA",
+      "dialogueLines": 3,
+      "totalWords": 19
+    },
+    {
+      "name": "ARISHAT",
+      "dialogueLines": 2,
+      "totalWords": 24
+    },
+    {
+      "name": "BOSTAR",
+      "dialogueLines": 2,
+      "totalWords": 7
+    },
+    {
+      "name": "EXT.",
+      "dialogueLines": 2,
+      "totalWords": 6
+    },
+    {
+      "name": "LU CIUS",
+      "dialogueLines": 2,
+      "totalWords": 7
+    },
+    {
+      "name": "PHOEBUS",
+      "dialogueLines": 2,
+      "totalWords": 10
+    },
+    {
+      "name": "SENATORS",
+      "dialogueLines": 2,
+      "totalWords": 6
+    },
+    {
+      "name": "GLADIATORS",
+      "dialogueLines": 2,
+      "totalWords": 2
+    },
+    {
+      "name": "WARRIORS",
+      "dialogueLines": 1,
+      "totalWords": 4
+    },
+    {
+      "name": "BOY",
+      "dialogueLines": 1,
+      "totalWords": 6
+    },
+    {
+      "name": "CLARION HORNS",
+      "dialogueLines": 1,
+      "totalWords": 18
+    },
+    {
+      "name": "PRAETORIAN",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "GOVERNOR",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "V IGGO",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "INT.",
+      "dialogueLines": 1,
+      "totalWords": 7
+    },
+    {
+      "name": "VILLAGE BOYS",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "AFRICAE.",
+      "dialogueLines": 1,
+      "totalWords": 23
+    },
+    {
+      "name": "WHITE RHINO.",
+      "dialogueLines": 1,
+      "totalWords": 5
+    },
+    {
+      "name": "IN THE ROYAL SEATS",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "MAXIMUS",
+      "dialogueLines": 1,
+      "totalWords": 4
+    },
+    {
+      "name": "GLADIATORS AND CENTURIONS",
+      "dialogueLines": 1,
+      "totalWords": 8
+    },
+    {
+      "name": "AGEDILIOS",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "IMPERIAL BOX.",
+      "dialogueLines": 1,
+      "totalWords": 2
+    },
+    {
+      "name": "ON LUCIUS",
+      "dialogueLines": 1,
+      "totalWords": 10
+    },
+    {
+      "name": "ROAD.",
+      "dialogueLines": 1,
+      "totalWords": 2
+    }
+  ],
+  "scenes": [
+    {
+      "number": 1,
+      "heading": "EXT. SMALL HOLDING - NUMIDIA - DAWN",
+      "characters": [
+        "ARISHAT",
+        "LUCIUS"
+      ],
+      "dialogues": [
+        {
+          "character": "ARISHAT",
+          "parenthetical": "",
+          "text": "Be gentle. ARISHAT is standing in the doorway of a white washed farm house. She is dressed - somewhat oddly"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "I am being gentle. She is not being gentle with me."
+        },
+        {
+          "character": "ARISHAT",
+          "parenthetical": "",
+          "text": "Are they finally here?"
+        }
+      ],
+      "actionPreview": "A1 A1 A dusty small holding on the edge of a great walled town. LUCIUS is trying to get hold of a goat. It will not stay still for him. Every time he gets a hold of it, it manages to escape his grasp. It’s exasperating but Lucius has a smile on his face. - in military clothes. He grabs hold of the g"
+    },
+    {
+      "number": 2,
+      "heading": "EXT. NUMIDIA -- AFRICA NOVA (PRESENT DAY LIBYA) -- MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "1 AN ANCIENT CITY carved into a cliffside overlooking the sea. The city is sleeping; its lights are darkened. PINK SHOOTING SCRIPT (JUNE 17, 2024) 1."
+    },
+    {
+      "number": 3,
+      "heading": "EXT. CITY SQUARE.",
+      "characters": [
+        "JUGURTHA",
+        "WARRIORS"
+      ],
+      "dialogues": [
+        {
+          "character": "JUGURTHA",
+          "parenthetical": "",
+          "text": "Macurtam, Macurgam, Vihinam, we invoke you by your great names to come to our aid."
+        },
+        {
+          "character": "WARRIORS",
+          "parenthetical": "",
+          "text": "Let us bind them."
+        },
+        {
+          "character": "JUGURTHA",
+          "parenthetical": "",
+          "text": "Sophonisba... Gisco..."
+        }
+      ],
+      "actionPreview": "Close on a large bronze bowl with burning coals JUGURTHA, Tribal Leader of Numidia, conducts a sacred ritual, blessing the warriors before him before they go into battle. Each person throws a small piece of papyrus into the coals and it catches flame. The tribesmen kneel in prayer, heads bowed, thei"
+    },
+    {
+      "number": 4,
+      "heading": "EXT. BATTLEMENT -- MORNING",
+      "characters": [
+        "JUGURTHA",
+        "LUCIUS",
+        "BOY",
+        "BOSTAR",
+        "CLARION HORNS"
+      ],
+      "dialogues": [
+        {
+          "character": "JUGURTHA",
+          "parenthetical": "",
+          "text": "Mago. You did not make an offering to the gods."
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "I prefer to sacrifice a Roman."
+        },
+        {
+          "character": "BOY",
+          "parenthetical": "",
+          "text": "I see them! I see them!"
+        },
+        {
+          "character": "JUGURTHA",
+          "parenthetical": "",
+          "text": "(to Bostar)"
+        },
+        {
+          "character": "BOSTAR",
+          "parenthetical": "",
+          "text": "Light the Beacons..."
+        },
+        {
+          "character": "CLARION HORNS",
+          "parenthetical": "",
+          "text": "sound. LANTERNS are lit in the city below; they flicker messages in code from one rampart to another."
+        }
+      ],
+      "actionPreview": "2 2 Along the wall soldiers are waiting, taking off blankets, food wrapped in linen in baskets and water being distributed amongst them. LUCIUS sits as a lookout, keeping watch over a white-capped sea. A raven-haired young woman approaches; s he hands him an Armudu of strong tea and a crust of bread"
+    },
+    {
+      "number": 5,
+      "heading": "EXT. DECK ROMAN WARSHIP -- NUMIDIAN COAST -- MORNING",
+      "characters": [
+        "DARIUS",
+        "ACACIUS"
+      ],
+      "dialogues": [
+        {
+          "character": "DARIUS",
+          "parenthetical": "",
+          "text": "On our first approach, General -- shall we wait for the wind to drop? PINK SHOOTING SCRIPT"
+        },
+        {
+          "character": "ACACIUS",
+          "parenthetical": "",
+          "text": "No! The wind is behind us."
+        }
+      ],
+      "actionPreview": "3 3 The ROMAN Fleet advances. Catapults, torsion ballistes and scorpios, equestrians and standard bearers. A vast moving machine of war brought to life. Leading them is a Roman General: ACACI US, a fifty-year-old battle-scarred veteran and hero of the Empire. His second-in- command, DARIUS, approach"
+    },
+    {
+      "number": 6,
+      "heading": "EXT. NUMIDIAN STREET/CITY SQUARE/WALLS -- MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "4 4 Along the wall, they are preparing for battle. The city is in a state of alarm: old women and children have lined up in the street to go into shelters underground. Most are what we would today call Bedouin or Arab, but others are African or European."
+    },
+    {
+      "number": 7,
+      "heading": "EXT. DECK ROMAN WARSHIP -- NUMIDIAN COAST -- MORNING",
+      "characters": [
+        "DARIUS",
+        "ACACIUS"
+      ],
+      "dialogues": [
+        {
+          "character": "DARIUS",
+          "parenthetical": "",
+          "text": "Shall we send a fast boat to offer terms, General?"
+        },
+        {
+          "character": "ACACIUS",
+          "parenthetical": "",
+          "text": "I wo uld not accept the Emperors’ terms."
+        },
+        {
+          "character": "ACACIUS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DARIUS",
+          "parenthetical": "",
+          "text": "Yes sir."
+        }
+      ],
+      "actionPreview": "5 5 Eight thousand troops aboard fifty vessels are now hove to in the azure water about a mile offshore, all under the eye of General Acacius and his officers. Acacius studies the sea walls and the tide breaking against them. Why would they? Darius raises an eyebrow at Acacius’ remark. But Acacius r"
+    },
+    {
+      "number": 8,
+      "heading": "EXT. NUMIDIA -- SEA WALLS -- MORNING",
+      "characters": [
+        "LUCIUS"
+      ],
+      "dialogues": [
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "(to “himself” but others hear)"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "6 6 Lucius stands with his small company . He is the equivalent of an officer or a company commander. He gazes out at the vast Roman Fleet making its way towards them. Rome. The enslaver. The destroyer. They have no lands but the ones they’ve stolen. Wherever they go, they destroy and call it peace."
+    },
+    {
+      "number": 9,
+      "heading": "EXT. ROMAN WARSHIP -- NUMIDIAN COAST -- DAY",
+      "characters": [
+        "ACACIUS",
+        "DARIUS"
+      ],
+      "dialogues": [
+        {
+          "character": "ACACIUS",
+          "parenthetical": "",
+          "text": "(to himself) “The ballista is my fist; the catapult is my elbow.” PINK SHOOTING SCRIPT"
+        },
+        {
+          "character": "DARIUS",
+          "parenthetical": "",
+          "text": "(smiling,murmurs. A FIST)"
+        }
+      ],
+      "actionPreview": "7 7 DRUMS ROLL as Roman ships advance toward the sea walls of Numidia. BALLISTAS (giant bolt-firing crossbows mounted on wheels) and CATAPULTS are now adjusted for range and angle. Acacius recites Plautus’ words as the towers on the bows of the large ships are seen to be rising. (JUNE 17, 2024) 5. T"
+    },
+    {
+      "number": 10,
+      "heading": "EXT. NUMIDIA -- SEAWALL -- DAY",
+      "characters": [
+        "BOSTAR",
+        "JUGURTHA"
+      ],
+      "dialogues": [
+        {
+          "character": "BOSTAR",
+          "parenthetical": "",
+          "text": "(shouting, with arm raised)"
+        },
+        {
+          "character": "JUGURTHA",
+          "parenthetical": "",
+          "text": "(repeating in unison)"
+        }
+      ],
+      "actionPreview": "8 8 The archers crouch behind the crenels and embrasures built into the city walls, watching as the ships come in formation, 200 shields protecting them from a cloud of arrows that will descend from the Roman boats .. As Lucius has joined Bostar’s troops along the centre of the wall: Coming into ran"
+    },
+    {
+      "number": 11,
+      "heading": "EXT. ROMAN WARSHIPS -- NUMIDIAN COAST -- DAY",
+      "characters": [
+        "ACACIUS"
+      ],
+      "dialogues": [
+        {
+          "character": "ACACIUS",
+          "parenthetical": "",
+          "text": "(shouting)"
+        }
+      ],
+      "actionPreview": "9 9 The Roman ships now in range of the wall as the stern decks have Roman archers kneeling and poised to r elease eight thousand arrows from the larger vessels. Acacius can hear the voices and see the eyes of the archers on the wall gazing down at him. Then, finally he drops his own arm: Release at"
+    },
+    {
+      "number": 12,
+      "heading": "EXT. NUMIDIA -- SEAWALL-- SAME",
+      "characters": [
+        "JUGURTHA"
+      ],
+      "dialogues": [
+        {
+          "character": "JUGURTHA",
+          "parenthetical": "(O.S.)",
+          "text": "Release! PINK SHOOTING SCRIPT"
+        }
+      ],
+      "actionPreview": "10 10 (JUNE 17, 2024) 6. The order is released in a flash along the length of the thousand foot wall."
+    },
+    {
+      "number": 13,
+      "heading": "EXT. -- SAME",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "11 11 The Roman archers fire their arrows skyward -- and 8000 arrows rain down onto the city walls. Numidian marksmen draw and take aim at the Roman ships approaching the walls. Roman oarsmen now back paddle with the enormous oars holding the prow of the ships just off the wall"
+    },
+    {
+      "number": 14,
+      "heading": "INT. BELOW DECK -- SAME",
+      "characters": [
+        "EXT."
+      ],
+      "dialogues": [
+        {
+          "character": "EXT.",
+          "parenthetical": "",
+          "text": "-- SAME 12"
+        }
+      ],
+      "actionPreview": "11A 11A Roman oarsm en now back paddle with the enormous oars, holding the prow of the ships just off the wall as burning oil ignites the towers 12 The Roman towers are rising and falling in the swell of the tide as Jugurtha orders his archers to fire at will onto the Roman decks. Jugurtha watches a"
+    },
+    {
+      "number": 15,
+      "heading": "EXT. STERN.",
+      "characters": [
+        "ROMAN SHIP.",
+        "SAME",
+        "EXT."
+      ],
+      "dialogues": [
+        {
+          "character": "SAME",
+          "parenthetical": "",
+          "text": "13"
+        },
+        {
+          "character": "EXT.",
+          "parenthetical": "",
+          "text": "-- SAME 14"
+        }
+      ],
+      "actionPreview": "13 The Roman ballistas LAUNCH flaming barrels of oil that STRIKE at the heart of the city. They BURST upon impact, spraying a mist of flaming oil everywhere as THE ROMAN TROOPS on the towers now sprint across the bridge onto the wall. Others plant ladders and begin to scale them, risking their lives"
+    },
+    {
+      "number": 16,
+      "heading": "EXT. THE WALL -- DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "15 15 Lucius is standing to receive the Romans with Acacius leading them. As Acacius bulldozes forwa rd, in that moment, Lucius is stunned by his recognition of this man who is immediately engulfed in the melee and chaos as -- -- A Centurion charges Lucius, who decapitates him, sending him stumbling"
+    },
+    {
+      "number": 17,
+      "heading": "EXT. BELOW IN THE CITY -- DAY",
+      "characters": [
+        "ACACIUS",
+        "LUCIUS",
+        "LU CIUS"
+      ],
+      "dialogues": [
+        {
+          "character": "ACACIUS",
+          "parenthetical": "",
+          "text": "(shouting orders)"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "Arishat!"
+        },
+        {
+          "character": "LU CIUS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "16 16 Along the entire length of the wall Roman are crossing the battlements and are streaming down into the city, butchering the Numidians as they try to defend. Lucius searches the fray he catches a glimpse of Arishat, now with her sword in her position on the wall a hundred feet away . Below us, "
+    },
+    {
+      "number": 18,
+      "heading": "EXT. UNDERWATER -- DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "17 17 -- and as Lucius HITS the water - we GO TO BLACK."
+    },
+    {
+      "number": 19,
+      "heading": "EXT. VOLCANIC BEACH -- DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "17A 17A Lucius regains consciousness: he's lying in the water on a riverbank of bl ack sand and volcanic stone. The sky is grey; the river is swathed in mist. He struggles to his knees, then staggers out onto the shore. There are others on this beach, all walking toward a jetty along the shore. At f"
+    },
+    {
+      "number": 20,
+      "heading": "EXT. NUMIDIAN BEACH -- DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "18 18 The waves deliver Lucius ashore, facedown in the tide at the foot of the great Numidian city walls. The tide has retreated -- -- to show BODIES floating in the surf amidst the wreckage of Roman ships. This is the aftermath of the battle. He looks up -- -- to see ROMAN STANDARDS being raised ab"
+    },
+    {
+      "number": 21,
+      "heading": "EXT. BEACH -- DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "19 19 Two Roman Centurions arr est him. His beloved city is aflame above him."
+    },
+    {
+      "number": 22,
+      "heading": "EXT. OUTSIDE THE CITY WALLS -- EVENING",
+      "characters": [
+        "ACACIUS"
+      ],
+      "dialogues": [
+        {
+          "character": "ACACIUS",
+          "parenthetical": "",
+          "text": "I claim this city for the glory of"
+        },
+        {
+          "character": "ACACIUS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "20 20 BURIAL PITS have been dug in the desert beyond the city walls. A group of twenty Centurions are there. The crowd of mourners parts as Acacius appears. He walks past hundreds of bodies lying in the pits, prepared for burning, on one side, teenage Numidian soldiers, on the other, young Romans. T"
+    },
+    {
+      "number": 23,
+      "heading": "EXT. TOWN SQUARE -- DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "21 21 Lucius is made to kneel along with hundreds of other prisoners. A Centurion gestures him to come forward. Lucius refuses. Three soldiers descend on Lucius as a glowing brand comes from the fire -- Lucius struggles violently -- -- as the searing brand is pressed into the back of his neck. It re"
+    },
+    {
+      "number": 24,
+      "heading": "EXT. DECK LARGE CARGO BOAT -- DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "22 22 A misty morning alongside the city walls as the prisoners descend the stairs to a boat. Lucius is pressed into a line as they go into a cargo hold. He still in pain from the fresh brand at the back of his neck. At first he hangs back, but then he sees-- -- Jugurtha, being press-ganged below de"
+    },
+    {
+      "number": 25,
+      "heading": "INT. ROMAN GALLEY SHIP -- BELOWDECKS -- NIGHT/DAY",
+      "characters": [
+        "LUCIUS",
+        "JUGURTHA",
+        "LU CIUS"
+      ],
+      "dialogues": [
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "Jugurtha?"
+        },
+        {
+          "character": "JUGURTHA",
+          "parenthetical": "",
+          "text": "Hanno."
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "What damage have they done you..."
+        },
+        {
+          "character": "JUGURTHA",
+          "parenthetical": "",
+          "text": "Arishat..."
+        },
+        {
+          "character": "JUGURTHA",
+          "parenthetical": "",
+          "text": "(CONT’D) I am sorry, my son."
+        },
+        {
+          "character": "LU CIUS",
+          "parenthetical": "",
+          "text": "She died - under my watch."
+        },
+        {
+          "character": "JUGURTHA",
+          "parenthetical": "",
+          "text": "She died under their sword."
+        },
+        {
+          "character": "JUGURTHA",
+          "parenthetical": "",
+          "text": "(CONT’D) I have not long Hanno. This galley is sailing us toward something I cannot endure - I am ready to be taken into another place -"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "Stay here a while longer -"
+        },
+        {
+          "character": "JUGURTHA",
+          "parenthetical": "",
+          "text": "I remember well when you first were brought to us. A lonely child from the desert. Guileless. Afraid. You embraced all we taught you. You found Arishat’s love. Your soul seemed restored. But now - I have such fear as to what these Romans may make you. PINK SHOOTING SCRIPT"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "I know what I am. I knew who I fought for."
+        },
+        {
+          "character": "JUGURTHA",
+          "parenthetical": "",
+          "text": "When I go into battle, my ancestors battle beside me. When I die, their spirits meet me to the next world."
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "You think me alone?"
+        },
+        {
+          "character": "JUGURTHA",
+          "parenthetical": "",
+          "text": "I think you fa ce a struggle to protect that soul. I think what awaits you is a battle fiercer than you have ever had to fight."
+        }
+      ],
+      "actionPreview": "23/23A 23/23A Seasickness and heat are taking their toll as Lucius rides with the other prisoners. From the deck above us we hear the beating of the DRUM used to kee p the rowers in time. Lucius sits with his back to the wall, consumed with grief. He twists the ring on his finger. We study his face "
+    },
+    {
+      "number": 26,
+      "heading": "EXT. PORT OF OSTIA -- DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "24 24 The Roman galley ship arrives into Ostia."
+    },
+    {
+      "number": 27,
+      "heading": "EXT. VIA SACRA -- DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "25 25 Acacius leads a triumphal parade along Rome’s main street: the hero has returned to Rome. A worshipful crowd waves their oraria in tribute as he marches at the head of his legions toward the Imperial Palace in the distance."
+    },
+    {
+      "number": 28,
+      "heading": "EXT. IMPERIAL PALACE -- GRAND ENTRY -- DAY",
+      "characters": [
+        "ACACIUS",
+        "GETA",
+        "CARACALLA"
+      ],
+      "dialogues": [
+        {
+          "character": "ACACIUS",
+          "parenthetical": "",
+          "text": "Emperor Geta."
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "General Acacius."
+        },
+        {
+          "character": "ACACIUS",
+          "parenthetical": "",
+          "text": "(almost by rote) I have taken Numidia in your names, that your dominion may eclipse that of every Emperor that came before you."
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "Crown him with laurels, brother."
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "In honor of your conquest, there will be games in the Colosseum."
+        },
+        {
+          "character": "ACACIUS",
+          "parenthetical": "",
+          "text": "I require no games in my honor."
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "You are too modest, Acacius."
+        },
+        {
+          "character": "ACACIUS",
+          "parenthetical": "",
+          "text": "The glory is yours, not min e."
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "(is this a hidden threat?)"
+        },
+        {
+          "character": "ACACIUS",
+          "parenthetical": "",
+          "text": "Has Rome not enough mouths to feed?"
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "They can eat war!"
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "Your triumphs will be celebrated as a tribute to the greatness of the"
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "There must be games!"
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "There will be games."
+        }
+      ],
+      "actionPreview": "26 26 Gravely Acacius ascends the palace stair s, flanked by his Legati Legioni . Rome's patrician elite have assembled here to receive him. Children scatter petals on the stairs while others present flowers. A path is cleared as we reach the top of the stairs, -- -- revealing two fraternal twin Emp"
+    },
+    {
+      "number": 29,
+      "heading": "EXT. LUCILLA'S VILLA -- EVENING",
+      "characters": [
+        "PRAETORIAN"
+      ],
+      "dialogues": [
+        {
+          "character": "PRAETORIAN",
+          "parenthetical": "",
+          "text": "General."
+        }
+      ],
+      "actionPreview": "27 27 A small cavalcade canters up a gravel road to the gates of a secluded villa guarded by a company of the Emperors’ personal militia, the PRAETORIAN GUARDS. Some men are seated on campaign stools around a cooking fire -- they are there for the night. T hey are dressed in black and gold, in contr"
+    },
+    {
+      "number": 30,
+      "heading": "INT. LUCILLA’S VILLA -- COURTYARD -- EVENING",
+      "characters": [
+        "LUCILLA",
+        "ACACIUS"
+      ],
+      "dialogues": [
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "Thank the Gods that brought you back safe to me."
+        },
+        {
+          "character": "ACACIUS",
+          "parenthetical": "",
+          "text": "Thank the Army."
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "You’ve lost weight."
+        }
+      ],
+      "actionPreview": "28 28 We follow Acacius to a candlelit courtyard where a woman is kneeling at a reflecting pool, wearing a long hooded cape. She feeds two golden carp. Acacius pauses a moment: we see love in his eyes as he sees her again. Hearing Acacius’ footsteps, she rises and turns to face us -- it’s LUCILLA, M"
+    },
+    {
+      "number": 31,
+      "heading": "EXT. ANTIUM (ROMAN OUTSKIRTS) -- CITY STREET -- DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "29 29 Jugur tha sits atop a wagon. He winces, with his broken arm, with every lurch of the wagon. The spectators ooh and aah; some spit and throw stones. Now Lucius sees an arena coming into view --"
+    },
+    {
+      "number": 32,
+      "heading": "EXT. PROVINCIAL WOODEN ARENA -- UNDERCROFT -- DAY",
+      "characters": [
+        "LUCIUS",
+        "JUGURTHA"
+      ],
+      "dialogues": [
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "Stay with me."
+        },
+        {
+          "character": "JUGURTHA",
+          "parenthetical": "",
+          "text": "I’ve made my peace."
+        }
+      ],
+      "actionPreview": "30 30 -- as the procession enters the undercroft beneath a circular wooden structure. From above us we can hear the roar of the crowd. The other prisoners are prayin g to their gods. We are in the undercroft beneath the Arena stands. We can see the feet of the spectators through the platforms. Ahead"
+    },
+    {
+      "number": 33,
+      "heading": "INT. ARENA -- DAY",
+      "characters": [
+        "GOVERNOR",
+        "MACRINUS",
+        "QUAESTOR",
+        "MASTER OF CEREMONIES",
+        "FORTUNA",
+        "HYACINTHIA"
+      ],
+      "dialogues": [
+        {
+          "character": "GOVERNOR",
+          "parenthetical": "",
+          "text": "Remarkable."
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "I was told there would be prisoners of war today. Sol diers. Contests of skill."
+        },
+        {
+          "character": "QUAESTOR",
+          "parenthetical": "",
+          "text": "These are Numidian warriors,"
+        },
+        {
+          "character": "MASTER OF CEREMONIES",
+          "parenthetical": "(O.S.)",
+          "text": "...watch as he faces the fate of a conquered enemy of Rome: the"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "(musing)"
+        },
+        {
+          "character": "FORTUNA",
+          "parenthetical": "",
+          "text": "Look how he protects him."
+        },
+        {
+          "character": "HYACINTHIA",
+          "parenthetical": "",
+          "text": "That poor man -- ! PINK SHOOTING SCRIPT"
+        },
+        {
+          "character": "QUAESTOR",
+          "parenthetical": "",
+          "text": "Not a man, but a barbarian."
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "This one is interesting. Stop the fight. I will buy him."
+        }
+      ],
+      "actionPreview": "31 31 -- and we enter a wooden bullring-like structure, with the crowd sitting on high benches surrounding it. They eat and drink as they watch the show. The crowd murmurs, shouting insults as Lucius and Jugurtha are led into the Arena. He is in pain, but he remains serene. Other prisoners follow th"
+    },
+    {
+      "number": 34,
+      "heading": "EXT. MACRINUS’ ESTATE -- DUSK",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "32 32 Lucius, covered in blood and filth, rides in the back of a cattl e wagon. He holds the fletch of the arrow that ended Arishat’s life, it is still red with blood. We pass through a front gate and through the armament yards, where men are building the kind of war machines we saw in Numidia -- sc"
+    },
+    {
+      "number": 35,
+      "heading": "EXT. MACRINUS' ESTATE -- DUSK",
+      "characters": [
+        "VIGGO"
+      ],
+      "dialogues": [
+        {
+          "character": "VIGGO",
+          "parenthetical": "",
+          "text": "Septem! Octo! Novem! Decem!"
+        },
+        {
+          "character": "VIGGO",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "VIGGO",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "VIGGO",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "33 33 Through the bars of the wagon Lucius g limpses his destination -- a sprawling villa in the Roman style. The wagon pulls up outside a stone building beneath the great wall. Lucius descends with other prisoners. Lucius is led past a dozen GLADIATORS performing exercises in the courtyard. They ho"
+    },
+    {
+      "number": 36,
+      "heading": "INT. MACRINUS GLADITOR QUARTERS.",
+      "characters": [
+        "VIGGO",
+        "V IGGO"
+      ],
+      "dialogues": [
+        {
+          "character": "VIGGO",
+          "parenthetical": "",
+          "text": "If any of you have any ideas about escape from here, this is what happens when you’re caught."
+        },
+        {
+          "character": "VIGGO",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "V IGGO",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "DUSK 33A 33A Viggo leads Lucius with a guard along a stone corridor. They pass a man who is swabbing water along the corridor. Centho! He man turns to face him. His forehead has been branded with a large symbol that disfigures his face with a grotesque pucker. The mark of the fugitive."
+    },
+    {
+      "number": 37,
+      "heading": "INT. MACRINUS ESTATE.",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "DUSK 33B 33B They enter a large chamber where 30 GLADIATORS eat at a long table. Viggo leaves and Lucius sits down at the table. A bowl of food is placed before him by a slave boy. No one looks at him. The gladiators all eat in SILENCE... ...until one of the gladiators in back, BRENNOS, starts makin"
+    },
+    {
+      "number": 38,
+      "heading": "EXT. FIGHTING PLACE -- BLAZING SUNSHINE -- MORNING",
+      "characters": [
+        "MACRINUS",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "MACRINUS",
+          "parenthetical": "(SMILING)",
+          "text": "Do you speak Aramaic? Hebrew?"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "35"
+        }
+      ],
+      "actionPreview": "34 34 Lucius is led, to an area with walls 40 feet high and a corral at one end, where Macrinus is seated, shaded by silk canopies. He flicks with his fly-swatter as he notices them approaching with Lucius. The other fighters are sitting in the dust watching. Someone brings Macrinus a silver tray of"
+    },
+    {
+      "number": 39,
+      "heading": "INT. MACRINUS’ LIBRARY -- DAY",
+      "characters": [
+        "MACRINUS",
+        "LUCIUS"
+      ],
+      "dialogues": [
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "A strong jaw. Good arms. A better smell. Yes. He will do well."
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "Not for you."
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "(LAUGHING)",
+          "text": "You do not fight"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "The Roman army? Too much. The"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "General Acacius? The great warrior who took Numidia and your life."
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "36 36 Viggo leads Lucius into a cool darkened room, where Macrinus is already wai ting for them. Lucius takes in the library, its shelves laden with scrolls, papyrii and tablets: the sanctum of a well-read, self-taught man. Macrinus approaches and inspects what he has brought. Lucius stares at him h"
+    },
+    {
+      "number": 40,
+      "heading": "INT. IMPERIAL VILLA -- SAME",
+      "characters": [
+        "LUCILLA",
+        "GETA",
+        "CARACALLA"
+      ],
+      "dialogues": [
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "You would kiss the hand of your prisoner? PINK SHOOTING SCRIPT"
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "(straightening)"
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "A guest."
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "You’re guarded for your own protection and enjoy many privileges."
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "Why am I here?"
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "My brother and I have a proposal to make."
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "I"
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "I was the first out of the womb --"
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "I was the first to be conceived because I was the last out surely proving my rights."
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "First out is what matters."
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "Last out ... conceived first ..."
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "In your father’s time, an Emperor who lacked a son would adopt one as his heir. PINK SHOOTING SCRIPT"
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "What is it you want?"
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "To adopt us."
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "For which you would enjoy greater benefits and more freedom."
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "And now you have no children of your own. Your son died did he not?"
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "And you are past childbearing age."
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "Though not undesirable!"
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "You want the daughter of Marcus"
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "We have only days before the games begin."
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "General Acacius does not seek glory. Glory seeks him."
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "The people love you."
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "The moment a man loses his life it is no longer a game."
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "Or the greatest game of all. PINK SHOOTING SCRIPT"
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "Go freely, or go in chains."
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "I’ll take the chains."
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "Then chains it will be."
+        }
+      ],
+      "actionPreview": "37 37 Lucilla, magnificently dressed, stands regally before the Emperors. Geta bows before her and waits for her to extend her hand. It is not forthcoming. Finally he gives up and str aightens. CARACALLA sniggers. (JUNE 17, 2024) 23A. A prisoner? You’re a guest of the Emperors, my lady. Lucilla says"
+    },
+    {
+      "number": 41,
+      "heading": "INT. LUCILLA'S VILLA -- EVENING",
+      "characters": [
+        "LUCILLA",
+        "ACACIUS",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "There are times I wished you’d abandoned me, rather than f ight their wars."
+        },
+        {
+          "character": "ACACIUS",
+          "parenthetical": "",
+          "text": "I made my choice."
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "Leta, you may go to your quarters."
+        },
+        {
+          "character": "ACACIUS",
+          "parenthetical": "",
+          "text": "To hear wives and mothers mourning their dead on the beach in"
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "Acacius, now is the time to act."
+        },
+        {
+          "character": "ACACIUS",
+          "parenthetical": "",
+          "text": "They make land at Ostia in ten days."
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "How many are loyal to you alone?"
+        },
+        {
+          "character": "ACACIUS",
+          "parenthetical": "",
+          "text": "All of them. (after a beat) I have taken territories before."
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "Those places were not like taking"
+        },
+        {
+          "character": "ACACIUS",
+          "parenthetical": "",
+          "text": "Ah, Lucilla."
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "Why must it always be a man?"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "39-41"
+        }
+      ],
+      "actionPreview": "38 38 Lucilla has returned home; Acacius is there. A fire burns in the fireplace. A maidservant has just brought them wine. I can live with it. But Caracalla and Geta, it’s as if Caligula gave birth to twins. My patience with those two is at an end. Lucilla silences him with a look. She sees her mai"
+    },
+    {
+      "number": 42,
+      "heading": "INT. GLADIATOR STABLE -- DORMITORY-- MORNING",
+      "characters": [
+        "VIGGO"
+      ],
+      "dialogues": [
+        {
+          "character": "VIGGO",
+          "parenthetical": "",
+          "text": "You."
+        }
+      ],
+      "actionPreview": "42 42 Lucius lies sleeping in a dormito ry on a wooden bunk. Viggo enters and throws a tunic in Macrinus’ colors at him along with a pair of golden sandals. Ready yourself. The other gladiators jeer at him as he walks past."
+    },
+    {
+      "number": 43,
+      "heading": "EXT. THRAEX’S MANSION -- MAIN HOUSE -- DAY",
+      "characters": [
+        "LUCIUS",
+        "VIGGO"
+      ],
+      "dialogues": [
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "What is my purpose here?"
+        },
+        {
+          "character": "VIGGO",
+          "parenthetical": "",
+          "text": "You’ll fi nd out soon enough. PINK SHOOTING SCRIPT"
+        }
+      ],
+      "actionPreview": "43 43 A palatial home, with patrician guests spilling onto the street outside: a party is already in progress. Carriages draw up and leave guests as if from limousines. Lucius follows Viggo inside, twisting Arishat’s ring as it sits on his finger. (JUNE 17, 2024) 27."
+    },
+    {
+      "number": 44,
+      "heading": "INT. THRAEX’S MANSION -- MAIN HOUSE -- DAY",
+      "characters": [
+        "THRAEX",
+        "MACRINUS",
+        "GETA",
+        "CARACALLA"
+      ],
+      "dialogues": [
+        {
+          "character": "THRAEX",
+          "parenthetical": "(GREETING)",
+          "text": "Macrinus!"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "I'm here for the ga mes, nothing more. PINK SHOOTING SCRIPT"
+        },
+        {
+          "character": "THRAEX",
+          "parenthetical": "(BANTER)",
+          "text": "You won't be disappointed."
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "Men like me, Thraex?"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "THRAEX",
+          "parenthetical": "",
+          "text": "Macrinus"
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "(remembering)"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "My estate is in Antium. But I could not resist the temptations your majesties are providing these days."
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "(laughter)"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "I am here only for the love of the sport. PINK SHOOTING SCRIPT"
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "As are we."
+        }
+      ],
+      "actionPreview": "44 44 A countertenor sings of exalted noble life. The contrast with the ruffians present is stark. The Senator THRAEX and his young male CONSORT greet Macrinus and his party as they enter the grand hall, other guests have arrived, mingle and chatter. I knew that the provinces would not be enough for"
+    },
+    {
+      "number": 45,
+      "heading": "INT. THRAEX’S MANSION -- SMALL CHAMBER -- SAME",
+      "characters": [
+        "THRAEX",
+        "MACRINUS",
+        "INT.",
+        "FORTUNA",
+        "LUCIUS"
+      ],
+      "dialogues": [
+        {
+          "character": "THRAEX",
+          "parenthetical": "(CHATTER)",
+          "text": "What’s this we hear about you being interested in standing for election to the Senate, Macrinus?"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "(BANTER)",
+          "text": "If only I were capable of such a task."
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "THRAEX",
+          "parenthetical": "",
+          "text": "(a flicker of weakness from this gambling man)"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "Perhaps - a thousand gold denarii?"
+        },
+        {
+          "character": "THRAEX",
+          "parenthetical": "",
+          "text": "Two."
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "Is it truly so simple?"
+        },
+        {
+          "character": "INT.",
+          "parenthetical": "",
+          "text": "THRAEX’S MANSION -- ANTEROOM -- SAME 45A"
+        },
+        {
+          "character": "FORTUNA",
+          "parenthetical": "",
+          "text": "Eat."
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "What is it?"
+        },
+        {
+          "character": "FORTUNA",
+          "parenthetical": "",
+          "text": "Flamingo."
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "I think you know how to protect yourself."
+        },
+        {
+          "character": "FORTUNA",
+          "parenthetical": "",
+          "text": "And I was told gladiators are fearless men."
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "Will you wait to see if I die?"
+        },
+        {
+          "character": "FORTUNA",
+          "parenthetical": "",
+          "text": "You will survive."
+        },
+        {
+          "character": "FORTUNA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "I’ve only ever seen these faces on coins."
+        },
+        {
+          "character": "FORTUNA",
+          "parenthetical": "",
+          "text": "There are those born to the throne, those given it and those who take it. I have placed money on you."
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "I am flattered you risk anything at all."
+        },
+        {
+          "character": "FORTUNA",
+          "parenthetical": "",
+          "text": "I do not see what Macrinus does."
+        },
+        {
+          "character": "FORTUNA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "THRAEX",
+          "parenthetical": "",
+          "text": "Please follow us into the court for your entertainment -- the art of combat."
+        }
+      ],
+      "actionPreview": "45 45 Lucius has been lead into a small chamber adjacent to the great hall, where he is chained to a column. From here he can see past some drapes across the quadrangle to see a GOTH FIGHTER chained to the wall in a similar space. Lucius studies the Emperors and Macrinus in the next room, surrounded"
+    },
+    {
+      "number": 46,
+      "heading": "INT. SMALLER QUAD -- SAME",
+      "characters": [
+        "GETA",
+        "MACRINUS",
+        "CARACALLA",
+        "THRAEX",
+        "LUCIUS"
+      ],
+      "dialogues": [
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "Is this your gladiator?"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "It is."
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "I want to see him fight."
+        },
+        {
+          "character": "THRAEX",
+          "parenthetical": "",
+          "text": "You will, Emperor."
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "I want to see him fight now."
+        },
+        {
+          "character": "THRAEX",
+          "parenthetical": "",
+          "text": "Very well."
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "(shakes his head)"
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "(CONT’D) (Clapping with glee)"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "Brother."
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "Remarkable!"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "Thank you."
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "Poor luck, Thraex."
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "Emperor, he is from the colonies."
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "(off Macrinus)"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "That’s -- that’s --"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "Virgil, your grace - poetry."
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "(he doesn’t)"
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "Very clever, Macrinus!"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "To amuse you is my only wish."
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "(calling after Lucius)"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "As do I, Emperor."
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "Yes. Yes. You must join us in our box at the games. We insist."
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "An offer I could never refuse."
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "Rhino’s horn has aphrodisiacal qualities."
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "Not my taste."
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "He has no need of it! Do you hear him Geta? What boasts -"
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "(WARNING)",
+          "text": "Brother. Control yourself. PINK SHOOTING SCRIPT"
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "Join us in the bedrooms Macrinus, show us your might..."
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "I prefer not to display my techniques for fear of plagiarism,"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "(AN ORDER)",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "46 46 Guests now mingle around the walls of this room. The drink and chatter in excited expectation. Lucius is led in ... astounded at what is about to take place. Caracalla claps his hands. In truth, he is too stoned to stand on his feet, so he is helped into a golden seat. From the opposite side o"
+    },
+    {
+      "number": 47,
+      "heading": "INT. GLADIATOR STABLE -- BATHS -- NIGHT",
+      "characters": [
+        "MACRINUS",
+        "LUCIUS"
+      ],
+      "dialogues": [
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "* (CONT’D)"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "* (lying)"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "* (Cynically)"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "* (CONT’D)"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "47 47 Enter Macrinus, he places the coins on th e bath edge. * You fought well. But you were * lucky, too. * Lucius shakes his head, unimpressed. Macrinus smiles. * The lines you recited. You didn't * learn that in Africa, I know that. * A good verse travels far. * Who taught you poetry? * * A - cap"
+    },
+    {
+      "number": 48,
+      "heading": "EXT. NORTH AFRICAN DESERT VILLAGE -- DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "47A 47A ...a desert s hamal wind blowing across the sands."
+    },
+    {
+      "number": 49,
+      "heading": "EXT. NORTH AFRICAN VILLAGE STREETS -- DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "47B 47B THE YOUNG LUCIUS, 13 years old, plays street handball with a group of village boys. The people here seem to have taken Lucius in as one of their own. But now, in the distance, we see something coming -- -- cantering horses ridden by Roman soldiers. Lucius throws the ball against the wall and"
+    },
+    {
+      "number": 50,
+      "heading": "EXT. STREET -- MOMENTS LATER",
+      "characters": [
+        "VILLAGE BOYS"
+      ],
+      "dialogues": [
+        {
+          "character": "VILLAGE BOYS",
+          "parenthetical": "",
+          "text": "Romans!"
+        }
+      ],
+      "actionPreview": "47C 47C They are going door-to-door. Some doors are kicked in and homes are ransacked. We hear the ULULATIONS of women sounding the alarm. The streets empty out. The village boys start calling out to warn him. Romans! Lucius now runs into an alley, through a maze of streets -- PINK SHOOTING SCRIPT ("
+    },
+    {
+      "number": 51,
+      "heading": "INT. SAFE HOUSE -- SAME",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "47D 47D -- and comes upon a safe house. Lucius' BODYGUARD waits outside with a spare horse and baggage."
+    },
+    {
+      "number": 52,
+      "heading": "INT. HOUSE -- SAME",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "47E 47E A Noble BEDOUIN WOMAN blesses and kisses him. He leaves. We hear the SOUNDS of horses, Praetorians with torches doing house-to-house searches, forcing the population into the streets."
+    },
+    {
+      "number": 53,
+      "heading": "EXT. STREET -- SAME",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "47F 47F Lucius joins his bodyguard and scrambles down the back a lley, onto the horse --"
+    },
+    {
+      "number": 54,
+      "heading": "EXT. DESERT -- DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "47G 47G -- and away from the village. He casts a final glance back and sees the village burning. He rides off into the vast empty desert."
+    },
+    {
+      "number": 55,
+      "heading": "INT. LUCILLA'S VILLA -- COURTYARD -- NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "48 48 Lucilla is at a small grilled window -- where she sees that the guards posted outside are changing shifts. She blows out all the candles in her room, and the guards below note that she’s turning in for the evening. Lucilla, now robed and hooded, approaches a small shrine. She rolls back a slab"
+    },
+    {
+      "number": 56,
+      "heading": "INT. TUNNEL -- NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "49 49 -- and descends a tight spiral staircase into a “hewn” tunnel that leads beneath the villa. After some distance in the labyrinth, the tunnel opens into a huge underground catacomb, tall and vaulted, built for centuries of royalty, in early Roman splendor."
+    },
+    {
+      "number": 57,
+      "heading": "INT. FAMILY TOMB -- NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "50 50 -- and she emerges inside the family tomb. PINK SHOOTING SCRIPT (JUNE 17, 2024) 37. Each crypt is marked by a bust of the family member interred within. Lucilla goes to the bust of her father, Marcus Aurelius, touching it and makes a prayer."
+    },
+    {
+      "number": 58,
+      "heading": "INT. ANTECHAMBER -- MINUTES LATER",
+      "characters": [
+        "LUCILLA",
+        "GRACCHUS",
+        "ACACIUS",
+        "THRAEX",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "Old friend."
+        },
+        {
+          "character": "GRACCHUS",
+          "parenthetical": "",
+          "text": "My lady."
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "The sun shone once - it will shine again."
+        },
+        {
+          "character": "GRACCHUS",
+          "parenthetical": "",
+          "text": "And what in heavens name does"
+        },
+        {
+          "character": "GRACCHUS",
+          "parenthetical": "(SO DRY)",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ACACIUS",
+          "parenthetical": "",
+          "text": "We want to take back the city. To restore Rome to what it should be."
+        },
+        {
+          "character": "GRACCHUS",
+          "parenthetical": "(TRULY DOUBTFUL)",
+          "text": "An exciting venture. When?"
+        },
+        {
+          "character": "ACACIUS",
+          "parenthetical": "",
+          "text": "On the final day of the games."
+        },
+        {
+          "character": "GRACCHUS",
+          "parenthetical": "",
+          "text": "How?"
+        },
+        {
+          "character": "ACACIUS",
+          "parenthetical": "",
+          "text": "My army waits for my command at"
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "We cannot continue to see Rome damaged slide down into the sewer."
+        },
+        {
+          "character": "THRAEX",
+          "parenthetical": "",
+          "text": "Does"
+        },
+        {
+          "character": "ACACIUS",
+          "parenthetical": "",
+          "text": "I am a soldier not a politician."
+        },
+        {
+          "character": "GRACCHUS",
+          "parenthetical": "",
+          "text": "Your father talked of returning power to the Senate. But that was a generation ago, much has changed, the people haven’t seen hope for many years and -"
+        },
+        {
+          "character": "ACACIUS",
+          "parenthetical": "(CUTTING HIM OFF IN TURN)",
+          "text": "Rome is not yet ready to be a republic but"
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "(TO GRACCHUS)",
+          "text": "Rome can live again. Do we have your support Gracchus?"
+        },
+        {
+          "character": "GRACCHUS",
+          "parenthetical": "",
+          "text": "Lucilla, you are the daughter of"
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "A politic answer, but good enough."
+        },
+        {
+          "character": "THRAEX",
+          "parenthetical": "",
+          "text": "Politics follows power, my lady."
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "51A"
+        }
+      ],
+      "actionPreview": "51 51 Lucilla greets Gracchus and Thraex warmly: I wish we were meeting in better times. that mean? Acacius emerges from the shadows. Gracchus smiles wryly. Oh yes. He is shiny. Gracchus has heard this a thousand times, it makes him weary. A moment - Acacius shows his irritation at Gracchus’ ton e. "
+    },
+    {
+      "number": 59,
+      "heading": "INT. MACRINUS’ LIBRARY -- DAY (WAS SC.66)",
+      "characters": [
+        "MACRINUS",
+        "HYACINTHIA",
+        "FORTUNA"
+      ],
+      "dialogues": [
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "Fortuna."
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "(CONT’D) I would have expected more enthusiasm. She does not speak - what say you Mother - is it conscience that holds"
+        },
+        {
+          "character": "HYACINTHIA",
+          "parenthetical": "",
+          "text": "I could not tell you."
+        },
+        {
+          "character": "FORTUNA",
+          "parenthetical": "",
+          "text": "(covering)"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "Good. We must both make use of him - while he lives."
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "HYACINTHIA",
+          "parenthetical": "",
+          "text": "We serve him as we can."
+        }
+      ],
+      "actionPreview": "51B 51B Macrinus is in his library with Hyacinthia. Fortuna enters. The barbarian. I saw you talking to him at the palace. You like him. Fortuna is silent -- she’s afraid that she’s run afoul of Macrinus, but does her best to hide it. Lie with him. You have my permission. Learn his truth. Fortuna sa"
+    },
+    {
+      "number": 60,
+      "heading": "EXT. THE APPROACH TO ROME",
+      "characters": [
+        "DORSO",
+        "BRENNOS",
+        "LUCIUS"
+      ],
+      "dialogues": [
+        {
+          "character": "DORSO",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "BRENNOS",
+          "parenthetical": "(WRY)",
+          "text": "*"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "DORSO",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "(TOO KNOWING)",
+          "text": "* (CONT’D)"
+        },
+        {
+          "character": "DORSO",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "* I know the chaos they've wrought..."
+        },
+        {
+          "character": "BRENNOS",
+          "parenthetical": "",
+          "text": "* I never dreamt it wo uld be so big."
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "*"
+        }
+      ],
+      "actionPreview": "-- DAY 52 52 Macrinus' convoy of carriages rides along the road into Rome. * Swarms of beggars at the side of the road - the wretched and * the diseased. * When I was told about this place * they never mentioned the stink. * It is Hanno. * * The gladiators laugh. * You will have to put up with me as"
+    },
+    {
+      "number": 61,
+      "heading": "INT. GLADIATOR CART -- DAY",
+      "characters": [
+        "DORSO",
+        "LUCIUS",
+        "BRENNOS",
+        "VIGGO",
+        "AFRICAE.",
+        "MACRINUS"
+      ],
+      "dialogues": [
+        {
+          "character": "DORSO",
+          "parenthetical": "",
+          "text": "It is not as I thought it would look...it’s a good deal bigger."
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "It is not how it used to be."
+        },
+        {
+          "character": "DORSO",
+          "parenthetical": "",
+          "text": "You know Rome?"
+        },
+        {
+          "character": "BRENNOS",
+          "parenthetical": "",
+          "text": "He’s lying. He came to us from"
+        },
+        {
+          "character": "VIGGO",
+          "parenthetical": "",
+          "text": "And there is it..."
+        },
+        {
+          "character": "VIGGO",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "AFRICAE.",
+          "parenthetical": "",
+          "text": "Lucius looks up at it with loathing -- -- and Macrinus notices it too, as he drives his four-in-hand through the great arch."
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "(to himself and to Rome)"
+        }
+      ],
+      "actionPreview": "53 53 (CONTINUING THE SCENE THAT HAS ALREADY BEEN SHOT) From inside the gladiator’s cart, we behold the city as we enter its gates. PINK SHOOTING SCRIPT (JUNE 17, 2024) 40AA. Most of the gladiators have never seen Rome -- their heads are on swivels, awed by all they see. They talk amongst themselves"
+    },
+    {
+      "number": 62,
+      "heading": "EXT. BAR OUTSIDE THE COLOSSEUM. DAY",
+      "characters": [
+        "MACRINUS",
+        "THRAEX",
+        "VIGGO"
+      ],
+      "dialogues": [
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "Thraex."
+        },
+        {
+          "character": "THRAEX",
+          "parenthetical": "",
+          "text": "Ah, the barbarian."
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "I was going to suggest your luck might change."
+        },
+        {
+          "character": "VIGGO",
+          "parenthetical": "",
+          "text": "Move on!"
+        }
+      ],
+      "actionPreview": "54 54 Thraex is sitting inside the tavern. About out wager. I haven’t forgotten. I always repay my debts. Shall we say double or quits? Thaex can’t help himself..he nods in agreement. Outside the Colosseum, a CROWD has gathered, Vendors and pickpocke ts ply their trade outside the Arena as the crowd"
+    },
+    {
+      "number": 63,
+      "heading": "INT. COLOSSEUM UNDERCROFT -- DAY",
+      "characters": [
+        "LUCIUS",
+        "RAVI"
+      ],
+      "dialogues": [
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "What are these names?"
+        },
+        {
+          "character": "RAVI",
+          "parenthetical": "",
+          "text": "Contests of legend."
+        }
+      ],
+      "actionPreview": "55 55 Lucius descends into the tunnels of a dungeon-like undercroft, where dozens of gladiators are already preparing for the games that are in progress. IN THE MAIN CHAMBER a stone memorial spanning two centuries, with a list of NAMES carved into one wall. A surgeon and cut- man named RAVI. He wear"
+    },
+    {
+      "number": 64,
+      "heading": "EXT. COLOSSEUM -- DAY",
+      "characters": [
+        "MASTER OF CEREMONIES",
+        "CARACALLA",
+        "GETA",
+        "ACACIUS",
+        "MACRINUS",
+        "LUCILLA",
+        "WHITE RHINO.",
+        "LUCIUS",
+        "PHOEBUS",
+        "IN THE ROYAL SEATS",
+        "THRAEX"
+      ],
+      "dialogues": [
+        {
+          "character": "MASTER OF CEREMONIES",
+          "parenthetical": "",
+          "text": "Citizens of Rome!"
+        },
+        {
+          "character": "MASTER OF CEREMONIES",
+          "parenthetical": "",
+          "text": "(CONT’D) -- and to honor Rome's legionary commander --"
+        },
+        {
+          "character": "MASTER OF CEREMONIES",
+          "parenthetical": "",
+          "text": "(CONT’D) -- General Justus Acacius! -- as Acacius appears in the Emperors' booth."
+        },
+        {
+          "character": "MASTER OF CEREMONIES",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "We give them everything."
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "Brother."
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ACACIUS",
+          "parenthetical": "",
+          "text": "I am not an orator, nor a politician."
+        },
+        {
+          "character": "ACACIUS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "You handle them with more grace than I could ever summon, lady."
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "I’ve had more practice. PINK SHOOTING SCRIPT"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "And I admire Acacius’ discipline."
+        },
+        {
+          "character": "MASTER OF CEREMONIES",
+          "parenthetical": "",
+          "text": "From the South Gate... fighters from the stable of Macrinus of"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "(to Acacius)"
+        },
+        {
+          "character": "MASTER OF CEREMONIES",
+          "parenthetical": "",
+          "text": "And from the stables of our"
+        },
+        {
+          "character": "WHITE RHINO.",
+          "parenthetical": "",
+          "text": "The crowd ROARS its approval."
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "Spread"
+        },
+        {
+          "character": "PHOEBUS",
+          "parenthetical": "",
+          "text": "Why would I obey you?"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "I don’t want you to obey me."
+        },
+        {
+          "character": "PHOEBUS",
+          "parenthetical": "",
+          "text": "Fend for yourself, little man."
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "Separate!"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "IN THE ROYAL SEATS",
+          "parenthetical": "",
+          "text": "57"
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "(excited)"
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "I don’t remember, brother."
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "\"The gates of hell are open night and day."
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "“Smooth is the descent...”"
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "(murmurs) \"Smooth is the descent, and easy is the way.\" ON LUCILLA: the verse strikes a chord in her."
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "The gladiator spoke them at Thraex’ party."
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "He won't live that long."
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "Shall we spare his life, brother?"
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "I wouldn’t mind seeing some blood. PINK SHOOTING SCRIPT"
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "Lucilla, shall we show mercy?"
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "Mercy."
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "Gladiator."
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "I will not accept mercy."
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "(CONT’D) I would sooner face your blade than accept Roman mercy."
+        },
+        {
+          "character": "THRAEX",
+          "parenthetical": "",
+          "text": "When has such defiance been seen in the Arena?"
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "Once."
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "Fight on, then, fool, and die."
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "What is the punishment for victory?"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "Brother -- allow him his moment."
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "Stand, Macrinus."
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "(CONT’D) (loud and grandly)"
+        }
+      ],
+      "actionPreview": "56 56 -- as Caracalla and Geta already arrive in the Royal seats. There is only tepid applause from the crowd. PINK SHOOTING SCRIPT (JUNE 17, 2024) 42. The fight’s EDITOR, or MASTER OF CEREMONIES, nervously signals for the musicians to play a fanfare again. Lucius stands in the South Arch awaiting h"
+    },
+    {
+      "number": 65,
+      "heading": "INT. COLOSSEUM UNDERCROFT -- DAY",
+      "characters": [
+        "LUCIUS",
+        "VIGGO"
+      ],
+      "dialogues": [
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "The road to freedom doesn’t run through the Arena."
+        },
+        {
+          "character": "VIGGO",
+          "parenthetical": "",
+          "text": "Cage them."
+        }
+      ],
+      "actionPreview": "58 58 We hear the chanting of the crowd in the background as Lucius descends, weary and wounded, into the undercroft. Though a gash has been opene d up on his arm, there’s an air of triumph. A small crowd of gladiators has gathered. The gathering parts -- -- to REVEAL a body on stretcher: the gored "
+    },
+    {
+      "number": 66,
+      "heading": "INT. COLOSSEUM HOSPITAL ROOM -- NIGHT. (WAS SC.6 4)",
+      "characters": [
+        "LUCIUS",
+        "RAVI",
+        "MACRINUS"
+      ],
+      "dialogues": [
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "RAVI",
+          "parenthetical": "",
+          "text": "* I am Ravi, I'm a doctor. Because"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "RAVI",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "RAVI",
+          "parenthetical": "",
+          "text": "* (CONT’D)"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "RAVI",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "RAVI",
+          "parenthetical": "",
+          "text": "* I used to be a gladiator myself."
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "* (CONT’D)"
+        },
+        {
+          "character": "RAVI",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "* (Amused)"
+        },
+        {
+          "character": "RAVI",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "* I feel I know those words..."
+        },
+        {
+          "character": "RAVI",
+          "parenthetical": "",
+          "text": "* I cannot take credit, it is written"
+        },
+        {
+          "character": "RAVI",
+          "parenthetical": "",
+          "text": "* (CONT’D)"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "* (Option)"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "* I smell Devil's breath... My"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "(CONT'D)",
+          "text": "*"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "* (To himself)"
+        }
+      ],
+      "actionPreview": "58A 58A Lucius sits at a stool. His arm has an untreated wound; * mosquitoes are buzzing around. * What's your name. * PINK SHOOTING SCRIPT (JUNE 17, 2024) 51. * More men die of infected wounds * than in the Arena. This needs to be * cleaned and stitched up. This is * going to hurt. * Ravi hands him"
+    },
+    {
+      "number": 67,
+      "heading": "INT. LUCILLA'S VILLA -- EVENING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "59 59 On Lucilla: she is haunted, still shaken by what she has seen at the games. Then she heads down a corridor to a room at the end of the hall."
+    },
+    {
+      "number": 68,
+      "heading": "INT. A BOY’S BEDROOM - - EVENING",
+      "characters": [
+        "MACRINUS"
+      ],
+      "dialogues": [
+        {
+          "character": "MACRINUS",
+          "parenthetical": "(CONT’D)",
+          "text": "PINK SHOOTING SCRIPT"
+        }
+      ],
+      "actionPreview": "60 60 The room is darkened, clean but unused, shut-away. Lucilla lights candles -- (JUNE 17, 2024) 51BA. -- it’s a boy’s room, once occupied by a 12 year old. A small bed, a chest with toy soldiers and swords, a chalk slate with a half-finished Latin lesson in a boy’s handwriting, preserved from yea"
+    },
+    {
+      "number": 69,
+      "heading": "INT. ROMAN COLOSSEUM -- DAY (FLASHBACK)",
+      "characters": [
+        "MAXIMUS",
+        "LUCILLA",
+        "ACACIUS"
+      ],
+      "dialogues": [
+        {
+          "character": "MAXIMUS",
+          "parenthetical": "",
+          "text": "Lucius i s safe...?"
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "(whispering)"
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ACACIUS",
+          "parenthetical": "",
+          "text": "Quickly."
+        }
+      ],
+      "actionPreview": "61 61 MAXIMUS’ BODY lies on the sandy floor of the Arena. Commodus’ corpse lies nearby. Lucilla is kneeling beside Maximus. She has taken his hand. Lucilla nods. Go home. Go to them. Maximus passes. The whole Arena is watching as Lucilla stands and addresses them: He was a soldier of Rome. Honor him"
+    },
+    {
+      "number": 70,
+      "heading": "EXT. LUCILLA’S VILLA -- EVENING (FLASHBACK)",
+      "characters": [
+        "LUCILLA",
+        "LUCIUS",
+        "ACACIUS",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "Lucius."
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "Mother!"
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "Lucius, I must stay for your sake and for the sake of Rome."
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "Please -- mother..."
+        },
+        {
+          "character": "ACACIUS",
+          "parenthetical": "",
+          "text": "Lucius."
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "Remember who you are."
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "63"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "(NOW SC.58A)",
+          "text": "64"
+        }
+      ],
+      "actionPreview": "62 62 A CHARIOT stands waiting. Lucilla crouches to say goodbye to her son: You're the sole heir now. There are men who will kill you so they can take power. As soon as it's safe I'll bring you back home where you belong -- I promise you. A Roman bodyguard named GNAEUS stands nearby. The young offic"
+    },
+    {
+      "number": 71,
+      "heading": "INT. SMALL DARK ROOM.",
+      "characters": [
+        "LUCILLA",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "Leave me."
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "65-67"
+        }
+      ],
+      "actionPreview": "NIGHT (FLASHBACK) 64A 64A On a stone table is a simple wooden box. Lucilla enters with great trepidation with a cloaked traveller behind her. She lifts off the lid. Inside, wrapped in heavy white linen, we see a shroud covering a small body. Lucilla gently undoes the ties revealing a skeleton of bla"
+    },
+    {
+      "number": 72,
+      "heading": "EXT. LUCILLA'S VILLA.",
+      "characters": [
+        "MACRINUS",
+        "LUCILLA",
+        "ACACIUS"
+      ],
+      "dialogues": [
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "What an honor this is."
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "It was a pleasure to meet you at the games.I hear you are the talk of the court --"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "We’ve met before, long ago."
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "Where?"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "I was in the se rvice of your father’s army."
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "You served my father?"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "I was one of many translators but I had the privilege of reading your father’s"
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "“Rome’s power preserves the freedoms of its citizens .”"
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "I do that for love of the sport."
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "Where do you recruit your gladiators?"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "I find them at contests in the provinces."
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "They have no c hoice."
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "Of course not... but a man can choose to fight and stay alive."
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "I believe you know General Acacius."
+        },
+        {
+          "character": "ACACIUS",
+          "parenthetical": "",
+          "text": "Welcome."
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "Who is this?"
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "My father, as a youth. PINK SHOOTING SCRIPT"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "Uncanny."
+        }
+      ],
+      "actionPreview": "DAY 67A 67A Centurions stand guard outside Lucilla’s home. A chariot approaches. A figure steps down and dismounts -- -- it’s Macrinus. He produces a note with Lucilla’s seal to the officer on guard duty. PINK SHOOTING SCRIPT (JUNE 17, 2024) 57. INT./EXT. LUCILLA'S VILLA -- COURTYARD -- DAY 68 68 Lu"
+    },
+    {
+      "number": 73,
+      "heading": "INT. -- LUCIUS’ CELL -- NIGHT. (WAS SC.85)",
+      "characters": [
+        "FORTUNA",
+        "LUCIUS"
+      ],
+      "dialogues": [
+        {
+          "character": "FORTUNA",
+          "parenthetical": "",
+          "text": "You were impressive today."
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "Did you have a wager placed?"
+        },
+        {
+          "character": "FORTUNA",
+          "parenthetical": "",
+          "text": "I made a mistake. I thought you would lose. I lost all I have."
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "Then how could you afford the fee to get into my cell?"
+        },
+        {
+          "character": "FORTUNA",
+          "parenthetical": "",
+          "text": "You miss nothing. My fee was paid by another."
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "Macrinus."
+        },
+        {
+          "character": "FORTUNA",
+          "parenthetical": "",
+          "text": "He thinks you lie to him. He is frightened of nothing more so than lies. A skill he is so proficient at that he despises it in others."
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "I have not lied."
+        },
+        {
+          "character": "FORTUNA",
+          "parenthetical": "",
+          "text": "He knows you’re not what you claim to be."
+        },
+        {
+          "character": "FORTUNA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "Then what do you wish to talk of?"
+        },
+        {
+          "character": "FORTUNA",
+          "parenthetical": "",
+          "text": "Who says I wish to talk at all-? (he looks at her concerned)"
+        },
+        {
+          "character": "FORTUNA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "I am not afraid."
+        },
+        {
+          "character": "FORTUNA",
+          "parenthetical": "",
+          "text": "You are right. It is not fear. It is something else. Who damaged you and left you so?"
+        },
+        {
+          "character": "FORTUNA",
+          "parenthetical": "",
+          "text": "(CONT’D) I am kept just as you - my father had a debt to him, it was settled with Macrinus taking both my mother and I. My mother became his servant - I became - whatever he’d have me be. I was fourteen."
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "I"
+        },
+        {
+          "character": "FORTUNA",
+          "parenthetical": "",
+          "text": "I did not ask for your pity."
+        },
+        {
+          "character": "FORTUNA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "What would you have me be?"
+        },
+        {
+          "character": "FORTUNA",
+          "parenthetical": "",
+          "text": "I confess I like the beast."
+        },
+        {
+          "character": "FORTUNA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "68A 68A Lucius sits awake: he is on a bunk in a small cell, thinking of what to do - thinking of what’s ahead. He hears someone working the bolt on the cell door from outside. He sits up abruptly -- -- as someone enters. It’s Fortuna, being led in by a guard. She slips into the cell and closes the d"
+    },
+    {
+      "number": 74,
+      "heading": "EXT. TRAINING GROUND -- COLOSSEUM -- DAY",
+      "characters": [
+        "VIGGO",
+        "LUCIUS"
+      ],
+      "dialogues": [
+        {
+          "character": "VIGGO",
+          "parenthetical": "",
+          "text": "Again!"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "We will not get far like this."
+        },
+        {
+          "character": "VIGGO",
+          "parenthetical": "",
+          "text": "Just him. CUT TO:"
+        },
+        {
+          "character": "VIGGO",
+          "parenthetical": "(TO A GUARD)",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "68B 68B An offscreen whip cracks: Three planks make primitive benches to take twelve oarsmen who are shackled to heavy poles that are pivoted and tied to heavy logs on each side. In effect a rowing machine. The drum beats. The gladiators beg in to row. TIMELAPSE: the sun arcs through the sky above t"
+    },
+    {
+      "number": 75,
+      "heading": "EXT. TRAINING GROUND -- COLOSSEUM -- NIGHT",
+      "characters": [
+        "RAVI",
+        "LUCIUS"
+      ],
+      "dialogues": [
+        {
+          "character": "RAVI",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "RAVI",
+          "parenthetical": "",
+          "text": "* (CONT’D)"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "RAVI",
+          "parenthetical": "",
+          "text": "* I am now. I laid down the sword and"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "RAVI",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "* (laughing)"
+        },
+        {
+          "character": "RAVI",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "* (CONT’D) I grew up hearing stories at my"
+        },
+        {
+          "character": "RAVI",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "RAVI",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "RAVI",
+          "parenthetical": "",
+          "text": "* (CONT’D)"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "RAVI",
+          "parenthetical": "",
+          "text": "*"
+        }
+      ],
+      "actionPreview": "68C 68C Night has fallen. Lucius lies slumped and unconscious over * his oars, still shackled to the machine. A figure appears -- - * - it's Ravi. * ADR: to highlight the gladiators are bonding with Lucius. * Easy! Easy! It's only vinegar . * He looks around to make sure no one is watching, then tak"
+    },
+    {
+      "number": 76,
+      "heading": "INT. MACRINUS' VILLA -- BATHS -- NIGHT. (WAS SC. 87)",
+      "characters": [
+        "MACRINUS",
+        "FORTUNA",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "Did you lie with him?"
+        },
+        {
+          "character": "FORTUNA",
+          "parenthetical": "",
+          "text": "I did."
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "And? Tell me."
+        },
+        {
+          "character": "FORTUNA",
+          "parenthetical": "",
+          "text": "From the beginning?"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "When there’s more time."
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "FORTUNA",
+          "parenthetical": "",
+          "text": "He lives only for revenge upon this"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "I knew that. I wanted to know why. PINK SHOOTING SCRIPT"
+        },
+        {
+          "character": "FORTUNA",
+          "parenthetical": "",
+          "text": "Give me another chance and I’ll find out --"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "(INDICATING)",
+          "text": "Join me."
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "(CONT’D) I h ave no jealousy in my soul. But I do demand my own kind of fidelity. If you were ever to betray that trust --"
+        },
+        {
+          "character": "FORTUNA",
+          "parenthetical": "",
+          "text": "I never will"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "(WATCHING)",
+          "text": "I wonder if you already have."
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "69-70"
+        }
+      ],
+      "actionPreview": "68D 68D Fortuna enters. Macrinus lies in a great marble bath, chest- deep in the water, swathed in steam. Servants, amongst them Hyacinthia pour steaming buckets of herbal water into the bathtub, then leave. Macrinus gazes at Fortuna with hooded eyes like a crocodile. Macrinus closes his eyes, leans"
+    },
+    {
+      "number": 77,
+      "heading": "EXT. COLOSSEUM UNDERCROFT -- DAY",
+      "characters": [
+        "LUCIUS"
+      ],
+      "dialogues": [
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "This is about survival."
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "71 71 Fight day. We see Lucius in a dark space. As the doors are opened to the ship docked in the south arch. S urvive. They move out onto the boats. PINK SHOOTING SCRIPT (JUNE 17, 2024) 60F. We are a crew. Work to my time and pull as one."
+    },
+    {
+      "number": 78,
+      "heading": "EXT. COLOSSEUM -- DAY",
+      "characters": [
+        "THRAEX",
+        "MACRINUS",
+        "MASTER OF CEREMONIES",
+        "GLADIATORS AND CENTURIONS",
+        "LUCIUS"
+      ],
+      "dialogues": [
+        {
+          "character": "THRAEX",
+          "parenthetical": "",
+          "text": "Let me enjoy the games, Macrinus."
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "My concern is"
+        },
+        {
+          "character": "THRAEX",
+          "parenthetical": "",
+          "text": "I am not a “man” Macrinus. I am a"
+        },
+        {
+          "character": "MASTER OF CEREMONIES",
+          "parenthetical": "(O.S.)",
+          "text": "In the name of Poseidon, we celebrate the glory of naval war!"
+        },
+        {
+          "character": "MASTER OF CEREMONIES",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MASTER OF CEREMONIES",
+          "parenthetical": "",
+          "text": "(CONT’D) -- from the barbarian sailors of"
+        },
+        {
+          "character": "MASTER OF CEREMONIES",
+          "parenthetical": "",
+          "text": "(CONT’D) (Loudly)"
+        },
+        {
+          "character": "GLADIATORS AND CENTURIONS",
+          "parenthetical": "",
+          "text": "We who are about to die salute you!"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "In time -- one two, one two..."
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "(CONT’D) (shouting)"
+        }
+      ],
+      "actionPreview": "72 72 -- the Arena has been filled with water. It is now a great blue sea. Water is pumping from the mouths of sculpted heads along the walls of the Arena floor. The Emperors sit in the Royal Seats as Macrinus enters and sits next to Thraex who breaks into a sweat when Macrinus turns his gaze upon h"
+    },
+    {
+      "number": 79,
+      "heading": "INT. ROYAL SEATS -- DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "73 73 Lucilla has now identified the leading gladiator and watches him carefully. Her continued attention is noted by Macrinus."
+    },
+    {
+      "number": 80,
+      "heading": "INT. COLOSSEUM",
+      "characters": [
+        "MASTER OF CEREMONIES",
+        "LUCIUS"
+      ],
+      "dialogues": [
+        {
+          "character": "MASTER OF CEREMONIES",
+          "parenthetical": "",
+          "text": "Now -- we release the creatures of the depths!"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "(shouting)"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "-- DAY 74 74 From under the water TIGER SHARKS glide, seeking blood. A gladiator furiously cuts the rigging and the sail falls to the deck as others scramble to cast it overboard. The sharks immediately snap at it, dragging it beneath the water. Lucius steers his craft at the Roman ship with intenti"
+    },
+    {
+      "number": 81,
+      "heading": "EXT. COLOSSEUM -- DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "75 75 -- disappearing into the blood-streaked waters of the pool."
+    },
+    {
+      "number": 82,
+      "heading": "EXT. COLOSSEUM -- DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "76 76 WIDE SHOT: in an instant the sharks are drawn to the blood. They streak toward us from every corner of the great pool, fighting, bumping against the hull as men fall overboard from the battle."
+    },
+    {
+      "number": 83,
+      "heading": "EXT. COLOSSEUM -- DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "76A 76A Pick ups of 3 shark attacks under and over the surface of the water."
+    },
+    {
+      "number": 84,
+      "heading": "EXT. COLOSSEUM -- DAY",
+      "characters": [
+        "LUCIUS",
+        "GETA",
+        "ACACIUS",
+        "MASTER OF CEREMONIES"
+      ],
+      "dialogues": [
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "For Jugurtha, for Arishat, for"
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "(SHAKING)",
+          "text": "Praetorians."
+        },
+        {
+          "character": "ACACIUS",
+          "parenthetical": "",
+          "text": "Lucilla."
+        },
+        {
+          "character": "MASTER OF CEREMONIES",
+          "parenthetical": "",
+          "text": "In the name of the Emperors!"
+        }
+      ],
+      "actionPreview": "77 77 Lucius, seeing the commotion in the water below, his eyes wide, pulls himself back on board and looks around. His team have taken control even as the two ships begin to swing toward the royal box. Lucius moves fast and grabs the crossbow, turns and blinks against the smoke -- -- and he draws h"
+    },
+    {
+      "number": 85,
+      "heading": "INT. COLOSSEUM UNDERCROFT -- DAY",
+      "characters": [
+        "VIGGO",
+        "AGEDILIOS",
+        "LUCIUS"
+      ],
+      "dialogues": [
+        {
+          "character": "VIGGO",
+          "parenthetical": "",
+          "text": "Who did this!?"
+        },
+        {
+          "character": "AGEDILIOS",
+          "parenthetical": "",
+          "text": "(O.S.)"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "Pay the man."
+        },
+        {
+          "character": "VIGGO",
+          "parenthetical": "",
+          "text": "Did you learn to shoot the same place"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "Be glad it wasn’t me, or that arrow would have found you."
+        }
+      ],
+      "actionPreview": "78 78 Lucius and the other gladiators are led to the undercroft. Word of what happened in the Arena has already reached the cells where the fighters are kept... and they are riotous. PINK SHOOTING SCRIPT (JUNE 17, 2024) 64. The Praetorians rush into their cells to subdue the gladiators by force. Vig"
+    },
+    {
+      "number": 86,
+      "heading": "INT. MACRINUS’ CARRIAGE -- DAY",
+      "characters": [
+        "QUAESTOR",
+        "MACRINUS"
+      ],
+      "dialogues": [
+        {
+          "character": "QUAESTOR",
+          "parenthetical": "",
+          "text": "Macrinus, you own a hero!"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "It seems I do."
+        },
+        {
+          "character": "QUAESTOR",
+          "parenthetical": "",
+          "text": "If you wish to sell him, I could fetch you a good price?"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "Sell him? He is my key through the door."
+        }
+      ],
+      "actionPreview": "78A 78A ...as the crowds in the street chant it as well. Hanno! Hanno! Hanno! Macrinus watches it all as he leaves the fight in his carriage, a satisfied smile on his f ace. Upon a building’s wall, the words have been painted in crude graffiti: WHAT IS THE PUNISHMENT FOR HONOR? (MORE) PINK SHOOTING "
+    },
+    {
+      "number": 87,
+      "heading": "INT. LUCILLA'S VILLA -- NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "79 79 Lucilla puts out the candles. The guards see the lights dim... she crosses to Acacius rooms where he lies sleeping, she pulls up the hood of her cloak. She crosses the courtyard and approaches the secret door..."
+    },
+    {
+      "number": 88,
+      "heading": "EXT. EXIT TO SECRET TUNNEL -- ROMAN STREETS -- NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "80 80 Lucilla emerges from the tunnel hidden by growth. Her servant waits there for her. She mounts the black horse and they ride through the city. We see the graffiti here as well: QUAE POENA VICTORIAE is painted on one of the walls."
+    },
+    {
+      "number": 89,
+      "heading": "EXT. COLOSSEUM SIDE GATE -- NIGHT",
+      "characters": [
+        "MACRINUS",
+        "GRACCHUS"
+      ],
+      "dialogues": [
+        {
+          "character": "MACRINUS",
+          "parenthetical": "(CONT’D)",
+          "text": "PINK SHOOTING SCRIPT"
+        },
+        {
+          "character": "GRACCHUS",
+          "parenthetical": "",
+          "text": "My lady."
+        }
+      ],
+      "actionPreview": "81 81 A figure waits in the shadows next to the gate. (JUNE 17, 2024) 65A. As the cloaked Lucilla approaches, Gracchus emerges, accompanied by one of his bodyguards. He places his hand on his heart in greeting and whispers:"
+    },
+    {
+      "number": 90,
+      "heading": "INT. COLOSSEUM UNDERCROFT -- CORRIDOR/CELL -- NIGHT",
+      "characters": [
+        "LUCILLA",
+        "LUCIUS",
+        "GRACCHUS"
+      ],
+      "dialogues": [
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "* (CONT’D)"
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "* (CONT’D)"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "* I am not who you think I am. My"
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "(OPTION)",
+          "text": "* (Silence)"
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "* (CONT’D) (In despair)"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "* (Now Simmering)"
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "* (Defense turns into Anger)"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "* (CONT’D) (Growls)"
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "* (Walking to the door)"
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "* (CONT’D) I never stopped loving you."
+        },
+        {
+          "character": "GRACCHUS",
+          "parenthetical": "(O.S.)",
+          "text": "*"
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "* (From the door)"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "* (Shouting)"
+        }
+      ],
+      "actionPreview": "82 82 Gracchus leads Lucilla to the door of the cage where Lucius * is being kept. Gracchus pays the guard with a small pouch of * coins, then melts away. * Lucilla lowers her hood, and step s into the candlelight. * Lucius' eyes flare when he sees his mother. He bows his head, * hiding his face, tr"
+    },
+    {
+      "number": 91,
+      "heading": "EXT. LUCIUS' CELL",
+      "characters": [
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "83"
+        }
+      ],
+      "actionPreview": "* Ravi outside has been present, hearing this exchange from his * table. * PINK SHOOTING SCRIPT (JUNE 17, 2024) 67AA. 83"
+    },
+    {
+      "number": 92,
+      "heading": "INT. LUCILLA'S VILLA -- DAWN",
+      "characters": [
+        "LUCILLA",
+        "ACACIUS",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "Lucius is alive."
+        },
+        {
+          "character": "ACACIUS",
+          "parenthetical": "",
+          "text": "Are you certain?"
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "I know my son."
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ACACIUS",
+          "parenthetical": "",
+          "text": "The third day of games is tomorrow."
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "I know."
+        },
+        {
+          "character": "ACACIUS",
+          "parenthetical": "",
+          "text": "An attempt would put our plans at risk. The army are waiting in"
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "By that time he could be dead."
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "(CONT’D) I sent him to the desert and I swore to protect him."
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "85-89A"
+        }
+      ],
+      "actionPreview": "84 84 Acacius finds Lucilla by the fireplace, still in her hooded cloak, as she gazes into the ashes. I spoke to him tonight. (a beat) He may be lost to me for what I’ve done... but he lives. He said “That boy is dead but tells me not to grieve for him.” She looks at Acacius and says -- Is that not "
+    },
+    {
+      "number": 93,
+      "heading": "EXT. THRAEX'S MANSION -- DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "89B 89B Macrinus’ chariot pulls up in front of Thraex’s mansion."
+    },
+    {
+      "number": 94,
+      "heading": "INT. THRAEX'S MANSION -- DAY",
+      "characters": [
+        "MACRINUS",
+        "THRAEX"
+      ],
+      "dialogues": [
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "What are you doing here?"
+        },
+        {
+          "character": "THRAEX",
+          "parenthetical": "",
+          "text": "Macrinus --"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "This house is mine now."
+        },
+        {
+          "character": "THRAEX",
+          "parenthetical": "(DESPERATE)",
+          "text": "I have other"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "(SCORN)",
+          "text": "You offer me beef and paint? Oh"
+        },
+        {
+          "character": "THRAEX",
+          "parenthetical": "",
+          "text": "Slaves then. Or.. What do you want?"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "Well, there is... I could...there might always be... you could... (brutal)"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "THRAEX",
+          "parenthetical": "",
+          "text": "You wish my loyalty? PINK SHOOTING SCRIPT"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "(GRIN)",
+          "text": "I wish your house. It is a nice house. But I will take only your loyalty"
+        },
+        {
+          "character": "THRAEX",
+          "parenthetical": "",
+          "text": "I have heard of a - plot. To dethrone the Emperors. But the plan has been - delayed. A gladiator is to be rescued from the Arena."
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "I know why. And I know who. PINK"
+        }
+      ],
+      "actionPreview": "89C 89C Macrinus throws the door open and enters, with Viggo in tow, as if he already owned the place. Thraex appears, terrified. Your debt is now over ten thousand denarii. things. Cattle. Art. Thraex. Macrinus looks at him, as if the question is a surprise to him. He plays the supplicant once more"
+    },
+    {
+      "number": 95,
+      "heading": "EXT. ROMAN COLOSSEUM -- NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "90 90 OVERHEAD: the Colosseum, by night, is swathed in darkness. Normal night guards stand out outside the main gate. The streets are empty but for stray dogs. A beggar tries to negotiate food from a guard. The soldier strikes him and he scrambles away. An arrow HISSES from out of the darkness. It s"
+    },
+    {
+      "number": 96,
+      "heading": "INT. COLOSSEUM -- TUNNELS -- NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "91 91 We MOVE through the maze of tunnels with the cloaked figures. Arrows HISS down corridors and strike the posted guards at various points inside the tunnels. Throats are cut. The operation is swift, well- planned, almost soundless: an extraction mission. One of the cloaked figures lowers his hoo"
+    },
+    {
+      "number": 97,
+      "heading": "INT. COLOSSEUM -- TUNNELS -- NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "92 92 Suddenly the tunnels are flooded with 100 Praetorians, outnumbering Acacius’ elite unit. From above archers dominate the chamber. PINK SHOOTING SCRIPT (JUNE 17, 2024) 74."
+    },
+    {
+      "number": 98,
+      "heading": "INT. COLOSSEUM -- TUNNELS -- NIGHT",
+      "characters": [
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "94"
+        }
+      ],
+      "actionPreview": "93 93 Acacius and his men make a stand but are outnumbered. 94"
+    },
+    {
+      "number": 99,
+      "heading": "INT. LUCILLA’S VILLA -- COURTYARD -- NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "95 95 Lucilla waits anxiously by the fire for Acacius’ return. A group of Praetorian guards storm into the house. Lucilla rises as they grab her by either arm and roughly lead her outside."
+    },
+    {
+      "number": 100,
+      "heading": "INT. IMPERIAL VILLA",
+      "characters": [
+        "GETA",
+        "ACACIUS",
+        "CARACALLA",
+        "MACRINUS"
+      ],
+      "dialogues": [
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "The honor, the"
+        },
+        {
+          "character": "ACACIUS",
+          "parenthetical": "",
+          "text": "Torture me if you want."
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "Your name and deeds will be forgotten, lost to history."
+        },
+        {
+          "character": "ACACIUS",
+          "parenthetical": "",
+          "text": "(laughs)"
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "Why wait?"
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "Brother! Brother!"
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "Public, yes."
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "(shaking with fear and rage)"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "A s a friend I must counsel caution. (off his look)"
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "Acacius is a traitor."
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "I agree."
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "I don’t understand."
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "Let the Gods decide his fate in the"
+        }
+      ],
+      "actionPreview": "-- NIGHT 96 96 A hurried audience, the Emperors barely dr essed from bed. The captured Acacius and Lucilla, as well as Gracchus, have been brought before them. Acacius has been beaten and bloodied, but he remains unbowed. As they enter, Geta gowned and Caracalla wrapped in a sheet. Macrinus and Thra"
+    },
+    {
+      "number": 101,
+      "heading": "INT. UNDERCROFT -- MORNING",
+      "characters": [
+        "LUCIUS",
+        "RAVI"
+      ],
+      "dialogues": [
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "Who am I fighting?"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "RAVI",
+          "parenthetical": "",
+          "text": "Where I come from, crossing a river represents forgiveness and salvation."
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "Where I come from, it means you’re dead. I believe it means I will die today in the Arena. But - as I saw it, I was not afraid. For there were people on the other side. I was not alone. And my heart felt - open."
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "* (CONT’D)"
+        },
+        {
+          "character": "RAVI",
+          "parenthetical": "",
+          "text": "*"
+        }
+      ],
+      "actionPreview": "96A 96A The undercroft is eerily empty, quiet but for the sound of the crowd outside. Ravi wrapping Lucius’ wrists. Ravi shakes his head: he doesn’t know. Today I woke up dreaming of a dark river, a river I h ave dreamt of before, but this time, for the first time, I was crossing it. Lucius’ approac"
+    },
+    {
+      "number": 102,
+      "heading": "INT. COLOSSEUM -- DAY",
+      "characters": [
+        "MASTER OF CEREMONIES",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "MASTER OF CEREMONIES",
+          "parenthetical": "",
+          "text": "For his treason against the lives of the Emperors"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "98"
+        }
+      ],
+      "actionPreview": "97 97 The Master of Ceremonies stands before the enormous copper megaphone and reads off the official denunciation of Acacius: and the Roman state... an Enemy of the People. 98"
+    },
+    {
+      "number": 103,
+      "heading": "INT. COLOSSEUM -- DAY",
+      "characters": [
+        "VIGGO",
+        "MASTER OF CEREMONIES",
+        "LUCILLA",
+        "GETA",
+        "LUCIUS",
+        "ACACIUS",
+        "CARACALLA",
+        "MACRINUS"
+      ],
+      "dialogues": [
+        {
+          "character": "VIGGO",
+          "parenthetical": "",
+          "text": "(to Lucius)"
+        },
+        {
+          "character": "MASTER OF CEREMONIES",
+          "parenthetical": "",
+          "text": "From the vanquished city of"
+        },
+        {
+          "character": "MASTER OF CEREMONIES",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "(pleading with Caracalla)"
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "Too late."
+        },
+        {
+          "character": "MASTER OF CEREMONIES",
+          "parenthetical": "(O.S.)",
+          "text": "-- the Roman traitor, or the"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "You killed the woman I loved."
+        },
+        {
+          "character": "ACACIUS",
+          "parenthetical": "",
+          "text": "I’m sorry. Many were killed that day."
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "And you will die today. ON LUCIUS as he raises his sword and charges."
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "Acacius is a bull of a man."
+        },
+        {
+          "character": "ACACIUS",
+          "parenthetical": "",
+          "text": "I swore on your father’s memory that I would protect you with my life."
+        },
+        {
+          "character": "MASTER OF CEREMONIES",
+          "parenthetical": "",
+          "text": "Acacius has raised his hand! He has surrendered"
+        },
+        {
+          "character": "ACACIUS",
+          "parenthetical": "",
+          "text": "Do what you will."
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "Romans, what say you?"
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "Lucius -- !"
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "Kill him!"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "Is this how Rome treats its heroes?"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "(shouts in reply)"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "You must"
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "(gibbers)"
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "(foaming at the mouth)"
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "(formidable)"
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "(frightened)"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "For your safety, you should return to the palace."
+        }
+      ],
+      "actionPreview": "99 99 At the door of the south door arch Viggo hands Lucius a sword and a dagger. Go now. Vae victis. PINK SHOOTING SCRIPT (JUNE 17, 2024) 77A. He walks out onto the sun bleached sand. The gate clanging sut behind him. Numidia, the victor of three contests in the Colosseum -- the barbarian Hanno! Th"
+    },
+    {
+      "number": 104,
+      "heading": "INT. UNDERCROFT -- DAY",
+      "characters": [
+        "RAVI",
+        "VIGGO",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "RAVI",
+          "parenthetical": "",
+          "text": "Give him to me."
+        },
+        {
+          "character": "VIGGO",
+          "parenthetical": "(O.S.)",
+          "text": "Let him bleed."
+        },
+        {
+          "character": "RAVI",
+          "parenthetical": "",
+          "text": "Does"
+        },
+        {
+          "character": "VIGGO",
+          "parenthetical": "",
+          "text": "Stitch him up."
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "(NOW 106A)",
+          "text": "101"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "(NOW 96A)",
+          "text": "102"
+        }
+      ],
+      "actionPreview": "100 100 Lucius is dragged through the undercroft by Viggo and Macrinus’ men. All around us, the gladiators are chanting his name. Ravi waits for them in the passage: Macrinus want him to die? Is he still useful? Viggo hesitates. Ravi has a point. There’ll be time to change my mind. PINK SHOOTING SCR"
+    },
+    {
+      "number": 105,
+      "heading": "INT. UNDERCROFT -- CATACOMB -- DAY",
+      "characters": [
+        "RAVI",
+        "LUCIUS"
+      ],
+      "dialogues": [
+        {
+          "character": "RAVI",
+          "parenthetical": "",
+          "text": "When a rebel gladiator dies, we are supposed to cremate him and scatter the ashes."
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "“What we do in life... echoes in eternity.”"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "103 103 Ravi leads Lucius down a stairwell into a narrow tunnel lined with catacombs. Most are marked with nothing more than a name -- “Iduma of Mykonos,” “Cimon”. But we bury them here instead. The crypt is marked with a single crudely chiseled phrase: “What we do in life echoes in eternity ” Luciu"
+    },
+    {
+      "number": 106,
+      "heading": "INT. LUCIUS’ CELL.",
+      "characters": [
+        "MACRINUS",
+        "LUCIUS"
+      ],
+      "dialogues": [
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "* (Defiantly)"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "* I always get what I want, but why"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "* (CONT’D)"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "* I will never be your instrument in"
+        }
+      ],
+      "actionPreview": "DAY 103A 103A Lucius sits alone in his cell, in his hands the arrow that * killed Arishat. He is still, pensive. Something building * inside him. A guard appears with a lantern, he lays it down, * filling the cell with its glow. Lucius looks up as Macrinus * appears in the doorway. * We had a bargai"
+    },
+    {
+      "number": 107,
+      "heading": "INT. UNDERCROFT -- DAY",
+      "characters": [
+        "MACRINUS",
+        "VIGGO"
+      ],
+      "dialogues": [
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "He has outlived his use to me."
+        },
+        {
+          "character": "VIGGO",
+          "parenthetical": "",
+          "text": "As it must be."
+        }
+      ],
+      "actionPreview": "104 104 He dies tomorrow in the Arena, alongside his mother. Viggo nods, his vengeance at hand at last:"
+    },
+    {
+      "number": 108,
+      "heading": "INT. MACRINUS' CARRIAGE -- NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "104A 104A Macrinus’ carriage rides through the masses of rioting people in the streets as the chanting continues..."
+    },
+    {
+      "number": 109,
+      "heading": "INT. IMPERIAL PALACE -- NIGHT",
+      "characters": [
+        "GETA",
+        "CARACALLA",
+        "MACRINUS"
+      ],
+      "dialogues": [
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "There was nothing else to do."
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "(re: the street noise)"
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "Calm yourself, brother."
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "(CONT’D) (exasperated)"
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "Beware how you speak of Dondus!"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "Perhaps you should take Dondus elsewhere, to comfo rt one another."
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "Forgive my brother’s outburst."
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "I will reason with him."
+        }
+      ],
+      "actionPreview": "105 105 Inside the palace, the Emperors are anxious. Riots can be heard outside. The popular hero has been executed. PINK SHOOTING SCRIPT (JUNE 17, 2024) 86. He and his bitch were plotting to kill us. If I’d let him live -- Don’t you hear them? They’re calling for our heads! PINK SHOOTING SCRIPT (JU"
+    },
+    {
+      "number": 110,
+      "heading": "INT. IMPERIAL PALACE -- OTHER ROOM -- NIGHT",
+      "characters": [
+        "CARACALLA",
+        "MACRINUS"
+      ],
+      "dialogues": [
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "Nothing was ever mine."
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "You remember that, do you?"
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "Certainly, one cannot forget."
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "I must warn you, Caracalla."
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "Oh no."
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "Your brother means to blame you."
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "That’s a lie!"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "No testimony is more damning than that of one brother"
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "But he lies!"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "He’s very persuasive."
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "What will they do to me?"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "I don’t dare imagine."
+        }
+      ],
+      "actionPreview": "106 106 Macrinus finds Caracalla sitting on the floor, holding Dondus in his arms. They groom one ano ther as they gaze into each other’s eyes. It’s rather touching. The sounds of the crowd have diminished. The Praetorians have done their job. Macrinus approaches and sits next to them. Everything wa"
+    },
+    {
+      "number": 111,
+      "heading": "INT. UNDERCROFT -- DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "106A 106A In a chamber, Acacius’ body lies upon a marble slab the arrows have been removed. Lucilla is brought in by a guard to view her husband’s body one last time. Her hands are still manacled by silver chains. She looks at the guard with pleading eyes. He hesitates but then grants her wish and l"
+    },
+    {
+      "number": 112,
+      "heading": "INT. IMPERIAL PALACE -- NIGHT",
+      "characters": [
+        "GETA",
+        "CARACALLA",
+        "MACRINUS",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "Caracalla, no."
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "You lie!"
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "(calmly, used to the dementia)"
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "Lie!"
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "We’re brothers!"
+        },
+        {
+          "character": "GETA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "Now you’re the only one."
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "(NOW SC. 110A)",
+          "text": "108"
+        }
+      ],
+      "actionPreview": "107 107 Geta stands by the window, the curtains drawn, worriedly peering out into the streets below. He hears footsteps, turns -- -- and Caracalla is upon him and Geta grabs his arm. Put down the blade. Put it down -- You always lie! Caracalla -- It’s me! Look at me. I am your brother. Listen to my "
+    },
+    {
+      "number": 113,
+      "heading": "INT. UNDERCROFT -- DAY",
+      "characters": [
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "OMITTED",
+          "parenthetical": "(NOW SC.110A)",
+          "text": "110"
+        }
+      ],
+      "actionPreview": "109 109 The usual clamor in the pens has gone, only silence. -- Lucilla is being led down the corridor by Ravi past the other gladiators in their cells. She is in chains, surrounded by four Praetorians, her eyes still red from mourning Acacius. 110"
+    },
+    {
+      "number": 114,
+      "heading": "INT. LUCIUS CELL -- DAY. (RESHOOT OF 110)",
+      "characters": [
+        "LUCILLA",
+        "LUCIUS",
+        "VIGGO"
+      ],
+      "dialogues": [
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "Lucius... I never could have imagined the fates would lead us here.."
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "And yet here I am. Everything has brought us full circle. You sent me away, yet fate brought me back to the very ground where my father died."
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "This was your grandfather’s. He gave it to Maximus in acknowledgement of his trust. I gave it to Acacius. Now it should be yours."
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "This ring was one my wife gave me. I will wear it beside yours. PINK SHOOTING SCRIPT"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "(CONT’D) I’m sorry for Acacius. I could not see the man."
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "He lived and died for Rome. He had troops readying at Ostia under the command of General Darius Sextus, troops he was to lead again the emperors."
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "Is it true they intend to kill you?"
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "One man or another has had a sword on my neck since my father died but now I have found yo u I am not afraid."
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "I’ve grown quite accustomed to losing the things I love. Now that I’ve found you I have no desire to lose you again."
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "You stand like him, your father, proud, alert."
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "I do not have his strength."
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "I wish that were true. (Beat) She sees Maximus in her son"
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "Strength and honor. LUCIUS approaches and they finally"
+        },
+        {
+          "character": "VIGGO",
+          "parenthetical": "",
+          "text": "How did she get here?"
+        }
+      ],
+      "actionPreview": "110A 110A -- to the bars of Lucius’ cell. Ravi opens it for her and she walks insi de. Where he stands... She takes a ring from her finger and presses it into his hands. Lucius looks at it, he knows the importance of it. (JUNE 17, 2024) 92. He puts the ring on his finger. He looks at both rings. Luc"
+    },
+    {
+      "number": 115,
+      "heading": "INT. ROMAN SENATE -- DAY. (WAS SC.108)",
+      "characters": [
+        "CARACALLA",
+        "MACRINUS",
+        "SENATORS"
+      ],
+      "dialogues": [
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "Now I am the only one."
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "(PULLING HIMSELF TOGETHER)",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "(from the shadows, clapping hard)"
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "(JOINING IN)",
+          "text": "Hail Dondus!"
+        },
+        {
+          "character": "SENATORS",
+          "parenthetical": "(JOINING TOO)",
+          "text": "Hail Dondus!"
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "As is custom, I am naming a Second"
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "SENATORS",
+          "parenthetical": "",
+          "text": "Long live the Emperor!"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "I happen to have - through good fortune and not a little skill - the remaining - Emperor’s ear. I can - speak reason in it, and tame the madness in the street."
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "(O.S.)",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "110B 110B CARACALLA sits on the throne before them as Emperor, but his mental state has unraveled further in the wake of his brother’s death. A bloody fabric bundle leaking onto the floor by Carac alla’s feet. I was the true us, and he was the false me. We were always “we,” all our lives, but now I "
+    },
+    {
+      "number": 116,
+      "heading": "INT. COLOSSEUM UNDERCROFT -- DAY",
+      "characters": [
+        "MACRINUS",
+        "LUCILLA",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "Rome must fall."
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "And after Rome falls, what then?"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "You are your fathers chi ld."
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "(looks away)"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "“The best revenge is to become unlike the one who did the injury.” I made myself unlike him. (MORE) PINK SHOOTING SCRIPT"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "(NOW SCENE 112A)",
+          "text": "111A-112"
+        }
+      ],
+      "actionPreview": "111 111 The Praetorians lead her to a private cell. Macrinus walks in. I need only give it a push. His “Dream of Rome” was never a dream -- it was a fiction. Look. Macrinus pulls back his collar to reveal the “M.A.” branded on his left pectoral. Lucilla reacts. Do you recognize your father’s mark? P"
+    },
+    {
+      "number": 117,
+      "heading": "INT. LUCIUS CELL.",
+      "characters": [
+        "LUCIUS",
+        "RAVI",
+        "MACRINUS"
+      ],
+      "dialogues": [
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "I need you to get a mess age to"
+        },
+        {
+          "character": "RAVI",
+          "parenthetical": "",
+          "text": "What is at Ostia?"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "We have an army. I am - asking you to risk yourself my friend."
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "(SOFTER)",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "(CONT’D)",
+          "text": "PINK SHOOTING SCRIPT"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "RAVI",
+          "parenthetical": "(DAUNTED)",
+          "text": "And who will I say sent this ring?"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "I am Lucius Verus Aurelius, Prince"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "(CONT’D) I am summoning this Army to the defense of the Republic of Rome."
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "NIGHT (RESHOOT OF 111A-112) 112A 112A Lucius examines the ring his mother gave him: inside it bears the inscriptions of the names “Marcus Aurelius” and “Maximus.” He hears footsteps approaching: it’s RAVI. Ostia by morning. Ravi looks at him for a long time. We can see conflict within him. In servic"
+    },
+    {
+      "number": 118,
+      "heading": "EXT. RURAL ROADS -- NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "113 113 Ravi rides flat out on a horse."
+    },
+    {
+      "number": 119,
+      "heading": "EXT. COLOSSEUM -- WIDE SHOT -- PRE-LIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "113A 113A The crowds are gathering outside the Colosseum for the Emperor Geta’s triumphal games."
+    },
+    {
+      "number": 120,
+      "heading": "EXT. OSTIA -- PRE-DAWN",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "113B 113B The sun is on the horizon as Ravi dismounts his tethered horse inside the Roman camp at Ostia. A Centurion takes him to Darius Sextus tent. As he emerges, Ravi presents the signet ring tha t Lucius gave him, and it is recognized immediately."
+    },
+    {
+      "number": 121,
+      "heading": "EXT. COLOSSEUM - DAWN",
+      "characters": [
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "114"
+        }
+      ],
+      "actionPreview": "113C 113C The sun blooms through the empty stadium as ten horses drag rakes to smooth and comb the sand for the day’s spectacle. 114"
+    },
+    {
+      "number": 122,
+      "heading": "INT. NORTH ARCH.",
+      "characters": [
+        "SAME"
+      ],
+      "dialogues": [
+        {
+          "character": "SAME",
+          "parenthetical": "",
+          "text": "114A"
+        }
+      ],
+      "actionPreview": "114A The Emperor’s enemies, including the conspirators, against him and his brother, are paraded to a decorated wagon, then chained to it. Some murmur prayers, others are just o penly terrified."
+    },
+    {
+      "number": 123,
+      "heading": "EXT. EMPEROR’S PALACE -- DAY",
+      "characters": [
+        "CARACALLA",
+        "MACRINUS"
+      ],
+      "dialogues": [
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "Where is my brother?"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "Geta couldn’t be here, Emperor. He is unwell. PINK SHOOTING SCRIPT"
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "He should be here."
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "This is your triumph, Emperor."
+        }
+      ],
+      "actionPreview": "115 115 As the sun shines down, Caracalla is lead out of the palace with his entourage and Dondus to the royal coach. (JUNE 17, 2024) 96. He would be so happy for me. PINK SHOOTING SCRIPT (JUNE 17, 2024) 96A. Exult in it. Caracalla nods, already forgetting his brother’s absence, waving and acknowled"
+    },
+    {
+      "number": 124,
+      "heading": "EXT. NORTH ARCH -- SAME",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "115A 115A Lucilla, also in silver chains, is led onto the wagon. Viggo checks the chains of all the conspirators."
+    },
+    {
+      "number": 125,
+      "heading": "EXT. ENTRANCE.",
+      "characters": [
+        "IMPERIAL BOX.",
+        "QUAESTOR",
+        "MACRINUS"
+      ],
+      "dialogues": [
+        {
+          "character": "IMPERIAL BOX.",
+          "parenthetical": "",
+          "text": "DAY 115B"
+        },
+        {
+          "character": "QUAESTOR",
+          "parenthetical": "",
+          "text": "The people love her."
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "If she dies and the streets rise up in anger, I will deliver them"
+        }
+      ],
+      "actionPreview": "115B Macrinus and Quaestor watch from above as Lucilla and the other conspirators are led onto the wagon. A pall comes over the crowd. Her death will incite the mob -- Caracalla’s head, and the people will acclaim me. That is politics."
+    },
+    {
+      "number": 126,
+      "heading": "EXT. RURAL ROADS -- DAY",
+      "characters": [
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "116"
+        }
+      ],
+      "actionPreview": "115C 115C Ravi rides with Acacius’s army. The horses are at full throttle. The soldiers going double time - cantering for huge distances as they approach the distant Rome. PINK SHOOTING SCRIPT (JUNE 17, 2024) 97. 116"
+    },
+    {
+      "number": 127,
+      "heading": "EXT. COLOSSEUM -- DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "117 117 The stands are filling, but there is palpable unease in the air today. The stands are guarded by black-clad Praetorian archers -- 200 bowmen placed at evenly spaced intervals around the first tier of the Arena. A security cordon facing the crowd. Macrinus stands behind the Emperor Caracalla."
+    },
+    {
+      "number": 128,
+      "heading": "INT. ROYAL BOX -- SAME",
+      "characters": [
+        "CARACALLA",
+        "MACRINUS",
+        "MASTER OF CEREMONIES"
+      ],
+      "dialogues": [
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "(whispers, uneasy)"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "Until she is dead, you will never know peace."
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MASTER OF CEREMONIES",
+          "parenthetical": "",
+          "text": "To honor the acclamation of Emperor"
+        }
+      ],
+      "actionPreview": "Must w e kill Lucilla? The Emperor is losing his nerve. Macrinus gestures to the Master of Ceremonies. PINK SHOOTING SCRIPT (JUNE 17, 2024) 98. Let it begin. The Master of Ceremonies drinks a draft of wine and approaches the giant copper horn to announce the fight. Caracalla... (continues throughout"
+    },
+    {
+      "number": 129,
+      "heading": "INT. UNDERCROFT -- DAY",
+      "characters": [
+        "VIGGO",
+        "LUCIUS"
+      ],
+      "dialogues": [
+        {
+          "character": "VIGGO",
+          "parenthetical": "",
+          "text": "Today is your last fight, champion."
+        },
+        {
+          "character": "VIGGO",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "Wood or steel, a point is a point. PINK SHOOTING SCRIPT"
+        }
+      ],
+      "actionPreview": "118 118 Lucius uses the key Ravi slipped him to open the lock on the cell door. The lock quietly springs open . CUT TO: VIGGO comes down the corridor with a wooden sword in his hand. Two other guards are with him. And our Master has bestowed on you the wooden sword of freedom. Viggo holds the sword "
+    },
+    {
+      "number": 130,
+      "heading": "EXT. ARENA -- MAIN ARCH -- DAY",
+      "characters": [
+        "MASTER OF CEREMONIES"
+      ],
+      "dialogues": [
+        {
+          "character": "MASTER OF CEREMONIES",
+          "parenthetical": "",
+          "text": "...and as punishment for her conspiracy against him and the"
+        },
+        {
+          "character": "MASTER OF CEREMONIES",
+          "parenthetical": "",
+          "text": "(CONT’D) ...for treason against the"
+        },
+        {
+          "character": "MASTER OF CEREMONIES",
+          "parenthetical": "(O.S.)",
+          "text": "(CONT’D) ...for her calumnies against the"
+        }
+      ],
+      "actionPreview": "119 119 The gates open as the crowd roars. Excitement and anger pervade all, the promise of violence is palpable as the wagon with Lucilla and the other conspirators standing atop it rides into the cen ter of the Arena. She is surrounded by other loyalists, including Gracchus. Roman people... Each h"
+    },
+    {
+      "number": 131,
+      "heading": "INT. UNDERCROFT -- DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "119A 119A The gladiators have raided the armory. They move quickly, quietly, gathering and distributing weapons. Lucius looks at them as they arm themselves, putting on armor and choosing weapons. He realizes what he must choose. He descends into -"
+    },
+    {
+      "number": 132,
+      "heading": "INT. UNDERCROFT -- CATACOMBS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "-- DAY 120 120 Lucius races into the catacomb. He cannot hesitate. He grabs one of the metal swords then he looks up at the breastplate above him. He looks at it reverently for a moment and then takes it from the wall and places it on. PINK SHOOTING SCRIPT (JUNE 17, 2024) 100."
+    },
+    {
+      "number": 133,
+      "heading": "EXT. COLOSSEUM -- DAY",
+      "characters": [
+        "MASTER OF CEREMONIES"
+      ],
+      "dialogues": [
+        {
+          "character": "MASTER OF CEREMONIES",
+          "parenthetical": "(O.S.)",
+          "text": "...for fomenting military mutiny along with her husband, whose name will never again be spoken..."
+        }
+      ],
+      "actionPreview": "121 121 Simultaneously, TWO HUNDRED PRAETORIANS enter the Arena, marching in perfect sync. They form a wide circle, positioned against the wall becoming statues in the contrast of the blazing light and shadows. PINK SHOOTING SCRIPT (JUNE 17, 2024) 100A."
+    },
+    {
+      "number": 134,
+      "heading": "EXT. COLOSSEUM.",
+      "characters": [
+        "SAME"
+      ],
+      "dialogues": [
+        {
+          "character": "SAME",
+          "parenthetical": "",
+          "text": "121A"
+        }
+      ],
+      "actionPreview": "121A Lucilla, standing on the wagon, stands formidably poised. The gates open and the wagon and float moves to the centre of the oval."
+    },
+    {
+      "number": 135,
+      "heading": "INT. UNDERCROFT -- DAY",
+      "characters": [
+        "LUCIUS",
+        "BRENNOS",
+        "GLADIATORS"
+      ],
+      "dialogues": [
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "* I am not a General BUT WE ARE ALL"
+        },
+        {
+          "character": "BRENNOS",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "* (CONT’D) ...Or you can join me... and we can"
+        },
+        {
+          "character": "GLADIATORS",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "* (CONT’D) (Raises his sword)"
+        },
+        {
+          "character": "GLADIATORS",
+          "parenthetical": "",
+          "text": "*"
+        }
+      ],
+      "actionPreview": "122 122 Lucius and the other gladiators are gathered in the * undercroft. Lucius looks at the gladiators th at surround him. * Every one of them is armed, but silent. They encircle him. * * soldiers. Until now, we have fought * in that arena for nothing more than * another day's survival. * Lucius p"
+    },
+    {
+      "number": 136,
+      "heading": "INT. COLOSSEUM. TUNNELS.",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "DAY 122A 122A The gladiators run around the corridors that circle the arena, taking up positions at each portal, waiting for Lucius’ command."
+    },
+    {
+      "number": 137,
+      "heading": "EXT. ROAD. DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "122B 122B DARIUS leads a contingent of five thousand along the road. Their horses trotting. Beside him rides RAVI. They are here to bring war"
+    },
+    {
+      "number": 138,
+      "heading": "EXT. COLOSSEUM -- DAY",
+      "characters": [
+        "MASTER OF CEREMONIES",
+        "MACRINUS",
+        "FORTUNA",
+        "CARACALLA",
+        "GENERAL TEGULA"
+      ],
+      "dialogues": [
+        {
+          "character": "MASTER OF CEREMONIES",
+          "parenthetical": "",
+          "text": "Let it not be said that the Emperor is not merciful!"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "He has chosen his own demise."
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "FORTUNA",
+          "parenthetical": "(WITH TRUE BRAVERY)",
+          "text": "I also choose my own demise."
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "Yes!"
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "(UNSURE OF THE CHAOS)",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "Summon your cavalry...put this down at once."
+        },
+        {
+          "character": "GENERAL TEGULA",
+          "parenthetical": "",
+          "text": "(nods)"
+        }
+      ],
+      "actionPreview": "123 123 The crowd is silent. Lucilla and her loyalists are a tableau in the center of the Arena. PINK SHOOTING SCRIPT (JUNE 17, 2024) 101A. Macrinus gazes down at the scene from beside the Emperor. Fortuna seated behind him. Caracalla nervously fidgets, nibbles on sweetmeats, giving some to Dondus i"
+    },
+    {
+      "number": 139,
+      "heading": "EXT. COLOSSEUM -- DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "124 124 On the Arena floor, the fighting separates Lucius from Lucilla -- a chaotic phalanx of blood and steel stands between them. Lucilla look s on helplessly as the fighting rages."
+    },
+    {
+      "number": 140,
+      "heading": "EXT. COLOSSEUM -- ROYAL SEATS -- DAY",
+      "characters": [
+        "GENERAL TEGULA",
+        "CARACALLA",
+        "MACRINUS"
+      ],
+      "dialogues": [
+        {
+          "character": "GENERAL TEGULA",
+          "parenthetical": "( LOW VOICED)",
+          "text": "The army of Acacius is advancing just outside of Rome, sir."
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "(OVERHEARING)",
+          "text": "The army of"
+        },
+        {
+          "character": "GENERAL TEGULA",
+          "parenthetical": "",
+          "text": "Sighted on the march. They come swiftly."
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "(PISSING HIMSELF, LITERALLY)",
+          "text": "How many?"
+        },
+        {
+          "character": "GENERAL TEGULA",
+          "parenthetical": "",
+          "text": "Five thousand, perhaps more."
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "",
+          "text": "I can feel their swords sharpening..."
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "My lord, you must trust me -"
+        },
+        {
+          "character": "CARACALLA",
+          "parenthetical": "(SHRILL NOW)",
+          "text": "But where is my protection?"
+        }
+      ],
+      "actionPreview": "125 125 From the Royal Box, Macrinus watches the scene from behind the Emperor. The North gate opens -- and the cavalry begin streaming in, brutally putting down the uprising. Macrinus looks on with unease: General Tegula, the Praetorian commander, reappears at his side, clearly disturbed. He report"
+    },
+    {
+      "number": 141,
+      "heading": "EXT. COLOSSEUM -- ARENA FLOOR -- SAME",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "126 126 Lucius fights to reach Lucilla. The crowd control in the stands has given way: the mob rules and streams onto the Arena floor. The gladiators -- including Brennos and Agedilios -- crash forward in a wedge formation in order to drive through the phalanx of violence that separates Lucius from "
+    },
+    {
+      "number": 142,
+      "heading": "EXT. ROYAL BOX -- SAME",
+      "characters": [
+        "MACRINUS"
+      ],
+      "dialogues": [
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "The bow."
+        }
+      ],
+      "actionPreview": "127 127 Macrinus takes this in for a moment. He turns to a distracted ARCHER, whose eyes pop: Give it to me. The impressed Praetorian hands Macrinus the longbow. Macrinus sights Lucius expertly -- -- but he’s surrounded by the wedge of gladiators. Lucilla, however, is exposed. PINK SHOOTING SCRIPT ("
+    },
+    {
+      "number": 143,
+      "heading": "EXT. COLOSSEUM -- SAME",
+      "characters": [
+        "LUCILLA",
+        "LUCIUS"
+      ],
+      "dialogues": [
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "Lucius."
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "I know."
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "Tell me you will be just -"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "I will."
+        },
+        {
+          "character": "LUCILLA",
+          "parenthetical": "",
+          "text": "I always loved you."
+        }
+      ],
+      "actionPreview": "128 128 Lucius’ gladiators now crashing through the violence and mayhem -- one final heave and the wall of soldiers opens up -- -- Lucilla stands before him. Lucius leaps onto the wagon and reaches out for his mother’s hand -- -- Lucilla looks over to see -- as Macrinus releases the arrow -- Their h"
+    },
+    {
+      "number": 144,
+      "heading": "EXT. VIA SACRA -- DAY",
+      "characters": [
+        "MACRINUS",
+        "GENERAL TEGULA",
+        "ON LUCIUS",
+        "EXT.",
+        "ROAD."
+      ],
+      "dialogues": [
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "How long until Acacius’ army reach us? PINK SHOOTING SCRIPT"
+        },
+        {
+          "character": "GENERAL TEGULA",
+          "parenthetical": "",
+          "text": "Less than one half hour."
+        },
+        {
+          "character": "GENERAL TEGULA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ON LUCIUS",
+          "parenthetical": "",
+          "text": "There is chaos everywhere; Macrinus’ Praetorians are seen moving away."
+        },
+        {
+          "character": "ROAD.",
+          "parenthetical": "",
+          "text": "LATER 129A"
+        }
+      ],
+      "actionPreview": "129 129 Macrinus is swiftly descending the staircase to see General Tegula, on his horse. (JUNE 17, 2024) 105. Macrinus’ own Praetorians can be seen mustering behind the Colosseum. PINK SHOOTING SCRIPT (JUNE 17, 2024) 105A. They must cross beneath the old arch. Our men will lie in wait until they pa"
+    },
+    {
+      "number": 145,
+      "heading": "EXT. RIVERBANK -- LATER",
+      "characters": [
+        "MACRINUS",
+        "LUCIUS"
+      ],
+      "dialogues": [
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "* I don't fight for power. I fight to"
+        },
+        {
+          "character": "MACRINUS",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "* (CONT’D)"
+        }
+      ],
+      "actionPreview": "130 130 Macrinus rides towards the gate, w here Acacius' army is * advancing towards Rome. Macrinus pauses for a moment before * Tegula gestures to the traveling army. * Macrinus gallops towards the arch, gazing defiantly out * towards the soldiers being led by Ravi and General Sextus. * A galloping"
+    },
+    {
+      "number": 146,
+      "heading": "EXT. COLOSSEUM -- SAME",
+      "characters": [
+        "LUCIUS",
+        "BLACK OUT."
+      ],
+      "dialogues": [
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "Speak to me... (pause) ....Mother."
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "LUCIUS",
+          "parenthetical": "(CONT’D)",
+          "text": "PINK SHOOTING SCRIPT"
+        }
+      ],
+      "actionPreview": "131 131 * Lucius is in the Arena. The ground is stained with blood. He stands next to the wagon upon which his mother died. He whispers - Placing his hand on the ground where Maximus died and whispers a prayer: He turns and walks to the spot where he believes his Father died. He kneels and murmurs.."
+    }
+  ]
+}

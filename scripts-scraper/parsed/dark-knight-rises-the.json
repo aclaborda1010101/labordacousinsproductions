@@ -1,0 +1,26 @@
+{
+  "slug": "dark-knight-rises-the",
+  "title": "Dark Knight Rises, The",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 1,
+  "characters": [
+    "TV ANNOUNCER"
+  ],
+  "total_words": 33409,
+  "total_dialogue": 1,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "TV ANNOUNCER"
+      ],
+      "action_text": "<b>                          THE DARK KNIGHT RISES </b> Written by Jonathan Nolan & Christopher Nolan Story by Christopher Nolan & David S. Goyer <b>          BLACK SCREEN. </b> <b>           GORDON (V.O) </b>           Harvey Dent was needed. He was everything Gotham has been crying out for. He was...a hero. Not the hero we deserved - the hero we needed. Nothing less than a knight, shining... The sound of cracking. Splintering. A shape appears, in ice. The shape of a BAT. The ice disintegrates.",
+      "dialogue_count": 1,
+      "word_count": 33409
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "slug": "antz",
+  "title": "Antz",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 19149,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<html> <head> <title>\"Antz\", unknown draft</title> </head> <body bgcolor=\"#FFFFFF\"> <pre> <u>A N T Z</u> <u>CHARACTERS                                            VOICES</u> <b>     \"Z\"...............................................WOODY ALLEN </b><b>     \"WASP #1\".........................................DAN AYKROYD </b><b>     \"WASP #2\".........................................JANE CURTIN </b><b>     \"GEN. FORMICA\"...................................DANNY GLOVER </b><b>     \"MANDIBLE\".............",
+      "dialogue_count": 0,
+      "word_count": 19149
+    }
+  ]
+}

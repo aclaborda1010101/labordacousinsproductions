@@ -1,0 +1,4597 @@
+{
+  "slug": "memory-2023",
+  "title": "Memory",
+  "parsedWith": "v2",
+  "parsedAt": "2026-01-29T22:09:11.328Z",
+  "stats": {
+    "scenes": 109,
+    "dialogues": 668,
+    "characters": 31
+  },
+  "characters": [
+    {
+      "name": "SYLVIA",
+      "dialogueLines": 213,
+      "totalWords": 1413
+    },
+    {
+      "name": "SAUL",
+      "dialogueLines": 122,
+      "totalWords": 646
+    },
+    {
+      "name": "ANNA",
+      "dialogueLines": 86,
+      "totalWords": 415
+    },
+    {
+      "name": "ISAAC",
+      "dialogueLines": 54,
+      "totalWords": 359
+    },
+    {
+      "name": "SAMANTHA",
+      "dialogueLines": 43,
+      "totalWords": 409
+    },
+    {
+      "name": "OLIVIA",
+      "dialogueLines": 40,
+      "totalWords": 291
+    },
+    {
+      "name": "SARA",
+      "dialogueLines": 31,
+      "totalWords": 178
+    },
+    {
+      "name": "KAREN",
+      "dialogueLines": 12,
+      "totalWords": 133
+    },
+    {
+      "name": "ROBERT",
+      "dialogueLines": 11,
+      "totalWords": 59
+    },
+    {
+      "name": "LUCY",
+      "dialogueLines": 6,
+      "totalWords": 28
+    },
+    {
+      "name": "ASHLEY",
+      "dialogueLines": 6,
+      "totalWords": 26
+    },
+    {
+      "name": "WAITRESS",
+      "dialogueLines": 5,
+      "totalWords": 36
+    },
+    {
+      "name": "MARK",
+      "dialogueLines": 4,
+      "totalWords": 23
+    },
+    {
+      "name": "YOUNG WAITER",
+      "dialogueLines": 4,
+      "totalWords": 18
+    },
+    {
+      "name": "REBECCA",
+      "dialogueLines": 3,
+      "totalWords": 41
+    },
+    {
+      "name": "MEGAN",
+      "dialogueLines": 3,
+      "totalWords": 49
+    },
+    {
+      "name": "HOSPITAL RECEPTIONIST",
+      "dialogueLines": 3,
+      "totalWords": 17
+    },
+    {
+      "name": "MALE NURSE",
+      "dialogueLines": 3,
+      "totalWords": 11
+    },
+    {
+      "name": "EMILY",
+      "dialogueLines": 2,
+      "totalWords": 65
+    },
+    {
+      "name": "REFRIGERATOR REPAIR MAN",
+      "dialogueLines": 2,
+      "totalWords": 19
+    },
+    {
+      "name": "WAITER",
+      "dialogueLines": 2,
+      "totalWords": 23
+    },
+    {
+      "name": "SAU L",
+      "dialogueLines": 2,
+      "totalWords": 14
+    },
+    {
+      "name": "SA MANTHA",
+      "dialogueLines": 2,
+      "totalWords": 17
+    },
+    {
+      "name": "AA MEMBERS",
+      "dialogueLines": 2,
+      "totalWords": 40
+    },
+    {
+      "name": "AA MEMBER",
+      "dialogueLines": 1,
+      "totalWords": 4
+    },
+    {
+      "name": "LATER THAT NIGHT",
+      "dialogueLines": 1,
+      "totalWords": 23
+    },
+    {
+      "name": "ISAA C",
+      "dialogueLines": 1,
+      "totalWords": 8
+    },
+    {
+      "name": "S YLVIA",
+      "dialogueLines": 1,
+      "totalWords": 6
+    },
+    {
+      "name": "CARD.",
+      "dialogueLines": 1,
+      "totalWords": 24
+    },
+    {
+      "name": "LORRAINE",
+      "dialogueLines": 1,
+      "totalWords": 10
+    },
+    {
+      "name": "ANN A",
+      "dialogueLines": 1,
+      "totalWords": 4
+    }
+  ],
+  "scenes": [
+    {
+      "number": 1,
+      "heading": "INT. CHURCH HALL (SUNSET PARK) NIGHT",
+      "characters": [
+        "KAREN",
+        "EMILY",
+        "SYLVIA",
+        "ANNA"
+      ],
+      "dialogues": [
+        {
+          "character": "KAREN",
+          "parenthetical": "",
+          "text": "My dear Sylvia. Being your sponsor has been a gift. I know you don’t like to hear this, but I really do think you should find yourself a person. So you don’t end up alone like me."
+        },
+        {
+          "character": "KAREN",
+          "parenthetical": "(cont'd)",
+          "text": "I love you as if you were my own daughter. Maybe because you’re like a child in many ways. I want to take care of you. That’s why I don’t want you"
+        },
+        {
+          "character": "KAREN",
+          "parenthetical": "(cont'd)",
+          "text": "years. That’s longer than most marriages nowadays."
+        },
+        {
+          "character": "EMILY",
+          "parenthetical": "",
+          "text": "I’m not going to say as much. I’ve only known you for four days... but I can tell how much everyone loves you. I hope I can get to where you are..."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "I'm very grateful for this space and for all of you and definitely nothing would be possible without you. And I'm very grateful for my daughter. ANNA (13) Sylvia’s daughter, a fresh and confident version of her"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "(cont'd)",
+          "text": "How do you feel here?"
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "Good."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Is it what you thought?"
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "Yes! I'm so proud of you."
+        }
+      ],
+      "actionPreview": "The surroundings blur as the camera focuses on KARE N. Karen immediately regrets oversharing. She starts again. to be alone. Anna will grow up. She’ll go away, to make it on her own. (MORE) (Printed with the demonstration version of Fade In) We’ve known each other for thirteen Laughter and applause."
+    },
+    {
+      "number": 2,
+      "heading": "INT. CHURCH HALL (SUNSET PARK) NIGHT",
+      "characters": [
+        "KAREN",
+        "AA MEMBER"
+      ],
+      "dialogues": [
+        {
+          "character": "KAREN",
+          "parenthetical": "",
+          "text": "I'm glad you came, Anna."
+        },
+        {
+          "character": "AA MEMBER",
+          "parenthetical": "",
+          "text": "Congratulations Sylvia! Good night."
+        },
+        {
+          "character": "KAREN",
+          "parenthetical": "",
+          "text": "Let's have dinner later. 3"
+        }
+      ],
+      "actionPreview": "The members are picking up the chairs and getting ready to leave. Sylvia is saying goodbye to the people. 3"
+    },
+    {
+      "number": 3,
+      "heading": "EXT. SYLVIA’S NEIGHBORHOOD. NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Sylvia and Anna arrive to their house in an Uber. They go inside. The neighborhood is not so fancy. 4 4"
+    },
+    {
+      "number": 4,
+      "heading": "INT. SYLVIA' S APARTMENT - KITCHEN. MORNING",
+      "characters": [
+        "ANNA",
+        "SYLVIA"
+      ],
+      "dialogues": [
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "The fridge broke again?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "I called to have it fixed."
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "It’s seven thirty."
+        }
+      ],
+      "actionPreview": "Sylvia prepares two portions of freshly made dumplings. She places them in plastic containers - they look professionally made. Her movements are quick, precise, elegant. Peeling paint and damp spots scar the walls of the old house. Anna takes an apple out of the fridge. Anna eats the apple on the go"
+    },
+    {
+      "number": 5,
+      "heading": "EXT. STREET / SCHOOL (SUNSET PARK). DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Sylvia and Anna rush to school through a grim-looking neighborhood. 5 5"
+    },
+    {
+      "number": 6,
+      "heading": "EXT. STREET / SCHOOL (SUNSET PARK). DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The school bell rings. Anna speeds up, leaving Sylvia behind. 3. (Printed with the demonstration version of Fade In) Sylvia watches her daughter run into the school building. She then crosses the street, and walks back in the direction she came from. 6 6"
+    },
+    {
+      "number": 7,
+      "heading": "INT. ADULT RESIDENCE - HALLWAY / OFFICE ROOM. DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Sylvia enters the hallway and greets a resident, ILYA, who is happy to see her. He presents her with a mimed bouquet of flowers which she mimes taking off him, thanking him. She heads into the office where Karen and T ARINA are sitting at their desks. They greet her. 7 7"
+    },
+    {
+      "number": 8,
+      "heading": "INT. ADULT RESIDENCE - MAIN ROOM. LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Sylvia leads a group stretch with a handful of residents. 7A 7A"
+    },
+    {
+      "number": 9,
+      "heading": "INT. ADULT RESIDENCE - ROOM. LATER",
+      "characters": [
+        "SYLVIA"
+      ],
+      "dialogues": [
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "If you're going outside, you need a jacket, Mario. I know you have two things but it is so cold. Do you want to do it yourself?"
+        }
+      ],
+      "actionPreview": "Sylvia is helping a resident, MARIO (30) to get ready to go for a walk. Sylvia i s having trouble trying to convince Mario, so she gives up and they walk outside. Sylvia carries the jacket. 8 8"
+    },
+    {
+      "number": 10,
+      "heading": "INT. ADULT RESIDENCE - COMMON ROOM. TWO HOURS LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Sylvia and Karen are taking breakfast to the residents in the common room. Sylvia asks Karen for a break so she can go to check on Anna at the school. 9 9"
+    },
+    {
+      "number": 11,
+      "heading": "EXT. STREET / SCHOOL. DAY",
+      "characters": [
+        "SYLVIA"
+      ],
+      "dialogues": [
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Hey... good... yeah. We had a good time... I’m eating outside... No, I don’t go to school during rec ess anymore... I swear I’m not outside."
+        }
+      ],
+      "actionPreview": "Students crowd the patio during recess. Anna and her friends sit on the steps leading to the school. Sylvia watches them from a bench across the street. Anna and Sylvia greet each other discretely from afar, eating lunch at a distance. 4. (Printed with the demonstration version of Fade In) One of An"
+    },
+    {
+      "number": 12,
+      "heading": "EXT. BEVERLY ROAD SUBWAY STATION (PROSPECT PARK SOUTH) DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Anna and Sylvia get out of the subway. The neighborhood is noticeably different - mostly white faces, moms in work-out clothes pushing strollers or walking their small dogs along the pavement line d with high-end boutiques. 10A 10A"
+    },
+    {
+      "number": 13,
+      "heading": "EXT. OLIVIA’S HOUSE. DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Anna and Sylvia arrive at the house. 11 11"
+    },
+    {
+      "number": 14,
+      "heading": "INT. OLIVIA’S HOUSE - KITCHEN. CONTINUOUS",
+      "characters": [
+        "OLIVIA",
+        "LUCY",
+        "SYLVIA",
+        "ANNA"
+      ],
+      "dialogues": [
+        {
+          "character": "OLIVIA",
+          "parenthetical": "",
+          "text": "to Lucy ("
+        },
+        {
+          "character": "LUCY",
+          "parenthetical": "",
+          "text": "I already did."
+        },
+        {
+          "character": "OLIVIA",
+          "parenthetical": "",
+          "text": "You were playing with Rocco."
+        },
+        {
+          "character": "OLIVIA",
+          "parenthetical": "(cont'd)",
+          "text": "calling out ("
+        },
+        {
+          "character": "OLIVIA",
+          "parenthetical": "(cont'd)",
+          "text": "Are you staying for dinner?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "No, we’ll eat at home."
+        },
+        {
+          "character": "OLIVIA",
+          "parenthetical": "",
+          "text": "Are you going to the Woodbury event on Friday?"
+        },
+        {
+          "character": "OLIVIA",
+          "parenthetical": "(cont'd)",
+          "text": "Robert’s not going."
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "I’ll be your date if you want."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Thank you, sweetie."
+        },
+        {
+          "character": "OLIVIA",
+          "parenthetical": "",
+          "text": "It’ll be good for you to spend time with..."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "People who aren’t from AA?"
+        },
+        {
+          "character": "OLIVIA",
+          "parenthetical": "",
+          "text": "How did the anniversary meeting go?"
+        },
+        {
+          "character": "LUCY",
+          "parenthetical": "",
+          "text": "What anniversary?"
+        },
+        {
+          "character": "OLIVIA",
+          "parenthetical": "",
+          "text": "Eat some salad."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "It was nice. (MORE) 6."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "(cont'd)",
+          "text": "Wasn’t it?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "(cont'd)",
+          "text": "I’ll tell you about it later."
+        },
+        {
+          "character": "LUCY",
+          "parenthetical": "",
+          "text": "What anniversary?"
+        },
+        {
+          "character": "OLIVIA",
+          "parenthetical": "",
+          "text": "Lucy, your food is getting cold."
+        }
+      ],
+      "actionPreview": "Sylvia is in the kitchen. ) Wash your hands. Lucy grudgingly washes her hands. Mark, Anna and Ashley come down. Mark continues to tease Anna, asking her to take a photo together for one of their frien ds. This makes Sylvia visibly uncomfortable. Olivia understands how anxious Sylvia gets when it com"
+    },
+    {
+      "number": 15,
+      "heading": "INT. OLIVIA'S HOUSE - LIVING ROOM / TV ROOM. LATE AFTERNOON",
+      "characters": [
+        "OLIVIA",
+        "SYLVIA"
+      ],
+      "dialogues": [
+        {
+          "character": "OLIVIA",
+          "parenthetical": "",
+          "text": "You don’t have to pay me back right away. It’s not Robert’s money."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Have you become a drug dealer?"
+        },
+        {
+          "character": "OLIVIA",
+          "parenthetical": "",
+          "text": "The students pay me in cash. Count it. It should all be there."
+        },
+        {
+          "character": "OLIVIA",
+          "parenthetical": "(cont'd)",
+          "text": "I’ve been meaning to tell you. Mom k eeps asking about you and Anna."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Is she staying long?"
+        },
+        {
+          "character": "OLIVIA",
+          "parenthetical": "",
+          "text": "What would she go back for? She wasn’t doing well without dad. 7."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Anna? We’re leaving!"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "(cont'd)",
+          "text": "Could you get me an aspirin?"
+        }
+      ],
+      "actionPreview": "Sylvia i s having a cup of coffee on the sofa. The kids watch TV. Olivia comes over and hands Sylvia four hundred dollars in small bills. Sylvia puts away the money and smiles at Olivia. (Printed with the demonstration version of Fade In) Sylvia collapses onto the sofa and closes her eyes, wincing. "
+    },
+    {
+      "number": 16,
+      "heading": "INT. SYLVIA'S APARTMENT / KITCHEN. DAY",
+      "characters": [
+        "SYLVIA",
+        "REFRIGERATOR REPAIR MAN",
+        "ANNA"
+      ],
+      "dialogues": [
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Yes?"
+        },
+        {
+          "character": "REFRIGERATOR REPAIR MAN",
+          "parenthetical": "(O.S.)",
+          "text": "Hi ma’am... you’ve got a situation with your fridge?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "I as ked for a repair woman..."
+        },
+        {
+          "character": "REFRIGERATOR REPAIR MAN",
+          "parenthetical": "(O.S.)",
+          "text": "She wasn’t available today... do you want me to leave?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "(cont'd)",
+          "text": "Go back to your room."
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "But I’m thirsty."
+        }
+      ],
+      "actionPreview": "The doorbell rings. Sylvia answers the intercom in her pajamas, still half asleep. Sylvia buzzes the repair man in and escorts him into the kitchen to show the fridge. Anna comes into the kitchen barefoot in a pair of shorts. Irritated, Anna grabs a glass and fills it with water from the sink. Sylvi"
+    },
+    {
+      "number": 17,
+      "heading": "INT. SIRICO - ENTRANCE HALL. DAY",
+      "characters": [
+        "OLIVIA",
+        "REBECCA",
+        "SYLVIA"
+      ],
+      "dialogues": [
+        {
+          "character": "OLIVIA",
+          "parenthetical": "",
+          "text": "Rebecca! REBECCA is obnoxiously happy to see Olivia."
+        },
+        {
+          "character": "OLIVIA",
+          "parenthetical": "(cont'd)",
+          "text": "Has it been 15 years already??"
+        },
+        {
+          "character": "REBECCA",
+          "parenthetical": "",
+          "text": "More! I was pregnant - REBECCA’S HUSBAND appears. Olivia h ugs him. They chat. Even though Sylvia recognizes Rebecca, she stays silent and looks around. She’s clearly regretting having come."
+        },
+        {
+          "character": "REBECCA",
+          "parenthetical": "(cont'd)",
+          "text": "Sylvia? I haven’t seen you in ages!"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "polite ("
+        },
+        {
+          "character": "REBECCA",
+          "parenthetical": "",
+          "text": "She canceled last minute."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "I was looking forward to seeing her."
+        }
+      ],
+      "actionPreview": "Olivia and Sylvia walk into the foyer. About 200 people are gathered for the Woodbury High school fundraiser. Olivia excitedly greets an old classmate with a hug. Sylvia stands back and keeps quiet. ) Hi. Is your sister here? She told me she was coming. Olivia greets three girlfriends who are thrill"
+    },
+    {
+      "number": 18,
+      "heading": "INT. SIRICO’S - BALLROOM. DAY",
+      "characters": [
+        "WAITER",
+        "SYLVIA"
+      ],
+      "dialogues": [
+        {
+          "character": "WAITER",
+          "parenthetical": "",
+          "text": "What can I get you? We have red, white - 9."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Still water please."
+        }
+      ],
+      "actionPreview": "She moves through the crowd, and sits down at an empty table. A WAITER approaches. (Printed with the demonstration version of Fade In) The waiter leaves. Sylvia watches people having fun. Most of them have just arrived, and greet their old classmates with affection. 16 16"
+    },
+    {
+      "number": 19,
+      "heading": "INT. SIRICO’S - BALLROOM. DAY",
+      "characters": [
+        "OLIVIA",
+        "SYLVIA",
+        "MEGAN"
+      ],
+      "dialogues": [
+        {
+          "character": "OLIVIA",
+          "parenthetical": "",
+          "text": "Dance teacher. TWIN 2"
+        },
+        {
+          "character": "OLIVIA",
+          "parenthetical": "",
+          "text": "Did you have her too?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Yes. I think I had her for P.E but not for dance. TWIN 1"
+        },
+        {
+          "character": "MEGAN",
+          "parenthetical": "",
+          "text": "Hello,"
+        },
+        {
+          "character": "MEGAN",
+          "parenthetical": "(cont'd)",
+          "text": "I’m sure I’m not the only one who can say I’ve missed this - I’ve missed Woodbury High..."
+        },
+        {
+          "character": "MEGAN",
+          "parenthetical": "(cont'd)",
+          "text": "...and what’s crazy is that it really feels like no time has passed at all. So let’s raise a glass to all of you wonderful people who made high school"
+        }
+      ],
+      "actionPreview": "People are starting to get drunk. The mood is definitely more relaxed. Olivia is having a conversation with a pair of TWIN CLASSMATES, and tries to include Sylvia from time to time. TWIN 1 I’m sorry but she was t oo much of a fat-ass to be the P.E teacher. She taught both. Dance and P.E... Dance was"
+    },
+    {
+      "number": 20,
+      "heading": "INT. SIRICO’S - BALLROOM.",
+      "characters": [
+        "LATER THAT NIGHT"
+      ],
+      "dialogues": [
+        {
+          "character": "LATER THAT NIGHT",
+          "parenthetical": "",
+          "text": "People are dancing to 80s music. Alone at her table, Sylvia has to deal with Saul’s permanent gaze. He hasn’t looked away once."
+        }
+      ],
+      "actionPreview": "Olivia dances with a group on the dance-floor. She looks back from ti me to time, checking on Sylvia, and signals for her to join them. Sylvia doesn’t feel like dancing. Olivia gestures again for Sylvia to come over - but she’s interrupted by a friend offering everyone shots of tequila on the dance-"
+    },
+    {
+      "number": 21,
+      "heading": "EXT. SIRICO’S / STREETS (BENSONHURST). NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Sylvia shivers in the crisp November air. She walks fast down the street, packed full of people enjoying their Friday night. 18 18"
+    },
+    {
+      "number": 22,
+      "heading": "EXT. 71ST STREET SUBWAY STATION (BENSONHURST). NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "She doesn’t realize Saul is following her until she reaches the subway station. She quickens her step. Saul shivers - he left his coat behind - but he continues to follow S ylvia. Sylvia taps her subway card on the reader and goes through the barrier. She heads up to the open-air platform. It’s near"
+    },
+    {
+      "number": 23,
+      "heading": "INT. SUBWAY TRAIN. CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Sylvia is sitting i n a near-empty subway car. Saul is standing nearby, looking at her. She shrinks into her seat and makes herself as small as she can. The train stops. Some people get on and off, but Saul stays on. Sylvia moves to a seat further down the carriage. 20 20"
+    },
+    {
+      "number": 24,
+      "heading": "INT. SUBWAY - PLATFORM. NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Sylvia gets off the train. She turns to see if Saul is still following. He gets off. 12. (Printed with the demonstration version of Fade In) 21 21"
+    },
+    {
+      "number": 25,
+      "heading": "EXT. SYLVIA’S NEIGHBORHOOD. NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Sylvia walks through her neighborhood. Saul follows. 22 22"
+    },
+    {
+      "number": 26,
+      "heading": "EXT. SYLVIA'S APARTMENT. CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Sylvia walks her street, opens the front door and gets inside. 23 23"
+    },
+    {
+      "number": 27,
+      "heading": "INT. SYLVIA'S APARTMENT - STAIRS / ANNA'S BEDROOM.",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "CONTINUOUS She makes her way up the stairs in the dark and deactivates the house alarm. Sylvia goes to the window, peeking through the blinds. Saul crosse s the street and looks up towards Anna’s bedroom - the only illuminated room in the house. Sylvia turns off the light and shuts the blinds. She s"
+    },
+    {
+      "number": 28,
+      "heading": "INT. SYLVIA'S APARTMENT - KITCHEN. NIGHT",
+      "characters": [
+        "ANNA"
+      ],
+      "dialogues": [
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "Mom, I will be in my room. 25"
+        }
+      ],
+      "actionPreview": "Sylvia obsesses over dinner preparations. Anna walk towards her bedroom. 25"
+    },
+    {
+      "number": 29,
+      "heading": "INT. SYLVIA'S APARTMENT - ANNA'S BEDROOM. NIGHT.",
+      "characters": [
+        "SYLVIA"
+      ],
+      "dialogues": [
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "What are you doing honey? Stay away, from the window. Please go to bed."
+        }
+      ],
+      "actionPreview": "An na is looking through the window to the street. She notices Saul. Sylvia arrives and closes the curtains. She looks nervous. Sylvia takes Anna to the bed and turns off the light. 13. (Printed with the demonstration version of Fade In) 26 26"
+    },
+    {
+      "number": 30,
+      "heading": "INT. SYLVIA'S APARTMENT - KITCHEN. NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Sylvia is washing the dishes, very anxious, in the kitchen. She can't sleep. 27 27"
+    },
+    {
+      "number": 31,
+      "heading": "INT. SYLVIA'S APARTMENT - SYLVIA’S BEDROOM / KITCHEN. LATER",
+      "characters": [
+        "SYLVIA"
+      ],
+      "dialogues": [
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Karen, I’m sorry to call this late. I normally wouldn’t but I think I’m about to have a nervous breakdown. I can’t explain it over voicemail... Anyway, just wanted to see if you’d pick up, since you usually can’t sleep either... call me back if you can, okay?"
+        }
+      ],
+      "actionPreview": "Sylvia watches Saul from the window in her room. She takes two sleeping pills out of a packet from the night table and dials a number as she heads to the kitchen. She pours herself a glass of water. The call goes t o voicemail. Sylvia hangs up and takes the pills. Her nerves make her short of breath"
+    },
+    {
+      "number": 32,
+      "heading": "INT. SYLVIA'S APARTMENT - SYLVIA’S BEDROOM. DAWN",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Sylvia lies in bed. She hasn’t slept a wink. She gets up and walks up to the window. From the condensation on the glass she can tell how cold it is outside. Saul is still sitting on the curb, shaking uncontrollably. 29 29"
+    },
+    {
+      "number": 33,
+      "heading": "EXT. SYLVIA'S APARTMENT / STAIRWELL / KITCHEN. MORNING",
+      "characters": [
+        "SYLVIA",
+        "ANNA"
+      ],
+      "dialogues": [
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Get up."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "(cont'd)",
+          "text": "What do you want?"
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "Mom?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Go to your room!"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "(cont'd)",
+          "text": "Do you have your phone?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "(cont'd)",
+          "text": "Give me your phone."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "(cont'd)",
+          "text": "Hello? Hi. I found Saul on the street where I live... he was outside in the cold... I have no idea how he got here... yes, OK..."
+        }
+      ],
+      "actionPreview": "Sylvia walks out the house in pajamas. She stops in the middle of the street, keeping a safe distance from Saul. Saul struggles to stand, he’s practically frozen. Saul doesn’t respond. Sylvia keeps the distance from him. Anna comes downstairs, groggy, and sees Saul. 14. (Printed with the demonstrati"
+    },
+    {
+      "number": 34,
+      "heading": "EXT. SYLVIA'S APARTMENT - STREET. 20 MINUTES LATER",
+      "characters": [
+        "ISAAC"
+      ],
+      "dialogues": [
+        {
+          "character": "ISAAC",
+          "parenthetical": "",
+          "text": "Sylvia ? I’m Isaac. We spoke on the phone?"
+        },
+        {
+          "character": "ISAAC",
+          "parenthetical": "(cont'd)",
+          "text": "Saul... are you alright?"
+        },
+        {
+          "character": "ISAAC",
+          "parenthetical": "(cont'd)",
+          "text": "Let’s go home."
+        },
+        {
+          "character": "ISAAC",
+          "parenthetical": "(cont'd)",
+          "text": "I was going crazy looking for him. I called the police bu t they won’t move until someone’s missing for 48 hours."
+        },
+        {
+          "character": "ISAAC",
+          "parenthetical": "(cont'd)",
+          "text": "Thank you so much."
+        },
+        {
+          "character": "ISAAC",
+          "parenthetical": "(cont'd)",
+          "text": "If you ever need anything, please call. You have my number. Thank you for helping him."
+        }
+      ],
+      "actionPreview": "Sylvia opens the front door. Sylvia steps aside. Saul’s eyes open. He’s not surprised to see his brother. Saul is returning to his senses. Sylvia watches him closely. 15. (Printed with the demonstration version of Fade In) Isaac checks Saul’s temperature with the back of his hand, clocking how cold "
+    },
+    {
+      "number": 35,
+      "heading": "INT. SAUL’S HOUSE - BATHROOM. DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Saul relaxes in a warm bath. He hears Isaac come in through the door and opens his eyes, but doesn’t move his head. Saul gets out of the bath. Drying himself off, he sees his reflection in the mirror. He avoids his own gaze - turning away. 32 32"
+    },
+    {
+      "number": 36,
+      "heading": "EXT. INDUSTRY CITY. DAY",
+      "characters": [
+        "SAUL",
+        "SARA",
+        "ISAAC"
+      ],
+      "dialogues": [
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "Sara!"
+        },
+        {
+          "character": "SARA",
+          "parenthetical": "",
+          "text": "You really scared us..."
+        },
+        {
+          "character": "ISAAC",
+          "parenthetical": "",
+          "text": "Would you like a cup of coffee?"
+        },
+        {
+          "character": "SARA",
+          "parenthetical": "",
+          "text": "Hi dad... no, I’m OK."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "Did you fly all the way here just to see me?"
+        },
+        {
+          "character": "SARA",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "You’re both taking this too far."
+        },
+        {
+          "character": "SARA",
+          "parenthetical": "",
+          "text": "You went missing for an entire night!"
+        },
+        {
+          "character": "ISAAC",
+          "parenthetical": "",
+          "text": "It’s a miracle you didn’t catch pneumonia."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "I have n’t gotten sick in years."
+        },
+        {
+          "character": "ISAAC",
+          "parenthetical": "",
+          "text": "He was lost a minute ago."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "I was not lost. I went to the bathroom."
+        },
+        {
+          "character": "ISAAC",
+          "parenthetical": "",
+          "text": "And you forgot how to get back."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "That’s enough!"
+        },
+        {
+          "character": "SARA",
+          "parenthetical": "",
+          "text": "to Saul ("
+        },
+        {
+          "character": "ISAAC",
+          "parenthetical": "",
+          "text": "I’ll go get coffee."
+        },
+        {
+          "character": "SARA",
+          "parenthetical": "",
+          "text": "Do you remember leaving the party?"
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "SARA",
+          "parenthetical": "",
+          "text": "Did you leave alone?"
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "I don’t know."
+        },
+        {
+          "character": "ISAAC",
+          "parenthetical": "",
+          "text": "The line was too long."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "H ow’s... P...P..."
+        },
+        {
+          "character": "ISAAC",
+          "parenthetical": "",
+          "text": "Providence."
+        },
+        {
+          "character": "SARA",
+          "parenthetical": "",
+          "text": "Good. I like it there."
+        }
+      ],
+      "actionPreview": "Happy families enjoy their Sunday at the outdoor shop ping centre. Isaac and Saul are sitting in a table outside a coffee shop. There is tension between the two of them. 16. (Printed with the demonstration version of Fade In) SARA (22) Isaac’s daughter arrives carrying a backpack. The remark does no"
+    },
+    {
+      "number": 37,
+      "heading": "INT. SAUL’S HOUSE - LIVING ROOM. DAY",
+      "characters": [
+        "SAUL",
+        "SARA"
+      ],
+      "dialogues": [
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "I like it. 18."
+        },
+        {
+          "character": "SARA",
+          "parenthetical": "",
+          "text": "I knew you would. He’s one of my favorites."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "It’s good."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "(cont'd)",
+          "text": "What is this?"
+        },
+        {
+          "character": "SARA",
+          "parenthetical": "",
+          "text": "You have to wear it when you go out."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "I’m not wearing this."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "(cont'd)",
+          "text": "Okay. Can I wear it inside, at least?"
+        },
+        {
+          "character": "SARA",
+          "parenthetical": "",
+          "text": "Sure. You can wear it inside. 34"
+        }
+      ],
+      "actionPreview": "Sara opens her suitcase and gives Saul a gift - a book of Julian Schnabel paintings. Saul looks through it. (Printed with the demonstration version of Fade In) She gives him a vinyl of Brian Kelly songs. He puts it on and they listen to it together, sitting on the sofa. Sara takes something out of h"
+    },
+    {
+      "number": 38,
+      "heading": "INT. SYLVIA'S APARTMENT - SYLVIA'S BEDROOM. DAY",
+      "characters": [
+        "OLIVIA",
+        "SYLVIA"
+      ],
+      "dialogues": [
+        {
+          "character": "OLIVIA",
+          "parenthetical": "",
+          "text": "Anna told me what happened."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "He followed me home from the"
+        },
+        {
+          "character": "OLIVIA",
+          "parenthetical": "",
+          "text": "Are you sure?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Why else would he follow me home?"
+        },
+        {
+          "character": "OLIVIA",
+          "parenthetical": "",
+          "text": "What's his name?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Saul Shapiro."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "(cont'd)",
+          "text": "Do you want to stay with Olivia tonight?"
+        }
+      ],
+      "actionPreview": "Sylvia is deep in thought, stretched out on her bed. The house alarm beeps - someone’s arrived. Olivia walks into the room and sits on the bed next to her sister. Anna stands in the doorway, looking concerned. She opens the curtains. Woodbury party. He is one of Ben's friends. 19. (Printed with the "
+    },
+    {
+      "number": 39,
+      "heading": "INT. SYLVIA'S HOUSE. BA THROOM. DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Sylvia is taking a shower. She seems very reflexive. 34B 34B"
+    },
+    {
+      "number": 40,
+      "heading": "INT. SYLVIA'S HOUSE. BEDROOM. DAY.",
+      "characters": [
+        "SYLVIA"
+      ],
+      "dialogues": [
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Hi Isaac. This is Sylvia, from..."
+        }
+      ],
+      "actionPreview": "Sylvia is wearing comfortable clothes. She is searching through her contacts to find Isaac's phone. She calls him. The other morning I found Saul outside my house... Yeah... I was wondering if I can come visit you today, if that's okay... Great. Send me y our address... Thanks. 35 35"
+    },
+    {
+      "number": 41,
+      "heading": "EXT. SAUL’S HOUSE. DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Sylvia walks towards Isaac and Saul's house. She reaches the door, rings the bell. 36 36"
+    },
+    {
+      "number": 42,
+      "heading": "INT. SAUL’S HOUSE. CONTINUOUS",
+      "characters": [
+        "ISAAC",
+        "SYLVIA",
+        "SARA",
+        "SAUL"
+      ],
+      "dialogues": [
+        {
+          "character": "ISAAC",
+          "parenthetical": "",
+          "text": "Hello! Come on in..."
+        },
+        {
+          "character": "ISAAC",
+          "parenthetical": "(cont'd)",
+          "text": "This is my daughter, Sara."
+        },
+        {
+          "character": "ISAAC",
+          "parenthetical": "(cont'd)",
+          "text": "Sylvia found Saul."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "I looked out my window in the morning and saw him in the street."
+        },
+        {
+          "character": "SARA",
+          "parenthetical": "",
+          "text": "to Isaac ("
+        },
+        {
+          "character": "ISAAC",
+          "parenthetical": "",
+          "text": "Thank God Sylvia found him."
+        },
+        {
+          "character": "SARA",
+          "parenthetical": "",
+          "text": "I’ll go get him."
+        },
+        {
+          "character": "ISAAC",
+          "parenthetical": "",
+          "text": "Can I offer you anything to drink?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "No, thanks. I have to head to work soon."
+        },
+        {
+          "character": "ISAAC",
+          "parenthetical": "",
+          "text": "On a Saturday?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "I work at a residence for people * with developmental disabilities."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "Hello. 21."
+        },
+        {
+          "character": "SARA",
+          "parenthetical": "",
+          "text": "Sylvia."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "I know her name."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "(cont'd)",
+          "text": "I apologize if I made you feel uncomfortable the other night."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "It’s fine."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "Come. Sit down."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "(cont'd)",
+          "text": "I forget things. Recent things."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "(cont'd)",
+          "text": "I’ll get you a glass of water."
+        },
+        {
+          "character": "ISAAC",
+          "parenthetical": "",
+          "text": "He has dementia."
+        },
+        {
+          "character": "SARA",
+          "parenthetical": "",
+          "text": "He remembers things from years ago but forgets immediate events."
+        },
+        {
+          "character": "ISAAC",
+          "parenthetical": "",
+          "text": "Our childhood. Our parents..."
+        },
+        {
+          "character": "SARA",
+          "parenthetical": "",
+          "text": "The more recent, the less he remembers."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "He remembered me."
+        },
+        {
+          "character": "ISAAC",
+          "parenthetical": "",
+          "text": "Sometimes he’s good for weeks and (MORE) 22."
+        },
+        {
+          "character": "ISAAC",
+          "parenthetical": "(cont'd)",
+          "text": "everything. Then something like the other night happens. We’re not sure why that is."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Do you remember how you got to my house?"
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "I remember being on the subway. I remember your daughter’s long hair. I remember your house... but I don’t know how I got there, no."
+        },
+        {
+          "character": "ISAAC",
+          "parenthetical": "",
+          "text": "Do you remember the Woodbury party?"
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "I don’t r ecall it being the same day..."
+        },
+        {
+          "character": "SARA",
+          "parenthetical": "",
+          "text": "to Sylvia ("
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "Actually, I’m his boss. And this is my house."
+        },
+        {
+          "character": "ISAAC",
+          "parenthetical": "",
+          "text": "He’s the big brother. We have an accounting firm."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "I hardly work anymore."
+        }
+      ],
+      "actionPreview": "Isaac opens the door. He recognizes Sylvia. 20. (Printed with the demonstration version of Fade In) Sylvia enters. The house is tastefully decorated. Sara is nearby. Isaac closes the door behind them and introduces Sylvia to his daughter. Sara smiles and extends a hand. Sylvia shakes it, gripping he"
+    },
+    {
+      "number": 43,
+      "heading": "EXT. RUNDOWN PARK. DAY",
+      "characters": [
+        "SYLVIA",
+        "SAUL",
+        "SAU L"
+      ],
+      "dialogues": [
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "It’s changed a lot right?"
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "I guess it needs some taking care of."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "I used to play here when I was little."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "(cont'd)",
+          "text": "It was nicer then."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "(cont'd)",
+          "text": "Do you remember things that happened a long time ago?"
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Okay."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "I think about my wife. I replay things from childhood. My parents."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "What about school?"
+        },
+        {
+          "character": "SAU L",
+          "parenthetical": "",
+          "text": "I remember school."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "What school did you go to?"
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "Woodbury."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "So did I."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "What! Really?? 24."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Don’t you remember me?"
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "We’ve both changed after so many years."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "We didn’t go to school together."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "I remember you perfectly."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "(cont'd)",
+          "text": "You really don’t remember me?"
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Do you remember Ben Goldberg?"
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "Yes. We were in the same class."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Ben used to get me drunk after sc hool. I was twelve, he was 17."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "(cont'd)",
+          "text": "He liked raping me. He liked forcing me to give him blow jobs."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "Ben?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Sometimes he was alone. Other times he wasn’t."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "(cont'd)",
+          "text": "Don’t you remember? 25."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "I remember Ben."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "You don’t remember being with him and making me suck your dick?"
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "You said you remember school."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "I don’t remember."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Why did you follow me home after the party?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "(cont'd)",
+          "text": "Do you remember the Woodbury party last week?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "(cont'd)",
+          "text": "Do you remember following me home?"
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "I re member the party because Isaac showed me pictures. I remember you finding me on the street outside your house."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "You followed me home."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "From where?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "From the Woodbury party!"
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "You were at Woodbury party?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "You followed me home from the"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "(cont'd)",
+          "text": "And you sexually abused me when I was twelve and you were seventeen or eighteen."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "Are you sure?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Do you like thinking about what you used to do to me?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "(cont'd)",
+          "text": "Or do you only remember when it’s convenient??"
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "I don’t remember."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "You deserve b eing the way you are."
+        }
+      ],
+      "actionPreview": "Sa ul and Sylvia stroll through a rundown park. A few homeless people amble around. 23. (Printed with the demonstration version of Fade In) Saul looks around. Saul nods. They walk in silence. My cousins. Holidays. She sits down on a bench. He joins her. (Printed with the demonstration version of Fad"
+    },
+    {
+      "number": 44,
+      "heading": "INT. SUBWAY STATION. AFTERNOON.",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Sylvia is coming back to her house. She is waiting for the subway at the station. The train arrives and she stands up to get in but she hesitates and doesn't enter. The subway doors c lose. Sylvia stays alone in the station. 39 39"
+    },
+    {
+      "number": 45,
+      "heading": "EXT. RUNDOWN PARK. DUSK.",
+      "characters": [
+        "SYLVIA"
+      ],
+      "dialogues": [
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Saul! Saul!"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "(cont'd)",
+          "text": "Hey, Isaac. It’s Sylvia. Could you call me back please? Thanks. 40"
+        }
+      ],
+      "actionPreview": "Sylvia is back in the park. Saul is no longer sitting on the bench. She checks everywhere but the park is empty. Anxious, she takes out her phone and dials a number. It goes straight to voicemail. 27. (Printed with the demonstration version of Fade In) 40"
+    },
+    {
+      "number": 46,
+      "heading": "EXT. RUNDOWN PARK - GARBAGE BINS. END OF DAY",
+      "characters": [
+        "SAUL"
+      ],
+      "dialogues": [
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "Isaac... fine. We went for coffee and a long walk. We’re on our way back home... she called to tell you that we’d be a while... yeah, she’s here. See you."
+        }
+      ],
+      "actionPreview": "Saul is urinating against the wall behind some large industrial bins. A few homeless men are milling around in the background. Sylvia sees Saul from the distance and she walks towards him, relieved. Saul stands still watching her. As Saul walks towards Sylvia she turns and wa lks out of his reach. S"
+    },
+    {
+      "number": 47,
+      "heading": "INT. SYLVIA'S APARTMENT. DAY",
+      "characters": [
+        "SARA",
+        "SYLVIA"
+      ],
+      "dialogues": [
+        {
+          "character": "SARA",
+          "parenthetical": "(O.S)",
+          "text": "Hi, it’s Sara... Saul’s niece. Can I come in?"
+        },
+        {
+          "character": "SARA",
+          "parenthetical": "",
+          "text": "I’m sorry... were you sleeping?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Oh. No. Don’t worry."
+        },
+        {
+          "character": "SARA",
+          "parenthetical": "",
+          "text": "So I know this may be random but I’m leaving today. I study in"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "I’m not a nurse."
+        },
+        {
+          "character": "SARA",
+          "parenthetical": "",
+          "text": "He doesn’t want"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "I don’t think I can."
+        },
+        {
+          "character": "SARA",
+          "parenthetical": "",
+          "text": "We could pay you full-time."
+        },
+        {
+          "character": "SARA",
+          "parenthetical": "(cont'd)",
+          "text": "He talks about you a lot."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Let me think about it. I’ll call your dad."
+        },
+        {
+          "character": "SARA",
+          "parenthetical": "",
+          "text": "Here."
+        },
+        {
+          "character": "SARA",
+          "parenthetical": "(cont'd)",
+          "text": "We’ll pay in advance. In cash. Even if you say no, we’d like you to keep the money as a gesture of thanks for helping my uncl e..."
+        },
+        {
+          "character": "SARA",
+          "parenthetical": "(cont'd)",
+          "text": "You could try it for a few afternoons..."
+        }
+      ],
+      "actionPreview": "Sylvia is asleep on the sofa after a late-night binge. Empty packets of crisps, peanuts, pretzels and biscuits lie around her. The doorbell rings. She wakes, groggy and answers the intercom. 28. (Printed with the demonstration version of Fade In) Sylvia buzzes her up. She smooths her hair as Sara co"
+    },
+    {
+      "number": 48,
+      "heading": "INT. ADULT RESIDENCE. DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Sylvia is absent-minded, washing some dishes at the adult residence. She doesn't care much about what's happening around. 44 44"
+    },
+    {
+      "number": 49,
+      "heading": "INT. SYLVIA'S APARTMENT. NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Sylvia sits, thinking. 45 45"
+    },
+    {
+      "number": 50,
+      "heading": "INT. SYLVIA'S APARTMENT - ANNA'S BEDROOM. NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Sylvia scours every corner of Anna’s room. She organizes her daughter’s drawers and closet. She can’t help but looking through Anna’s stuff. She finds a joint in Anna’s pencil case. She attempts to log into Anna’s computer but the password is invalid. 46 46"
+    },
+    {
+      "number": 51,
+      "heading": "INT. SYLVIA'S APARTMENT. MORNING",
+      "characters": [
+        "SYLVIA",
+        "ANNA"
+      ],
+      "dialogues": [
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "I decided to make the most of it and got the whole house clean..."
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "(O.S.)",
+          "text": "You went through my stuff!"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "I organized."
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "Why were you spying on me?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "I found a joint in your pencil case."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "(cont'd)",
+          "text": "I want to see what’s on your computer. You changed the password."
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "You don’t need to see what’s on my computer."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Stop talking back!"
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "I hate my life!"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "to Olivia ("
+        }
+      ],
+      "actionPreview": "Sylvia has been up all night cleaning. She cleans her bedroom. She hears the house alarm beep. Anna and Olivia have come in. Sylvia goes to greet them. Anna r uns to her bedroom. Anna yells from her bedroom. Anna comes back. She raises her voice, upset, trying to get Olivia on her side. 30. (Printed"
+    },
+    {
+      "number": 52,
+      "heading": "INT. CHURCH HALL (SUNSET PARK). NIGHT",
+      "characters": [
+        "EMILY"
+      ],
+      "dialogues": [
+        {
+          "character": "EMILY",
+          "parenthetical": "",
+          "text": "...without even asking. Last month... I didn’t care if my parents found out. It would have been better if they had... I just didn’t care. With who or where it was... I’d have"
+        }
+      ],
+      "actionPreview": "At an AA meeting Sylvia sits next to Emily who talks through sobs. Sylvia looks at her, but her mind is elsewhere. sex... when I went to get tested, I was sure I’d get a positive somewhere... Karen hands Sylvia a cup of tea, pulling Sylvia back into the room. She rubs Sylvia’s shoulder, supportive. "
+    },
+    {
+      "number": 53,
+      "heading": "INT. SYLVIA'S APARTMENT. LIVING ROOM. DAY.",
+      "characters": [
+        "OLIVIA",
+        "SYLVIA",
+        "SAMANTHA"
+      ],
+      "dialogues": [
+        {
+          "character": "OLIVIA",
+          "parenthetical": "",
+          "text": "You never met Saul at school..."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "OLIVIA",
+          "parenthetical": "",
+          "text": "Saul’s family are from Reading."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "How do you know?"
+        },
+        {
+          "character": "OLIVIA",
+          "parenthetical": "",
+          "text": "Yearbooks, phone calls."
+        },
+        {
+          "character": "SAMANTHA",
+          "parenthetical": "",
+          "text": "How is she? Is she doing better?"
+        },
+        {
+          "character": "SAMANTHA",
+          "parenthetical": "(cont'd)",
+          "text": "Great."
+        },
+        {
+          "character": "SAMANTHA",
+          "parenthetical": "(cont'd)",
+          "text": "I don't love this neighborhood. Is it even safe around here for Anna to grow up?... I'd be happy to give them some money so they can move to a better place. 32."
+        },
+        {
+          "character": "OLIVIA",
+          "parenthetical": "",
+          "text": "We've offered."
+        },
+        {
+          "character": "SAMANTHA",
+          "parenthetical": "",
+          "text": "Have you? You're such a good sister. Thank you. That's nice."
+        },
+        {
+          "character": "OLIVIA",
+          "parenthetical": "",
+          "text": "It's nice in the inside. It's very sweet. 50"
+        }
+      ],
+      "actionPreview": "Sylvia is looking through messages in the living room. Olivia enters the house and gives her a cup of coffee. They moved in ‘86 - the year you stopped going to Woodbury. Sylvia looks upset. But that makes her think about it. Olivia feels pity about her sister and leaves. 49 49 INT / EXT. SYLVIA'S AP"
+    },
+    {
+      "number": 54,
+      "heading": "INT. SAUL’S HOUSE - HALLWAY / LIVING ROOM. DAY.",
+      "characters": [
+        "SYLVIA",
+        "ISAAC",
+        "SAUL",
+        "SAU L",
+        "OK..."
+      ],
+      "dialogues": [
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Saul."
+        },
+        {
+          "character": "ISAAC",
+          "parenthetical": "(O.S.)",
+          "text": "Who is it?"
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "Sylvia!"
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "(cont'd)",
+          "text": "Would you like to come in?"
+        },
+        {
+          "character": "ISAAC",
+          "parenthetical": "",
+          "text": "I"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "I can stay if you’d like."
+        },
+        {
+          "character": "ISAAC",
+          "parenthetical": "",
+          "text": "Great. I’ll get my shoes."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "I made a mistake. It wasn’t you."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "(cont'd)",
+          "text": "You registered in ‘86, which is the year my parents made me switch schools. My mom didn’t believe me when I told her about Ben. She thought it’d be easier to put me in a different school. You and I had never seen each other before the other night."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "I remember Ben."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "You had nothing to do with it."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "(cont'd)",
+          "text": "What are you doing?"
+        },
+        {
+          "character": "SAU L",
+          "parenthetical": "",
+          "text": "I’m writing it down so I can remember. Is that OK?"
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "Why didn’t your mom believe you?"
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "(cont'd)",
+          "text": "Do you feel like talking about it?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Why did you follow me the other night?"
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "I don’t know."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "(cont'd)",
+          "text": "I don’t remember."
+        }
+      ],
+      "actionPreview": "Sylvia doesn’t say anything. She enters. Saul closes the door behind her. Isaac arrives, his presence easing the tension. thought you couldn’t come today. Isaac leaves - the tension returns. They walk into the living room. Saul sits down. Sylvia sits across from him. Isaac rushes past the living roo"
+    },
+    {
+      "number": 55,
+      "heading": "INT. ELECTRONICS STORE. DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Through a store window we see Sylvia comparing two mobile phones, a sales girl standing nearby. 52 52"
+    },
+    {
+      "number": 56,
+      "heading": "INT. OLIVIA’S HOUSE. DAY",
+      "characters": [
+        "MARK",
+        "ASHLEY",
+        "ROBERT",
+        "SYLVIA",
+        "ANNA",
+        "OLIVIA",
+        "LUCY"
+      ],
+      "dialogues": [
+        {
+          "character": "MARK",
+          "parenthetical": "",
+          "text": "Hi."
+        },
+        {
+          "character": "ASHLEY",
+          "parenthetical": "",
+          "text": "Hi."
+        },
+        {
+          "character": "ROBERT",
+          "parenthetical": "",
+          "text": "Sylvia, hello."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Anna."
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "Mom!"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Forgive me?"
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "How could you afford this?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "I got a second job."
+        },
+        {
+          "character": "OLIVIA",
+          "parenthetical": "",
+          "text": "What kind of a job?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "I’m working with the guy tha t (MORE) 35."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "(cont'd)",
+          "text": "me home after the Woodbury event."
+        },
+        {
+          "character": "MARK",
+          "parenthetical": "",
+          "text": "I was wondering if Anna could come to a party on Friday?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Are there gonna be other kids your age there?"
+        },
+        {
+          "character": "MARK",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Then"
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "Told you."
+        },
+        {
+          "character": "ASHLEY",
+          "parenthetical": "",
+          "text": "Would you like something to drink"
+        },
+        {
+          "character": "LUCY",
+          "parenthetical": "",
+          "text": "Want a beer, Aunt Sylvia?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "No, thank you."
+        },
+        {
+          "character": "LUCY",
+          "parenthetical": "",
+          "text": "Why don’t you ever drink beer?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Because I’m an alcoholic Lucy."
+        },
+        {
+          "character": "ROBERT",
+          "parenthetical": "",
+          "text": "Sylvia..."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "She asked a question."
+        },
+        {
+          "character": "ASHLEY",
+          "parenthetical": "",
+          "text": "What happens if you drink just one?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "I’ll relapse. I haven’t had a drink in thirteen years."
+        },
+        {
+          "character": "ASHLEY",
+          "parenthetical": "",
+          "text": "Since Anna was born?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "She’s the reason I stopped."
+        },
+        {
+          "character": "ROBERT",
+          "parenthetical": "",
+          "text": "This conversation’s over."
+        },
+        {
+          "character": "MARK",
+          "parenthetical": "",
+          "text": "Did you take drugs or did you just drink?"
+        },
+        {
+          "character": "ROBERT",
+          "parenthetical": "",
+          "text": "That’s enough!"
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "Let’s go."
+        }
+      ],
+      "actionPreview": "Sylvia rings the doorbell, holding a gift bag. Mark opens. He runs back to the sofa, where he’s watching TV with Anna, Ashley, Robert and Olivia. Sylvia approaches them. Olivia meets her halfway, greeting her sister with a kiss. Anna is sti ll mad - she ignores her mom. Robert attempts to be nice bu"
+    },
+    {
+      "number": 57,
+      "heading": "INT. SAUL’S H OUSE - KITCHEN. DAY",
+      "characters": [
+        "SAUL",
+        "SYLVIA"
+      ],
+      "dialogues": [
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "This is delicious."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "What should we do after lunch?"
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "Whatever you feel like doing."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Would you l ike to watch a film?"
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "Yes. 37."
+        }
+      ],
+      "actionPreview": "Sylvia puts the finishing touches on an elaborate dish she’s just made. She takes it to the kitchen counter where Saul is waiting and checks to make sure it isn’t too hot. Saul eats, enjoying the meal. Pleased by the compliment, Sylvia serves herself a plate and joins Saul. (Printed with the demonst"
+    },
+    {
+      "number": 58,
+      "heading": "INT. SAUL’S HOUSE - STUDY. DAY",
+      "characters": [
+        "SYLVIA",
+        "SAUL"
+      ],
+      "dialogues": [
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "I’m going to the bathroom."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "Pause the film."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "It’s fine. I’ll be quick."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "(cont'd)",
+          "text": "So what happened?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "(cont'd)",
+          "text": "Could they open the car?"
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "Rewind it if you want."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Are you enjoying the film?"
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "(cont'd)",
+          "text": "I don’t understand anything. I can’t watch films."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Why didn’t you tell me?"
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "So you could watch it."
+        }
+      ],
+      "actionPreview": "Saul and Sylvia watch a movie. Saul watches her walk away before turning his attention back to the film. An entire scene finishes by the time she gets back. Saul squints at her. Sylvia rewind s to the scene, watching Saul from the corner of her eye. She’s thinking about something other than the film"
+    },
+    {
+      "number": 59,
+      "heading": "INT. SAUL’S HOUSE - STUDY. LATE AFTERNOON",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "While Saul naps on the sofa, Sylvia goes through family albums. She wants to know more about him. It becomes clear that Saul’s ex-wife and Sylvia have a strong resemblance - same figure, same hair color and hairstyle. She finds a Vinyl on the player - A Whiter Shade of Pale. The record sleeve has a "
+    },
+    {
+      "number": 60,
+      "heading": "INT. OLIVIA'S HOUSE. DAY",
+      "characters": [
+        "ROBERT",
+        "SA MANTHA",
+        "SAMANTHA",
+        "OLIVIA",
+        "ANNA",
+        "LUCY",
+        "ASHLEY"
+      ],
+      "dialogues": [
+        {
+          "character": "ROBERT",
+          "parenthetical": "",
+          "text": "Thanks Samantha."
+        },
+        {
+          "character": "SA MANTHA",
+          "parenthetical": "",
+          "text": "My pleasure."
+        },
+        {
+          "character": "SAMANTHA",
+          "parenthetical": "(cont'd)",
+          "text": "Hi Anna. I would have gotten you a present too..."
+        },
+        {
+          "character": "OLIVIA",
+          "parenthetical": "",
+          "text": "To get Sylvia even more upset?"
+        },
+        {
+          "character": "SAMANTHA",
+          "parenthetical": "",
+          "text": "Should I leave? 39."
+        },
+        {
+          "character": "OLIVIA",
+          "parenthetical": "",
+          "text": "No mom... would you like some coffee?"
+        },
+        {
+          "character": "SAMANTHA",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "OLIVIA",
+          "parenthetical": "",
+          "text": "Anna?"
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "A coke."
+        },
+        {
+          "character": "ROBERT",
+          "parenthetical": "",
+          "text": "Were you able to make the Airbnb a long term rental?"
+        },
+        {
+          "character": "SAMANTHA",
+          "parenthetical": "",
+          "text": "I talked to the owner. He’s formalizing it."
+        },
+        {
+          "character": "SAMANTHA",
+          "parenthetical": "(cont'd)",
+          "text": "I’ve seen pictures of you, Anna."
+        },
+        {
+          "character": "SAMANTHA",
+          "parenthetical": "(cont'd)",
+          "text": "You look like your mother."
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "We all look alike."
+        },
+        {
+          "character": "SAMANTHA",
+          "parenthetical": "",
+          "text": "Thank goodness no one took after your grandpa."
+        },
+        {
+          "character": "SAMANTHA",
+          "parenthetical": "(cont'd)",
+          "text": "May he rest in peace."
+        },
+        {
+          "character": "SAMANTHA",
+          "parenthetical": "(cont'd)",
+          "text": "I’ll have my coffee and get going. I don’t want to upset your mom. 40."
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "I won’t tell."
+        },
+        {
+          "character": "LUCY",
+          "parenthetical": "",
+          "text": "Come to my room and I’ll show you the rest..."
+        },
+        {
+          "character": "ASHLEY",
+          "parenthetical": "",
+          "text": "to Anna ("
+        }
+      ],
+      "actionPreview": "Anna and Ashley hold a rope for Lucy, showing her how to jump the rope. Samantha comes in carrying shopping bags. Ashley and Lucy run up to greet her. They kiss their grandmother and take the bags from her, then run back to join Anna. Anna looks nervous, not sure what to do. (Printed with the demons"
+    },
+    {
+      "number": 61,
+      "heading": "INT. SUSHI RESTAURANT. NIGHT",
+      "characters": [
+        "WAITER",
+        "ANNA",
+        "SYLVIA",
+        "YOUNG WAITER"
+      ],
+      "dialogues": [
+        {
+          "character": "WAITER",
+          "parenthetical": "",
+          "text": "One eel bowl, marinated Tuna roll, one edamame and two miso soups."
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "(cont'd)",
+          "text": "How’s your new job?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Great."
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "Are you gonna stop working at the residence?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "No, but I’ll be taking care of Saul on the weekends, too."
+        },
+        {
+          "character": "YOUNG WAITER",
+          "parenthetical": "",
+          "text": "Would you like some water?"
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "Yes, please."
+        },
+        {
+          "character": "YOUNG WAITER",
+          "parenthetical": "",
+          "text": "With or without ice?"
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "Without... actually with."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "to the young waiter ("
+        },
+        {
+          "character": "YOUNG WAITER",
+          "parenthetical": "",
+          "text": "Fifteen."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "What are you doing working at night?"
+        },
+        {
+          "character": "YOUNG WAITER",
+          "parenthetical": "",
+          "text": "It’s my dad’s restaurant... with or without ice?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Without."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "(cont'd)",
+          "text": "That kid’s a character..."
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "I want to go on a date."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Don’t start. We’ve talked about this."
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "He’s in my class. I’m the only girl in my class who doesn’t have a boyfriend. 42."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "What would you do with a boyfriend?"
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "Forget it mom."
+        }
+      ],
+      "actionPreview": "The waiter finishes taking Sylvia and Anna’s order at the bar. The waiter leaves. A YOUNG WAITER, handsome and young, arrives holding a pitcher. 41. (Printed with the demonstration version of Fade In) They smile at each other. ) How old are you? As he pours water in Sylvia’s glass he and Anna smile "
+    },
+    {
+      "number": 62,
+      "heading": "EXT. SAUL'S HOUSE. DAY",
+      "characters": [
+        "SYLVIA"
+      ],
+      "dialogues": [
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Yes... I’m here... Okay."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "(cont'd)",
+          "text": "I see them..."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "(cont'd)",
+          "text": "I’m opening the door... okay. Bye."
+        }
+      ],
+      "actionPreview": "It’s Saturday. Sylvia rushes towards Saul’s house, talking on the phone. Isaac is giving her directions on the other end of the line. Reaching behind a potted plant, she picks up the house keys and opens the front door. She ends the call, walks inside and shuts the door. 59 59"
+    },
+    {
+      "number": 63,
+      "heading": "INT. SAUL’S HOUSE - HALLWAY / BATHROOM / SAUL'S BEDROOM.",
+      "characters": [
+        "SYLVIA",
+        "SAUL"
+      ],
+      "dialogues": [
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Hello! I’m here!"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "(cont'd)",
+          "text": "I’m here! I..."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "(cont'd)",
+          "text": "Where are you hurt? 43."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "(cont'd)",
+          "text": "Did you hit your head?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "(cont'd)"
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "I’m calling Isaac so he can send in a doctor."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "(cont'd)",
+          "text": "I’m okay now."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "How long have you been lying there?"
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "I don’t know."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "(cont'd)",
+          "text": "I’ll get dressed. Don’t worry."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Are you sure?"
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "Yes. I’m hungry."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "I’ll see you in the kitchen. 44."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "Thank you."
+        }
+      ],
+      "actionPreview": "No answer. Sylvia heads for Saul’s bedroom. He’s not there. She hears the sound of the shower running. She hears a groan. She hesitates before opening the bathroom do or, until the sound of Saul’s groaning grows more alarming. She walks in and finds Saul in a foetal position on the floor of the show"
+    },
+    {
+      "number": 64,
+      "heading": "INT. SAUL'S HOUSE. KITCHEN. DAY",
+      "characters": [
+        "SYLVIA",
+        "SAUL"
+      ],
+      "dialogues": [
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "I didn't know you were married."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "I was. She passed away a long time ago."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "I'm sorry."
+        }
+      ],
+      "actionPreview": "Sylvia and Saul are washing the dishes. They're listening to \"A whiter shade of pale\" by Proc ol Harum. Saul is telling Sylvia some fun facts about the songs and he talks about his wife. There's an awkward silence in the kitchen. 61 61"
+    },
+    {
+      "number": 65,
+      "heading": "INT. OLIVIA'S HOUSE. NIGHT.",
+      "characters": [
+        "SA MANTHA",
+        "ANNA",
+        "SAMANTHA"
+      ],
+      "dialogues": [
+        {
+          "character": "SA MANTHA",
+          "parenthetical": "",
+          "text": "I want to do the same here. I’ve been in contact with a few organizations."
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "You pay for the wheelchairs?"
+        },
+        {
+          "character": "SAMANTHA",
+          "parenthetical": "",
+          "text": "I find the donors."
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "Are you staying here, for sure? 45."
+        },
+        {
+          "character": "SAMANTHA",
+          "parenthetical": "",
+          "text": "It doesn’t make sense for me to go back to Miami when you’re here."
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "When did Grandpa pass away?"
+        },
+        {
+          "character": "SAMANTHA",
+          "parenthetical": "",
+          "text": "Less than a year ago."
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "Why did you and mom stop talking?"
+        },
+        {
+          "character": "SAMANTHA",
+          "parenthetical": "",
+          "text": "Your mother was out drinking and going out with boys when she was your age. She was out of control, I couldn’t handle her. She kept lying. She would then ask me to stand"
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "Lying?"
+        },
+        {
+          "character": "SAMANTHA",
+          "parenthetical": "",
+          "text": "She kept making things up... it’s similar to what happened with that man she’s working for now."
+        },
+        {
+          "character": "SAMANTHA",
+          "parenthetical": "(cont'd)",
+          "text": "Your mother accused him for something he wasn’t guilty of..."
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "Not with me."
+        },
+        {
+          "character": "SAMANTHA",
+          "parenthetical": "",
+          "text": "That’s different, s he’s a good mother. Though maybe a bit controlling with you, isn’t she?"
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "Maybe. 46."
+        },
+        {
+          "character": "SAMANTHA",
+          "parenthetical": "",
+          "text": "I’d say not allowing you and I to see each other is controlling."
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "You stopped talking because of what happened to her in school?"
+        },
+        {
+          "character": "SAMANTHA",
+          "parenthetical": "",
+          "text": "When I stopped standing up for the things she lied about, she stopped talking to us."
+        }
+      ],
+      "actionPreview": "INSERT PHONE SCREEN: PICTURES OF KIDS ON WHEELCHAIRS. Anna is looking at the pictures. In some of them Samantha is hugging the kids. (Printed with the demonstration version of Fade In) What would I go back for? Anna looks at the pictures. up for her and for the things she did while she was drunk... "
+    },
+    {
+      "number": 66,
+      "heading": "INT. SAUL’S HOUSE - KITCHEN. NIGHT",
+      "characters": [
+        "ISAAC",
+        "SYLVIA",
+        "SAUL"
+      ],
+      "dialogues": [
+        {
+          "character": "ISAAC",
+          "parenthetical": "",
+          "text": "I’m sorry I’m late... is everything OK?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Yes, but now I’m running late myself."
+        },
+        {
+          "character": "ISAAC",
+          "parenthetical": "",
+          "text": "It’s better if you have your own."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "There’s leftover pasta if you’re hungry. My daughter is waiting for me."
+        },
+        {
+          "character": "ISAAC",
+          "parenthetical": "",
+          "text": "Could you come tomorrow?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Only if I can bring my daughter."
+        },
+        {
+          "character": "ISAAC",
+          "parenthetical": "",
+          "text": "Of course. 47."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "See you tomorrow."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "Thank you."
+        }
+      ],
+      "actionPreview": "Saul listens music while eating on the kitchen counter and writing some notes in his notebook. Sylvia does the dishes. Isaac hurries inside. Isaac pulls out a set of keys, places them on the counter. Sylvia readies herself to le ave. She grabs the keys, looks for her purse. (Printed with the demonst"
+    },
+    {
+      "number": 67,
+      "heading": "INT. SAUL’S HOUSE. DAY",
+      "characters": [
+        "ANNA",
+        "SAUL",
+        "SYLVIA"
+      ],
+      "dialogues": [
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "Does he have a mustache?"
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "(cont'd)",
+          "text": "Is it a man?"
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "(cont'd)",
+          "text": "Does he have a hat?"
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "(cont'd)",
+          "text": "Is he a redhead?"
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "(cont'd)",
+          "text": "Does he wear glasses?"
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "The oven."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "Is it your turn or mine?"
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "My turn."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "Are you sure?"
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "(cont'd)",
+          "text": "Time for my pills."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Oh, don't worry. I'll bring your pills. You two keep playing."
+        }
+      ],
+      "actionPreview": "Sylvia watches Anna and Saul play GUESS WHO. Anna eliminates three characters. Saul eliminates half of the characters. Anna eliminates four characters. Saul eliminates all but three of the characters. An alarm sounds on Sylvia’s phone. 48. (Printed with the demonstration version of Fade In) She rush"
+    },
+    {
+      "number": 68,
+      "heading": "EXT. SAUL'S HOUSE / OLIVIA'S CAR. DUSK.",
+      "characters": [
+        "SYLVIA",
+        "OLIVIA"
+      ],
+      "dialogues": [
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Thanks!"
+        },
+        {
+          "character": "OLIVIA",
+          "parenthetical": "",
+          "text": "Have you decided if you’re quitting yet?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Yes. I told Karen."
+        },
+        {
+          "character": "OLIVIA",
+          "parenthetical": "",
+          "text": "I never liked it there. Lots of weird people, right? Hi! You must be Saul. Olivia. Sylvia’s sister."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Thanks again for taking Anna."
+        }
+      ],
+      "actionPreview": "Olivia pulls up in an Uber in front of Saul ’s house. Anna kisses Sylvia goodbye and walks out, greeting Olivia who has stepped out for a moment. Saul joins Sylvia on the doorstep. Saul smiles. 49. (Printed with the demonstration version of Fade In) Sylvia waves goodbye. Olivia gets back in the Uber"
+    },
+    {
+      "number": 69,
+      "heading": "INT. SAUL’S HOUSE - STUDY. NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Saul and Sylvia are watching a film on TV. He’s lying on the bed, nodding off. The sentimental film moves Sylvia - she tries not to cry. Sylvia glances over at Saul. She sees him sleeping, turns her attention back to the film. A scene makes her cry. She tries to be quiet as she sobs. Saul opens his "
+    },
+    {
+      "number": 70,
+      "heading": "INT. SAUL’S HOUSE - STUDY / STAIRS / HALLWAY. DAY",
+      "characters": [
+        "SARA",
+        "SYLVIA",
+        "SAUL"
+      ],
+      "dialogues": [
+        {
+          "character": "SARA",
+          "parenthetical": "(O.S.)",
+          "text": "Hello!"
+        },
+        {
+          "character": "SARA",
+          "parenthetical": "(O.S.) (cont'd)",
+          "text": "Saul?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "It’s not what it looks like."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "(cont'd)",
+          "text": "He started crying last night while we were watching a film. I wanted to help."
+        },
+        {
+          "character": "SARA",
+          "parenthetical": "",
+          "text": "I see..."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "Where is she?"
+        },
+        {
+          "character": "SARA",
+          "parenthetical": "",
+          "text": "She left. 67"
+        }
+      ],
+      "actionPreview": "Sylvia and Saul have spent the night in each other’s arms and are in a deep, peaceful sleep. They don’t hear the front door open. Sylvia continues to sleep while Saul momentarily opens his eyes, then shuts them again. The door inches open. S ara peeks inside, and smiles to see them asleep together. "
+    },
+    {
+      "number": 71,
+      "heading": "INT. SYLVIA'S HOUSE. BEDROOM. DAY.",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Sylvia arrives to her house and hurries to the bed. She lies there, crying. 68 68"
+    },
+    {
+      "number": 72,
+      "heading": "EXT. SCHOOL / STREET. DAY",
+      "characters": [
+        "ANNA",
+        "SYLVIA",
+        "SAUL",
+        "SARA"
+      ],
+      "dialogues": [
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "Wasn’t Olivia supposed to come?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "She’s not picking up her phone."
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "Why aren’t you with Saul?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Does Samantha visi t them often? 51."
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "I don’t know mom."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Do they mention her when you’re around?"
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "No, mom."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "Can we talk?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Anna, go inside."
+        },
+        {
+          "character": "SARA",
+          "parenthetical": "",
+          "text": "I’ll leave you two."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "Why did you leave?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "I don’t want things to get complicated."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "What do you mean?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "I got my job back... it’s better for me to stick to a routine."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "Why do you want to stop working with me?"
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "(cont'd)",
+          "text": "Is it because Sara walked in on us?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "I’m glad we met, really."
+        }
+      ],
+      "actionPreview": "Sylvia waits outside school. Anna comes out. She’s probably with Samantha. They start walking. (Printed with the demonstration version of Fade In) Sylvia knows she should stop probing, but can’t help herself. Anna feels bad lying. 68A 68A EXT/INT. SYLVIA'S APARTMENT / MARK’S CAR. DAY Sylvia and Anna"
+    },
+    {
+      "number": 73,
+      "heading": "INT. SYLVIA'S APARTMENT - SYLVIA’S BEDROOM / KITCHEN. DAY",
+      "characters": [
+        "ANNA",
+        "SYLVIA"
+      ],
+      "dialogues": [
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "They’re not"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "They didn’t want to or you wouldn’t let them?"
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "Are you mad at Saul?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "What did he do?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Nothing."
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "Why don’t you ever tell me the truth?"
+        }
+      ],
+      "actionPreview": "Sylvia enters the house. Anna’s been watching through Sylvia’s bedroom window. coming in? Anna walks over to the window and watches the car drive off. Pensive, Sylvia walks into the kitchen and washes her hands. Sylvia ignores Anna. 69 69"
+    },
+    {
+      "number": 74,
+      "heading": "INT. SAUL'S HOUSE - SAUL'S BEDROOM. CONTINUOUS",
+      "characters": [
+        "ISAAC",
+        "SAUL"
+      ],
+      "dialogues": [
+        {
+          "character": "ISAAC",
+          "parenthetical": "",
+          "text": "Let me know so I know if I need to cancel my afternoon appointments... OK... thank you Sylvia."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "Why isn’t she coming?"
+        },
+        {
+          "character": "ISAAC",
+          "parenthetical": "",
+          "text": "She said she couldn’t. I didn’t ask why."
+        },
+        {
+          "character": "ISAAC",
+          "parenthetical": "(cont'd)",
+          "text": "I’m going to have to cancel my date with Rachel."
+        },
+        {
+          "character": "ISAAC",
+          "parenthetical": "(cont'd)",
+          "text": "Would you come?"
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "I don’t want to see Rachel, and you don’t have to c ancel your appointments."
+        },
+        {
+          "character": "ISAAC",
+          "parenthetical": "",
+          "text": "You’re staying here, locked up all day?"
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "I’d rather stay here than be taken on your date like a pet."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "(cont'd)",
+          "text": "Could you lend me a notebook?"
+        },
+        {
+          "character": "ISAAC",
+          "parenthetical": "",
+          "text": "Yeah... sure."
+        },
+        {
+          "character": "ISAAC",
+          "parenthetical": "(O.S.)",
+          "text": "Hey, sorry I can’t make it tonight... 54."
+        }
+      ],
+      "actionPreview": "Isaac on the phone: 53. (Printed with the demonstration version of Fade In) Isaac hangs up. Saul is next to him. The news upset Saul. Saul isn’t really paying attention. Isaac doesn’t want to argue - he lets his brother be. Isaac dials a number on his phone and walks out of Saul’s room. (Printed wit"
+    },
+    {
+      "number": 75,
+      "heading": "INT. SAUL'S HOUSE. BEDROOM. NIGHT.",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Saul is lying on the bed, he seems depressed. In his phone, \"A whiter shade of pale\" is playing. Saul repeats the song over and over. 71 71"
+    },
+    {
+      "number": 76,
+      "heading": "INT. SAUL'S HOUSE. KITCHEN. DAY",
+      "characters": [
+        "ISAAC",
+        "SAUL",
+        "ISAA C"
+      ],
+      "dialogues": [
+        {
+          "character": "ISAAC",
+          "parenthetical": "",
+          "text": "I couldn't find anyone to help us today so you'll have to stay here alone."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "It's okay."
+        },
+        {
+          "character": "ISAA C",
+          "parenthetical": "",
+          "text": "Unless you want to stay with the neighbors."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "ISAAC",
+          "parenthetical": "",
+          "text": "Okay. Call me if you need anything. 72"
+        }
+      ],
+      "actionPreview": "Isaac is taking some coffee and getting ready to leave. Saul is looking through the window. 72"
+    },
+    {
+      "number": 77,
+      "heading": "INT. SAUL'S HOUSE. HALLWAY. DAY.",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Saul is fixing his hair in front of the mirror. He picks up a jacket and goes outside. A note in the door says DO NOT WALK OUT! Saul ignores it. 73 73"
+    },
+    {
+      "number": 78,
+      "heading": "INT. UBER. DAY.",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Saul is in the backseat of an uber, silent. 74 74"
+    },
+    {
+      "number": 79,
+      "heading": "INT. ADULT RESIDENCE. DAY",
+      "characters": [
+        "KAREN",
+        "SAUL",
+        "SYLVIA",
+        "S YLVIA"
+      ],
+      "dialogues": [
+        {
+          "character": "KAREN",
+          "parenthetical": "",
+          "text": "Hello, may I help you? 55."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "I'm looking for Feinstein House."
+        },
+        {
+          "character": "KAREN",
+          "parenthetical": "",
+          "text": "This is it."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "Is Sylvia here?"
+        },
+        {
+          "character": "KAREN",
+          "parenthetical": "",
+          "text": "Yes, she's here. What is your name?"
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "Saul."
+        },
+        {
+          "character": "KAREN",
+          "parenthetical": "",
+          "text": "Okay. Wait here please."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "What are you doing here?"
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "I need to talk to you."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "What happened?"
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "Can we go somewhere private?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Of course..."
+        },
+        {
+          "character": "S YLVIA",
+          "parenthetical": "",
+          "text": "I’ll be back in a minute."
+        }
+      ],
+      "actionPreview": "Karen opens the door to let Sau l in, who is outside. (Printed with the demonstration version of Fade In) He catches Sylvia’s eye, and walks up to her. Sylvia calls out to Jessica, still drying dishes in the small kitchen. She gestures for Saul to follow her. 75 75"
+    },
+    {
+      "number": 80,
+      "heading": "EXT. ADULT RESIDENCE. DAY",
+      "characters": [
+        "SYLVIA"
+      ],
+      "dialogues": [
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "What’s going on? 56."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "I need to get back to work..."
+        }
+      ],
+      "actionPreview": "She leads Saul to a pantry full of dry foods and turns on the light, closing the door. She looks worried. (Printed with the demonstration version of Fade In) Saul doesn’t say anything. He closes the door behind them. He kisses her. She’s a bit surprised - unused to the romance, let alone in her work"
+    },
+    {
+      "number": 81,
+      "heading": "EXT. SCHOOL. DAY",
+      "characters": [
+        "ANNA",
+        "SYLVIA"
+      ],
+      "dialogues": [
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "Hey."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Saul came by. He’s joining us for dinner."
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "Can we get pizza?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "I was thinking of making something with what we have at home."
+        }
+      ],
+      "actionPreview": "Sylvia and Saul walk to school and wait for Anna. Teenagers start walking out. Anna appears and notices them. She’s surprised to see Saul. Saul waves hello. Anna smiles, trying to be polite. Sylvia’s response further sinks Anna’s mood. The trio walk home. 77 77"
+    },
+    {
+      "number": 82,
+      "heading": "INT. SYLVIA'S HOUSE. DAY",
+      "characters": [
+        "ANNA",
+        "SAUL",
+        "SYLVIA"
+      ],
+      "dialogues": [
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "I told you I wanted pizza."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "I can go to get pizza. Or I can call them. 57."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "No. We're not giving in to this behavior."
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "What behavior? I just wanted pizza."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "This is spicy."
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "Exactly. You know I don't like spicy..."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Both of you are belittling me as a chef."
+        }
+      ],
+      "actionPreview": "Sylvia, Saul and Anna are taking lunch in the terrace. (Printed with the demonstration version of Fade In) The three of them starts laughing. 78 78"
+    },
+    {
+      "number": 83,
+      "heading": "INT. SYLVIA'S APARTMENT. NIGHT",
+      "characters": [
+        "ANNA",
+        "SYLVIA",
+        "ISAAC",
+        "SAUL"
+      ],
+      "dialogues": [
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "I thou ght you weren’t working with him anymore."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "I’m not. I’ll be back with Karen on Monday."
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "I don’t get it. Why’s he here, then?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "He’s here as a friend."
+        },
+        {
+          "character": "ISAAC",
+          "parenthetical": "(O.S)",
+          "text": "Hi Sylvia. Is Saul there?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "He is. I’ll buzz you. 58."
+        },
+        {
+          "character": "ISAAC",
+          "parenthetical": "",
+          "text": "I’ve been looking all over for you."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "Don’t start."
+        },
+        {
+          "character": "ISAAC",
+          "parenthetical": "",
+          "text": "What are you doing here?"
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "I came to visit."
+        },
+        {
+          "character": "ISAAC",
+          "parenthetical": "",
+          "text": "You specifically do what I ask you not to do."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "I forgot what you told me not to do."
+        },
+        {
+          "character": "ISAAC",
+          "parenthetical": "",
+          "text": "Fuck off."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Hey!"
+        },
+        {
+          "character": "ISAAC",
+          "parenthetical": "",
+          "text": "to Sylvia ("
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "I haven’t looked at my phone."
+        },
+        {
+          "character": "ISAAC",
+          "parenthetical": "",
+          "text": "What is wrong with you??"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Excuse me?"
+        },
+        {
+          "character": "ISAAC",
+          "parenthetical": "",
+          "text": "Sara showed me the picture of you two. 59."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Lower your voice."
+        },
+        {
+          "character": "ISAAC",
+          "parenthetical": "",
+          "text": "Let’s go. We’ll talk on the way home."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "Would you mind if I stay longer?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Of course not."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "to Isaac ("
+        }
+      ],
+      "actionPreview": "Saul is asleep in front of the TV. Sylvia puts a blanket over him. Anna and Sylvia are watching a show with the volume low. They continue watching the TV. Anna is confused. The door buzzer sounds. Sylvia stands and checks who it is. Saul wakes. (Printed with the demonstration version of Fade In) Isa"
+    },
+    {
+      "number": 84,
+      "heading": "INT. SYLVIA'S APARTMENT - ANNA’S BEDROOM / SYLVIA’S BEDROOM.",
+      "characters": [
+        "ANNA",
+        "SAUL",
+        "SYLVIA"
+      ],
+      "dialogues": [
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "Goo d night."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "Thanks for lending me your room."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Got all you need?"
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "Thanks."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Night."
+        }
+      ],
+      "actionPreview": "NIGHT Anna and Sylvia finish putting fresh sheets on Anna’s bed. Anna smiles and leaves. He smiles. Sylvia smiles back, closes the door and heads back to her room. Anna is already in bed. Sylvia lies down next to her. They hug. 60. (Printed with the demonstration version of Fade In) Sylvia turns off"
+    },
+    {
+      "number": 85,
+      "heading": "INT. SYLVIA'S APARTMENT - SYLVIA’S BEDROOM / ANNA’S BEDROOM.",
+      "characters": [
+        "SYLVIA",
+        "ANNA",
+        "SAUL"
+      ],
+      "dialogues": [
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Wake up. It’s late."
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "Okay..."
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "It’s me!"
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "(O.S.)",
+          "text": "Come in."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "Good morning."
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "Would"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "He doesn’t have to stay..."
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "You like him, he should stay."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Okay... you know he doesn’t realize the things he does sometimes. 61."
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "I know."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Go take a shower."
+        }
+      ],
+      "actionPreview": "DAY It’s early in the morning. Sylvia is up. She wakes Anna. Anna gets out of bed and goes to her room. She knocks on the door. Anna opens the door to find Saul stark naked - just out of the shower. Anna is stunned, she turn s around and hurries off. Saul doesn’t understand what just happened - he c"
+    },
+    {
+      "number": 86,
+      "heading": "INT. LUCIEN. DAY",
+      "characters": [
+        "WAITRESS",
+        "SAUL",
+        "SYLVIA"
+      ],
+      "dialogues": [
+        {
+          "character": "WAITRESS",
+          "parenthetical": "",
+          "text": "Welcome, it’s been a while."
+        },
+        {
+          "character": "WAITRESS",
+          "parenthetical": "(cont'd)",
+          "text": "The usual appetizers?"
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "We’ll take a look at the menu, thanks."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "What are the usual appetizers?"
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "I have no idea."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "You do remember the waiter?"
+        }
+      ],
+      "actionPreview": "Sylvia and Saul are looking at the menu in a fancy restaurant. The waiter approaches. Saul nods, and smiles at Sylvia. The waiter leaves. Sylvia can’t help but laugh. Saul shake his head. They both laugh out loud. 82 82"
+    },
+    {
+      "number": 87,
+      "heading": "INT. LUCIEN. DAY",
+      "characters": [
+        "WAITRESS",
+        "SYLVIA",
+        "SAUL"
+      ],
+      "dialogues": [
+        {
+          "character": "WAITRESS",
+          "parenthetical": "",
+          "text": "I’ll get the terminal."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Thanks. 62."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "My pleasure."
+        },
+        {
+          "character": "WAITRESS",
+          "parenthetical": "",
+          "text": "Would you like us to check with your bank and see if we can validate the payment?"
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "Yes, please."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Can we have the check, please?"
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "Hold onto the receipt. I’m paying you back."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Are you crazy?"
+        },
+        {
+          "character": "WAITRESS",
+          "parenthetical": "",
+          "text": "I’ve been told the account is blocked."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "He’s an asshole."
+        }
+      ],
+      "actionPreview": "Sylvia comes out of the bathroom and joins Saul at their table. They’re done eating. The waitress brings the bill. Saul gestures that he wants to pay with his smartphone. (Printed with the demonstration version of Fade In) The waitress comes back with the card machine. Sylvia gives Saul his card, bu"
+    },
+    {
+      "number": 88,
+      "heading": "EXT. OLIVIA’S HOUSE - GARDEN. DAY",
+      "characters": [
+        "SAMANTHA",
+        "ANNA"
+      ],
+      "dialogues": [
+        {
+          "character": "SAMANTHA",
+          "parenthetical": "",
+          "text": "Anna!"
+        },
+        {
+          "character": "SAMANTHA",
+          "parenthetical": "(cont'd)",
+          "text": "You don’t drink with friends, do you?"
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "No. My mom hardly ever lets me go out. But I don’t like drinking."
+        },
+        {
+          "character": "SAMANTHA",
+          "parenthetical": "",
+          "text": "Does Ashley smoke or just drink alcohol?"
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "I think she stopped smoking."
+        },
+        {
+          "character": "SAMANTHA",
+          "parenthetical": "",
+          "text": "You’re a good girl."
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "Wh y did you let mom drink?"
+        },
+        {
+          "character": "SAMANTHA",
+          "parenthetical": "",
+          "text": "You think she asked for permission?"
+        },
+        {
+          "character": "SAMANTHA",
+          "parenthetical": "(cont'd)",
+          "text": "Sylvia was a sweet child... Olivia was always jealous of her. Your mom was my favorite. But when she hit her teens she started looking for trouble..."
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "Did she get along with Grandpa better?"
+        },
+        {
+          "character": "SAMANTHA",
+          "parenthetical": "",
+          "text": "She didn’t."
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "Too bad we never met."
+        }
+      ],
+      "actionPreview": "The family is having a picni c. Robert and Mark are passing a baseball around. Olivia is grilling. Lucy, Ashley and Anna play with the dog, pretending to throw a ball, the dog is confused. Samantha sits down on the grass. The dog jumps on her. Lucy goes to Samantha’s rescue. 63. (Printed with the de"
+    },
+    {
+      "number": 89,
+      "heading": "INT. SYLVIA'S APARTMENT - SYLVIA’S BEDROOM. NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Sylvia and Saul enter the house. She drops her purse on the couch. There’s tension in the air. They enter her bedroom and they start kissing and undressing each other and make love in an awkward way. 85 85"
+    },
+    {
+      "number": 90,
+      "heading": "INT. SAUL'S HOUSE - FRONT DOOR TO BEDROOM. DAY",
+      "characters": [
+        "ISAAC",
+        "SAUL"
+      ],
+      "dialogues": [
+        {
+          "character": "ISAAC",
+          "parenthetical": "",
+          "text": "Why are you packing?"
+        },
+        {
+          "character": "ISAAC",
+          "parenthetical": "(cont'd)",
+          "text": "You are not sufficiently aware of what you’re doing to make rational decisions..."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "Unblock my account! Or I swear I’ll kick you out of"
+        }
+      ],
+      "actionPreview": "Saul unlocks the front door and enters. Sylvia follows him to his bedroom. He takes a suitcase ou t of the closet. Sylvia helps him pack. Isaac walks in. They ignore Isaac and continue packing. my house! Isaac walks out. Saul and Sylvia continue packing in silence. Saul sees the A Whiter Shade of Pa"
+    },
+    {
+      "number": 91,
+      "heading": "INT. SYLVIA'S APARTMENT - SYLVIA'S BEDROOM. NIGHT",
+      "characters": [
+        "SYLVIA",
+        "ANNA",
+        "CARD.",
+        "SAUL"
+      ],
+      "dialogues": [
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Hi sweetie, how are you?"
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "(V.O.)",
+          "text": "Hi mom... can I stay over at"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "I thought we were going to ha ve dinner the three of us... 65."
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "(V.O.)",
+          "text": "C’mon mom. Olivia will drive me over tomorrow after lunch."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "OK. See you tomorrow then."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "(cont'd)",
+          "text": "She is gonna stay at Olivia's again."
+        },
+        {
+          "character": "CARD.",
+          "parenthetical": "",
+          "text": "Sylvia takes off the old card from Sara’s handmade necklace and attaches the new one with her address. She hangs it round his neck."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "(cont'd)",
+          "text": "I have made myself your new emergency contact."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "Nice."
+        }
+      ],
+      "actionPreview": "Saul and Sylvia have eaten dinner naked in bed. We see the remaining crackers, salmon and cream cheese on a tray. Sylvia’s phone - it’s Anna. She answers, putting Anna on loudspeaker. Ashley’s again tonight? (Printed with the demonstration version of Fade In) Saul looks at Sylvia, convincing her to "
+    },
+    {
+      "number": 92,
+      "heading": "INT. OLIVIA’S HOUSE. DAY",
+      "characters": [
+        "SYLVIA",
+        "SAMANTHA",
+        "ASHLEY",
+        "ROBERT",
+        "OLIVIA",
+        "ANNA",
+        "SAUL"
+      ],
+      "dialogues": [
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Where’s Anna? 66."
+        },
+        {
+          "character": "SAMANTHA",
+          "parenthetical": "",
+          "text": "Why don’t you sit down?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Anna!"
+        },
+        {
+          "character": "SAMANTHA",
+          "parenthetical": "",
+          "text": "Hello. You must be Saul."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Where did you get that dress?"
+        },
+        {
+          "character": "ASHLEY",
+          "parenthetical": "",
+          "text": "Grandma gave it to her."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "You’l l take it off at home. Let’s go."
+        },
+        {
+          "character": "SAMANTHA",
+          "parenthetical": "",
+          "text": "Anna, tell your mom you want to spend time with me."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Don’t you go near her!"
+        },
+        {
+          "character": "SAMANTHA",
+          "parenthetical": "",
+          "text": "You’ll make her live with a man who’s mentally ill?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "You protected a pedophile for years. 67."
+        },
+        {
+          "character": "ROBERT",
+          "parenthetical": "",
+          "text": "I will not accept that kind of talk in my house."
+        },
+        {
+          "character": "SAMANTHA",
+          "parenthetical": "",
+          "text": "I hoped you’d finally stop making things up after so many years..."
+        },
+        {
+          "character": "SAMANTHA",
+          "parenthetical": "(cont'd)",
+          "text": "Stop lying."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Are you finally going to remember or are"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "(cont'd)",
+          "text": "You saw us inside his room more than once."
+        },
+        {
+          "character": "OLIVIA",
+          "parenthetical": "",
+          "text": "I was eight years old."
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "What happened?"
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "(cont'd)",
+          "text": "Mom?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Tell her."
+        },
+        {
+          "character": "SAMANTHA",
+          "parenthetical": "",
+          "text": "Anna, would you rather live here with Olivia?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "I hate you. 68."
+        },
+        {
+          "character": "SAMANTHA",
+          "parenthetical": "",
+          "text": "calmly ("
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Tell them how dad used to abuse me when I was a little girl."
+        },
+        {
+          "character": "ROBERT",
+          "parenthetical": "",
+          "text": "That’s enough."
+        },
+        {
+          "character": "SAMANTHA",
+          "parenthetical": "",
+          "text": "You’ve been lying since you learned to talk. Your sister never gave us any problems. You gave us nothing but grief - at school, at home."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Olivia"
+        },
+        {
+          "character": "ROBERT",
+          "parenthetical": "",
+          "text": "That’s enough. Get out."
+        },
+        {
+          "character": "SAMANTHA",
+          "parenthetical": "",
+          "text": "Is it my fault you’re a failure?"
+        },
+        {
+          "character": "SAMANTHA",
+          "parenthetical": "(cont'd)",
+          "text": "to Saul ("
+        },
+        {
+          "character": "OLIVIA",
+          "parenthetical": "",
+          "text": "Dad used to take her to his room and shut the door. He’d say they were going to watch a film together. But he never let me in."
+        },
+        {
+          "character": "SAMANTHA",
+          "parenthetical": "",
+          "text": "So you remember how they used to watch films together? 69."
+        },
+        {
+          "character": "OLIVIA",
+          "parenthetical": "",
+          "text": "You knew what was going on in that room."
+        },
+        {
+          "character": "SAMANTHA",
+          "parenthetical": "",
+          "text": "Then why didn’t you say anything?"
+        },
+        {
+          "character": "OLIVIA",
+          "parenthetical": "",
+          "text": "I was confused... I always thought he loved Sylvia more than he loved me. I told you once what I saw and you slapped me."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "You slapped me every single time I told you I didn’t like being with dad."
+        },
+        {
+          "character": "SAMANTHA",
+          "parenthetical": "",
+          "text": "He never touched you."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "Let’s go home."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Anna, let’s go."
+        }
+      ],
+      "actionPreview": "Robert and Olivia watch TV while Mark and Lucy play Twister with Samantha. We hear Anna and Ashley play with the dog in one of the rooms. The doorbell rings. Olivia gets up from the couch and opens. S he’s surprised to see Sylvia and Saul. They walk in - Saul carries an ice cream tub. Sylvia notices"
+    },
+    {
+      "number": 93,
+      "heading": "INT. SYLVIA'S APARTMENT - SYLVIA'S BEDROOM. DAY",
+      "characters": [
+        "SAUL",
+        "OLIVIA",
+        "ROBERT"
+      ],
+      "dialogues": [
+        {
+          "character": "SAUL",
+          "parenthetical": "(O.S.)",
+          "text": "Yes?"
+        },
+        {
+          "character": "OLIVIA",
+          "parenthetical": "",
+          "text": "It's Olivia."
+        },
+        {
+          "character": "ROBERT",
+          "parenthetical": "",
+          "text": "We were just hoping to talk"
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "She is not available right now."
+        },
+        {
+          "character": "ROBERT",
+          "parenthetical": "",
+          "text": "Oh okay. Please tell her that we're thinking about her and that we'll come back."
+        }
+      ],
+      "actionPreview": "Sylvia is lying down - she looks exhausted. Anna is lying next to her, comforting her. Saul brings some cookies to Sylvia. The doorbell rings. Saul answers. to Sylvia. 70. (Printed with the demonstration version of Fade In) Anna hugs her mother in the bed. 89 89"
+    },
+    {
+      "number": 94,
+      "heading": "INT. SYLVIA'S HOUSE. KITCHEN. DAY.",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Saul and Anna are washing dishes together. They hear Sylvia crying from the bathroom. Saul goes to check on her. 90 90"
+    },
+    {
+      "number": 95,
+      "heading": "INT. SYLVIA'S HOUSE. BATHROOM. DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Saul sits next to Sylvia in the bathtub. She is cryin g and hurries to hug Saul. Accidentally she pulls him over and he fells into the bathtub. They start laughing and kissing. 91 91"
+    },
+    {
+      "number": 96,
+      "heading": "INT. SYLVIA'S APARTMENT. DAY",
+      "characters": [
+        "ANNA",
+        "OLIVIA"
+      ],
+      "dialogues": [
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "She is sleeping."
+        },
+        {
+          "character": "OLIVIA",
+          "parenthetical": "",
+          "text": "That's why I knocked."
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "Why did you keep talking to"
+        },
+        {
+          "character": "OLIVIA",
+          "parenthetical": "",
+          "text": "It’s not that simple."
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "You knew all along and never said anything."
+        },
+        {
+          "character": "OLIVIA",
+          "parenthetical": "",
+          "text": "I was a child Anna ."
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "That’s not an excuse. If I had a sister I would never do that to her. 71."
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "(cont'd)",
+          "text": "I don’t want to see Samantha ever again. I don’t even think I want to talk to you, either."
+        }
+      ],
+      "actionPreview": "The door bell rings. Anna opens the door and finds Olivia. Grandma? (Printed with the demonstration version of Fade In) Olivia remains quiet. Olivia leaves and Anna closes the door behind her. 92 92"
+    },
+    {
+      "number": 97,
+      "heading": "INT. SYLVIA'S APARTMENT. BEDROOM. NIGHT.",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Sylvia is sleeping in the middle of the night. 93 93"
+    },
+    {
+      "number": 98,
+      "heading": "INT. SYLVIA'S APARTMENT. NIGHT.",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Saul wakes up in the middle of the night and tries to go to Sylvia's bedroom. He sees the rooms of Sylvia and Anna closed and he can't remember which door is the one he is looking for. Saul sits on a chair, frustrated. 94 94"
+    },
+    {
+      "number": 99,
+      "heading": "INT. ADULT RESIDENCE - MAIN ROOM. DAY",
+      "characters": [
+        "SYLVIA",
+        "KAREN"
+      ],
+      "dialogues": [
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "I'll be right back, okay?"
+        },
+        {
+          "character": "KAREN",
+          "parenthetical": "",
+          "text": "Woodhull hospital called. Saul is there. You need to go."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Saul? Is he okay?"
+        },
+        {
+          "character": "KAREN",
+          "parenthetical": "",
+          "text": "I don't know. You will have to go there. Keep me posted."
+        }
+      ],
+      "actionPreview": "Sylvia is helping a resident to pick her clothes for the day. From the reception, Sylvia is called. Sylvia goes to the reception and finds Karen. Sylvia rushes to the hospital. 95 95"
+    },
+    {
+      "number": 100,
+      "heading": "INT. HOSPITAL - RECEPTION. DAY",
+      "characters": [
+        "SYLVIA",
+        "HOSPITAL RECEPTIONIST",
+        "ISAAC"
+      ],
+      "dialogues": [
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Excuse me, I’m looking for Saul"
+        },
+        {
+          "character": "HOSPITAL RECEPTIONIST",
+          "parenthetical": "",
+          "text": "Just a second."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "They took him in a few hours ago."
+        },
+        {
+          "character": "HOSPITAL RECEPTIONIST",
+          "parenthetical": "",
+          "text": "What’s your name?"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Sylvia Sanders."
+        },
+        {
+          "character": "HOSPITAL RECEPTIONIST",
+          "parenthetical": "",
+          "text": "Sylvia Sanders is here... Yes... OK. You can wait over there."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "How is he?"
+        },
+        {
+          "character": "ISAAC",
+          "parenthetical": "",
+          "text": "Go away."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Can you at least tell me if he’s OK?"
+        },
+        {
+          "character": "ISAAC",
+          "parenthetical": "",
+          "text": "They found him lying unconscious in the street outside you're house."
+        }
+      ],
+      "actionPreview": "Sylvia waits for a receptionist to finish her conversation on the phone - and approaches her after she hangs up. 72. (Printed with the demonstration version of Fade In) Shapiro. The receptionist checks her computer. The receptionist makes a phone call. She points to a bench. Sylvia sits. She waits a"
+    },
+    {
+      "number": 101,
+      "heading": "INT. SYLVIA'S APARTMENT. NIGHT",
+      "characters": [
+        "SYLVIA"
+      ],
+      "dialogues": [
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Hi. I just want to know if you’re OK. Then I’ll leave you alone. Are you OK?"
+        }
+      ],
+      "actionPreview": "Sylvia can’t sleep. She take s her phone from under her pillow and dials Saul. He doesn’t answer. She tries again but it goes straight to voicemail. 73. (Printed with the demonstration version of Fade In) She hangs up, and puts her phone under the pillow. She turns over. 97 97"
+    },
+    {
+      "number": 102,
+      "heading": "INT. CHURCH HALL (SUNSET PARK) NIGHT",
+      "characters": [
+        "KAREN"
+      ],
+      "dialogues": [
+        {
+          "character": "KAREN",
+          "parenthetical": "",
+          "text": "Hey, any news about Saul?"
+        }
+      ],
+      "actionPreview": "Karen is setting up the room for the weekly meeting. She notes that Sylvia is not well. Sylvia says no. And without energy, she helps Karen. 97A 97A"
+    },
+    {
+      "number": 103,
+      "heading": "INT. CHURCH HALL (SUNSET PARK) NIG HT",
+      "characters": [
+        "AA MEMBERS",
+        "LORRAINE"
+      ],
+      "dialogues": [
+        {
+          "character": "AA MEMBERS",
+          "parenthetical": "",
+          "text": "God, grant us the strength to accept the things that we cannot change; the courage to change the things we can; and the wisdom to know the difference."
+        },
+        {
+          "character": "AA MEMBERS",
+          "parenthetical": "(cont'd)",
+          "text": "I have asked a friend to read \"What is the AA Program?\""
+        },
+        {
+          "character": "LORRAINE",
+          "parenthetical": "",
+          "text": "AA is a fellowship of people who share their experience..."
+        }
+      ],
+      "actionPreview": "The group is praying. Sylvia is absent-minded while Lorraine speaks. She is not paying attention a t all. 98 98"
+    },
+    {
+      "number": 104,
+      "heading": "INT. SYLVIA'S APARTMENT - KITCHEN TO SYLVIA'S BEDROOM. NIGHT",
+      "characters": [
+        "ANNA",
+        "SYLVIA"
+      ],
+      "dialogues": [
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "You should eat."
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "No, thank you. 99"
+        }
+      ],
+      "actionPreview": "Anna finishes preparing a dish and takes it upstairs. Sylvia is sleeping while \"A Whiter Shade of Pale\" plays from a speaker. Anna puts the food on the table besides the bed, Sylvia doesn’t feel like standing up. 74. (Printed with the demonstration version of Fade In) 99"
+    },
+    {
+      "number": 105,
+      "heading": "INT. SUBWAY TRAIN. DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Anna travels by subway at rush hour. She looks at her reflection in the blackened window and fixes her hair. 100 100"
+    },
+    {
+      "number": 106,
+      "heading": "EXT. SAUL’S HOUSE. DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Anna arrives at Saul’s house. She peers through the window, looking in for a while. She crosses the street and rings the bell. 101 101"
+    },
+    {
+      "number": 107,
+      "heading": "EXT. SAUL’S HOUSE. DAY",
+      "characters": [
+        "ANN A",
+        "MALE NURSE",
+        "ANNA"
+      ],
+      "dialogues": [
+        {
+          "character": "ANN A",
+          "parenthetical": "",
+          "text": "Hi. Is Saul home?"
+        },
+        {
+          "character": "MALE NURSE",
+          "parenthetical": "",
+          "text": "Who is asking?"
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "Anna."
+        },
+        {
+          "character": "MALE NURSE",
+          "parenthetical": "",
+          "text": "Saul! Someone is here looking for you."
+        }
+      ],
+      "actionPreview": "Anna waits on the front porch. A male nurse opens the door. The male nurse lets Anna in. She walks into the house. 102 102"
+    },
+    {
+      "number": 108,
+      "heading": "INT. SAUL'S HOUSE. HALLWAY. DAY.",
+      "characters": [
+        "SAUL",
+        "ANNA",
+        "MALE NURSE"
+      ],
+      "dialogues": [
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "How are you?"
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "Fine."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "This is my friend. Give us some privacy, please."
+        },
+        {
+          "character": "MALE NURSE",
+          "parenthetical": "",
+          "text": "Sure."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "Can you go upstairs or are you just going to stand right there?"
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "Why haven't you answered my mom's calls?"
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "They took my phone. And my note book."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "(cont'd) I'm having a really hard time. They don't let me go outside. The won't even let me go in the kitchen. They don't... Are you sure you don't want something to drink?"
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "No, I'm okay. Thank you."
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "(cont'd)",
+          "text": "Let's go."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "Where do you want to go?"
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "Just trust me."
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "Okay. Alright. Let's go."
+        }
+      ],
+      "actionPreview": "Anna is waiting in the living room when Saul comes downstairs. Saul and Anna hug each other, affectively. They sit in the couch. Saul asks the nurse to leave the room. 75. (Printed with the demonstration version of Fade In) The male nurse walks away but stays close. Saul starts to get mad. The nurse"
+    },
+    {
+      "number": 109,
+      "heading": "INT. SYLVIA'S APARTMENT. DAY",
+      "characters": [
+        "ANNA",
+        "SYLVIA",
+        "SAUL"
+      ],
+      "dialogues": [
+        {
+          "character": "ANNA",
+          "parenthetical": "",
+          "text": "Mom."
+        },
+        {
+          "character": "ANNA",
+          "parenthetical": "(cont'd)",
+          "text": "Mom!"
+        },
+        {
+          "character": "SYLVIA",
+          "parenthetical": "",
+          "text": "Oh, hey. How did you get here?"
+        },
+        {
+          "character": "SAUL",
+          "parenthetical": "",
+          "text": "I don't know. I guess she helped me."
+        }
+      ],
+      "actionPreview": "Sylvia is vacuuming the floor. The sound of the vacuum cleaner doesn't let her hear when Anna arrives to the house. Sylvia keeps vacuuming. Sylvia listens Anna and turns of the vacuum cleaner. She realiz es Saul is there too. His presence surprises her. Anna sits in the couch, with a smile on her fa"
+    }
+  ]
+}

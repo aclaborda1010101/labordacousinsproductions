@@ -1,0 +1,32 @@
+{
+  "slug": "best-exotic-marigold-hotel-the",
+  "title": "Best Exotic Marigold Hotel, The",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 4,
+  "characters": [
+    "AUTOMATED VOICE",
+    "MRS JELLINEK",
+    "DR RAMA",
+    "MRS KAPOOR"
+  ],
+  "total_words": 26909,
+  "total_dialogue": 6,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "AUTOMATED VOICE",
+        "MRS JELLINEK",
+        "DR RAMA",
+        "MRS KAPOOR"
+      ],
+      "action_text": "<b>                             THE BEST EXOTIC MARIGOLD HOTEL </b> Written by Ol Parker Based on the book THESE FOOLISH THINGS by Deborah Moggach <b>                                                                  10/01/11 </b> <b>                         1 OVER BLACK 1 </b>          Muffled music; soothing, generic. <b>                         AUTOMATED VOICE </b>          Thank you for your patience. Your call is important to us. We will be with you shortly. <b>          2 INT. MANSION FLAT,",
+      "dialogue_count": 6,
+      "word_count": 26909
+    }
+  ]
+}

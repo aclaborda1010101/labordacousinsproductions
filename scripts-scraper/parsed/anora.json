@@ -1,0 +1,22 @@
+{
+  "slug": "anora",
+  "title": "Anora",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 25532,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                  ANORA </b> Written by Sean Baker Green Draft <b>                                                             04/22/23 </b> <b>1      INT. HEADQUARTERS (MANHATTAN) - NIGHT                        1 </b> The night is banging at HEADQUARTERS, a gentlemen's club in the heart of the city. A large central part of the room is filled with couches and seats where flirting and light lap dances happen. Around the edge of that are smaller curtained off areas and rooms whe",
+      "dialogue_count": 0,
+      "word_count": 25532
+    }
+  ]
+}

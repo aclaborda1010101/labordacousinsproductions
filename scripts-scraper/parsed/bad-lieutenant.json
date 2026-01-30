@@ -1,0 +1,30 @@
+{
+  "slug": "bad-lieutenant",
+  "title": "Bad Lieutenant",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 2,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 15925,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "\"BAD LIEUTENANT\" by Abel Ferrara and Zoe Lund <b>                                         11/25/90 </b> <b>                                       FIRST DRAFT </b> <b> </b> This story takes place during a World Series between the Mets and the A's. Canseco plays for Oakland, and Strawberry is still with New York. <b>                                         DAY ONE: </b> <b>                                   GAME THREE: LT WINS </b> <b>               EXT: EARLY MORNING - LT'S HOME - QUEENS </b> Thi",
+      "dialogue_count": 0,
+      "word_count": 10648
+    },
+    {
+      "scene_number": 2,
+      "slugline": "EXT. LT leaves the CLUB for the STREET, looking over his",
+      "characters": [],
+      "action_text": "shoulder all the way. <b>                                                                    CUT TO: </b> <b>               INT: NIGHT - STAIRWELL OF J.C.'S APARTMENT BUILDING </b> LT enters an APARTMENT BUILDING, faces a dark and sinister staircase. STRANGE NOISES come from the APARTMENTS ABOVE. LT climbs. He hugs the wall, GUN at the ready. To LT, it seems some gothic horror may await him at any turn. On one landing, he comes upon a PIT-BULL. A GRANDMOTHER pulls him back inside an APARTMENT by",
+      "dialogue_count": 0,
+      "word_count": 5277
+    }
+  ]
+}

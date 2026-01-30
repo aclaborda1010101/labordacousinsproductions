@@ -1,0 +1,22 @@
+{
+  "slug": "cold-mountain",
+  "title": "Cold Mountain",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 32098,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "\"COLD MOUNTAIN\" by Anthony Minghella Based On The Novel \"Cold Mountain\" by Charles Frazier <b> </b> <b>               EXT. COLD MOUNTAIN TOWN, NORTH CAROLINA. DAY </b> ON A BLACK SCREEN: Credits. <b>               A RAUCOUS VOICE (SWIMMER�S) CHANTING IN THE CHEROKEE LANGUAGE. </b> A RANGE OF MOUNTAINS SLOWLY EMERGES: shrouded in a blue mist like a Chinese water color. Below them, close to a small town, YOUNG MEN, armed with vicious sticks and stripped to the waist, come charging in a muscular, s",
+      "dialogue_count": 0,
+      "word_count": 32098
+    }
+  ]
+}

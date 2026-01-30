@@ -1,0 +1,22 @@
+{
+  "slug": "crying-game",
+  "title": "Crying Game",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 18201,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b><HTML><HEAD> </b><script> <b><!-- </b>if (window!= top) top.location.href=location.href <b>// --> </b></script> <TITLE>The Crying Game</TITLE> <b><BODY><PRE> </b> The Crying Game <b>FADE IN: </b> <b>EXT. CARNIVAL - DAY </b> A loudspeaker playing Percy Sledge's \"When a Man Loves a Woman,\" as we see a carnival in the distance - with a Ferris Wheel turning round and round. A black man is by a stall. On his arm is an Irish girl with blond hair. The black man is drunk, and is tossing rings around",
+      "dialogue_count": 0,
+      "word_count": 18201
+    }
+  ]
+}

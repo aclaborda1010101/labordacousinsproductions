@@ -1,0 +1,22 @@
+{
+  "slug": "cooler-the",
+  "title": "Cooler, The",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 22255,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                        THE COOLER </b> Written by Frank Hannah & Wayne Kramer <b> </b> <b>               EXT. STYGIAN DARKNESS - NIGHT </b> <b>               STYGIAN DARKNESS </b> The suggestion of traveling through space. Suddenly a star sparkles to life in the distance. Gives rise to another... and another... until we're looking at a whole galaxy of stars. No, not stars. LIGHTS. NEON LIGHTS. A throbbing skyline of neon. LAS VEGAS, NEVADA. As seen from a descending aerial sh",
+      "dialogue_count": 0,
+      "word_count": 22255
+    }
+  ]
+}

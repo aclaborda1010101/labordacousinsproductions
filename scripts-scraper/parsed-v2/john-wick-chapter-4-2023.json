@@ -1,0 +1,5802 @@
+{
+  "slug": "john-wick-chapter-4-2023",
+  "title": "John Wick Chapter 4",
+  "parsedWith": "v2",
+  "parsedAt": "2026-01-29T22:09:10.544Z",
+  "stats": {
+    "scenes": 136,
+    "dialogues": 840,
+    "characters": 43
+  },
+  "characters": [
+    {
+      "name": "JOHN",
+      "dialogueLines": 116,
+      "totalWords": 474
+    },
+    {
+      "name": "THE MARQUIS",
+      "dialogueLines": 104,
+      "totalWords": 878
+    },
+    {
+      "name": "CAINE",
+      "dialogueLines": 102,
+      "totalWords": 641
+    },
+    {
+      "name": "WINSTON",
+      "dialogueLines": 83,
+      "totalWords": 610
+    },
+    {
+      "name": "THE TRACKER",
+      "dialogueLines": 83,
+      "totalWords": 475
+    },
+    {
+      "name": "SHIMAZU",
+      "dialogueLines": 58,
+      "totalWords": 476
+    },
+    {
+      "name": "THE HARBINGER",
+      "dialogueLines": 38,
+      "totalWords": 268
+    },
+    {
+      "name": "OMITTED",
+      "dialogueLines": 36,
+      "totalWords": 36
+    },
+    {
+      "name": "AKIRA",
+      "dialogueLines": 34,
+      "totalWords": 178
+    },
+    {
+      "name": "KILLA",
+      "dialogueLines": 33,
+      "totalWords": 217
+    },
+    {
+      "name": "THE BOWERY KING",
+      "dialogueLines": 25,
+      "totalWords": 326
+    },
+    {
+      "name": "CHIDI",
+      "dialogueLines": 23,
+      "totalWords": 120
+    },
+    {
+      "name": "KATIA",
+      "dialogueLines": 20,
+      "totalWords": 174
+    },
+    {
+      "name": "THE D.J.",
+      "dialogueLines": 16,
+      "totalWords": 150
+    },
+    {
+      "name": "CHARON",
+      "dialogueLines": 11,
+      "totalWords": 104
+    },
+    {
+      "name": "FRAU GOETZ",
+      "dialogueLines": 9,
+      "totalWords": 47
+    },
+    {
+      "name": "THE ELDER",
+      "dialogueLines": 8,
+      "totalWords": 89
+    },
+    {
+      "name": "ARNO",
+      "dialogueLines": 7,
+      "totalWords": 39
+    },
+    {
+      "name": "DEALER",
+      "dialogueLines": 4,
+      "totalWords": 11
+    },
+    {
+      "name": "BOWERY KING",
+      "dialogueLines": 3,
+      "totalWords": 40
+    },
+    {
+      "name": "PRIEST",
+      "dialogueLines": 3,
+      "totalWords": 7
+    },
+    {
+      "name": "KLAUS",
+      "dialogueLines": 3,
+      "totalWords": 9
+    },
+    {
+      "name": "EXTREMELY CLOSE ON",
+      "dialogueLines": 1,
+      "totalWords": 19
+    },
+    {
+      "name": "WIDER ON",
+      "dialogueLines": 1,
+      "totalWords": 9
+    },
+    {
+      "name": "MISSING ITS RING FINGER.",
+      "dialogueLines": 1,
+      "totalWords": 5
+    },
+    {
+      "name": "SILHOUETTE.",
+      "dialogueLines": 1,
+      "totalWords": 39
+    },
+    {
+      "name": "THE MYRMIDONS",
+      "dialogueLines": 1,
+      "totalWords": 3
+    },
+    {
+      "name": "PARIS",
+      "dialogueLines": 1,
+      "totalWords": 4
+    },
+    {
+      "name": "THE DEALER",
+      "dialogueLines": 1,
+      "totalWords": 7
+    },
+    {
+      "name": "DOG.",
+      "dialogueLines": 1,
+      "totalWords": 4
+    },
+    {
+      "name": "RETAINERS.",
+      "dialogueLines": 1,
+      "totalWords": 16
+    },
+    {
+      "name": "SUICIDE GIRLS",
+      "dialogueLines": 1,
+      "totalWords": 52
+    },
+    {
+      "name": "HOBO CARD",
+      "dialogueLines": 1,
+      "totalWords": 5
+    },
+    {
+      "name": "BERLIN",
+      "dialogueLines": 1,
+      "totalWords": 17
+    },
+    {
+      "name": "TAXIDERMY SHOP.",
+      "dialogueLines": 1,
+      "totalWords": 6
+    },
+    {
+      "name": "GUNTER",
+      "dialogueLines": 1,
+      "totalWords": 4
+    },
+    {
+      "name": "THE PRIEST",
+      "dialogueLines": 1,
+      "totalWords": 34
+    },
+    {
+      "name": "GANGSTER",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "HIGH TABLE GUARDIANS",
+      "dialogueLines": 1,
+      "totalWords": 35
+    },
+    {
+      "name": "BAR TENDER",
+      "dialogueLines": 1,
+      "totalWords": 3
+    },
+    {
+      "name": "TRACKER",
+      "dialogueLines": 1,
+      "totalWords": 3
+    },
+    {
+      "name": "SINGLE REPORT",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "BLACK",
+      "dialogueLines": 1,
+      "totalWords": 2
+    }
+  ],
+  "scenes": [
+    {
+      "number": 1,
+      "heading": "EXT. NEW YORK CITY - DAWN",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "1 1 Establishing: An aerial view of New York City’s iconic skyline as the sun crests the horizon. OPENING CREDITS: Titles begin: BANG! The sound of bone impacting wood echoes."
+    },
+    {
+      "number": 2,
+      "heading": "EXT. NYC / STREET - DAWN",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "1A 1A A low rent part of town, gritty and industrial. A symbol is spray painted on a wall: an “X” with an “0” on each side and a jagged “line” above. This is HOBO SYMBOL and in the language of the street it means: “ a safe place.”"
+    },
+    {
+      "number": 3,
+      "heading": "INT. NYC / BOWERY KING’S WORLD / UNDERGROUND - DAWN",
+      "characters": [
+        "THE BOWERY KING"
+      ],
+      "dialogues": [
+        {
+          "character": "THE BOWERY KING",
+          "parenthetical": "(V.O.)",
+          "text": "“I am the way into the city of woe, I am the way into eternal pain, I am the way to go among the lost.”"
+        }
+      ],
+      "actionPreview": "2 2 A long, dark tunnel illuminated by a lantern. Walls covered in HOBO SYMBOLS. Footsteps echo. Two long shadows stretch out. A familiar voice, loud in the confined space, washes over us:"
+    },
+    {
+      "number": 4,
+      "heading": "INT. NYC / BOWERY KING'S WORLD / BOMB SHELTER - DAWN",
+      "characters": [
+        "EXTREMELY CLOSE ON"
+      ],
+      "dialogues": [
+        {
+          "character": "EXTREMELY CLOSE ON",
+          "parenthetical": "",
+          "text": "a thick wooden Makiwara board as a FIST slams into it. When the fist pulls back, it leaves a"
+        }
+      ],
+      "actionPreview": "3 3 BANG! A shadow shrouded room illuminated faintly by shafts of blue light angling down from above through an old grate. smear of blood."
+    },
+    {
+      "number": 5,
+      "heading": "INT. NYC / BOWERY KING'S WORLD / UNDERGROUND - DAWN",
+      "characters": [
+        "THE BOWERY KING"
+      ],
+      "dialogues": [
+        {
+          "character": "THE BOWERY KING",
+          "parenthetical": "(V.O.)",
+          "text": "“Justice caused my high architect to move,"
+        },
+        {
+          "character": "THE BOWERY KING",
+          "parenthetical": "(V.O.)",
+          "text": "Divine omnipotence created me,"
+        }
+      ],
+      "actionPreview": "4 4 ANGLE ON a large metal door. An old fashioned SKELETON KEY, set on a large ring of keys , slides into the lock. SALMON REVISED - 28.1.2022 2. The highest wisdom, and the primal love.” The key turns and the lock disengages with a sharp clang. A hand pulls the door open to reveal stairs dropping d"
+    },
+    {
+      "number": 6,
+      "heading": "INT. NYC / BOWERY KING'S WORLD / BOMB SHELTER - DAWN",
+      "characters": [
+        "WIDER ON",
+        "MISSING ITS RING FINGER."
+      ],
+      "dialogues": [
+        {
+          "character": "WIDER ON",
+          "parenthetical": "",
+          "text": "the Makiwara board as the fist SLAMS into it."
+        },
+        {
+          "character": "MISSING ITS RING FINGER.",
+          "parenthetical": "",
+          "text": "The fist of JOHN WICK."
+        }
+      ],
+      "actionPreview": "5 5 BANG! Violent, brutal. Each punch speckling the wood with blood. We now see that the fist is"
+    },
+    {
+      "number": 7,
+      "heading": "INT. NYC / BOWERY KING'S WORLD / UNDERGROUND - DAWN",
+      "characters": [
+        "BOWERY KING",
+        "THE BOWERY KING"
+      ],
+      "dialogues": [
+        {
+          "character": "BOWERY KING",
+          "parenthetical": "",
+          "text": "and John’s dog. Slung over the Bowery King’s shoulder is a black suit in a plastic dry cleaning bag."
+        },
+        {
+          "character": "THE BOWERY KING",
+          "parenthetical": "",
+          "text": "“Before me there were no created things."
+        }
+      ],
+      "actionPreview": "6 6 Man and dog approach a heavy duty grate secured by chains and padlocks. As the man unlocks the locks, we see his face, and that of his companion: the But those that last forever as do I.” The King slides the grate over and he and the dog step onto a freight elevator. He pulls a lever. The elevat"
+    },
+    {
+      "number": 8,
+      "heading": "INT. NEW YORK CITY / BOWERY KING'S WORLD / BOMB SHELTER - DAY",
+      "characters": [
+        "SILHOUETTE."
+      ],
+      "dialogues": [
+        {
+          "character": "SILHOUETTE.",
+          "parenthetical": "",
+          "text": "Kettle bells to one side, a work bench that’s home to a disassembled Glock and bullet press, on the other. |Light glistening off a knife blade resting on a millstone. Behind it, a worn and duct taped heavy bag."
+        }
+      ],
+      "actionPreview": "7 7 BANG! SLIGHTLY WIDER NOW, as we view John’s fist punching the board in"
+    },
+    {
+      "number": 9,
+      "heading": "INT. NEW YORK CITY / BOWERY KING'S WORLD / UNDERGROUND - DAY",
+      "characters": [
+        "THE BOWERY KING"
+      ],
+      "dialogues": [
+        {
+          "character": "THE BOWERY KING",
+          "parenthetical": "",
+          "text": "“Abandon all hope you who enter...” (to dog, with a sly smile) ...because you are now in the presence of the motherfucking King."
+        }
+      ],
+      "actionPreview": "8 8 The Bowery King and the dog move down a long corridor, passing by a stone face carved into a supporting beam: JANUS, the Roman god of beginnings, transitions, duality, endings, and perhaps most importantly, war and peace. As the Bowery King passes Janus’s face, we see, on the back of the support"
+    },
+    {
+      "number": 10,
+      "heading": "INT. NYC / BOWERY KING'S WORLD / BOMB SHELTER - DAWN",
+      "characters": [
+        "THE BOWERY KING",
+        "JOHN",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "THE BOWERY KING",
+          "parenthetical": "",
+          "text": "You ready, John?"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "...Yeah."
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "10"
+        }
+      ],
+      "actionPreview": "9 9 BANG! As the door opens, a band of light illuminates the room and we finally see John in full: SHIRTLESS, tattoos glistening with sweat, muscles RIPPLING. Finally, John looks over his shoulder at The Bowery King who presents the suit to him. Months have passed. His body is honed by exercise, and"
+    },
+    {
+      "number": 11,
+      "heading": "EXT. THE DESERT - DAWN",
+      "characters": [
+        "THE ELDER",
+        "JOHN",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "THE ELDER",
+          "parenthetical": "",
+          "text": "; the One Who Sits Above the Table. THE ELDER’S POV:"
+        },
+        {
+          "character": "THE ELDER",
+          "parenthetical": "",
+          "text": "Mr. Wick. To what do I owe the pleasure?"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "My ring, my freedom. JW takes a knee ....."
+        },
+        {
+          "character": "THE ELDER",
+          "parenthetical": "",
+          "text": "Then I’m afraid you’ve come a very long way for nothing."
+        },
+        {
+          "character": "THE ELDER",
+          "parenthetical": "",
+          "text": "Your ring is gone , like the Elder before me and if you came here thinking you could end this by killing me , you are mistaken...."
+        },
+        {
+          "character": "THE ELDER",
+          "parenthetical": "(CONT'D)",
+          "text": "SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "I know."
+        },
+        {
+          "character": "THE ELDER",
+          "parenthetical": "",
+          "text": "...Then why are you here?"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "For you to help me change their minds."
+        },
+        {
+          "character": "THE ELDER",
+          "parenthetical": "",
+          "text": "As I said , no on escapes who they are...Im afraid you’ve come a long way for nothing...."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "Yeah.....me too. BOOM! The shot rings out, echoing across the desert and far beyond."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "(CONT'D)",
+          "text": "Tell them. Tell them all. I’m going to kill them. I’m going to kill them all."
+        },
+        {
+          "character": "THE ELDER",
+          "parenthetical": "(CONT'D)",
+          "text": "SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "11"
+        }
+      ],
+      "actionPreview": "10A 10A WIDE. The sun -- blood orange, massive -- slowly rises, illuminating the wide and featureless desert flats. Three Arabians thunder by. The RIDERS, in Bedouin robes, pushing their steeds to the edge of exhaustion. BOOM! A gunshot reverberates and Rider #1 slumps over his saddle. SALMON REVISE"
+    },
+    {
+      "number": 12,
+      "heading": "EXT. MANHATTAN / THE CONTINENTAL - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "12 12 Establishing: An aerial view of the hotel. SALMON REVISED - 28.1.2022 3C. SALMON REVISED - 28.1.2022 4."
+    },
+    {
+      "number": 13,
+      "heading": "INT. MANHATTAN / THE CONTINENTAL / LOBBY - DAY",
+      "characters": [
+        "CHARON",
+        "THE HARBINGER"
+      ],
+      "dialogues": [
+        {
+          "character": "CHARON",
+          "parenthetical": "",
+          "text": ", at his rightful place at the front desk."
+        },
+        {
+          "character": "THE HARBINGER",
+          "parenthetical": "",
+          "text": "."
+        },
+        {
+          "character": "THE HARBINGER",
+          "parenthetical": "",
+          "text": "The Manager."
+        },
+        {
+          "character": "CHARON",
+          "parenthetical": "",
+          "text": "A Harbinger is here to see you, sir."
+        }
+      ],
+      "actionPreview": "13 13 BELLBOYS with luggage, GUESTS checking in, and the true fixture of this establishment, A DOORMAN opens the front door. On a dime, the mood changes. Conversations turn to whispers as all eyes turn toward a behemoth of a man in a tweed suit: The Harbinger cuts an imposing path as he walks toward"
+    },
+    {
+      "number": 14,
+      "heading": "INT. MANHATTAN / THE CONTINENTAL / WINSTON’S OFFICE - DAY",
+      "characters": [
+        "WINSTON",
+        "THE HARBINGER",
+        "CHARON"
+      ],
+      "dialogues": [
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "sits behind his desk, reading glasses perched on his nose, scanning an official looking DOCUMENT -- something written with quill and ink and sealed with wax. He lowers it."
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "There must be a mistake."
+        },
+        {
+          "character": "THE HARBINGER",
+          "parenthetical": "",
+          "text": "There is no mistake. By order of"
+        },
+        {
+          "character": "THE HARBINGER",
+          "parenthetical": "(CONT'D)",
+          "text": "One hour."
+        },
+        {
+          "character": "THE HARBINGER",
+          "parenthetical": "(CONT'D)",
+          "text": "He’s expecting you. SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "CHARON",
+          "parenthetical": "",
+          "text": "Can he do this, sir?"
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "The decree is signed by all twelve members of The Table bestowing upon him powers"
+        }
+      ],
+      "actionPreview": "14 14 The Marquis, Vincent Bisset de Gramont, this hotel has been condemned. The Harbinger turns the hourglass over and the black sand beings to run through it. The Harbinger turns to walk out, pausing by Charon who stands by the door. He turns back to Winston. 4. SALMON REVISED - 28.1.2022 5-9. Win"
+    },
+    {
+      "number": 15,
+      "heading": "EXT. MANHATTAN / OFFICE TOWER - DAY",
+      "characters": [
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "16"
+        }
+      ],
+      "actionPreview": "15 15 Winston and Charon exit a towncar and head for the lobby. 16"
+    },
+    {
+      "number": 16,
+      "heading": "INT. MANHATTAN / OFFICE TOWER / TOP FLOOR / LOBBY - DAY",
+      "characters": [
+        "THE MYRMIDONS",
+        "CHIDI",
+        "WINSTON",
+        "CHARON"
+      ],
+      "dialogues": [
+        {
+          "character": "THE MYRMIDONS",
+          "parenthetical": "",
+          "text": "line the walls."
+        },
+        {
+          "character": "CHIDI",
+          "parenthetical": "",
+          "text": "--"
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "Tradition has it that a condemned man being led to the gallows was permitted a final speech. This public penitence was an affirmation of the necessity of observing divine law."
+        },
+        {
+          "character": "CHARON",
+          "parenthetical": "",
+          "text": "You have done nothing to warrant the gallows. SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "(a wry smile)"
+        },
+        {
+          "character": "CHARON",
+          "parenthetical": "",
+          "text": "Today is not the day you will die."
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "You have the unshakable faith of"
+        },
+        {
+          "character": "CHARON",
+          "parenthetical": "",
+          "text": "Such is life, sir."
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "Thank you."
+        }
+      ],
+      "actionPreview": "17 17 DING! Elevator doors slide open to reveal Winston and Charon. The two step out into a whole new corner of the world of the High Table. Sterile, minimalist, the INSIGNIA OF THE HIGH TABLE looming over a desk where several SECRETARIES -- all in white, all with FLEUR DE LIS tattoos or jewelry -- "
+    },
+    {
+      "number": 17,
+      "heading": "INT. MANHATTAN / OFFICE TOWER / PENTHOUSE - DAY",
+      "characters": [
+        "THE MARQUIS",
+        "WINSTON",
+        "CHARON"
+      ],
+      "dialogues": [
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "My father used to say: “"
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "I do."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "And what of consequences?"
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "That depends on the transgression."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "You believe in measured responses, then?"
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "And in second chances."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "That’s where we differ, you and I."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "(CONT'D)",
+          "text": "Second chances are the refuge of men who fail."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "(CONT'D)",
+          "text": "There are those on The Table who blame this... atrocity on New York. (MORE) SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "(CONT'D)",
+          "text": "SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "I shot him."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "And yet he lives... polluting everything he touches."
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "Marquis. Respectfully. My hotel--"
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "Your hotel?"
+        },
+        {
+          "character": "CHARON",
+          "parenthetical": "",
+          "text": "If I might, sir?"
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "By all means."
+        },
+        {
+          "character": "CHARON",
+          "parenthetical": "",
+          "text": "The Continentals, and their management are a reminder to all who sit beneath The Table that"
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "You believe your hotel provides order?"
+        },
+        {
+          "character": "CHARON",
+          "parenthetical": "",
+          "text": "No, sir. Only The Table can assure order. But our hotel, by virtue of the fact that it is a place of sanctuary, ensures that The Table does not have to."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "(CONT'D)",
+          "text": "SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "And yet here we are."
+        },
+        {
+          "character": "CHARON",
+          "parenthetical": "",
+          "text": "Mr. Wick--"
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "We are not here because of John"
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "(CONT'D)",
+          "text": "You"
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "Such is life."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "Thus you will no longer require the services of a concierge. SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "CHARON",
+          "parenthetical": "",
+          "text": "It has been an honor."
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "Rest now, friend."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "Amène-moi Caine."
+        }
+      ],
+      "actionPreview": "18 18 Doors fully open and Winston, Charon and Chidi enter the gargantuan chamber lined with Myrmidons. Scores of high white columns frame a round reflecting pool of still water set in the chamber’s center, their capitals, incandescent with diffuse white light, a stark contrast to the pool’s dark su"
+    },
+    {
+      "number": 18,
+      "heading": "EXT. PARIS - AFTERNOON",
+      "characters": [
+        "PARIS"
+      ],
+      "dialogues": [
+        {
+          "character": "PARIS",
+          "parenthetical": "",
+          "text": "SALMON REVISED - 28.1.2022"
+        }
+      ],
+      "actionPreview": "19 19 Establishing: Paris, the city of lights, vibrant and alive on a summer’s afternoon. 10. SALMON REVISED - 28.1.2022 11."
+    },
+    {
+      "number": 19,
+      "heading": "EXT. PARIS / JARDIN DE LUXENBOURG - AFTERNOON",
+      "characters": [
+        "ANGLE ON",
+        "CAINE",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": ", (40s) Chinese, sharp suit, walking cane stands some dozen yards away. Though he is apart from Mia -- his back is to her and his eyes are closed -- in this moment he is very much with her."
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "21"
+        }
+      ],
+      "actionPreview": "20 20 MIA (20), Chinese, violin to her ear, stands on the steps, playing the piece. People have stopped to watch and to listen. Her body sways as the pitch builds. She is profoundly connected to this music, almost as though it has meaning outside of the notes. As the music builds, we note the locket"
+    },
+    {
+      "number": 20,
+      "heading": "INT. PARIS / GAMBLING PARLOR - NIGHT",
+      "characters": [
+        "DEALER",
+        "CAINE"
+      ],
+      "dialogues": [
+        {
+          "character": "DEALER",
+          "parenthetical": "",
+          "text": "(French:)"
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "Nine."
+        },
+        {
+          "character": "DEALER",
+          "parenthetical": "",
+          "text": "Lucky."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "There’s no such thing as luck."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "(CONT'D)",
+          "text": "Would you look at that."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "(CONT'D)",
+          "text": "Lucky me."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "(CONT'D)",
+          "text": "Again."
+        },
+        {
+          "character": "DEALER",
+          "parenthetical": "",
+          "text": "...You should leave now."
+        },
+        {
+          "character": "DEALER",
+          "parenthetical": "(CONT'D)",
+          "text": "Maybe you didn’t hear me."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "...Again."
+        }
+      ],
+      "actionPreview": "22 22 CLOSE ON a heavy metal CUP. With a FLASH - two dice are snatched off the GREEN FELT TABLE into the up. We pull back to see the weathered hand that shakes it. Inside the CUP, the dice rattle - a feverish crescendo building. With a flick of the wrist, the dice skitter across the felt, bounce off"
+    },
+    {
+      "number": 21,
+      "heading": "EXT. PARIS / ALLEY - NIGHT",
+      "characters": [
+        "CAINE",
+        "THE DEALER",
+        "CHIDI"
+      ],
+      "dialogues": [
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "...Guess I’m not that lucky."
+        },
+        {
+          "character": "THE DEALER",
+          "parenthetical": "",
+          "text": "You have something that belongs to me."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "Here."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "(CONT'D)",
+          "text": "Take it."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "(CONT'D)",
+          "text": "Don’t."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "(CONT'D)",
+          "text": "Go."
+        },
+        {
+          "character": "CHIDI",
+          "parenthetical": "",
+          "text": "You should have killed them."
+        },
+        {
+          "character": "CHIDI",
+          "parenthetical": "(CONT'D)",
+          "text": "You’ve been summoned."
+        }
+      ],
+      "actionPreview": "23 23 Caine makes his way down the alley, his cane swinging in front of him as the rain pours. Caine finds a dry spot under the eaves, leans against the wall and lights a cigarette. The lighter flares, briefly illuminating three forms -- The Dealer and the two Thugs from the parlor -- emerging from "
+    },
+    {
+      "number": 22,
+      "heading": "EXT. PARIS / PALAIS MARQIS DE GRAMONT - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "24 24 Massive. Gilded. Imposing. Puts Versailles to shame. SALMON REVISED - 28.1.2022 13. SALMON REVISED - 28.1.2022 14."
+    },
+    {
+      "number": 23,
+      "heading": "INT. PARIS / PALAIS MARQUIS DE GRAMONT / DINING ROOM - EARLY",
+      "characters": [
+        "THE MARQUIS",
+        "CAINE"
+      ],
+      "dialogues": [
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "Coffee?"
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "...Tea, please."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "I have a name for you."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "...Respectfully, I am retired."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "I disagree."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "I am no longer of use to you or The"
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "I am amused that you think that is for you to decide."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "...You should find someone else."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "You got close today."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "(CONT'D)",
+          "text": "Too close. You put her in danger."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "(flat and hard) I know the deal I made."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "Do you?"
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "(CONT'D)",
+          "text": "A former associate, I believe. SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "...He was... a friend."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "Your agreement with The Table is as it has been: we give you a name, you give us a life, or we take one."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "(CONT'D)",
+          "text": "Tell me you understand."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "...I have served. I will be of service."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "Excellent. I assume you have a notion of where he might be."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "...John Wick has few friends remaining in this world. And even fewer he trusts with his life."
+        }
+      ],
+      "actionPreview": "25 25 MORNING ANGLE ON Caine -- damp, face caked in blood, standing in the majestic space. His body sways slightly. Chidi stands directly behind him. The Marquis sits alone at the head of a very long formal dining table some distance away. The silence hangs there. Caine teeters and retches. Bile spa"
+    },
+    {
+      "number": 24,
+      "heading": "EXT. PARIS / STREET - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "25A 25A An old and run down movie theatre, it’s billboard proudly presenting Buster Keaton’s The General. Laughter washes over us."
+    },
+    {
+      "number": 25,
+      "heading": "INT. PARIS / MOVIE THEATRE - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "25B 25B A fuzzy reel on a big screen. Keaton pulling off an impossible stunt. A dozen FILM BUFFS scattered around the theater. A few laugh. Caine, who is making his way across the back of the theatre, pauses. SALMON REVISED - 28.1.2022 15. SALMON REVISED - 28.1.2022 15A."
+    },
+    {
+      "number": 26,
+      "heading": "INT. PARIS / MOVIE THEATRE / PROJECTION ROOM - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "25C 25C Film runs through the old fashioned projector. A rectangular beam of light emanates from the lens. THE PROJECTIONIST -- an old and wizened Frenchman with a cigarette, thick glasses, and a black beret, looks up as Caine enters. ANGLE ON a shelf of film canisters. The Projectionist pulls a can"
+    },
+    {
+      "number": 27,
+      "heading": "EXT. OSAKA - NIGHT",
+      "characters": [
+        "OSAKA"
+      ],
+      "dialogues": [],
+      "actionPreview": "25D 25D Establishing: An aerial view of Osaka’s downtown with its bright strobe lights and giant billboards; a miasma of color and cacophonous sound."
+    },
+    {
+      "number": 28,
+      "heading": "EXT. OSAKA / DOWNTOWN - NIGHT",
+      "characters": [
+        "THE TRACKER",
+        "DOG."
+      ],
+      "dialogues": [
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "Gotcha."
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "and the dog is"
+        },
+        {
+          "character": "DOG.",
+          "parenthetical": "",
+          "text": "SALMON REVISED - 28.1.2022"
+        }
+      ],
+      "actionPreview": "26 26 Bright strobe lights flash on a giant billboard. An advertisement. Japanese text. PAN DOWN. More billboards. More advertisements. More colors. Sounds now. Discordant; the kind you hear in a crowded city. At street level now, people walking by billboards. Spray painted on a billboard, and parti"
+    },
+    {
+      "number": 29,
+      "heading": "EXT. OSAKA / OSAKA STREET - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "27 27 Down a street, the dog’s ears are back now, confident, like he’s got a scent, off the curb and into traffic... ignoring honking cars... The dog stops, eyes locked on massive ONYX DOORS flanked by two Japanese DOORMEN. SALMON REVISED - 28.1.2022 16A. SALMON REVISED - 28.1.2022 17. Above them, r"
+    },
+    {
+      "number": 30,
+      "heading": "INT. OSAKA / OSAKA CONTINENTAL / LOBBY - NIGHT",
+      "characters": [
+        "THE TRACKER",
+        "AKIRA",
+        "ANGLE ON",
+        "SHIMAZU"
+      ],
+      "dialogues": [
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "(under his breath)"
+        },
+        {
+          "character": "AKIRA",
+          "parenthetical": "(O.S.)",
+          "text": "I’m afraid this facility doesn’t allow animals."
+        },
+        {
+          "character": "AKIRA",
+          "parenthetical": "",
+          "text": "-- sleek suit, leather folder under her arm, perhaps a touch young for her position as concierge -- standing behind The Tracker, her form reflected in a glass case."
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "You should tell her that."
+        },
+        {
+          "character": "AKIRA",
+          "parenthetical": "",
+          "text": "Meaning your pet, sir."
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "Emotional support animal. SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "AKIRA",
+          "parenthetical": "",
+          "text": "She’s your support animal?"
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "Other way around: I’m her’s."
+        },
+        {
+          "character": "AKIRA",
+          "parenthetical": "",
+          "text": "...Does she bite?"
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "Only when she’s hungry."
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "(CONT'D)",
+          "text": "She’s always hungry."
+        },
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "",
+          "text": "(50s) strolling through the lobby. A slight hitch in his step speaks to battles fought, a scar, just visible on his neck, to mistakes made, and the deference granted by all around him, to the respect he’s earned."
+        },
+        {
+          "character": "AKIRA",
+          "parenthetical": "",
+          "text": "She stays in your room."
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "Of course."
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "(CONT'D)",
+          "text": "Can’t take you anywhere."
+        }
+      ],
+      "actionPreview": "28 28 Floor to ceiling windows offer 360 degree views of Osaka from on high. The Tracker, the Malinois next to him, stands in the middle of the elegant lobby as guests and Geishas and servers with champagne and hors d’oeuvres pass by. His phone -- old school flip phone -- buzzes. He checks it. We ca"
+    },
+    {
+      "number": 31,
+      "heading": "INT. OSAKA / OSAKA CONTINENTAL / LOBBY - NIGHT",
+      "characters": [
+        "SHIMAZU",
+        "AKIRA"
+      ],
+      "dialogues": [
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "",
+          "text": "There’s a dog in my lobby."
+        },
+        {
+          "character": "AKIRA",
+          "parenthetical": "",
+          "text": "Emotional support animal."
+        },
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "",
+          "text": "Of course it is."
+        },
+        {
+          "character": "AKIRA",
+          "parenthetical": "",
+          "text": "Tomorrow’s schedule: Mr. Suzuki at"
+        },
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "",
+          "text": "What’s this at Eight?"
+        },
+        {
+          "character": "AKIRA",
+          "parenthetical": "",
+          "text": "Dinner with your daughter. She’s concerned that you’ve been working too hard."
+        },
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "",
+          "text": "What must I have done to deserve such a considerate child?"
+        },
+        {
+          "character": "AKIRA",
+          "parenthetical": "",
+          "text": "Good karma, I suppose."
+        },
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "",
+          "text": "Indeed. And how are our guests?"
+        },
+        {
+          "character": "AKIRA",
+          "parenthetical": "",
+          "text": "Some of our “gold” club members are anxious."
+        },
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "",
+          "text": "It’s always something. SALMON REVISED - 28.1.2022"
+        }
+      ],
+      "actionPreview": "29 29 Akira paces up to walk beside Shimazu. As they move across the lobby, passing the bar and the Exhibition hall, by staff and patrons, their tone, volume and even language shifts. SALMON REVISED - 28.1.2022 18. SALMON REVISED - 28.1.2022 19. She hands him the folder. He flips it open, scanning i"
+    },
+    {
+      "number": 32,
+      "heading": "INT. OSAKA / OSAKA CONTINENTAL / EXHIBITION HALL - NIGHT",
+      "characters": [
+        "AKIRA",
+        "SHIMAZU"
+      ],
+      "dialogues": [
+        {
+          "character": "AKIRA",
+          "parenthetical": "",
+          "text": "Today it’s New York."
+        },
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "",
+          "text": "And my concierge?"
+        },
+        {
+          "character": "AKIRA",
+          "parenthetical": "",
+          "text": "Concerned."
+        },
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "",
+          "text": "Perhaps we should get you an emotional support animal."
+        },
+        {
+          "character": "AKIRA",
+          "parenthetical": "",
+          "text": "(Japanese)"
+        },
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "",
+          "text": "We’ve done nothing to offend The"
+        },
+        {
+          "character": "AKIRA",
+          "parenthetical": "",
+          "text": "The Table seems to decide that for themselves."
+        },
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "",
+          "text": "Work must be light for you to be so focused on events a world away."
+        },
+        {
+          "character": "AKIRA",
+          "parenthetical": "",
+          "text": "Your past relationship with Mr."
+        },
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "",
+          "text": "And will be met with our grace."
+        },
+        {
+          "character": "AKIRA",
+          "parenthetical": "",
+          "text": "Everything he touches dies."
+        },
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "",
+          "text": "(Japanese)"
+        },
+        {
+          "character": "AKIRA",
+          "parenthetical": "",
+          "text": "Forgive me... Father."
+        },
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "",
+          "text": "Akira. Please tell my daughter that I look forward to our dinner."
+        }
+      ],
+      "actionPreview": "30 30 A large and open space cut up by a series of glass partitions housing an assortment of museum grade weapons and armor -- mostly Japanese, some from surrounding regions, including nunchaku -- as well as scrolls -- pressed between panels. As they continue to walk: Shimazu exchanges a small bow w"
+    },
+    {
+      "number": 33,
+      "heading": "INT. OSAKA / OSAKA CONTINENTAL / KITCHEN - NIGHT",
+      "characters": [
+        "RETAINERS.",
+        "SHIMAZU"
+      ],
+      "dialogues": [
+        {
+          "character": "RETAINERS.",
+          "parenthetical": "",
+          "text": "As Shimazu passes an older, Senior Retainer stationed at the bottom of a flight of stairs:"
+        },
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "",
+          "text": "I’m not to be disturbed."
+        }
+      ],
+      "actionPreview": "31 31 Shimazu moves through the bustling hotel kitchen: cooks, servers... and two SUMO sized men standing guard. They nod respect as he passes between them. A score of hard looking Japanese men in gray suits, white shirts, open collars, irezumi tattoos visible at necks and cuff lines are scattered a"
+    },
+    {
+      "number": 34,
+      "heading": "EXT. OSAKA / OSAKA CONTINENTAL / ROOFTOP GARDEN - NIGHT",
+      "characters": [
+        "SHIMAZU",
+        "JOHN"
+      ],
+      "dialogues": [
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "",
+          "text": "(Japanese; sarcastic)"
+        },
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "(CONT'D)",
+          "text": "...Apparently not. Killing the"
+        },
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "(CONT'D)",
+          "text": "Their response was the destruction of the New York Continental."
+        },
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "(CONT'D)",
+          "text": "My daughter fears we are next."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "Winston?"
+        },
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "",
+          "text": "Alive. But they executed his concierge. To prove a point."
+        },
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "(CONT'D)",
+          "text": "Have you given any thought to where this ends?"
+        },
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "(CONT'D)",
+          "text": "The Table will never stop. You know this. It only takes life. And only gives death. SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "(stands)"
+        },
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "",
+          "text": "The only thing that would trouble me is your leaving before you finish your tea."
+        },
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "(CONT'D)",
+          "text": "When was the last time you slept?"
+        },
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "(CONT'D)",
+          "text": "...I will have a room prepared."
+        },
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "(CONT'D)",
+          "text": "Friendship means little when its convenient. If they come, they come. (motions John to sit)"
+        }
+      ],
+      "actionPreview": "32 32 Doors open and Shimazu steps onto the rooftop’s manicured garden: a stone path, a water feature, Japanese cherry trees, all framed by Osaka’s neon glow. As Shimazu rounds a bend, a lone figure, in silhouette, gazing out over Osaka, comes into view. SALMON REVISED - 28.1.2022 21. SALMON REVISED"
+    },
+    {
+      "number": 35,
+      "heading": "EXT. OSAKA / OSAKA CONTINENTAL - NIGHT",
+      "characters": [
+        "CAINE",
+        "CHIDI"
+      ],
+      "dialogues": [
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "It would be best if I went alone."
+        },
+        {
+          "character": "CHIDI",
+          "parenthetical": "",
+          "text": "For who -- the blind drunk or the traitor?"
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "For you."
+        }
+      ],
+      "actionPreview": "33 33 Caine -- clean shaven, fresh haircut, tailored suit -- stands in front of the hotel, blind eyes locked on the obsidian doors. Chidi steps into frame. Arrayed around him are a group of SIX MYRMIDONS, each wearing the Marquis' Fleur de Lis pin. Chidi looks at Caine with contempt and heads up the"
+    },
+    {
+      "number": 36,
+      "heading": "INT. OSAKA / OSAKA CONTINENTAL / LOBBY - NIGHT",
+      "characters": [
+        "CHIDI",
+        "AKIRA",
+        "THE TRACKER"
+      ],
+      "dialogues": [
+        {
+          "character": "CHIDI",
+          "parenthetical": "",
+          "text": "The Manager."
+        },
+        {
+          "character": "AKIRA",
+          "parenthetical": "",
+          "text": "...Of course. Please make yourself comfortable."
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "Check."
+        }
+      ],
+      "actionPreview": "34 34 Akira is at the front desk when the elevator doors open and Chidi and the Myrmidons enter. A half dozen Myrmidons spread out -- like any other guest -- some making their way to the bar, others meandering through the lobby. The Tracker, enjoying a steak at the bar... smiles as Chidi, alone, app"
+    },
+    {
+      "number": 37,
+      "heading": "INT. OSAKA / OSAKA CONTINENTAL / ROOFTOP GARDEN - NIGHT",
+      "characters": [
+        "SHIMAZU",
+        "JOHN",
+        "AKIRA",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "",
+          "text": "I want you to find your peace,"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "We all die."
+        },
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "",
+          "text": "Is that what you want?... Certainly killing the spiritual head of The"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "I’m going to kill them all. SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "",
+          "text": "(laughs) I believe you’ll try. But no one, not even you, can kill everyone."
+        },
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "(CONT'D)",
+          "text": "You can’t outrun time and bullets."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "You and I left a good life behind a long time ago."
+        },
+        {
+          "character": "AKIRA",
+          "parenthetical": "",
+          "text": "The Table. They’re here--"
+        },
+        {
+          "character": "AKIRA",
+          "parenthetical": "(CONT'D)",
+          "text": "What is he doing here--"
+        },
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "",
+          "text": "(standing to leave)"
+        },
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "(CONT'D)",
+          "text": "No. They don’t know you’re here. So long as that’s the case, they won’t move against us. I will talk to them. (to Akira)"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "35A"
+        }
+      ],
+      "actionPreview": "35 35 John, but the only path this leads to is death. High Table is a unique way of going about it. 24. SALMON REVISED - 28.1.2022 25. He reaches for an elegant cabinet, opens it, pulls out a bottle of Yamazaki 25 and pours to glasses. Offers one to John. All you can hope for is that when it’s your "
+    },
+    {
+      "number": 38,
+      "heading": "INT. OSAKA / OSAKA CONTINENTAL / LOBBY - NIGHT",
+      "characters": [
+        "SHIMAZU",
+        "CHIDI",
+        "CAINE",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "",
+          "text": "Welcome to the Osaka Continental, gentlemen. How may I be of service?"
+        },
+        {
+          "character": "CHIDI",
+          "parenthetical": "",
+          "text": "The Table has reason to believe that this facility is providing services"
+        },
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "",
+          "text": "That is a grave accusation."
+        },
+        {
+          "character": "CHIDI",
+          "parenthetical": "",
+          "text": "We will require full access."
+        },
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "",
+          "text": "Of course."
+        },
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "(CONT'D)",
+          "text": "But as you are well aware, no business -- not even your kind of business -- may be conducted on"
+        },
+        {
+          "character": "CHIDI",
+          "parenthetical": "",
+          "text": "We speak for The Marquis."
+        },
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "",
+          "text": "And I speak for Osaka. Your guns, please."
+        },
+        {
+          "character": "CHIDI",
+          "parenthetical": "",
+          "text": "Don’t repeat the mistake that fool in New York made. SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "",
+          "text": "Fools talk, cowards are silent, but wise men--"
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "(O.S.)",
+          "text": "--listen."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "(CONT'D)",
+          "text": "Which one will you be today? Hello old friend,"
+        },
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "",
+          "text": "So good of you to visit after all these years. If I’d known, I would have better prepared."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "Unfortunately, the result would be the same."
+        },
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "",
+          "text": "You’re with them now."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "",
+          "text": "...Your daughter, Mia?"
+        },
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "(CONT'D)",
+          "text": "How is she?"
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "Alive. And your daughter, Akira?"
+        },
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "",
+          "text": "Well."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "I’m glad."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "(CONT'D)",
+          "text": "This doesn’t have to end with blood."
+        },
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "",
+          "text": "(to Chidi)"
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "No one defies The Table. I remember a time when you understood that."
+        },
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "",
+          "text": "And I remember a time when you understood the meaning of brotherhood."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "I haven't forgotten. But we all serve The Table..."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "(CONT'D)",
+          "text": "Tell us where Mr. Wick is and perhaps you can save a life."
+        },
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "",
+          "text": "You think coming into my home and threatening my daughter makes me"
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "I’m not threatening her; I’m trying to save her."
+        },
+        {
+          "character": "CHIDI",
+          "parenthetical": "",
+          "text": "Enough! By order of the Marquis de"
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "(to Shimazu)"
+        },
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "",
+          "text": "I won’t ask again: leave now."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "I’m sorry."
+        },
+        {
+          "character": "CHIDI",
+          "parenthetical": "",
+          "text": "(to Myrmidons) ...Remove Mr. Shimazu."
+        },
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "",
+          "text": "Ute!"
+        },
+        {
+          "character": "CHIDI",
+          "parenthetical": "",
+          "text": "...Tuez-les tous."
+        },
+        {
+          "character": "CHIDI",
+          "parenthetical": "(CONT'D)",
+          "text": "Seal the hotel. Find John Wick."
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "37"
+        }
+      ],
+      "actionPreview": "36 36 Shimazu appears from a door behind the front counter and heads for Chidi. As he approaches: ut qui excommunicantur. Chidi eyes Shimazu, then takes a step-- Continental grounds. So I’m going to have to ask you to surrender your firearms. 26. SALMON REVISED - 28.1.2022 27. Shimazu, recognizing t"
+    },
+    {
+      "number": 39,
+      "heading": "INT. OSAKA / OSAKA CONTINENTAL / STAIRWELL - NIGHT",
+      "characters": [
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "38"
+        }
+      ],
+      "actionPreview": "37A 37A The High Table Soldiers move up the stairwells... 38"
+    },
+    {
+      "number": 40,
+      "heading": "INT. OSAKA / OSAKA CONTINENTAL / ROOFTOP GARDEN - NIGHT",
+      "characters": [
+        "AKIRA"
+      ],
+      "dialogues": [
+        {
+          "character": "AKIRA",
+          "parenthetical": "",
+          "text": "(Japanese)"
+        },
+        {
+          "character": "AKIRA",
+          "parenthetical": "(CONT'D)",
+          "text": "If they find you here, The Table will kill my father. Me. Everyone."
+        },
+        {
+          "character": "AKIRA",
+          "parenthetical": "(CONT'D)",
+          "text": "Do you have a weapon?"
+        },
+        {
+          "character": "AKIRA",
+          "parenthetical": "(CONT'D)",
+          "text": "This way."
+        }
+      ],
+      "actionPreview": "39 39 John looks out over the city. Akira is a dozen feet away, looking in a different direction. You have no right to be here. John turns his head, taking her in. SALMON REVISED - 28.1.2022 29. (MORE) SALMON REVISED - 28.1.2022 30. Because you broke the rules. You shouldn’t have come. A beat and Jo"
+    },
+    {
+      "number": 41,
+      "heading": "INT. OSAKA / OSAKA CONTINENTAL / CIRCULAR STAIRCASE - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "39A 39A John and Akira head down as a Tactical Team comes up. Contact. Shots exchanged. High Table Soldiers are dropped. Two levels down, Akira pushes through another door. She and John step into the Mezzanine level."
+    },
+    {
+      "number": 42,
+      "heading": "INT. OSAKA / OSAKA CONTINENTAL / MEZZANINE LEVEL - NIGHT",
+      "characters": [
+        "SHIMAZU",
+        "JOHN"
+      ],
+      "dialogues": [
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "",
+          "text": "They’ll be covering the front and back. Get out the way you came. (MORE) SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "(CONT'D)",
+          "text": "SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "I’ll stay."
+        },
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "",
+          "text": "Do not insult my gift to you."
+        },
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "(CONT'D)",
+          "text": "And John. Do me a small courtesy: (Japanese)"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "Osu ."
+        }
+      ],
+      "actionPreview": "39B 39B Motion ahead. Akira raises her bow. John puts a hand on it as Shimazu, with three of his men, appear from a corner. The two groups meet and move together towards the escalators. As they walk. 30. 31. From there it’s a half mile to Umeda station. John... nods. The escalators loom ahead. Then "
+    },
+    {
+      "number": 43,
+      "heading": "INT. OSAKA / OSAKA CONTINENTAL / KITCHEN - NIGHT",
+      "characters": [
+        "CHIDI",
+        "SHIMAZU",
+        "CAINE"
+      ],
+      "dialogues": [
+        {
+          "character": "CHIDI",
+          "parenthetical": "",
+          "text": "Earn your keep, blind man."
+        },
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "(CONT'D)",
+          "text": "SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "These men didn’t need to die."
+        },
+        {
+          "character": "CHIDI",
+          "parenthetical": "",
+          "text": "Find him!"
+        }
+      ],
+      "actionPreview": "40 40 Gunfire rocks the kitchen. Plates and glasses shatter, containers of rice spill out as High Table soldiers and Shimazu’s men fire on each other. Arrows push the soldiers back. ANGLE ON Chidi, his back to the wall in the hall just outside the kitchen as more arrows slam into the wall. Caine is "
+    },
+    {
+      "number": 44,
+      "heading": "INT. OSAKA / OSAKA CONTINENTAL / EXHIBITION HALLS - NIGHT",
+      "characters": [
+        "CAINE",
+        "JOHN"
+      ],
+      "dialogues": [
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "John"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "Caine."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "(CONT'D)",
+          "text": "...They gave you my name."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "I’m afraid so."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "I’m sorry."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "...Me too."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "You took a deal."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "Same as you."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "Family?"
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "Family. SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "(CONT'D)",
+          "text": "You should have stayed out... For all our sakes."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "...I tried."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "Did you?"
+        }
+      ],
+      "actionPreview": "41 41 John moves through the Exhibition Hall -- weapons displays, art, light, etc. Figures appear up ahead, flittering through exhibits. High Table Soldiers. He drops one, two, three, four! Out. Reloads and repeats-- never pausing, always moving -- drops five, six! Clicks empty. Is reloading when a "
+    },
+    {
+      "number": 45,
+      "heading": "INT. OSAKA / OSAKA CONTINENTAL / EXHIBITION HALL / BALCONY -",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "41A 41A NIGHT The Tracker pulls back and runs, the dog at his heels."
+    },
+    {
+      "number": 46,
+      "heading": "EXT. OSAKA / OSAKA CONTINENTAL / HALLWAY - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "42 42 Shimazu and Akira moving down the exterior hallway. A door looms ahead."
+    },
+    {
+      "number": 47,
+      "heading": "EXT. OSAKA / OSAKA CONTINENTAL / BAMBOO GROVE - NIGHT",
+      "characters": [
+        "THE TRACKER",
+        "JOHN"
+      ],
+      "dialogues": [
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "God damn, Mr. Wick, this is quite the mess you’ve made."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "I don’t know you."
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "But I know you."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "Tracker. (off The Tracker’s smile) ...How much?"
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "Not enough... but getting there."
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "(CONT'D)",
+          "text": "Please take better care of yourself, John. We’re in this together now..."
+        }
+      ],
+      "actionPreview": "43 43 A door opens and John pushes out of a doorway into the bamboo grove. Motion all around as he enters the bamboo, angling for the back gate. CRANE UP: John seen from above. High Table Soldiers and Myrmidons all around, searching. ANGLE ON John, as he comes around a stand of bamboo, kills one Hig"
+    },
+    {
+      "number": 48,
+      "heading": "EXT. OSAKA / OSAKA CONTINENTAL / SHRINE - NIGHT",
+      "characters": [
+        "SHIMAZU",
+        "CAINE",
+        "AKIRA",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "",
+          "text": "NO!"
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "Tell me where he is. SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "AKIRA",
+          "parenthetical": "",
+          "text": "...No ."
+        },
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "",
+          "text": "(to Akira)"
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "Stay down."
+        },
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "",
+          "text": "You know I can’t."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "Koji. Please. Think of your daughter."
+        },
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "",
+          "text": "...I am."
+        },
+        {
+          "character": "SHIMAZU",
+          "parenthetical": "(CONT'D)",
+          "text": "...Consequences. SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "...Rules."
+        },
+        {
+          "character": "AKIRA",
+          "parenthetical": "",
+          "text": "NO!"
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "Don’t die. Live to remember your father."
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "44A"
+        }
+      ],
+      "actionPreview": "44 44 Simple and elegant -- altar, urns, gravel, hanging chimes, a bridge spanning a tranquil pool that glows with reflected light. SALMON REVISED - 28.1.2022 36. SALMON REVISED - 28.1.2022 37. A Myrmidon’s body crashes into frame, an arrow through his head. PULL BACK to Akira as she fires arrow aft"
+    },
+    {
+      "number": 49,
+      "heading": "INT. OSAKA / UMEDA TRAIN STATION / PLATFORM - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "45 45 * John makes his way through the all by deserted platform * towards a waiting train. *"
+    },
+    {
+      "number": 50,
+      "heading": "INT. OSAKA / TRAIN - NIGHT",
+      "characters": [
+        "AKIRA",
+        "JOHN"
+      ],
+      "dialogues": [
+        {
+          "character": "AKIRA",
+          "parenthetical": "",
+          "text": "...Who is he?"
+        },
+        {
+          "character": "AKIRA",
+          "parenthetical": "(CONT'D)",
+          "text": "WHO IS HE?"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "...He was a friend."
+        },
+        {
+          "character": "AKIRA",
+          "parenthetical": "",
+          "text": "My father is dead because of you! I want a name!"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "...Caine."
+        },
+        {
+          "character": "AKIRA",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "* (CONT'D)"
+        },
+        {
+          "character": "AKIRA",
+          "parenthetical": "",
+          "text": "* ...I can’t."
+        },
+        {
+          "character": "AKIRA",
+          "parenthetical": "(CONT'D)",
+          "text": "Either you kill him or I will."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "...I understand."
+        },
+        {
+          "character": "AKIRA",
+          "parenthetical": "",
+          "text": "*"
+        }
+      ],
+      "actionPreview": "46 46 John steps into the train car. Looks left. Empty. Then right. * Akira has just entered from the opposite side of the car. She * says nothing and in that moment John knows Shimazu is dead. * A beat and John makes his way to a seat. Sits. * Doors close and the train glides away from the platform"
+    },
+    {
+      "number": 51,
+      "heading": "EXT. PARIS / EIFFEL TOWER - MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "46A 46A Establishing: The Eiffel Tower rises above the waking city."
+    },
+    {
+      "number": 52,
+      "heading": "INT. PARIS / EIFFEL TOWER / HIGH TABLE FACILITY - MORNING",
+      "characters": [
+        "SUICIDE GIRLS",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "SUICIDE GIRLS",
+          "parenthetical": "",
+          "text": "on phones... PULL BACK SOME MORE to reveal the large and open multi-level space populated by SUICIDE GIRLS at typewriters, telex machines and old IBM computers. High Table iconography on walls and equipment. ANGLE ON a glowing green screen. Cell numbers with global prefixes scroll by. DISSOLVE to-- SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "48"
+        }
+      ],
+      "actionPreview": "47 47 A telex spits out a page. A tattooed hand tears it. The hand belongs to a French SUICIDE GIRL. She walks to a counter and places the telex in a bin by SUICIDE GIRL #2 who picks it up and scans it, then lifts an old rotary phone, dials. SUICIDE GIRL #2 John Wick. Open contract increased to twen"
+    },
+    {
+      "number": 53,
+      "heading": "EXT. OSAKA / OSAKA CONTINENTAL / ROOFTOP GARDEN - NIGHT",
+      "characters": [
+        "CAINE",
+        "THE TRACKER",
+        "CHIDI",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "You’re not with him."
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "I’m not with anybody."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "We’re all with somebody. .45 long?"
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "You have a good ear."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "Two actually... Why did you save him?"
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "Who says I did?"
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "Your rifle..."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "(CONT'D)",
+          "text": "You’re raising his bounty. SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "Well, money talks and bullshit runs a marathon. SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "You’re not"
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "That’s where you’re wrong... Ten fingers, two eyes. Seems to me you’re the one who’s more like him."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "Maybe. Then again, neither John nor I need a dog to guide us."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "(CONT'D)",
+          "text": "You interfered with The Table’s business."
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "I think I can handle your Marquis."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "(turning into The Tracker)"
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "...Your move, blind man--"
+        },
+        {
+          "character": "CHIDI",
+          "parenthetical": "",
+          "text": "Who are you?"
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "(eyes on Caine) I’m... Nobody."
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "(CONT'D)",
+          "text": "That would be a mistake."
+        },
+        {
+          "character": "CHIDI",
+          "parenthetical": "",
+          "text": "Why’s that?"
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "Two reasons. One, I can find John"
+        },
+        {
+          "character": "CHIDI",
+          "parenthetical": "",
+          "text": "And the second?"
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "Nuts."
+        },
+        {
+          "character": "CHIDI",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "I said: nuts."
+        },
+        {
+          "character": "CHIDI",
+          "parenthetical": "",
+          "text": "Come with me. You too, blind man."
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "50"
+        }
+      ],
+      "actionPreview": "49 49 The Malinois sniffs John’s cup. PULL BACK TO INCLUDE The Tracker looking out at the city, almost like he’s waiting. His PAGER buzzes. There is just a number: $24. He smiles. Behind The Tracker, a shadow within a shadow moves. Caine seemingly materializes right next to The Tracker. The suddenne"
+    },
+    {
+      "number": 54,
+      "heading": "EXT. MANHATTAN / NY CONTINENTAL - DAY",
+      "characters": [
+        "WINSTON",
+        "THE BOWERY KING",
+        "HOBO SYMBOL."
+      ],
+      "dialogues": [
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "“It is a far, far better thing that I do, than I have ever done; it is a far, far better rest I go to than I have ever known...”"
+        },
+        {
+          "character": "THE BOWERY KING",
+          "parenthetical": "(V.O)",
+          "text": "Well, this sure as shit looks like the worst of times... SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "THE BOWERY KING",
+          "parenthetical": "(CONT'D)",
+          "text": "She was glorious, wasn’t she? SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "Thank you for agreeing to meet."
+        },
+        {
+          "character": "THE BOWERY KING",
+          "parenthetical": "",
+          "text": "Well, we homeless folk have to stick together now, don’t we?"
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "I know you’ve been supporting him in his... travels."
+        },
+        {
+          "character": "THE BOWERY KING",
+          "parenthetical": "",
+          "text": "Who’s that?"
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "I need to see him."
+        },
+        {
+          "character": "THE BOWERY KING",
+          "parenthetical": "",
+          "text": "If memory serves, the last time you saw him, you shot him. Off a goddamn roof."
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "I had no choice. The Table held all the cards."
+        },
+        {
+          "character": "THE BOWERY KING",
+          "parenthetical": "",
+          "text": "But who held the gun?"
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "Enough! I have to see Jonathan. He needs to know the breadth of what is coming for him. This Marquis isn’t constrained -- The Table has let him off his leash."
+        },
+        {
+          "character": "THE BOWERY KING",
+          "parenthetical": "",
+          "text": "Ah, your benevolence is touching. I’m sure this has nothing to do with this pile of rocks. Or the gravestone of your former concierge..."
+        },
+        {
+          "character": "THE BOWERY KING",
+          "parenthetical": "(CONT'D)",
+          "text": "Tell me something and tell it true: why did that Frenchman let you live? SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "To make a point. A dead man can be made a martyr. But you let him live and you tell the world that he is either a turncoat, a coward, or a fool."
+        },
+        {
+          "character": "THE BOWERY KING",
+          "parenthetical": "",
+          "text": "So which are you?"
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "Aggrieved."
+        },
+        {
+          "character": "THE BOWERY KING",
+          "parenthetical": "",
+          "text": "...You have a plan?"
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "(taps the card to his head) I have John Wick."
+        }
+      ],
+      "actionPreview": "51 51 Sheets of rain spatter the still smoking remains of the once proud hotel. Winston, his back to us, head naked to the rain, stands on the sidewalk, watching. Winston takes a FLASK out of his coat pocket. Perhaps it’s half-empty after the day he’s had. He offers up the flask as a toast to his fo"
+    },
+    {
+      "number": 55,
+      "heading": "EXT. PARIS / STABLE - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "51A 51A Establishing: An elegant stable."
+    },
+    {
+      "number": 56,
+      "heading": "INT. PARIS / EQUESTRIAN RING - DAY",
+      "characters": [
+        "THE HARBINGER",
+        "THE MARQUIS"
+      ],
+      "dialogues": [
+        {
+          "character": "THE HARBINGER",
+          "parenthetical": "",
+          "text": "The Table is concerned that your recent efforts are becoming quite... public."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "The Table needs to let me do what they elevated me to do."
+        },
+        {
+          "character": "THE HARBINGER",
+          "parenthetical": "",
+          "text": "We fail to see how laying waste to"
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "Which is exactly why we are in this position. This campaign is not alone to kill John Wick; it is to kill the"
+        },
+        {
+          "character": "THE HARBINGER",
+          "parenthetical": "",
+          "text": "The bloodshed in Osaka was not necessary."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "(shaking his head)"
+        }
+      ],
+      "actionPreview": "52 52 The Marquis stands in the center of the ring as a half dozen riders canter around on their Lippizaners to music. The Harbinger is next to him. Continentals is getting you closer to killing John Wick. SALMON REVISED - 28.1.2022 46-50A. SALMON REVISED - 28.1.2022 46-50B. idea of John Wick. That "
+    },
+    {
+      "number": 57,
+      "heading": "INT. PARIS / EQUESTRIAN RING / ANTECHAMBER - DAY",
+      "characters": [
+        "CAINE"
+      ],
+      "dialogues": [
+        {
+          "character": "CAINE",
+          "parenthetical": "(V.O.)",
+          "text": "He’ll make it your choice. ANGLE ON The Tracker, leaning against a post, head down, one knee bent in a classic western pose. He raises his head, eyes"
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "...Think twice before accepting."
+        }
+      ],
+      "actionPreview": "AA52 AA52 ANGLE ON the Malinois, eyes tight on something she very likely wants to kill, fuck, or eat. The objects of her malicious intent, lust or appetite are two IRISH WOLFHOUNDS -- large, powerful, aloof and superior. If these dogs could look down on other dogs they would, which makes the Malinoi"
+    },
+    {
+      "number": 58,
+      "heading": "INT. PARIS / EQUESTRIAN RING - DAY",
+      "characters": [
+        "THE MARQUIS",
+        "THE TRACKER",
+        "CAINE"
+      ],
+      "dialogues": [
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "(to The Tracker)"
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "Nobody."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "Coyness,"
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "The bounty on Wick."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "The stone beneath my shoe. How were you able to locate him?"
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "Pay and find out."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "And what would such a service be worth?"
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "Twenty-five million. Plus the value of the contract when he’s dead."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "By your hand?"
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "No. I’m a Tracker. I track."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "Killing pays better."
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "When you try to kill a man, he generally tries to kill you back."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "We’ll never know. We found him once; we will find him again."
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "Before or after he puts you in the ground?"
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "I like you."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "(CONT'D)",
+          "text": "Twenty million."
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "Like me more. Twenty-three."
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "(CONT'D)",
+          "text": "We have a deal."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "Not yet..."
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "NO!"
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "(CONT'D)",
+          "text": "No. No. No. Look at me. (the dog does)"
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "(CONT'D)",
+          "text": "What the hell is this?"
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "A choice. You can pull the knife out or you can pull your hand out."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "(CONT'D)",
+          "text": "Bonne chasse."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "(CONT'D)",
+          "text": "I misjudged you. I thought you to be a man of conviction."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "I was interfered with."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "I GAVE YOU A NAME!.. We had an understanding: a life for a life;"
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "I choose her."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "...I thought so."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "(CONT'D)",
+          "text": "When Wick is dead, kill"
+        }
+      ],
+      "actionPreview": "52A 52A The Tracker, Chidi behind him enters. The Marquis waits. SALMON REVISED - 28.1.2022 46-50B. SALMON REVISED - 28.1.2022 46-50C. And you are? Chidi kicks The Tracker in the back of his knees, driving him to his knees. The dog growls. A look from The Tracker silences him but it remains locked o"
+    },
+    {
+      "number": 59,
+      "heading": "EXT. ROOSEVELT ISLAND / MAUSOLEUM - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "53 53 * Establishing: the two mile long 800 foot wide island * bisecting the East River stretches out before us. To the west * is Manhattan, FDR Drive and the UN Building prominent, to the * east, Queens. Spanning the island is the Queensboro Bridge. * We PUSH IN ON the island, passing over manicure"
+    },
+    {
+      "number": 60,
+      "heading": "EXT. ROOSVELT ISLAND / MAUSOLEUM COURTYARD - DAY",
+      "characters": [
+        "JOHN",
+        "WINSTON",
+        "HOBO CARD"
+      ],
+      "dialogues": [
+        {
+          "character": "JOHN",
+          "parenthetical": "(O.S.)",
+          "text": "*"
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "* ...Jonathan."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "Who is he?"
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "The Marquis de Gramont. Elevated"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "Where do I find him?"
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "Paris."
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "* (CONT'D)"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "* (CONT'D)"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "By using his rules and consequences"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "A High Table Duels aren’t real."
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "You’re wrong. The"
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "(CONT'D)",
+          "text": "SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "* ...I don’t sit at The Table,"
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "* I don’t have a family. The Ruska"
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "HOBO CARD",
+          "parenthetical": "",
+          "text": "The Bowery King gave him."
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "* (CONT'D)"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "* ...What do you get out of this?"
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "(CONT'D)",
+          "text": "SALMON REVISED - 28.1.2022"
+        }
+      ],
+      "actionPreview": "54 54 * Simple. Elegant. Geometric. Winston stands in front of a * large stone plaque, “CHARON” carved into the living stone. No * epitaph. He lights a candle, placing it on a small ledge set * under the plaque. * Winston. * ANOTHER ANGLE TO INCLUDE John standing behind Winston who * doesn’t turn. *"
+    },
+    {
+      "number": 61,
+      "heading": "EXT. BERLIN - NIGHT",
+      "characters": [
+        "BERLIN"
+      ],
+      "dialogues": [
+        {
+          "character": "BERLIN",
+          "parenthetical": "",
+          "text": "As he passes by, a JUGGLER tracks him... lets the balls fall, and makes a phone call..."
+        }
+      ],
+      "actionPreview": "55 55 * Berlin’s iconic Brandenburg Gate. Even at this hour, there are tourists and street performers. A long shadow crosses the center arch. Then a figure emerges from the west: John Wick, a man alone and apart. Across the street, watching both Wick and The Juggler is The Tracker and the dog."
+    },
+    {
+      "number": 62,
+      "heading": "EXT. BERLIN / MONTBIAOU BRIDGE - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "56 56 John walks down the empty sidewalk. Across the street, a cigarette butt glows bright to reveal another FREELANCER. The man stubs out his cigarette and follows John. A third FREELANCER joins him. As they move away, The Tracker and the dog appear..."
+    },
+    {
+      "number": 63,
+      "heading": "EXT. BERLIN / UNDERPASS FRIEDRICH STRASSE - NIGHT",
+      "characters": [
+        "JOHN"
+      ],
+      "dialogues": [
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "(German)"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "(CONT'D)",
+          "text": "I need a gun."
+        }
+      ],
+      "actionPreview": "57 57 John approaches a HOMELESS MAN sitting by a burning barrel. He drops a gold coin into the man’s cup. Long live the King. The Homeless Man looks up at John... The Homeless man offers up a card with a HOBO SYMBOL: a triangle with “hands.” He looks east. John follows his gaze. In the distance, il"
+    },
+    {
+      "number": 64,
+      "heading": "EXT. BERLIN / HACKESACHER MARKT - NIGHT",
+      "characters": [
+        "TAXIDERMY SHOP.",
+        "FRAU GOETZ"
+      ],
+      "dialogues": [
+        {
+          "character": "TAXIDERMY SHOP.",
+          "parenthetical": "",
+          "text": "He crosses, bangs on the door."
+        },
+        {
+          "character": "FRAU GOETZ",
+          "parenthetical": "",
+          "text": "."
+        },
+        {
+          "character": "FRAU GOETZ",
+          "parenthetical": "",
+          "text": "(German)"
+        }
+      ],
+      "actionPreview": "58 58 The streets are dark and quiet as John passes by that same HOBO triangle with “hands” etched into a brick wall. He turns a corner. Across the street is the SYMBOL carved over the door of a A long moment and the door opens a crack to reveal a WOMAN (70s) -- pale skin, blue eyes, bifocals, shock"
+    },
+    {
+      "number": 65,
+      "heading": "INT. BERLIN / TAXIDERMY SHOP - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "59 59 Frau leads John through the musty shop filled with dusty, TAXIDERMIZED ANIMALS: dogs, sheep... a WOLF. Down a hallway to a door. She fumbles through a ring of keys... finally finds the key she’s looking for, unlocks the door and pushes it open."
+    },
+    {
+      "number": 66,
+      "heading": "INT. BERLIN / TAXIDERMY SHOP / GUN ROOM - NIGHT",
+      "characters": [
+        "JOHN",
+        "FRAU GOETZ"
+      ],
+      "dialogues": [
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "Glock 34. 9 millimeter. 125 grain."
+        },
+        {
+          "character": "FRAU GOETZ",
+          "parenthetical": "",
+          "text": "A fine weapon... for an Austrian."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "No, thank you."
+        },
+        {
+          "character": "FRAU GOETZ",
+          "parenthetical": "",
+          "text": "Very well. Method of payment?"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "...Do you take credit?"
+        },
+        {
+          "character": "FRAU GOETZ",
+          "parenthetical": "",
+          "text": "(English)"
+        }
+      ],
+      "actionPreview": "60 60 Racks of high-end rifles, pistols, knives and tactical gear line the walls. The very best of the best. Frau Goetz slowly and meticulously reaches into the cabinet and places the weapon and ammo on a velvet mat. Then, with a speed and surety that defies her age, she expertly breaks the weapon d"
+    },
+    {
+      "number": 67,
+      "heading": "EXT. BERLIN / TAXIDERMY SHOP - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "60A 60A Four Freelancers have converged on the front door. One picks the lock. It snaps open. The door swings open. The LEAD Freelancer signals his men to spread out. Three head for an adjacent alley as he enters"
+    },
+    {
+      "number": 68,
+      "heading": "INT. BERLIN / TAXIDERMY SHOP - NIGHT",
+      "characters": [
+        "FRAU GOETZ",
+        "JOHN",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "FRAU GOETZ",
+          "parenthetical": "",
+          "text": "I believe I have something more... suitable to your... situation."
+        },
+        {
+          "character": "FRAU GOETZ",
+          "parenthetical": "(CONT'D)",
+          "text": "Vintage. SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "FRAU GOETZ",
+          "parenthetical": "(CONT'D)",
+          "text": "Every gun in my shop shoots straight or it would not be in my shop."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "Ammunition?"
+        },
+        {
+          "character": "FRAU GOETZ",
+          "parenthetical": "",
+          "text": "As I said."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "Thank you."
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "61"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "62"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "63"
+        }
+      ],
+      "actionPreview": "60B 60B John... takes his WATCH off, places it next to the gun. Frau Goetz eyes the watch -- dented, face cracked -- then John... A beat and she opens a drawer and tosses his watch on a pile of OTHER EXPENSIVE WATCHES. She reaches down and pulls a box from under the counter. John examines the conten"
+    },
+    {
+      "number": 69,
+      "heading": "EXT. BERLIN / TAXIDERMY SHOP - NIGHT",
+      "characters": [
+        "ARNO",
+        "GUNTER",
+        "JOHN",
+        "THE TRACKER"
+      ],
+      "dialogues": [
+        {
+          "character": "ARNO",
+          "parenthetical": "",
+          "text": "(German accented English)"
+        },
+        {
+          "character": "GUNTER",
+          "parenthetical": "",
+          "text": "Careful, Arno, he’s fast."
+        },
+        {
+          "character": "ARNO",
+          "parenthetical": "",
+          "text": "Is that so?. Are you fast? Should I be careful?... Gun. Left hand. Two fingers. Slow."
+        },
+        {
+          "character": "ARNO",
+          "parenthetical": "(CONT'D)",
+          "text": "Slower. ...Slowly, with two fingers, John draws the gun."
+        },
+        {
+          "character": "ARNO",
+          "parenthetical": "(CONT'D)",
+          "text": "Turn around."
+        },
+        {
+          "character": "ARNO",
+          "parenthetical": "(CONT'D)",
+          "text": "Give it to me. Butt first."
+        },
+        {
+          "character": "ARNO",
+          "parenthetical": "(CONT'D)",
+          "text": "The"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "...You can still walk away."
+        },
+        {
+          "character": "ARNO",
+          "parenthetical": "",
+          "text": "Could. (smiling)"
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "(O.S.)",
+          "text": "Dying’s not much of a living."
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "(CONT'D)",
+          "text": "(re the Webley)"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "Vintage. SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "No. Classic. Webley Mark VI."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "You took a deal."
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "I made a deal."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "You think you can buy your way out?"
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "Everybody’s got a price."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "No. But everything has a cost. You sure you’re willing to pay it?"
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "Nuts."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "I said nuts."
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "(CONT'D)",
+          "text": "Catch you later, Mr. Wick"
+        }
+      ],
+      "actionPreview": "64 64 He’s heading for the street when -- KERCHUNK -- he hears the distinctive sound of a shotgun being pumped. He stops mid- step. Goddamnit. Three Freelancers -- ARNO, sawed-off shot gun, KARL and GUNTER, automatics -- come out of the gloom, facing off against John. You’re a wanted man, Mr. Wick. "
+    },
+    {
+      "number": 70,
+      "heading": "EXT. BERLIN / CHARLOTTENGRAD / CHURCH - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "65 65 An old Eastern Orthodox church set in the heart of Berlin’s Russian expat community."
+    },
+    {
+      "number": 71,
+      "heading": "INT. BERLIN / CHARLOTTENGRAD / CHURCH / NARTEX - NIGHT",
+      "characters": [
+        "JOHN"
+      ],
+      "dialogues": [
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "(Russian)"
+        }
+      ],
+      "actionPreview": "66 66 An elderly Russian WOMAN behind a counter in a small alcove on the side of the Narthex slides a basket to a BABUCHKA who retrieves a .410 Jury handgun and slides it into her bag. John’s next. He holds out the Webley. The breach drops open of its own volition. The Woman behind the counter eyes "
+    },
+    {
+      "number": 72,
+      "heading": "INT. BERLIN /CHARLOTTENGRAD / CHURCH / NAVE - NIGHT",
+      "characters": [
+        "JOHN",
+        "PRIEST"
+      ],
+      "dialogues": [
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "(Russian)"
+        },
+        {
+          "character": "PRIEST",
+          "parenthetical": "",
+          "text": "Yes, my son?"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "I need to speak to Uncle--"
+        },
+        {
+          "character": "PRIEST",
+          "parenthetical": "",
+          "text": "Nice suit."
+        }
+      ],
+      "actionPreview": "67 67 Old school. Candles. Stained glass. An alter. A half dozen PARISHIONERS: pensioners, a babushka, etc. John pauses to dip his fingers into Holy Water, crosses himself and moves down the aisle towards the altar where an old PRIEST in collar and robe prepares for a service. Father. BOOM! A round "
+    },
+    {
+      "number": 73,
+      "heading": "INT. BERLIN / CHURCH / TRIAL ROOM - NIGHT",
+      "characters": [
+        "KATIA",
+        "JOHN",
+        "THE PRIEST",
+        "KLAUS",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "KATIA",
+          "parenthetical": "(O.S.)",
+          "text": "(Russian)"
+        },
+        {
+          "character": "KATIA",
+          "parenthetical": "(CONT'D)",
+          "text": "But this isn’t your home anymore, is it..."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "You grew up, Katia."
+        },
+        {
+          "character": "KATIA",
+          "parenthetical": "",
+          "text": "And you got old. Then again, it’s been a while."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "I need to talk to him."
+        },
+        {
+          "character": "KATIA",
+          "parenthetical": "",
+          "text": "Why?"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "Business."
+        },
+        {
+          "character": "KATIA",
+          "parenthetical": "",
+          "text": "(English)"
+        },
+        {
+          "character": "KATIA",
+          "parenthetical": "(CONT'D)",
+          "text": "...and last I checked... SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "KATIA",
+          "parenthetical": "(CONT'D)",
+          "text": "...you’re"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "That’s for Petr to decide."
+        },
+        {
+          "character": "KATIA",
+          "parenthetical": "",
+          "text": "Petr’s dead."
+        },
+        {
+          "character": "KATIA",
+          "parenthetical": "(CONT'D)",
+          "text": "After you put a bullet in the"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "...Then we have a common enemy..."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "(CONT'D)",
+          "text": "We can help each other!"
+        },
+        {
+          "character": "KATIA",
+          "parenthetical": "",
+          "text": "You can’t even help yourself. How the hell are you going help us?"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "By killing this Marquis!"
+        },
+        {
+          "character": "KATIA",
+          "parenthetical": "",
+          "text": "They’d just appoint another."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "(with what little breath he has left)"
+        },
+        {
+          "character": "THE PRIEST",
+          "parenthetical": "",
+          "text": "...The Old Ways are clear on the matter. But for a duel to be sanctioned by The Table, he’d need to be a member of a family... and he’d have to have a Crest."
+        },
+        {
+          "character": "KATIA",
+          "parenthetical": "",
+          "text": "...How many did you kill to get out?"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "Too many."
+        },
+        {
+          "character": "KATIA",
+          "parenthetical": "",
+          "text": "...You’ll only have to kill one to get back in: the bastard who murdered my father."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "...Give me the name."
+        },
+        {
+          "character": "KATIA",
+          "parenthetical": "",
+          "text": "Killa Harkan. You’ll find him at"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "...And the Crest?"
+        },
+        {
+          "character": "KATIA",
+          "parenthetical": "",
+          "text": "Harkan first. Then we talk. Bring proof of death."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "I’ll need a way in. SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "KATIA",
+          "parenthetical": "",
+          "text": "I know a way. Klaus will take you. KLAUS -- big, powerful, face, beard and body studded with metal and marked with tattoos, steps forward."
+        },
+        {
+          "character": "KLAUS",
+          "parenthetical": "",
+          "text": "I am Klaus."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "John."
+        },
+        {
+          "character": "KLAUS",
+          "parenthetical": "",
+          "text": "I am Klaus."
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "69"
+        }
+      ],
+      "actionPreview": "68 68 John’s eyes squint as he tries to focus but the light is bright and the peripheries of the room dim. His wrists are tied behind his back, his feet are bound by CHAINS that are connected to an eyebolt set in the floor and a cable hooked to a HYDRAULIC LIFT is looped around his neck. The prodiga"
+    },
+    {
+      "number": 74,
+      "heading": "EXT. BERLIN / CHARLOTTENGRAD / CHURCH - NIGHT",
+      "characters": [
+        "THE TRACKER"
+      ],
+      "dialogues": [
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "He’s in Berlin. With the Ruska"
+        }
+      ],
+      "actionPreview": "70 70 The Tracker eyes his phone. The bounty has gone up yet again. A beat and he dials... Roma. You can transfer that finder’s fee now."
+    },
+    {
+      "number": 75,
+      "heading": "INT. PARIS / OPERA HOUSE / STAIRS - NIGHT",
+      "characters": [
+        "THE MARQUIS",
+        "THE TRACKER"
+      ],
+      "dialogues": [
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "(V.O.)",
+          "text": "Excuse me?"
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "Kill John Wick and you’ll get your money. SALMON REVISED - 28.1.2022"
+        }
+      ],
+      "actionPreview": "71 71 The Marquis walks up a wide staircase toward the auditorium, phone to his ear, phone cable trailing behind as opera plays in the background. 64. SALMON REVISED - 28.1.2022 65."
+    },
+    {
+      "number": 76,
+      "heading": "EXT. BERLIN / CHARLOTTENGRAD / CHURCH - NIGHT",
+      "characters": [
+        "THE TRACKER",
+        "THE MARQUIS"
+      ],
+      "dialogues": [
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "I told you: that’s not what I do."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "(V.O)",
+          "text": "It is now."
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "And that wasn’t our deal."
+        }
+      ],
+      "actionPreview": "71A 71A The Tracker’s tone changes. That veneer of invincibility he’s so carefully cultivated cracks just a bit."
+    },
+    {
+      "number": 77,
+      "heading": "INT. PARIS / OPERA HOUSE / STAIRS - NIGHT",
+      "characters": [
+        "THE MARQUIS"
+      ],
+      "dialogues": [
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "The deal was for your service. And that is the only deal being offered today. A life for a life, Mr."
+        }
+      ],
+      "actionPreview": "71B 71B The Marquis feels The Tracker’s distress as he crests the stairs into the Auditorium. Nobody; yours or his. When it’s done, kill the blind man."
+    },
+    {
+      "number": 78,
+      "heading": "EXT. BERLIN / CHARLOTTENGRAD / CHURCH - NIGHT",
+      "characters": [
+        "THE TRACKER"
+      ],
+      "dialogues": [
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "...Asshole."
+        }
+      ],
+      "actionPreview": "72 72 The Tracker’s about to respond when the line goes dead. He rubs his head with his hands. Shakes his head. Curses under his breath. The dog looks up at him with sympathetic eyes."
+    },
+    {
+      "number": 79,
+      "heading": "EXT. BERLIN / THE CLUB - NIGHT",
+      "characters": [
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "74"
+        }
+      ],
+      "actionPreview": "73 73 A massive structure rising up over the river with a long neon lit archway leading to the entrance. The muffled sound of techno throbs. 74 SALMON REVISED - 28.1.2022 65. SALMON REVISED - 28.1.2022 66."
+    },
+    {
+      "number": 80,
+      "heading": "INT. BERLIN / THE CLUB / VIP GAMING ROOM - NIGHT",
+      "characters": [
+        "KILLA",
+        "KLAUS",
+        "JOHN",
+        "CAINE",
+        "GANGSTER",
+        "THE TRACKER"
+      ],
+      "dialogues": [
+        {
+          "character": "KILLA",
+          "parenthetical": "",
+          "text": "(to Klaus)"
+        },
+        {
+          "character": "KLAUS",
+          "parenthetical": "",
+          "text": "I am Klaus."
+        },
+        {
+          "character": "KILLA",
+          "parenthetical": "",
+          "text": "Must be Christmas... But where are my manners?"
+        },
+        {
+          "character": "KILLA",
+          "parenthetical": "(CONT'D)",
+          "text": "Drink?"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "...You were expecting me."
+        },
+        {
+          "character": "KILLA",
+          "parenthetical": "",
+          "text": "Not me. Him."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "You knew I’d come."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "I suspected."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "...Family."
+        },
+        {
+          "character": "KILLA",
+          "parenthetical": "",
+          "text": "That “family” sold you out first chance they got. They gave you up,"
+        },
+        {
+          "character": "KILLA",
+          "parenthetical": "(CONT'D)",
+          "text": "You two know each other?"
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "Mr. Wick blames me for the death of a mutual friend. (Mandarin) (MORE) SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "(CONT'D)",
+          "text": "SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "KILLA",
+          "parenthetical": "",
+          "text": "I sense tension. This discord between old... friends saddens me."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "We have a deal."
+        },
+        {
+          "character": "KILLA",
+          "parenthetical": "",
+          "text": "Had."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "(CONT'D)",
+          "text": "SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "The Marquis--"
+        },
+        {
+          "character": "KILLA",
+          "parenthetical": "",
+          "text": "Will never know who killed him. And if he does, I doubt he’ll care if it’s bullets, blades, or a blind man."
+        },
+        {
+          "character": "GANGSTER",
+          "parenthetical": "",
+          "text": "(Turkish)"
+        },
+        {
+          "character": "KILLA",
+          "parenthetical": "",
+          "text": "These for me, Mr...?"
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "Nobody. And no, they’re for-- (glancing at John) --him."
+        },
+        {
+          "character": "KILLA",
+          "parenthetical": "",
+          "text": "...A blind man, a guy with a dog, and John Wick walk into a bar..."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "Let me have him and I’ll let you live. SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "What he said."
+        },
+        {
+          "character": "KILLA",
+          "parenthetical": "",
+          "text": "(to Caine)"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "Am going to kill you."
+        },
+        {
+          "character": "KILLA",
+          "parenthetical": "",
+          "text": "For Petr. Of course... Well, it sounds like we have ourselves a genuine conundrum. A quandary if you will. A real life dilemma... (to John)"
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "What’s the buy in?"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "More than you can afford."
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "I’m one bullet away from being a very rich man."
+        },
+        {
+          "character": "KILLA",
+          "parenthetical": "",
+          "text": "Or a dead one."
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "Either way, I’m free."
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "(CONT'D)",
+          "text": "I’m thirsty. You thirsty? SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "I’m not drinking."
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "And that is exactly the problem."
+        },
+        {
+          "character": "KILLA",
+          "parenthetical": "",
+          "text": "Mr. Wick?"
+        },
+        {
+          "character": "KILLA",
+          "parenthetical": "(CONT'D)",
+          "text": "...Five card draw."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "(to Caine) ...What did the Marquis promise you?"
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "He didn’t promise anything. He lets my daughter live."
+        },
+        {
+          "character": "KILLA",
+          "parenthetical": "",
+          "text": "Mr. Wick?"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "...A life for a life."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "(CONT'D)",
+          "text": "And you think he keeps that promise?"
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "The sun rises and she lives another day. That’s all that matters. SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "...I understand."
+        },
+        {
+          "character": "KILLA",
+          "parenthetical": "",
+          "text": "A dead man’s hand, Mr. Wick."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "I know."
+        },
+        {
+          "character": "KILLA",
+          "parenthetical": "",
+          "text": "Four of a kind, jack high for my blind friend. Very nice."
+        },
+        {
+          "character": "KILLA",
+          "parenthetical": "(CONT'D)",
+          "text": "Royal flush. Impressive for a nobody."
+        },
+        {
+          "character": "KILLA",
+          "parenthetical": "(CONT'D)",
+          "text": "...A blind man, a guy with a dog, and John Wick walk into a bar and take a seat at The Table."
+        },
+        {
+          "character": "KILLA",
+          "parenthetical": "(CONT'D)",
+          "text": "(to Caine)"
+        },
+        {
+          "character": "KILLA",
+          "parenthetical": "(CONT'D)",
+          "text": "(to The Tracker)"
+        },
+        {
+          "character": "KILLA",
+          "parenthetical": "(CONT'D)",
+          "text": "(to John)"
+        },
+        {
+          "character": "KILLA",
+          "parenthetical": "(CONT'D)",
+          "text": "Each thinks they have a winning hand."
+        },
+        {
+          "character": "KILLA",
+          "parenthetical": "(CONT'D)",
+          "text": "SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "KILLA",
+          "parenthetical": "(CONT'D)",
+          "text": "...they’d already lost."
+        },
+        {
+          "character": "KILLA",
+          "parenthetical": "(CONT'D)",
+          "text": "Just so you know, Petr wasn’t personal."
+        },
+        {
+          "character": "KILLA",
+          "parenthetical": "(CONT'D)",
+          "text": "Maybe a little bit."
+        },
+        {
+          "character": "KILLA",
+          "parenthetical": "(CONT'D)",
+          "text": "SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "KILLA",
+          "parenthetical": "(CONT'D)",
+          "text": "Orospu çocu ğ u!"
+        }
+      ],
+      "actionPreview": "75 75 CLOSE ON a felt gambling table. Cards with elaborate High Table iconography. Stacks of gold coins. A gold plated ivory handled diamond encrusted .357 Magnum. Cards are flipped. Winning hand is by the .357. A fleshy hand covered in gold rings and diamonds lifts the Magnum. BOOM! ANGLE ON black "
+    },
+    {
+      "number": 81,
+      "heading": "INT. BERLIN / THE CLUB / HALLWAY - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "76 76 John moves down the hall. The music gets louder. A door up ahead. John pushes it open and he and we are assaulted by light and sound."
+    },
+    {
+      "number": 82,
+      "heading": "INT. BERLIN / THE CLUB / WATER LEVEL - NIGHT",
+      "characters": [
+        "KILLA",
+        "JOHN",
+        "THE TRACKER",
+        "CAINE"
+      ],
+      "dialogues": [
+        {
+          "character": "KILLA",
+          "parenthetical": "",
+          "text": "KILL WICK!"
+        },
+        {
+          "character": "KILLA",
+          "parenthetical": "(CONT'D)",
+          "text": "Du hast mir in den Arsch geschossen!"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "(through gritted teeth)"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "(CONT'D)",
+          "text": "I guess that number’s high enough now?"
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "‘Fraid so."
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "(CONT'D)",
+          "text": "Motherfucker!"
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "He’s mine. SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "The hell he is!"
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "(CONT'D)",
+          "text": "Shit!"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "We’re even."
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "Shit."
+        }
+      ],
+      "actionPreview": "77 77 Music pulses and lasers flash, refracting off the massive industrial space fitted as a night club. A DJ spins tunes. Gogo Dancers gyrate on pedestals. Patrons party. ON John, moving, searching for Killa. Suddenly, an illuminated “wall” materializes, blocking our view of John. Then it demateria"
+    },
+    {
+      "number": 83,
+      "heading": "EXT. BERLIN / THE CLUB / ARCHED ENTRY - NIGHT",
+      "characters": [
+        "CAINE",
+        "THE TRACKER"
+      ],
+      "dialogues": [
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "He’s mine."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "(CONT'D)",
+          "text": "I told you not to take the deal."
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "Guess yours didn’t work out either."
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "(CONT'D)",
+          "text": "Helluva a thing for them to take your eyes, though."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "They didn’t take them. I gave them."
+        }
+      ],
+      "actionPreview": "77A 77A John runs / limps towards the exit, pushing through a mass of club patrons. ANGLE ON The Tracker appearing some twenty yards behind John. He pulls the lever action shotgun from his pack, snaps on the barrel, locks the stock, levers a round into the chamber, ad lines the weapon on John’s back"
+    },
+    {
+      "number": 84,
+      "heading": "INT. BERLIN / CHURCH / TRIAL ROOM - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "78 78 Candles light reflects off of walls, casting long shadows over Katia who prays at a pew. A shadow washes over her: John -- bloody, beat up, shot, with a piece of steel in his chest. He holds out his hand to reveal Killa’s gold tooth. Katia... nods. SALMON REVISED - 28.1.2022 77. SALMON REVISED"
+    },
+    {
+      "number": 85,
+      "heading": "INT. BERLIN / CHURCH / TRIAL ROOM - LATER",
+      "characters": [
+        "PRIEST",
+        "KATIA",
+        "JOHN",
+        "PARIS"
+      ],
+      "dialogues": [
+        {
+          "character": "PRIEST",
+          "parenthetical": "",
+          "text": "It’s time."
+        },
+        {
+          "character": "KATIA",
+          "parenthetical": "",
+          "text": "...You are a child of the Belarus, an orphan of our tribe. You are bound to us as we are to you in this life and the next. Your blood is my blood..."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "...your pain is my pain..."
+        },
+        {
+          "character": "KATIA",
+          "parenthetical": "",
+          "text": "...y our life is my life."
+        },
+        {
+          "character": "KATIA",
+          "parenthetical": "(CONT'D)",
+          "text": "...Welcome back, Jardani."
+        },
+        {
+          "character": "KATIA",
+          "parenthetical": "(CONT'D)",
+          "text": "The Ruska Roma will issue the challenge. Who will be your Second?"
+        }
+      ],
+      "actionPreview": "79 79 A red hot furnace roars under the altar, it’s light illuminating John and Katia who face each other. The Priest -- worn leather apron over a bare chest -- places a gold bar, it’s surface acid etched with Ruska Roma symbols, into a red hot cauldron set on white hot coals. The heat is such that "
+    },
+    {
+      "number": 86,
+      "heading": "EXT. PARIS / LOUVRE - MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "80 80 A beautiful morning in Paris, light reflecting off the Seine River as it flows by the Louvre."
+    },
+    {
+      "number": 87,
+      "heading": "INT. PARIS / LOUVRE - MORNING",
+      "characters": [
+        "WINSTON",
+        "THE MARQUIS"
+      ],
+      "dialogues": [
+        {
+          "character": "WINSTON",
+          "parenthetical": "(O.S.)",
+          "text": "A warning of the cost of tyranny."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "A reminder of the price of complacency in the face of dissent. ANOTHER ANGLE to include Winston standing some dozen yards away, flanked by Chidi and Myrmidons."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "(CONT'D)",
+          "text": "You must intend to join your concierge."
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "Not today."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "You say that as though you have a choice."
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "Per the Old Ways and the old laws,"
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "You talk of the Old Ways as if you know them. A man of Mr. Wick’s..."
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "He has his family’s Crest."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "Ah, Berlin."
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "The Ruska Roma’s challenge. Mr."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "And why would I accept this from a second rate seat?"
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "Because there are rules, and without them--"
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "We live with the animals?"
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "That time is passed, Mr. Manager. A new day is dawning. New ideas. New rules. New management."
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "Yet you will accept because we still"
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "And what exactly are Mr. Wick’s terms?"
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "(Latin)"
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "(to Chidi)"
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "“My name is Ozymandias, King of"
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "(CONT'D)",
+          "text": "History is littered with Marquis’ who are remembered only by their servants... But you can be remembered as the man who brought"
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "...Sunset,"
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "When I’m done."
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "(CONT'D)",
+          "text": "As his Second, upon his victory, my"
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "Of course."
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "Well, how you do anything is how you do everything. Now, I’m done."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "You’ve found renewed purpose. SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "He who has a ‘why’ to live for can bear almost any ‘how.’"
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "I rather think I’ll miss you when you’re gone."
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "I wish I could say the same."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "...You don’t know, do you?"
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "What’s that?"
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "A man’s Second, like his Sponsor, either walks out with his champion or is buried beside him... the Old"
+        }
+      ],
+      "actionPreview": "81 81 Empty save The Marquis standing in front of ‘ Liberty Leading the People ’ - a striking painting by Delacroix inspired by the Three Glorious Days of the July 1930 Revolution when the people of Paris rose up against King Charles X. Chidi draws his weapon and lines it on the back of Winston’s he"
+    },
+    {
+      "number": 88,
+      "heading": "INT. PARIS / PLACE DU TROCADÉRO - DAY",
+      "characters": [
+        "HIGH TABLE GUARDIANS",
+        "THE HARBINGER",
+        "THE MARQUIS",
+        "JOHN",
+        "WINSTON",
+        "CAINE",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "HIGH TABLE GUARDIANS",
+          "parenthetical": "",
+          "text": ", six male, six female, all about thirty, all sporting identical crewcuts and wearing matching suits with Mandarin collars, flank the square. Part Jesuit part Immortal, these men and women serve the interests of The"
+        },
+        {
+          "character": "THE HARBINGER",
+          "parenthetical": "",
+          "text": "(to John)"
+        },
+        {
+          "character": "THE HARBINGER",
+          "parenthetical": "(CONT'D)",
+          "text": "Under the old laws, only one can survive; do you both understand?"
+        },
+        {
+          "character": "THE HARBINGER",
+          "parenthetical": "(CONT'D)",
+          "text": "Very well. Rules. (motions to The Marquis)"
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "Sunrise."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "Now."
+        },
+        {
+          "character": "THE HARBINGER",
+          "parenthetical": "",
+          "text": "Sunrise. Location?"
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "You come here thinking there is a way out of this world for you, Mr."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "Sacré Coeur."
+        },
+        {
+          "character": "THE HARBINGER",
+          "parenthetical": "",
+          "text": "Sacré Coeur."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "If you win, The Table will honor its word. You will have your freedom, but you won’t take it."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "Pistols."
+        },
+        {
+          "character": "THE HARBINGER",
+          "parenthetical": "",
+          "text": "Dueling pistols. Thirty paces. In the event that both parties survive, each will approach the other in increments of ten paces until only one remains. Rules of engagement?"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "No quarter."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "You won’t take it as this is who you are, who you’ve always been. We allow you to think of yourself as some sort of Paladin or Samurai - serving nobly at the arm of your feudal Lord. Part of the comical artifice of this little world of ours. But the truth is that you are simply a killer. An orphan we plucked from the street and honed into a knife. And it is the killing that gives you purpose. And purpose gives men like you identity. (to the Harbinger)"
+        },
+        {
+          "character": "THE HARBINGER",
+          "parenthetical": "",
+          "text": "If there is nothing else-- SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "A nomination."
+        },
+        {
+          "character": "THE HARBINGER",
+          "parenthetical": "",
+          "text": "...It is his right. (to The Marquis)"
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "...Caine."
+        },
+        {
+          "character": "THE HARBINGER",
+          "parenthetical": "",
+          "text": "Sunrise, Sacré Coeur, dueling pistols, no quarter. Mr. Wick elects to duel, The Marquis nominates Caine as his Champion."
+        },
+        {
+          "character": "THE HARBINGER",
+          "parenthetical": "(CONT'D)",
+          "text": "Should The Marquis Vincent Bisset de Gramont be victorious--"
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "John Wick will be dead, as will his"
+        },
+        {
+          "character": "THE HARBINGER",
+          "parenthetical": "",
+          "text": "If there is nothing else, gentlemen, I will see you at sunrise. Failure to meet at the appointed hour will result in forfeiture and immediate execution."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "I have seen many like you who claim to want out. But that is always a lie. There is no “John” out there."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "And he is going to kill you."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "(CONT'D)",
+          "text": "Your hotel?"
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "Oh, grow up, Jonathan. If I’d asked for nothing, he would have shot me where I stood."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "You always have an angle, don’t you?"
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "Doesn’t everyone?... He’ll unleash the dogs now."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "Yeah."
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "We’d best go to safe harbor, then."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "There’s something I need to do first."
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "Don’t be too long. ANGLE ON The Marquis, watching as John and Winston walk in opposite directions."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "(O.S.)",
+          "text": "I won’t do it. ANOTHER ANGLE to include Caine standing behind The Marquis. SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "Of course you will."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "This is High Table. There are rules. Fight your own duel."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "You will because when John Wick is dead by your hand in that duel, you and your daughter will be free."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "(CONT'D)",
+          "text": "Where are you going?"
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "It’s personal. PULL BACK as Caine moves away from the Marquis.... SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "83"
+        }
+      ],
+      "actionPreview": "82 82 Bells echo across the city. Located just across the Seine, Trocadéro Square offers the most spectacular views of the Eiffel Tower. The tiled plaza is completely empty, save one TABLE, white tablecloth, a bottle of wine, two glasses, three chairs. The Marquis sits. The Harbinger stands to one s"
+    },
+    {
+      "number": 89,
+      "heading": "EXT. PARIS / SAINT-EUSTACHE - DUSK",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "84 84 Saint-Eustache’s flying buttresses rise up, catching the last rays of the setting sun. John enters, passing under the unflinching gaze of gargoyles carved in stone."
+    },
+    {
+      "number": 90,
+      "heading": "INT. PARIS / SAINT-EUSTACHE - DUSK",
+      "characters": [
+        "CAINE",
+        "JOHN",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "For your wife?"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "...Yes"
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "You think she can hear you?"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "Then why bother?"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "Maybe I’m wrong."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "The dead are gone. Memories."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "(CONT'D)",
+          "text": "Only the living matter."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "(CONT'D)",
+          "text": "After my daughter was born, I tried to leave this life... So The Table reminded me--"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "They do that."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "(nods knowingly)"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "On that we agree."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "But she’s not."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "(CONT'D)",
+          "text": "I won’t enjoy taking your life, but if it saves hers, you’re going to die."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "Maybe not."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "(...smiles) I’ve missed you, John."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "(CONT'D)",
+          "text": "It’s good to sit with a friend... isn’t it?"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "85A"
+        }
+      ],
+      "actionPreview": "85 85 A Catholic PRIEST and a NUN stand at the back of the church on one side of the aisle. An Orthodox PRIEST and NUN stand on the other side. All have High Table tattoos visible on hands and necks. CLINK! John drops a gold coin in the collection plate and walks down the aisle, by a few scattered p"
+    },
+    {
+      "number": 91,
+      "heading": "EXT. PARIS / BRIDGE - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "86 86 John walks along the river Seine’s bank towards the Bir- Hakeim Bridge. Two HOMELESS MEN lean on the wall by a metal service door. They straighten as John approaches. He holds up the card with the HOBO SYMBOL Winston gave him. One of the Homeless pushes the door open. Etched into the metal is "
+    },
+    {
+      "number": 92,
+      "heading": "INT. PARIS / ART ANNEX-CELLAR / NIGHT",
+      "characters": [
+        "THE BOWERY KING",
+        "JOHN",
+        "THE HARBINGER",
+        "THE MARQUIS",
+        "CHIDI"
+      ],
+      "dialogues": [
+        {
+          "character": "THE BOWERY KING",
+          "parenthetical": "(O.S.)",
+          "text": "Bon jour, Monsieur Wick!"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "A little far from home, aren’t you?"
+        },
+        {
+          "character": "THE BOWERY KING",
+          "parenthetical": "",
+          "text": "When you don’t have a house, the world is your home. And your little act of uncivil disobedience has inspired me. I’m branching out."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "Rocky."
+        },
+        {
+          "character": "THE BOWERY KING",
+          "parenthetical": "",
+          "text": "So it seems... 42 regular, wasn’t it?"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "It is."
+        },
+        {
+          "character": "THE BOWERY KING",
+          "parenthetical": "",
+          "text": "Appropriate for all formal occasions: weddings, funerals... and High Table Duels. After all, a man’s got to look his best when its time to get married... or buried. SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "THE HARBINGER",
+          "parenthetical": "(O.S.)",
+          "text": "This"
+        },
+        {
+          "character": "THE HARBINGER",
+          "parenthetical": "(CONT'D)",
+          "text": "By giving John Wick a chance to go free?"
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "It was the most... direct option."
+        },
+        {
+          "character": "THE HARBINGER",
+          "parenthetical": "",
+          "text": "For making you look like a fool."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "My victory will do the opposite."
+        },
+        {
+          "character": "THE HARBINGER",
+          "parenthetical": "",
+          "text": "A man’s ambition should never be greater than his worth. You’d be wise to remember that, sir."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "(French)"
+        },
+        {
+          "character": "CHIDI",
+          "parenthetical": "",
+          "text": "Forgive me, sir, but this is madness."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "Madness?"
+        },
+        {
+          "character": "CHIDI",
+          "parenthetical": "",
+          "text": "Trusting your fate to a blind man’s bullet. SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "There are three kinds of men in this world: those who have something to live for, those who have something to die for, and those who have something to kill for. John Wick has none of these things. He is but a ghost in search of a graveyard. But that blind man?"
+        },
+        {
+          "character": "CHIDI",
+          "parenthetical": "",
+          "text": "...Understood, sir..."
+        }
+      ],
+      "actionPreview": "87 87 A set of curving stairs open up to a large space brimming with stored art. A score of HOMELESS are arrayed about, sorting clothes and money and stolen watches and purses as music plays from a circa 1940s Diora Aga Rsz radio -- worn wood, analogue dials, tubes, etc. And welcome to La Resistance"
+    },
+    {
+      "number": 93,
+      "heading": "EXT. PARIS / EIFFEL TOWER - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "89 89 We’re at the top of the tower. Antennas bristle. Just below them is a glass encased RADIO STUDIO. We PUSH INSIDE:"
+    },
+    {
+      "number": 94,
+      "heading": "INT. PARIS / EIFFEL TOWER / RADIO STUDIO - NIGHT",
+      "characters": [
+        "THE D.J."
+      ],
+      "dialogues": [
+        {
+          "character": "THE D.J.",
+          "parenthetical": "",
+          "text": "All right now, for all you boppers out there in the City of Lights, all you street people with an ear for the action..."
+        }
+      ],
+      "actionPreview": "90 90 1970’s rock with a decidedly French twist plays as we pan over the old school radio studio: wood panels and analogue gauges. Racks of components. Vinyl records stacked. All of Paris stretches out. “On Air” sign glowing red under the station’s name: WUXIA. A set of turn tables. A gold plated mi"
+    },
+    {
+      "number": 95,
+      "heading": "INT. PARIS / ART ANNEX-CELLAR / NIGHT",
+      "characters": [
+        "THE D.J."
+      ],
+      "dialogues": [
+        {
+          "character": "THE D.J.",
+          "parenthetical": "(V.O.)",
+          "text": "...I’ve been asked to relay a special request..."
+        }
+      ],
+      "actionPreview": "91 91 John stands in front of a mirror straightening the suit. He looks good. Sharp. The D.J.’s rich and melodious voice rolls out of the old radio:"
+    },
+    {
+      "number": 96,
+      "heading": "INT. PARIS / MAP ROOM - NIGHT",
+      "characters": [
+        "THE D.J."
+      ],
+      "dialogues": [
+        {
+          "character": "THE D.J.",
+          "parenthetical": "(V.O.)",
+          "text": "...from a secret admirer..."
+        }
+      ],
+      "actionPreview": "91A 91A The Marquis stares at that map of Paris as the D.J.’s voice pours out of the radio."
+    },
+    {
+      "number": 97,
+      "heading": "EXT. PARIS / BAR - NIGHT",
+      "characters": [
+        "THE D.J."
+      ],
+      "dialogues": [
+        {
+          "character": "THE D.J.",
+          "parenthetical": "(V.O.)",
+          "text": "...and I know you know who I’m talking about..."
+        }
+      ],
+      "actionPreview": "92 92 MILIEU CORSO-MARSEILLAIS (Corsican Mafiosos) drinking and smoking react to the voice on the radio."
+    },
+    {
+      "number": 98,
+      "heading": "INT. PARIS / LE MARCHE INTERNATIONAL DE RUGIS - NIGHT",
+      "characters": [
+        "THE D.J.",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "THE D.J.",
+          "parenthetical": "(V.O.)",
+          "text": "This golden oldie -- and I do mean “golden”--"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "93"
+        }
+      ],
+      "actionPreview": "92A 92A The oldest continuously run market in the world. MEN and WOMEN work the stalls. Several -- members of LE MAIN ROUGE (The Red Hand) -- listen to the D.J. 93 SALMON REVISED - 28.1.2022 92. SALMON REVISED - 28.1.2022 92A. SALMON REVISED - 28.1.2022 92A. SALMON REVISED - 28.1.2022 93."
+    },
+    {
+      "number": 99,
+      "heading": "INT. PARIS / ART ANNEX-CELLAR / NIGHT",
+      "characters": [
+        "THE D.J.",
+        "WINSTON",
+        "JOHN",
+        "THE BOWERY KING",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "THE D.J.",
+          "parenthetical": "(V.O.)",
+          "text": "--"
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "So it begins."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "I’m going to need a gun."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "(CONT'D)",
+          "text": "With more than seven bullets this time..."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "(CONT'D)",
+          "text": "(impressed) 9mm Pit Viper."
+        },
+        {
+          "character": "THE BOWERY KING",
+          "parenthetical": "",
+          "text": "Twenty-one round capacity magazine, built in compensator for virtually no muzzle flip, fiber optic static front sight, ambidextrous safety, flared magwell for faster reloads, two pound extreme trigger, match grade fully ramped Bull barrel capable of running the spiciest of ordinance and for those more, shall we say, intimate encounters..."
+        },
+        {
+          "character": "THE BOWERY KING",
+          "parenthetical": "(CONT'D)",
+          "text": "...this Viper has FEROCIOUS fangs..."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "How close can you get me to the"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "95"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "96"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "97"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "98"
+        }
+      ],
+      "actionPreview": "94 94 hit goes out to you... Mr. Wick. At the mention of John’s name, Winston, The Bowery King, others, eye John. “Renegade” by Styx comes on. The Bowery King sets a STAINLESS STEEL GUN BOX on a table and slides it to John. The Bowery King grins and opens the box to reveal a tactical gun belt, a kni"
+    },
+    {
+      "number": 100,
+      "heading": "EXT. PARIS / THE SEINE / ST. MARTIN CANAL - NIGHT",
+      "characters": [
+        "WINSTON",
+        "JOHN",
+        "THE BOWERY KING",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "When I advised you not to dip a pinky back into this pond, I didn’t realize that it would be me who’d be getting wet..."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "It’ll all be over after today."
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "I suppose that’s one way to look at it. I have to admit that when The"
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "(CONT'D)",
+          "text": "I couldn’t help thinking: how would I be remembered? (MORE) SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "(CONT'D)",
+          "text": "SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "What did you decide?"
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "...‘Friend.’ That’s what he was."
+        },
+        {
+          "character": "THE BOWERY KING",
+          "parenthetical": "",
+          "text": "“Long Live the King.” Had mine carved years ago."
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "Ambitious."
+        },
+        {
+          "character": "THE BOWERY KING",
+          "parenthetical": "",
+          "text": "Prophetic."
+        },
+        {
+          "character": "THE BOWERY KING",
+          "parenthetical": "(CONT'D)",
+          "text": "Your stop. I will see you when you are a free man... one way or the other."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "Thank you. (regards Winston)"
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "Jonathan."
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "(CONT'D)",
+          "text": "Sunrise is at 6:33. Try not to be late. For both our sakes."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "‘Loving husband.’ (Winston focuses on John)"
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "(CONT'D)",
+          "text": "SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "100"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "101"
+        }
+      ],
+      "actionPreview": "99 99 Two kilometers of stone arch enclosed river stretching out into darkness. Every fifty yards is a large grated oval that allows moon and city light to filer in. The Bowery King at the helm of the BOAT ( 7 Cuts) they are on. John and Winston are in back, taking in the ethereal space. Winston run"
+    },
+    {
+      "number": 101,
+      "heading": "EXT. PARIS / LOUVRE - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "102 102 John emerges from a underground entrance. The Louvre looms behind and the city, glistening with light, stretches out before him. PULL BACK to a man sitting on park bench. He makes a call and John runs."
+    },
+    {
+      "number": 102,
+      "heading": "EXT. PARIS / STREET - NIGHT",
+      "characters": [
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "103"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "103"
+        }
+      ],
+      "actionPreview": "102A 102A John running. Headlights wash over him. He turns down a perpendicular street as vehicles accelerate after him. More ahead. Two slide to a stop. Men climb out, weapons lined. John, moving, fires on them. Bodies drop. A car hits John. He rolls onto the hood, firing on the driver as it accele"
+    },
+    {
+      "number": 103,
+      "heading": "INT. PARIS / MAP ROOM - NIGHT",
+      "characters": [
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "105"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "106"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "107"
+        }
+      ],
+      "actionPreview": "104 104 The Marquis stares down at the map as the Myrmidon places a red flag -- JOHN WICK -- moving away from the Louvre and towards the Arc de Triumph. 105 106 107 SALMON REVISED - 28.1.2022 96. SALMON REVISED - 28.1.2022 97."
+    },
+    {
+      "number": 104,
+      "heading": "INT. PARIS / EIFFEL TOWER / RADIO STUDIO - NIGHT",
+      "characters": [
+        "THE D.J."
+      ],
+      "dialogues": [
+        {
+          "character": "THE D.J.",
+          "parenthetical": "(V.O)",
+          "text": "Seems our Corsican friends dropped the ball..."
+        }
+      ],
+      "actionPreview": "108 108 Those ruby red lips brush the mic:"
+    },
+    {
+      "number": 105,
+      "heading": "INT. PARIS / MAP ROOM - NIGHT",
+      "characters": [
+        "THE D.J."
+      ],
+      "dialogues": [
+        {
+          "character": "THE D.J.",
+          "parenthetical": "(V.O)",
+          "text": "Let’s see who picks it up."
+        },
+        {
+          "character": "THE D.J.",
+          "parenthetical": "(V.O) (CONT'D)",
+          "text": "Round and round she goes, where she stops, nobody knows."
+        }
+      ],
+      "actionPreview": "109 109 A needle drops. Static. The Marquis surveys the map -- John, alive, moving. Others dead, their flags removed. The Marquis shoots Chidi a look. The big man strides out..."
+    },
+    {
+      "number": 106,
+      "heading": "INT. PARIS / GARAGE - NIGHT",
+      "characters": [
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "110"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "111"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "112"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "113"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "114"
+        }
+      ],
+      "actionPreview": "109A 109A A row of black BMWs idle. Myrmidons stand at attention. Chidi enters the garage and heads for a sedan. Myrmidons climb in and the six sedans pull out. 110 111 SALMON REVISED - 28.1.2022 97. SALMON REVISED - 28.1.2022 98. 112 113 SALMON REVISED - 28.1.2022 98. SALMON REVISED - 28.1.2022 99."
+    },
+    {
+      "number": 107,
+      "heading": "EXT. PARIS / ARC DE TRIUMPH / INT. BARRACUDA - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "115 115 The Barracuda slides into frame. The Arc de Triumph looms ahead. John heads for it, entering the circle as the black BMWs converge from the opposite direction. Within moments, we’re in a demolition derby with the added fun of guns. Shots fired. John cranks the wheel and the Barracuda spins o"
+    },
+    {
+      "number": 108,
+      "heading": "INT. PARIS / MAP ROOM - NIGHT",
+      "characters": [
+        "THE MARQUIS"
+      ],
+      "dialogues": [
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "How did you get this number? SALMON REVISED - 28.1.2022"
+        }
+      ],
+      "actionPreview": "115A 115A The Marquis stares at the map. A VALET, carrying a corded gold and ivory rotary telephone on a silver tray, approaches. The Marquis takes the receiver. 99. SALMON REVISED - 28.1.2022 99A."
+    },
+    {
+      "number": 109,
+      "heading": "EXT. PARIS / UTE - NIGHT",
+      "characters": [
+        "THE TRACKER",
+        "THE MARQUIS"
+      ],
+      "dialogues": [
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "The question you should be asking is: “How much?”"
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "(V.O./PHONE)",
+          "text": "I think we have the situation well under control. ANGLE ON The Tracker, eye pressed against the scope of his rifle."
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "Way I see it, if Johnny makes it to the church on time, this’ll be your last day as Marquis. What I’m offering is a guarantee that he won’t."
+        }
+      ],
+      "actionPreview": "115B 115B He fires! A Myrmidon drops!"
+    },
+    {
+      "number": 110,
+      "heading": "INT. PARIS / MAP ROOM - NIGHT",
+      "characters": [
+        "THE MARQUIS",
+        "THE TRACKER"
+      ],
+      "dialogues": [
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "I seem to remember you had some qualms about killing."
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "(V.O./PHONE)",
+          "text": "Killing pays better. And better is now thirty million. Oh, and the finder’s fee you still owe me from"
+        }
+      ],
+      "actionPreview": "115C 115C Berlin. The line goes dead. The Marquis is... unsure."
+    },
+    {
+      "number": 111,
+      "heading": "INT. PARIS / UTE - NIGHT",
+      "characters": [
+        "THE TRACKER",
+        "THE D.J."
+      ],
+      "dialogues": [
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "...Okay, okay... Have fun."
+        },
+        {
+          "character": "THE D.J.",
+          "parenthetical": "(V.O)",
+          "text": "Word on the street is we have ourselves a third party in the mix-- SALMON REVISED - 28.1.2022"
+        }
+      ],
+      "actionPreview": "116 116 The Tracker sights and fires again! Another Myrmidon drops. The dog whimpers. The Tracker looks at him. The dog springs forward and hurtles towards the fight. 99A. SALMON REVISED - 28.1.2022 99B."
+    },
+    {
+      "number": 112,
+      "heading": "INT. PARIS / BAR - NIGHT",
+      "characters": [
+        "THE D.J."
+      ],
+      "dialogues": [
+        {
+          "character": "THE D.J.",
+          "parenthetical": "(V.O)",
+          "text": "--if you catch my drift. SALMON REVISED - 28.1.2022"
+        }
+      ],
+      "actionPreview": "116A 116A Caine sits alone at the bar, untouched drink in front of him, listening as the radio plays. 99B. SALMON REVISED - 28.1.2022 100."
+    },
+    {
+      "number": 113,
+      "heading": "EXT. PARIS / ARC DE TRIUMPH - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "117 117 John drops a Myrmidon. Another. One gets behind John. He’s about to shoot John when the dog hits him, taking the man down. John sees it-- He dives as a BMW almost hits him. A second. Three Myrmidons step out of the first, firing. Chidi is amongst them. The second tries to run John down. The "
+    },
+    {
+      "number": 114,
+      "heading": "INT. PARIS / UTE - NIGHT",
+      "characters": [
+        "THE TRACKER",
+        "THE D.J.",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "You did not--"
+        },
+        {
+          "character": "THE D.J.",
+          "parenthetical": "(V.O)",
+          "text": "Here’s an update for all you nightcrawlers, vampires, werewolves and things that go bump in the night..."
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "119"
+        }
+      ],
+      "actionPreview": "118 118 The Tracker sees his dog hit. He opens fire on the sedan! Slugs tear into it as it accelerates after John. Then the Tacker turns the ute's engine over and floors it! As he pulls away, the dog matches him and leaps into the moving vehicle. 119 SALMON REVISED - 28.1.2022 100. SALMON REVISED - "
+    },
+    {
+      "number": 115,
+      "heading": "EXT. PARIS / STREETS - NIGHT",
+      "characters": [
+        "THE D.J."
+      ],
+      "dialogues": [
+        {
+          "character": "THE D.J.",
+          "parenthetical": "(V.O)",
+          "text": "I’m hearing the boys in black couldn’t get it done and the number just went up."
+        },
+        {
+          "character": "THE D.J.",
+          "parenthetical": "(V.O) (CONT'D)",
+          "text": "For my special friends Louis and"
+        }
+      ],
+      "actionPreview": "120 120 John drives hard as the first hints of the soon to be rising sun turn the black of night into the gray of pre-dawn. A sedan cuts in front of John. He spins. Another behind him. Men step out of the sedans. SALMON REVISED - 28.1.2022 100A. SALMON REVISED - 28.1.2022 101. These have military gr"
+    },
+    {
+      "number": 116,
+      "heading": "INT. PARIS / BAR - NIGHT",
+      "characters": [
+        "THE D.J.",
+        "CAINE",
+        "BAR TENDER"
+      ],
+      "dialogues": [
+        {
+          "character": "THE D.J.",
+          "parenthetical": "(V.O)",
+          "text": "...Be there or be Square."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "(to the female bar tender, in French)"
+        },
+        {
+          "character": "BAR TENDER",
+          "parenthetical": "",
+          "text": "Where too, hon?"
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "Square Louis Michel."
+        }
+      ],
+      "actionPreview": "120A 120A Caine still at the bar, still listening to the radio. Could you call me a cab, please?"
+    },
+    {
+      "number": 117,
+      "heading": "INT. PARIS / APARTMENT BUILDING - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "121 121 A Main Rouge is waiting for John, shotgun lined. John shoots the man as he shoots John. Both go down and both get up. But John’s faster, dumping rounds into the attacker, knocking him back, grabbing his shotgun, flipping it, shoving it under his helmet and pulling the trigger."
+    },
+    {
+      "number": 118,
+      "heading": "EXT. PARIS / APARTMENT BUILDING ALLEY - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "121A 121A More Main Rouge enter the apartment."
+    },
+    {
+      "number": 119,
+      "heading": "INT. PARIS / APARTMENT BUILDING - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "121B 121B John moves fast, firing at the door as the attackers pour in. Then he runs up the stairs. Takes cover behind a solid banister, re-loads. Fires. Runs some more. Puts rounds into a wall and punches through it. Turns up another flight of stairs and come face to face with-- SALMON REVISED - 28"
+    },
+    {
+      "number": 120,
+      "heading": "INT. PARIS / MAP ROOM - NIGHT",
+      "characters": [
+        "THE MARQUIS"
+      ],
+      "dialogues": [
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "Phone."
+        }
+      ],
+      "actionPreview": "122 122 The Marquis looks at the clock. 6:12 am . Then the map. John’s flag is close to Sacre Coeur. A Valet approaches with a phone and offers it to The Marquis."
+    },
+    {
+      "number": 121,
+      "heading": "INT. PARIS / APARTMENT BUILDING - NIGHT",
+      "characters": [
+        "THE MARQUIS",
+        "THE TRACKER"
+      ],
+      "dialogues": [
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "You have a deal. SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "Thirty-five, it is."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "That wasn’t our deal."
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "Well, that is the only deal that is being offered today. A life for a life, Mr. Marquis; yours or his."
+        }
+      ],
+      "actionPreview": "123 123 The Tracker shoots a Main Rouge. Another. His phone rings. He taps the earbud. As the carnage continues -- John killing Main Rouge, the dog killing Main Rouge, and The Tracker killing Main Rouge, we intercut between the Tracker and The Marquis: 101A. SALMON REVISED - 28.1.2022 102. The Track"
+    },
+    {
+      "number": 122,
+      "heading": "EXT. PARIS / MAP ROOM - NIGHT",
+      "characters": [
+        "THE MARQUIS"
+      ],
+      "dialogues": [
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "(to a Valet)"
+        }
+      ],
+      "actionPreview": "124 124 The line goes dead. The Marquis... throws the phone. It bounces off of polished marble, shedding pieces. He paces. Stops. Looks at the clock: 6:14, then back at the map... Phone! A Valet scurries forward with another phone."
+    },
+    {
+      "number": 123,
+      "heading": "INT. PARIS / APARTMENT BUILDING - NIGHT",
+      "characters": [
+        "THE MARQUIS",
+        "THE TRACKER"
+      ],
+      "dialogues": [
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "Thirty-two."
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "What we’ve got here is a failure to remunerate..."
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "(CONT'D)",
+          "text": "Hold on..."
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "(CONT'D)",
+          "text": "Some men you just can’t reach."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "(French)"
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "Forty."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "D'accord."
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "Wick."
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "(CONT'D)",
+          "text": "(to himself)"
+        }
+      ],
+      "actionPreview": "125 125 John backs into an apartment, killing men, moves through it, out another door into the hall, killing more as the dog takes others down and The Tracker snipes yet others. The Tracker keys his earbud as his phone rings. He and the Marquis continue to negotiate as he kills Main Rouge: Chidi and"
+    },
+    {
+      "number": 124,
+      "heading": "EXT. PARIS / APARTMENT BUILDING / ALLEY - PRE-DAWN",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "126 126 John hits the alley hard. The steps leading to Sacre Coeur are a half block away and he runs for them."
+    },
+    {
+      "number": 125,
+      "heading": "EXT. PARIS / SACRE COEUR - PRE-DAWN",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "127 127 A white Bentley pulls up. Doors open. The Marquis steps out as Winston appears from a side street and approaches. The Harbinger waits in the courtyard in front of the Church flanked by the dozen High Table Guardians. In front of them is a gravel strip with markers laid out at 30, 20, and 10 "
+    },
+    {
+      "number": 126,
+      "heading": "EXT. PARIS / BASE OF STAIRS - PRE-DAWN",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "128 128 John -- bruised, shot, bleeding -- gets to the bottom of the steps. At the top of the hill is Sacré-Coeur. Between him and the church is a narrow and steep stairway consisting of 300 steps framed by cafes, shops, and apartments. He glances at a clock: 6:20 am. 13 minutes until sunrise as he "
+    },
+    {
+      "number": 127,
+      "heading": "EXT. PARIS / SACRE COEUR - PRE-DAWN",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "129 129 John crests the top of the stairs with six minutes to spare. The church rises up, beckoning. The Marquis and Winston are there, waiting, as is the Harbinger. John made it. Then three Myrmidons rush John. He kills one, a second. Clicks empty as the third -- a mountain of a man -- fires. Slugs"
+    },
+    {
+      "number": 128,
+      "heading": "EXT. PARIS / STAIRS - PRE-DAWN",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "130 130 The weight of the man forces them back to the edge of the top stair. They teeter for a moment and-- FALL, tumbling... ass over heels... down... by bodies... more bodies... down some more... for exactly 300 steps... John pushes the Myrmidon’s body off him and looks back up those 300 steps... "
+    },
+    {
+      "number": 129,
+      "heading": "EXT. PARIS / SACRE COEUR - PRE-DAWN",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "131 131 A pissed off Chidi, with a Myrmidon team in tow, marches by The Marquis and Winston without a word. The Tracker and his dog approach from the other direction. Chidi and the dog exchange an unpleasant look."
+    },
+    {
+      "number": 130,
+      "heading": "EXT. PARIS / STAIRS - PRE-DAWN",
+      "characters": [
+        "CAINE",
+        "JOHN",
+        "OMITTED"
+      ],
+      "dialogues": [
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "How long until sunrise?"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "Two, maybe three minutes."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "I need you to make it to the top of those stairs, John. So... are you ready?"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "...Yeah."
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "133"
+        }
+      ],
+      "actionPreview": "132 132 Caine... extends his hand. John... takes it and Caine helps him to his feet. SALMON REVISED - 28.1.2022 105. SALMON REVISED - 28.1.2022 106. John glances at his watch and then the skyline. The crown of the sun is just visible on the horizon. John clenches his fist. A drop of blood drips from"
+    },
+    {
+      "number": 131,
+      "heading": "EXT. PARIS / SACRE COEUR - DAWN",
+      "characters": [
+        "THE MARQUIS"
+      ],
+      "dialogues": [
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "It appears Mr. Wick won’t be joining us."
+        }
+      ],
+      "actionPreview": "134 134 The Marquis and Winston eye one another. The second bell tolls. The Harbinger steps up behind Winston, draws a very large handgun and lines it on the back on Winston’s head. The third bell tolls. The Harbinger cocks the gun."
+    },
+    {
+      "number": 132,
+      "heading": "EXT. PARIS / STAIRS - DAWN",
+      "characters": [
+        "TRACKER",
+        "THE TRACKER"
+      ],
+      "dialogues": [
+        {
+          "character": "TRACKER",
+          "parenthetical": "",
+          "text": "...Goddmamnit. Fine... Nuts!"
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "You shouldn’t have kicked my dog."
+        }
+      ],
+      "actionPreview": "135 135 John takes a bullet to the chest. Caine catches him, supporting him as he drops the shooter. SALMON REVISED - 28.1.2022 106. SALMON REVISED - 28.1.2022 107-109. The fourth bell tolls. John is not half a dozen steps from the top when he sees The Tracker, rifle lined on him, dog at his side, s"
+    },
+    {
+      "number": 133,
+      "heading": "EXT. PARIS / SACRE COEUR - DAWN",
+      "characters": [
+        "CAINE",
+        "JOHN",
+        "THE HARBINGER",
+        "THE MARQUIS",
+        "WINSTON",
+        "SINGLE REPORT",
+        "THE TRACKER"
+      ],
+      "dialogues": [
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "You owe me one."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "...Yeah."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "(CONT'D)",
+          "text": "...We even now?"
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "It’s not personal, John."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "Shall we?"
+        },
+        {
+          "character": "THE HARBINGER",
+          "parenthetical": "",
+          "text": "‘We seek the truth and will endure the consequences.’ JOHN/CAINE/THE MARQUIS/WINSTON"
+        },
+        {
+          "character": "THE HARBINGER",
+          "parenthetical": "",
+          "text": "Jackets, gentlemen."
+        },
+        {
+          "character": "THE HARBINGER",
+          "parenthetical": "(CONT'D)",
+          "text": "And the vest, Mr. Wick."
+        },
+        {
+          "character": "THE HARBINGER",
+          "parenthetical": "(CONT'D)",
+          "text": "You may inspect your weapons, gentlemen."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "There is something quite poetic about all this, don’t you think? SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "Il dort dans le soleil, la main sur sa poitrine, Tranquille. Il a deux trous rouges au côté droit..."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "..."
+        },
+        {
+          "character": "THE HARBINGER",
+          "parenthetical": "",
+          "text": "Positions."
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "(sotto)"
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "Helping him was a mistake."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "For who?"
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "A lovely sunrise..."
+        },
+        {
+          "character": "THE HARBINGER",
+          "parenthetical": "",
+          "text": "Ready, Mr. Caine?"
+        },
+        {
+          "character": "THE HARBINGER",
+          "parenthetical": "(CONT'D)",
+          "text": "Mr. Wick? SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "Last words, Winston?"
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "Just... have fun."
+        },
+        {
+          "character": "THE HARBINGER",
+          "parenthetical": "",
+          "text": "(Latin)"
+        },
+        {
+          "character": "THE HARBINGER",
+          "parenthetical": "",
+          "text": "(CONT'D) (English)"
+        },
+        {
+          "character": "THE HARBINGER",
+          "parenthetical": "(CONT'D)",
+          "text": "Twenty paces."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "Remember your daughter."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "Remember our deal. WITH JOHN AND WINSTON: As John chambers a blood stained bullet."
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "A word of advice."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "What’s that? SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "Perhaps aim for the more important parts."
+        },
+        {
+          "character": "THE HARBINGER",
+          "parenthetical": "",
+          "text": "Fire!"
+        },
+        {
+          "character": "THE HARBINGER",
+          "parenthetical": "(CONT'D)",
+          "text": "Ten."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "I--"
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "Don’t speak."
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "Jonathan... Good luck."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "’Those who cling to death, live...’"
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "‘Those who cling to life, die..."
+        },
+        {
+          "character": "THE HARBINGER",
+          "parenthetical": "",
+          "text": "...Fire!"
+        },
+        {
+          "character": "SINGLE REPORT",
+          "parenthetical": "",
+          "text": "."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "(O.S.)",
+          "text": "Arrêter!"
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "(CONT'D)",
+          "text": "Your weapon. Give it to me."
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "...Then she’s free?"
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "",
+          "text": "You and your daughter."
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "(CONT'D)",
+          "text": "(lines the gun)"
+        },
+        {
+          "character": "THE MARQUIS",
+          "parenthetical": "(CONT'D)",
+          "text": "...Why are you laughing?"
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "I’m sorry, it’s just that..."
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "(CONT'D)",
+          "text": "You arrogant, bloviating twat... he didn’t shoot."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "...Consequences. BOOM!"
+        },
+        {
+          "character": "THE HARBINGER",
+          "parenthetical": "",
+          "text": "Your obligation to The Table is satisfied, John Wick. You are... free. (turning to Caine) ...as are you and your daughter, sir."
+        },
+        {
+          "character": "THE HARBINGER",
+          "parenthetical": "",
+          "text": "(CONT'D)"
+        },
+        {
+          "character": "CAINE",
+          "parenthetical": "",
+          "text": "Brother."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "Winston."
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "Jonathan."
+        },
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "...Will You take me home?"
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "Of course."
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "(O.S.)",
+          "text": "Where’s he going? ANOTHER ANGLE to include The Tracker, looking after John."
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "...To find his peace."
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "",
+          "text": "Well... at least we’re not dead."
+        },
+        {
+          "character": "THE TRACKER",
+          "parenthetical": "(CONT'D)",
+          "text": "...Who’s next?"
+        }
+      ],
+      "actionPreview": "136 136 SALMON REVISED - 28.1.2022 107-109. SALMON REVISED - 28.1.2022 110. Winston lets out a breath as the Harbinger lowers his weapon. John pulls himself to his feet. A blade flashes in Caine’s hand and stabs through John’s right hand! Caine pulls the blade out and blood wells on the wound even a"
+    },
+    {
+      "number": 134,
+      "heading": "EXT. PARIS / SACRE COEUR / OVERLOOK - MORNING",
+      "characters": [
+        "JOHN",
+        "THE D.J."
+      ],
+      "dialogues": [
+        {
+          "character": "JOHN",
+          "parenthetical": "",
+          "text": "(a whisper) ...Helen..."
+        },
+        {
+          "character": "THE D.J.",
+          "parenthetical": "(V.O)",
+          "text": "Bonjour,"
+        }
+      ],
+      "actionPreview": "137 137 John slowly makes his way to the railing. Paris stretches out in front of him as the sun rises behind him. John holds the railing for a long moment, and looks out over the city with the eyes of a free man. He slowly slides down to the ground, his back against the railing. He sits there for a"
+    },
+    {
+      "number": 135,
+      "heading": "EXT. MANHATTAN / CEMETERY - AFTERNOON",
+      "characters": [
+        "BOWERY KING",
+        "WINSTON"
+      ],
+      "dialogues": [
+        {
+          "character": "BOWERY KING",
+          "parenthetical": "",
+          "text": "I never thought I’d live to see the day... I wonder where he is?"
+        },
+        {
+          "character": "BOWERY KING",
+          "parenthetical": "(CONT'D)",
+          "text": "Heaven or hell? SALMON REVISED - 28.1.2022"
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "",
+          "text": "We’ll never know... All we can do is wish Jonathan the very best."
+        },
+        {
+          "character": "WINSTON",
+          "parenthetical": "(CONT'D)",
+          "text": "Farewell, my son..."
+        }
+      ],
+      "actionPreview": "138 138 A sun shower gently falls. The drops, illuminated by the sun’s rays, seem to sparkle in this, the magic hour. Winston, The Bowery King -- in a tailored suit -- and John’s dog stand together, paying their silent respects. Winston glances at the King. 115. SALMON REVISED - 28.1.2022 115A. Now "
+    },
+    {
+      "number": 136,
+      "heading": "EXT. PARIS / OPERA HOUSE - MORNING",
+      "characters": [
+        "BLACK"
+      ],
+      "dialogues": [
+        {
+          "character": "BLACK",
+          "parenthetical": "",
+          "text": "THE END"
+        }
+      ],
+      "actionPreview": "139 139 The sky is blue and the air crisp. That lovely song washes over the stairs, the notes resonating with power and promise. Caine's daughter, Mia is at her spot, violin to her ear, swaying to the music. She stops to applause. ANGLE ON Caine standing in his spot. Crisp suit, cool glasses, and so"
+    }
+  ]
+}

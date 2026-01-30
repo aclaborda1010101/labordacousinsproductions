@@ -1,0 +1,22 @@
+{
+  "slug": "being-the-ricardos",
+  "title": "Being the Ricardos",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 29770,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                       BEING THE RICARDOS </b> Written by Aaron Sorkin <b>    FADE IN: </b> We meet--individually--three people who are the older versions of three characters we'll meet shortly. They're speaking to an off-camera interviewer in three different locations that have been chosen, dressed and lit for a documentary. <b>1   INT. SOUNDSTAGE BLEACHERS - DAY                            1 </b> JESS is sitting in the bleachers of a television soundstage. <b>                          OLDER",
+      "dialogue_count": 0,
+      "word_count": 29770
+    }
+  ]
+}

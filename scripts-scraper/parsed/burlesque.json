@@ -1,0 +1,22 @@
+{
+  "slug": "burlesque",
+  "title": "Burlesque",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 30408,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                     BURLESQUE </b> Written by Steven Antin <b>                                                             2/20/09 </b> <b>          TITLE SEQUENCE OVER MUSIC </b>          A series of tight CLOSE-UP shots of dancers moving in high energy fast paced sexy choreography. Very provocative. Legs. Arms. Butts. Boas. Sequins. Costumes. High heels. A kaleidoscope of images and colors. <b>          END TITLES ON A BLACK SCREEN </b>          FADE IN sounds of PEOPLE TAL",
+      "dialogue_count": 0,
+      "word_count": 30408
+    }
+  ]
+}

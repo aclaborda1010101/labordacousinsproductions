@@ -1,0 +1,22 @@
+{
+  "slug": "bachelor-party",
+  "title": "Bachelor Party",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 24307,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                     \"BACHELOR PARTY\" </b> Screenplay by Neal Israel & Pat Proft Story by Bob Israel <b>                                   SHOOTING DRAFT (1984) </b> <b> </b> <b>               FADE IN: </b> <b>               EXT. ST. ANN'S SCHOOL - DAY </b> CAMERA PANS a group of freshly-scrubbed, innocent children, obediently standing in line, like recruits for the Holy Crusade. PULL BACK to REVEAL they are wearing the gray blazers, striped ties and navy slacks of St. Luke's",
+      "dialogue_count": 0,
+      "word_count": 24307
+    }
+  ]
+}

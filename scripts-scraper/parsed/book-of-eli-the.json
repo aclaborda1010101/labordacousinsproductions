@@ -1,0 +1,22 @@
+{
+  "slug": "book-of-eli-the",
+  "title": "Book of Eli, The",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 32437,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b> </b><b> </b><b>                                  THE BOOK OF ELI </b><b> </b><b> </b><b> </b>                                    Written by <b> </b>                                    Gary Whitta <b> </b><b> </b><b> </b><b> </b><b> </b>                                                          June 21, 2007 <b> </b><b> </b>          A civilization is destroyed only when its gods are destroyed. <b>                                                          - </b><b> </b>",
+      "dialogue_count": 0,
+      "word_count": 32437
+    }
+  ]
+}

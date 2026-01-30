@@ -1,0 +1,60 @@
+{
+  "slug": "badlands",
+  "title": "Badlands",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 18,
+  "characters": [
+    "BADLANDS",
+    "HOLLY",
+    "KIT",
+    "CLERK",
+    "FATHER",
+    "CATO",
+    "BOY",
+    "ROUGHNECK",
+    "DEPUTY",
+    "SHERIFF",
+    "MECHANIC",
+    "VOICE",
+    "SECOND VOICE",
+    "THIRD VOICE",
+    "FOURTH VOICE",
+    "FIFTH VOICE",
+    "SIXTH VOICE",
+    "SEVENTH VOICE"
+  ],
+  "total_words": 14432,
+  "total_dialogue": 117,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "BADLANDS",
+        "HOLLY",
+        "KIT",
+        "CLERK",
+        "FATHER",
+        "CATO",
+        "BOY",
+        "ROUGHNECK",
+        "DEPUTY",
+        "SHERIFF",
+        "MECHANIC",
+        "VOICE",
+        "SECOND VOICE",
+        "THIRD VOICE",
+        "FOURTH VOICE",
+        "FIFTH VOICE",
+        "SIXTH VOICE",
+        "SEVENTH VOICE"
+      ],
+      "action_text": "BADLANDS by Terence Malick Final Version Dialogue and Continuity <b>FADE IN </b> <b>INT. BEDROOM </b> The time is 1959. HOLLY SARGIS, the 15-year-old heroine, sits on her bed, petting her dog. The CAMERA DOLLIES BACK as she talks on <b>VOICE OVER. </b> HOLLY (v.o.) My mother died of pneumonia when I was just a kid. My father had kept their wedding cake in the freezer for ten whole years. After the funeral he gave it to the yardman... He tried to act cheerful, but he could never be consoled by th",
+      "dialogue_count": 117,
+      "word_count": 14432
+    }
+  ]
+}

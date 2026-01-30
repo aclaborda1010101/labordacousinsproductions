@@ -1,0 +1,38 @@
+{
+  "slug": "carrie",
+  "title": "Carrie",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 7,
+  "characters": [
+    "MARGARET",
+    "CARRIE",
+    "SHYRES",
+    "COLLINS",
+    "TOMMY",
+    "ERNEST",
+    "ALL"
+  ],
+  "total_words": 24762,
+  "total_dialogue": 14,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "MARGARET",
+        "CARRIE",
+        "SHYRES",
+        "COLLINS",
+        "TOMMY",
+        "ERNEST",
+        "ALL"
+      ],
+      "action_text": "<b>                                           CARRIE </b> Written by Lawrence D. Cohen & Stephen King <b>   FADE IN: </b> From an absolutely glistening WHITE � an image which first appears to be a brilliantly shining glass globe, and then gradually becomes more of a piece of solid matter, less of a mystery. It's the <b>   EXT. WHITE BUNGALOW (OR HOUSE) � DAY </b> 1. FILLING THE FRAME like a picture postcard. Modest, old-fashioned, spotless � a vision of small town normalcy and virtue. This is th",
+      "dialogue_count": 14,
+      "word_count": 24762
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "slug": "cinema-paradiso",
+  "title": "Cinema Paradiso",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 35167,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<HTML><HEAD><TITLE>CINEMA PARADISO by Giuseppe Tornatore</TITLE> <META http-equiv=Content-Type content=\"text/html; charset=windows-1252\"> <META content=\"MSHTML 6.00.2800.1141\" name=GENERATOR></HEAD> <b><BODY><PRE> </b> <b> </b><b>\t\t<B>CINEMA PARADISO</B> </b> by Giuseppe Tornatore <b> </b> <b>        <B><U>FOR EDUCATIONAL PURPOSES ONLY</U></B> </b> Shooting Script <b> </b><b> </b><b> </b><b>\t1  GIANCALDO. SALVATORE'S MOTHER'S HOUSE. EXT/INT. DAY </b><b> </b>\tThe October sun slashes through the g",
+      "dialogue_count": 0,
+      "word_count": 35167
+    }
+  ]
+}

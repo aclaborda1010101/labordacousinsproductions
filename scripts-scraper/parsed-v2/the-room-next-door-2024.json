@@ -1,0 +1,3365 @@
+{
+  "slug": "the-room-next-door-2024",
+  "title": "The Room Next Door",
+  "parsedWith": "v2",
+  "parsedAt": "2026-01-29T22:09:23.267Z",
+  "stats": {
+    "scenes": 2,
+    "dialogues": 603,
+    "characters": 49
+  },
+  "characters": [
+    {
+      "name": "INGRID",
+      "dialogueLines": 232,
+      "totalWords": 625
+    },
+    {
+      "name": "MARTHA",
+      "dialogueLines": 177,
+      "totalWords": 434
+    },
+    {
+      "name": "DAMIAN",
+      "dialogueLines": 45,
+      "totalWords": 98
+    },
+    {
+      "name": "POLICEMAN",
+      "dialogueLines": 20,
+      "totalWords": 34
+    },
+    {
+      "name": "CUT",
+      "dialogueLines": 18,
+      "totalWords": 18
+    },
+    {
+      "name": "PHOTOGRAPHER",
+      "dialogueLines": 18,
+      "totalWords": 34
+    },
+    {
+      "name": "BERNARDO",
+      "dialogueLines": 12,
+      "totalWords": 32
+    },
+    {
+      "name": "MICHELLE",
+      "dialogueLines": 11,
+      "totalWords": 29
+    },
+    {
+      "name": "TRAINER",
+      "dialogueLines": 9,
+      "totalWords": 15
+    },
+    {
+      "name": "TO.",
+      "dialogueLines": 6,
+      "totalWords": 12
+    },
+    {
+      "name": "LAWYER",
+      "dialogueLines": 6,
+      "totalWords": 6
+    },
+    {
+      "name": "NURSE",
+      "dialogueLines": 3,
+      "totalWords": 12
+    },
+    {
+      "name": "IN",
+      "dialogueLines": 3,
+      "totalWords": 13
+    },
+    {
+      "name": "RECEPTIONIST",
+      "dialogueLines": 3,
+      "totalWords": 10
+    },
+    {
+      "name": "DAY.",
+      "dialogueLines": 2,
+      "totalWords": 2
+    },
+    {
+      "name": "THE",
+      "dialogueLines": 2,
+      "totalWords": 16
+    },
+    {
+      "name": "WOODS.",
+      "dialogueLines": 2,
+      "totalWords": 2
+    },
+    {
+      "name": "HUSBAND",
+      "dialogueLines": 2,
+      "totalWords": 2
+    },
+    {
+      "name": "CONTINUOUS.",
+      "dialogueLines": 2,
+      "totalWords": 2
+    },
+    {
+      "name": "SQUARE.",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "DUSK.",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "PACO",
+      "dialogueLines": 1,
+      "totalWords": 4
+    },
+    {
+      "name": "WEEKS LATER.",
+      "dialogueLines": 1,
+      "totalWords": 2
+    },
+    {
+      "name": "HOSPITAL. INT. DAY.",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "IV",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "WEATHER.",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "BLACK",
+      "dialogueLines": 1,
+      "totalWords": 3
+    },
+    {
+      "name": "BACKGROUND.",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "CAR. INT. DAY",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "HOUSE IN WOODS. INT. DAY",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "HOUSE IN WOODS. INT. DAY.",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "LIVING ROOM",
+      "dialogueLines": 1,
+      "totalWords": 6
+    },
+    {
+      "name": "HIGHWAY. EXT. NIGHT",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "HOUSE IN WOODS. NIGHT.",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "TO",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "ROOM",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "STAIRS",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "GYM. INT. DAY.",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "ROOM. INT. DAY",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "BOOKSTORE. INT. DAY",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "CASHIER",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "HOUSE IN THE WOODS. DAWN.",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "IT",
+      "dialogueLines": 1,
+      "totalWords": 8
+    },
+    {
+      "name": "AREA AROUND A RESTAURANT.",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "RESTAURANT. INT. DAY.",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "CONTINUOUS. KITCHEN.",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "CORRIDOR. INT.",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "ASSISTANT",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "ID.",
+      "dialogueLines": 1,
+      "totalWords": 1
+    }
+  ],
+  "scenes": [
+    {
+      "number": 1,
+      "heading": "EXT. DAY",
+      "characters": [
+        "APARTMENT.",
+        "WASHINGTON",
+        "SQUARE.",
+        "ROOM."
+      ],
+      "dialogues": [
+        {
+          "character": "SQUARE.",
+          "parenthetical": "",
+          "text": "KITCHEN/LIVING"
+        }
+      ],
+      "actionPreview": "Ingrid arrives in a taxi. She rings the bell. The door opens and she goes inside. It’s a building with personality, sober and with good taste. 2 3 . BUILDING WASHINGTON SQUARE. MARTHA’S APARTMENT. INT. DAY Ingrid goes along the corridor, or up some stairs, looking at the different doors. She’s carry"
+    },
+    {
+      "number": 2,
+      "heading": "INT. DAY",
+      "characters": [
+        "INGRID",
+        "MARTHA",
+        "CUT",
+        "APARTMENT.",
+        "WASHINGTON",
+        "SQUARE.",
+        "INT.",
+        "DAY.",
+        "ALMOST",
+        "DUSK.",
+        "PHOTOGRAPHER",
+        "BERNARDO",
+        "PACO",
+        "SEVERAL",
+        "WEEKS LATER.",
+        "HOSPITAL. INT. DAY.",
+        "NURSE",
+        "IV",
+        "THE",
+        "WEATHER.",
+        "FADE",
+        "TO",
+        "BLACK",
+        "IN",
+        "WITH",
+        "SKYLINE",
+        "BACKGROUND.",
+        "DAMIAN",
+        "CAR. INT. DAY",
+        "HOUSE IN WOODS. INT. DAY",
+        "HOUSE IN WOODS. INT. DAY.",
+        "TO.",
+        "LIVING ROOM",
+        "HIGHWAY. EXT. NIGHT",
+        "HOUSE IN WOODS. NIGHT.",
+        "HOUSE",
+        "WOODS.",
+        "ROOM",
+        "STAIRS",
+        "KITCHEN.",
+        "GYM. INT. DAY.",
+        "RECEPTIONIST",
+        "ROOM. INT. DAY",
+        "TRAINER",
+        "BOOKSTORE. INT. DAY",
+        "CASHIER",
+        "HOUSE IN THE WOODS. DAWN.",
+        "IT",
+        "HUSBAND",
+        "AREA AROUND A RESTAURANT.",
+        "RESTAURANT. INT. DAY.",
+        "RESTAURANT. DAY.",
+        "CONTINUOUS. KITCHEN.",
+        "CAR",
+        "ARRIVES",
+        "AT",
+        "FRONT",
+        "DOOR",
+        "OF",
+        "CONTINUOUS.",
+        "POLICEMAN",
+        "POLICE STATION. MAIN",
+        "CORRIDOR. INT.",
+        "LAWYER",
+        "ASSISTANT",
+        "POLICE PARKING LOT. EXT.",
+        "ID.",
+        "MICHELLE"
+      ],
+      "dialogues": [
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "(Referring"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "You’re a darling. Thank you."
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "And I brought you a couple of books."
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "Thank you… You want something to drink?"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "I’d"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "Sure ."
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "( L aughing)"
+        },
+        {
+          "character": "CUT",
+          "parenthetical": "",
+          "text": "TO:"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "Are you working on something new?"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Actually,"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Her"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "I’ve never been able to allow myself that…"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Well,"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "You"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "The mere idea of it gives me chills."
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "You"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Maybe"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "I"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "(Joking) You’re wrong."
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "I’m"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "And you think that’s nothing?"
+        },
+        {
+          "character": "CUT",
+          "parenthetical": "",
+          "text": "TO:"
+        },
+        {
+          "character": "DAY.",
+          "parenthetical": "",
+          "text": "LATER,"
+        },
+        {
+          "character": "DUSK.",
+          "parenthetical": "",
+          "text": "The"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "It"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Oh, really?!"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "Naturally, I never published it."
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "It"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "Are you sure this is the right way?"
+        },
+        {
+          "character": "PHOTOGRAPHER",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "Let's make this brief."
+        },
+        {
+          "character": "PHOTOGRAPHER",
+          "parenthetical": "",
+          "text": "Sure."
+        },
+        {
+          "character": "PHOTOGRAPHER",
+          "parenthetical": "",
+          "text": "Here, stop here."
+        },
+        {
+          "character": "PHOTOGRAPHER",
+          "parenthetical": "",
+          "text": "Bernardo!"
+        },
+        {
+          "character": "BERNARDO",
+          "parenthetical": "",
+          "text": "("
+        },
+        {
+          "character": "PHOTOGRAPHER",
+          "parenthetical": "",
+          "text": "You really look great, Bernardo !"
+        },
+        {
+          "character": "BERNARDO",
+          "parenthetical": "",
+          "text": "Sorry…"
+        },
+        {
+          "character": "PHOTOGRAPHER",
+          "parenthetical": "",
+          "text": "Martha,"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "It’s"
+        },
+        {
+          "character": "BERNARDO",
+          "parenthetical": "",
+          "text": "Yes. Here we are."
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "But"
+        },
+        {
+          "character": "BERNARDO",
+          "parenthetical": "",
+          "text": "Yes. I know."
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "But"
+        },
+        {
+          "character": "BERNARDO",
+          "parenthetical": "",
+          "text": "You’re here as well…"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "We’re"
+        },
+        {
+          "character": "BERNARDO",
+          "parenthetical": "",
+          "text": "We"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "That’s true, but still extremely"
+        },
+        {
+          "character": "BERNARDO",
+          "parenthetical": "",
+          "text": "We can’t let them down now, señora."
+        },
+        {
+          "character": "PHOTOGRAPHER",
+          "parenthetical": "",
+          "text": "Do"
+        },
+        {
+          "character": "PACO",
+          "parenthetical": "",
+          "text": "Yo prefiero no salir."
+        },
+        {
+          "character": "BERNARDO",
+          "parenthetical": "",
+          "text": "(To"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "Yes,"
+        },
+        {
+          "character": "PHOTOGRAPHER",
+          "parenthetical": "",
+          "text": "(Gesturing"
+        },
+        {
+          "character": "PHOTOGRAPHER",
+          "parenthetical": "",
+          "text": "(To"
+        },
+        {
+          "character": "BERNARDO",
+          "parenthetical": "",
+          "text": "Five years?"
+        },
+        {
+          "character": "PHOTOGRAPHER",
+          "parenthetical": "",
+          "text": "Five years… Do you remember Liberia?"
+        },
+        {
+          "character": "BERNARDO",
+          "parenthetical": "",
+          "text": "(Smiling) How could I forget!"
+        },
+        {
+          "character": "PHOTOGRAPHER",
+          "parenthetical": "",
+          "text": "I"
+        },
+        {
+          "character": "BERNARDO",
+          "parenthetical": "",
+          "text": "38"
+        },
+        {
+          "character": "BERNARDO",
+          "parenthetical": "",
+          "text": "Goodbye ,"
+        },
+        {
+          "character": "PHOTOGRAPHER",
+          "parenthetical": "",
+          "text": "It"
+        },
+        {
+          "character": "CUT",
+          "parenthetical": "",
+          "text": "TO:"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "How do you know the Carmelite?"
+        },
+        {
+          "character": "PHOTOGRAPHER",
+          "parenthetical": "",
+          "text": "We"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "39"
+        },
+        {
+          "character": "PHOTOGRAPHER",
+          "parenthetical": "",
+          "text": "After"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "And you had sex?"
+        },
+        {
+          "character": "PHOTOGRAPHER",
+          "parenthetical": "",
+          "text": "Of"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "You think so?"
+        },
+        {
+          "character": "PHOTOGRAPHER",
+          "parenthetical": "",
+          "text": "Definitely."
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "What a wonderful story."
+        },
+        {
+          "character": "PHOTOGRAPHER",
+          "parenthetical": "",
+          "text": "Don’t you dare write it."
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "No,"
+        },
+        {
+          "character": "PHOTOGRAPHER",
+          "parenthetical": "",
+          "text": "He"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "I know that."
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "I"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "So"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Mhmm…"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "What a group! I so admire their freedom."
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Strachey"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "She was only thirty - eight…"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "(Pensive)"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "I know… it struck me too."
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "Maybe"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "Do you think I’m fated too?"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "No!"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "Next"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Well"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "I"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "How"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "The"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "(Surprised)"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "I"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "I had no complaints."
+        },
+        {
+          "character": "WEEKS LATER.",
+          "parenthetical": "",
+          "text": "32 ."
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Hi. What is it?"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "It"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "44"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "I"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "(Scared)"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "That"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Maybe it will work this time!"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "I"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "(Serious)"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "(Terrified)"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "(Exhausted)"
+        },
+        {
+          "character": "CUT",
+          "parenthetical": "",
+          "text": "TO:"
+        },
+        {
+          "character": "HOSPITAL. INT. DAY.",
+          "parenthetical": "",
+          "text": "In"
+        },
+        {
+          "character": "NURSE",
+          "parenthetical": "",
+          "text": "What are you doing up, Martha?"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "(Slightly"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "(To the nurse) Can you help her?"
+        },
+        {
+          "character": "NURSE",
+          "parenthetical": "",
+          "text": "(She"
+        },
+        {
+          "character": "IV",
+          "parenthetical": "",
+          "text": "drip."
+        },
+        {
+          "character": "NURSE",
+          "parenthetical": "",
+          "text": "Here, this will help you."
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "(Extending her arm) Bring it on."
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "(To"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "It’s okay, really."
+        },
+        {
+          "character": "CUT",
+          "parenthetical": "",
+          "text": "TO:"
+        },
+        {
+          "character": "WEATHER.",
+          "parenthetical": "",
+          "text": "Martha"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "Are you still here?"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Should"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "I"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "I just want some peace and quiet."
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "(Finding"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "(CONT’D)",
+          "text": "Look."
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "(CONT’D)",
+          "text": "Pink"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "(Emotional) Vaguely."
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "“The"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "It’s late… I should be going…"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "Thank you."
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "I’ll see you tomorrow."
+        },
+        {
+          "character": "BLACK",
+          "parenthetical": "",
+          "text": "3 7 ."
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "There’s"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "No… I want to talk to you about something."
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Okay."
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "I will not go out in mortifying anguish."
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "(CONT’D)",
+          "text": "I’ve"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "("
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "I’m hoping/I hope you’ll say yes."
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Yes to what?"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "To my asking you to help me."
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "(Terrified) To help you what?"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "I’ve"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "I think we should go get our seats…"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "Yeah,"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Okay…"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "Not"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Do you know where you want to do it?"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "(She"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "I know what that is…"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "I"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "(She"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "No,"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Wouldn’t"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "We’re very close."
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Yes ,"
+        },
+        {
+          "character": "IN",
+          "parenthetical": "",
+          "text": "MARTHA’S"
+        },
+        {
+          "character": "BACKGROUND.",
+          "parenthetical": "",
+          "text": "54"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "I"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "What about your daughter?"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "It"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "But…"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "We’re"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Right."
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "( B reathlessness,"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "(CONT’D)",
+          "text": "Some"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "People"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Are you completely sure you’re ready?"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "Totally… since the first diagnosis ."
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "(As"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "I"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Of"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "I"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "It terrifies me, Martha."
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "I understand that."
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "57"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "You’re"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "I"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "I"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "I wasn’t too much?"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "No, no!"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "(OFF)",
+          "text": "Hello, Ingrid."
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Hi, I’ve made up my mind."
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Come"
+        },
+        {
+          "character": "DAMIAN",
+          "parenthetical": "",
+          "text": "You"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "(Smiling)"
+        },
+        {
+          "character": "DAMIAN",
+          "parenthetical": "",
+          "text": "You"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "No…"
+        },
+        {
+          "character": "DAMIAN",
+          "parenthetical": "",
+          "text": "And, even so, you’re going with Martha?"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "She"
+        },
+        {
+          "character": "DAMIAN",
+          "parenthetical": "",
+          "text": "In"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "It’s"
+        },
+        {
+          "character": "DAMIAN",
+          "parenthetical": "",
+          "text": "Have you told her we’re in touch?"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "DAMIAN",
+          "parenthetical": "",
+          "text": "Really?"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "She rates you pretty highly as a lover."
+        },
+        {
+          "character": "DAMIAN",
+          "parenthetical": "",
+          "text": "(Flattered)"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Damian,"
+        },
+        {
+          "character": "DAMIAN",
+          "parenthetical": "",
+          "text": "I’m serious."
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "No,"
+        },
+        {
+          "character": "DAMIAN",
+          "parenthetical": "",
+          "text": "And"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Hi, how are you?"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "Better,"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Where are you? Are you at home ?"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "Yeah, I’m watering the plants."
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "62"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "I"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Good… Have you decided where we’re going?"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "That’s"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "How"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "I"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "(She thinks it’s a lot) A month? !"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "Yeah,"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "(CONT’D)",
+          "text": "It’s"
+        },
+        {
+          "character": "CUT",
+          "parenthetical": "",
+          "text": "TO:"
+        },
+        {
+          "character": "DAMIAN",
+          "parenthetical": "",
+          "text": "Oh,"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "I"
+        },
+        {
+          "character": "DAMIAN",
+          "parenthetical": "",
+          "text": "You’re going to need a lawyer."
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "(Dubious) Yes… I should look for one."
+        },
+        {
+          "character": "DAMIAN",
+          "parenthetical": "",
+          "text": "Let"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "DAMIAN",
+          "parenthetical": "",
+          "text": "Okay,"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Thank you."
+        },
+        {
+          "character": "THE",
+          "parenthetical": "",
+          "text": "CAR DRIVES ALONG SOME ROADS. EXT. DAY"
+        },
+        {
+          "character": "CAR. INT. DAY",
+          "parenthetical": "",
+          "text": "The"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "According"
+        },
+        {
+          "character": "HOUSE IN WOODS. INT. DAY",
+          "parenthetical": "",
+          "text": "From"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "66"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Wow! It’s so beautiful!"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "(Overwhelmed,"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "67"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "I"
+        },
+        {
+          "character": "HOUSE IN WOODS. INT. DAY.",
+          "parenthetical": "",
+          "text": "From"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "Do you hear them?! How wonderful!"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "(CONT’D)",
+          "text": "We"
+        },
+        {
+          "character": "TO.",
+          "parenthetical": "",
+          "text": "5 0 ."
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "Do you mind if I take this one?"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "No! Of course not. It’s your house."
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Oh,"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "Okay."
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "(From"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "Very good!"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "You"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "I can hear you breathe… And yell."
+        },
+        {
+          "character": "TO.",
+          "parenthetical": "",
+          "text": "52 ."
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Let me help you unpack."
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "Thank"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Okay, then I’ll unpack my things."
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "(Scared) What's wrong, honey?"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "(Furious) You won’t believe it… !"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "71"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "I forgot it!"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Forgot what?"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "The"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Of"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "No, not tomorrow. We have to go now!"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "(CONT’D)",
+          "text": "(A"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Okay. Let’s go…"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "Buying"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "I"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "Well,"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Don’t worry. I’ll help you find it."
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Just"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "This"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "I’ll start in your office."
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "(Distraught,"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "I found an envelope."
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "(Excited) That’s it!"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "(CONT’D)",
+          "text": "(Much calmer) Where did you find it?"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "A"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "How"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "You"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "Thank you."
+        },
+        {
+          "character": "LIVING ROOM",
+          "parenthetical": "",
+          "text": ". INT. MARTHA’S APARTMENT. WASHINGTON SQUARE."
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "What"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Don’t"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "(CONT’D)",
+          "text": "I’m"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "(Looking at Ingrid, grateful) Thank you."
+        },
+        {
+          "character": "HIGHWAY. EXT. NIGHT",
+          "parenthetical": "",
+          "text": "We"
+        },
+        {
+          "character": "HOUSE IN WOODS. NIGHT.",
+          "parenthetical": "",
+          "text": "They"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "Thank"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "What a great place to return to."
+        },
+        {
+          "character": "CUT",
+          "parenthetical": "",
+          "text": "TO:"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Maybe"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "I told you"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "I don’t remember you telling me that."
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "(Exhausted)"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "(CONT’D)",
+          "text": "(As"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Then"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "I’ve"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "It concerns me too,"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "Sure."
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "(CONT’D)",
+          "text": "I"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "I"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "I"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "But I’m not going to do it."
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "Wait until I’m dead."
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "80"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "(Serious) I promise."
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "I’d"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "Give"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "(OFF)",
+          "text": "I’ve"
+        },
+        {
+          "character": "TO",
+          "parenthetical": "",
+          "text": "BLACK:"
+        },
+        {
+          "character": "WOODS.",
+          "parenthetical": "",
+          "text": "INGRID´S"
+        },
+        {
+          "character": "ROOM",
+          "parenthetical": "",
+          "text": "/"
+        },
+        {
+          "character": "STAIRS",
+          "parenthetical": "",
+          "text": "/"
+        },
+        {
+          "character": "DAY.",
+          "parenthetical": "",
+          "text": "The"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "I’m"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Coffee first."
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "Help"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "(CONT’D)",
+          "text": "If"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "What"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "My"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "(Smiling)"
+        },
+        {
+          "character": "CUT",
+          "parenthetical": "",
+          "text": "TO:"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "I’ve"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "(CONT’D)",
+          "text": "Is there anything you want me to get?"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "I don’t think so."
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Do you want to come to the store with me?"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "Maybe"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "No,"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "That’s"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Okay…"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "Thanks, love."
+        },
+        {
+          "character": "GYM. INT. DAY.",
+          "parenthetical": "",
+          "text": "In"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Hello."
+        },
+        {
+          "character": "RECEPTIONIST",
+          "parenthetical": "",
+          "text": "Are you a member?"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "No. I’m just in town for a little bit."
+        },
+        {
+          "character": "RECEPTIONIST",
+          "parenthetical": "",
+          "text": "Well,"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Okay… I’ll use one of your trainers then."
+        },
+        {
+          "character": "RECEPTIONIST",
+          "parenthetical": "",
+          "text": "You’ll like Jonah, you’ll see."
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Ok, thank you."
+        },
+        {
+          "character": "ROOM. INT. DAY",
+          "parenthetical": "",
+          "text": "At"
+        },
+        {
+          "character": "TRAINER",
+          "parenthetical": "",
+          "text": "So,"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Okay."
+        },
+        {
+          "character": "TRAINER",
+          "parenthetical": "",
+          "text": "(Demonstrating"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Sure."
+        },
+        {
+          "character": "TRAINER",
+          "parenthetical": "",
+          "text": "(Impressed)"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "What I am is winded."
+        },
+        {
+          "character": "TRAINER",
+          "parenthetical": "",
+          "text": "There"
+        },
+        {
+          "character": "TRAINER",
+          "parenthetical": "(CONT’D)",
+          "text": "Is everything okay?"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "(Thinking"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "(CONT’D)",
+          "text": "When"
+        },
+        {
+          "character": "TRAINER",
+          "parenthetical": "",
+          "text": "All"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "I live with a friend who’s dying…"
+        },
+        {
+          "character": "TRAINER",
+          "parenthetical": "",
+          "text": "(Very"
+        },
+        {
+          "character": "TRAINER",
+          "parenthetical": "(CONT’D)",
+          "text": "(Suggesting) Come, let’s sit down."
+        },
+        {
+          "character": "TRAINER",
+          "parenthetical": "(CONT’D)",
+          "text": "(With"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "(Sad)"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "Oh,"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Do you want to buy it ?"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "(Putting"
+        },
+        {
+          "character": "TO.",
+          "parenthetical": "",
+          "text": "88"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "Oh,"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "She"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Which one was yours?"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "Bosnia,"
+        },
+        {
+          "character": "BOOKSTORE. INT. DAY",
+          "parenthetical": "",
+          "text": "89"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "There"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Don’t be so hard on yourself."
+        },
+        {
+          "character": "CUT",
+          "parenthetical": "",
+          "text": "TO:"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "(CONT’D)",
+          "text": "Hey!"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "(CONT’D)",
+          "text": "…"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "No…"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "(Worried)"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "No!"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "I love your hair."
+        },
+        {
+          "character": "CASHIER",
+          "parenthetical": "",
+          "text": "Nice…"
+        },
+        {
+          "character": "TO.",
+          "parenthetical": "",
+          "text": "73 ."
+        },
+        {
+          "character": "IN",
+          "parenthetical": "",
+          "text": "THE STREET. EXT. DAY. NEW ENGLAND"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "91"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Sounds like a song."
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "A"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "I"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Good."
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "Are you still in touch with him?"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "With who?"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "With Damian."
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "(Lying) I mean… from time to time."
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "(She"
+        },
+        {
+          "character": "TO.",
+          "parenthetical": "",
+          "text": "74 ."
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Are you all right?"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "I"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "And"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "I’ve"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "If you’re too tired, I can read"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "It’s"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "What about music?"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "I can only listen to the birds singing."
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Well,"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "Music"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Oh, honey."
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "I’ve"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Talk"
+        },
+        {
+          "character": "TO.",
+          "parenthetical": "",
+          "text": "75 ."
+        },
+        {
+          "character": "HOUSE IN THE WOODS. DAWN.",
+          "parenthetical": "",
+          "text": "She"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "What are you doing up? What’s wrong?"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Your door was closed. I thought you…"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "Oh,"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "I threw up. Oh my God."
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "Do"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "(CONT’D)",
+          "text": "Take"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "(Scolding her) Please… don't."
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "Okay."
+        },
+        {
+          "character": "CUT",
+          "parenthetical": "",
+          "text": "TO:"
+        },
+        {
+          "character": "IT",
+          "parenthetical": "",
+          "text": "IS EARLY MORNING. HOUSE IN THE WOODS. INT."
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "So,"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "(Still"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "98"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "Yes… please…"
+        },
+        {
+          "character": "HUSBAND",
+          "parenthetical": "(OFF)",
+          "text": "Yes,"
+        },
+        {
+          "character": "HUSBAND",
+          "parenthetical": "(OFF)",
+          "text": "The"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "Do you hear them?"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Yes. It’s daytime. And you’re alive."
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "This"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Here, let me help you."
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "(CONT’D)",
+          "text": "(Exhales) Ahhh. Much better."
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "(CONT’D)",
+          "text": "Before coming out here I made a new will."
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Let’s not talk about this now."
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "I’m"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "I"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "Of course you can read them."
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Can I tell your story?"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "You"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "Okay."
+        },
+        {
+          "character": "IN",
+          "parenthetical": "",
+          "text": "THE MORNING. INGRID’S STUDY. INT. DAY"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Let’s"
+        },
+        {
+          "character": "CUT",
+          "parenthetical": "",
+          "text": "TO:"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "Hey."
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Hi. Everything okay ?"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "(Smiling) Yeah. This breeze is delicious…"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Be careful, it’s a little chilly…"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "So,"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "("
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "Have you talked to your trainer about me?"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "It"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "Remember you know nothing about anything."
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "Come here, give me a kiss."
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Are you okay ?"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "AREA AROUND A RESTAURANT.",
+          "parenthetical": "",
+          "text": "Ingrid"
+        },
+        {
+          "character": "CUT",
+          "parenthetical": "",
+          "text": "TO:"
+        },
+        {
+          "character": "RESTAURANT. INT. DAY.",
+          "parenthetical": "",
+          "text": "There"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "I lied to her. And I don’t like it."
+        },
+        {
+          "character": "DAMIAN",
+          "parenthetical": "",
+          "text": "Well, you’ll have to practice."
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Lying?"
+        },
+        {
+          "character": "DAMIAN",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Yeah."
+        },
+        {
+          "character": "DAMIAN",
+          "parenthetical": "",
+          "text": "You"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Thank"
+        },
+        {
+          "character": "DAMIAN",
+          "parenthetical": "",
+          "text": "Well,"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "So"
+        },
+        {
+          "character": "DAMIAN",
+          "parenthetical": "",
+          "text": "I"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Martha"
+        },
+        {
+          "character": "DAMIAN",
+          "parenthetical": "",
+          "text": "I understand her."
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Yeah, but you’re not sick."
+        },
+        {
+          "character": "DAMIAN",
+          "parenthetical": "",
+          "text": "No,"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Don't"
+        },
+        {
+          "character": "DAMIAN",
+          "parenthetical": "",
+          "text": "Even"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Well,"
+        },
+        {
+          "character": "DAMIAN",
+          "parenthetical": "",
+          "text": "I’m interested in sex too."
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Then you’re not so bad."
+        },
+        {
+          "character": "DAMIAN",
+          "parenthetical": "",
+          "text": "(With"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "(With a smile) Yes, I remember that…"
+        },
+        {
+          "character": "DAMIAN",
+          "parenthetical": "",
+          "text": "I’m"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "You"
+        },
+        {
+          "character": "DAMIAN",
+          "parenthetical": "",
+          "text": "I"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "No…. Tell me about your lecture."
+        },
+        {
+          "character": "DAMIAN",
+          "parenthetical": "",
+          "text": "I"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "(Reproachfully)"
+        },
+        {
+          "character": "DAMIAN",
+          "parenthetical": "",
+          "text": "It’s their third !"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Well,"
+        },
+        {
+          "character": "DAMIAN",
+          "parenthetical": "",
+          "text": "People"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "You"
+        },
+        {
+          "character": "DAMIAN",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "(Upset)"
+        },
+        {
+          "character": "DAMIAN",
+          "parenthetical": "",
+          "text": "It’s"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "I’m"
+        },
+        {
+          "character": "DAMIAN",
+          "parenthetical": "",
+          "text": "I’ve always admired you for that…"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "DAMIAN",
+          "parenthetical": "",
+          "text": "You’re"
+        },
+        {
+          "character": "CUT",
+          "parenthetical": "",
+          "text": "TO:"
+        },
+        {
+          "character": "CONTINUOUS. KITCHEN.",
+          "parenthetical": "",
+          "text": "Martha’s"
+        },
+        {
+          "character": "DAMIAN",
+          "parenthetical": "",
+          "text": "Do you think it will be much longer?"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "No, it’ll be soon. Any day now…"
+        },
+        {
+          "character": "DAMIAN",
+          "parenthetical": "",
+          "text": "You"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "I do have one. I’ve thought about it."
+        },
+        {
+          "character": "DAMIAN",
+          "parenthetical": "",
+          "text": "Stick"
+        },
+        {
+          "character": "DAMIAN",
+          "parenthetical": "",
+          "text": "And"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "I"
+        },
+        {
+          "character": "DAMIAN",
+          "parenthetical": "",
+          "text": "All"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Why"
+        },
+        {
+          "character": "DAMIAN",
+          "parenthetical": "",
+          "text": "They"
+        },
+        {
+          "character": "WOODS.",
+          "parenthetical": "",
+          "text": "Ingrid"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Martha…?"
+        },
+        {
+          "character": "CONTINUOUS.",
+          "parenthetical": "",
+          "text": "She"
+        },
+        {
+          "character": "MARTHA",
+          "parenthetical": "",
+          "text": "(V.O.)"
+        },
+        {
+          "character": "THE",
+          "parenthetical": "",
+          "text": "FOLLOWING IS AN ALTERNATIVE I WOULD LIKE TO TRY:"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Oh,"
+        },
+        {
+          "character": "POLICEMAN",
+          "parenthetical": "",
+          "text": "What did you do the night before?"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "We"
+        },
+        {
+          "character": "POLICEMAN",
+          "parenthetical": "",
+          "text": "You"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "I"
+        },
+        {
+          "character": "POLICEMAN",
+          "parenthetical": "",
+          "text": "No gestures… ?"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "We"
+        },
+        {
+          "character": "POLICEMAN",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Martha"
+        },
+        {
+          "character": "POLICEMAN",
+          "parenthetical": "",
+          "text": "(Annoyed)"
+        },
+        {
+          "character": "POLICEMAN",
+          "parenthetical": "(CONT’D)",
+          "text": "What did you do the following morning?"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "I"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "About what?"
+        },
+        {
+          "character": "POLICEMAN",
+          "parenthetical": "",
+          "text": "About"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "No…"
+        },
+        {
+          "character": "POLICEMAN",
+          "parenthetical": "",
+          "text": "Nobody"
+        },
+        {
+          "character": "POLICEMAN",
+          "parenthetical": "(CONT’D)",
+          "text": "So…"
+        },
+        {
+          "character": "POLICEMAN",
+          "parenthetical": "(CONT’D)",
+          "text": "I"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "It’s"
+        },
+        {
+          "character": "POLICEMAN",
+          "parenthetical": "",
+          "text": "She"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "She complained, sometimes…"
+        },
+        {
+          "character": "POLICEMAN",
+          "parenthetical": "",
+          "text": "What"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "(With"
+        },
+        {
+          "character": "POLICEMAN",
+          "parenthetical": "",
+          "text": "(Fed"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "It"
+        },
+        {
+          "character": "POLICEMAN",
+          "parenthetical": "",
+          "text": "We’ve"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "(Steadfast,"
+        },
+        {
+          "character": "POLICEMAN",
+          "parenthetical": "",
+          "text": "When"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "There’s"
+        },
+        {
+          "character": "POLICEMAN",
+          "parenthetical": "",
+          "text": "Call"
+        },
+        {
+          "character": "CONTINUOUS.",
+          "parenthetical": "",
+          "text": "With"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Damian…"
+        },
+        {
+          "character": "POLICEMAN",
+          "parenthetical": "",
+          "text": "How"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "I’m"
+        },
+        {
+          "character": "POLICEMAN",
+          "parenthetical": "",
+          "text": "Very"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Ask"
+        },
+        {
+          "character": "POLICEMAN",
+          "parenthetical": "",
+          "text": "I"
+        },
+        {
+          "character": "POLICEMAN",
+          "parenthetical": "",
+          "text": "121"
+        },
+        {
+          "character": "CORRIDOR. INT.",
+          "parenthetical": "",
+          "text": "–"
+        },
+        {
+          "character": "CUT",
+          "parenthetical": "",
+          "text": "TO:"
+        },
+        {
+          "character": "DAMIAN",
+          "parenthetical": "",
+          "text": "Hi,"
+        },
+        {
+          "character": "LAWYER",
+          "parenthetical": "",
+          "text": "Damian’s"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "(Indignant)"
+        },
+        {
+          "character": "DAMIAN",
+          "parenthetical": "",
+          "text": "But you were with me!"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "He"
+        },
+        {
+          "character": "LAWYER",
+          "parenthetical": "",
+          "text": "(Caught"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Yes…"
+        },
+        {
+          "character": "ASSISTANT",
+          "parenthetical": "",
+          "text": "(Approaching"
+        },
+        {
+          "character": "LAWYER",
+          "parenthetical": "",
+          "text": "I’ll"
+        },
+        {
+          "character": "LAWYER",
+          "parenthetical": "",
+          "text": "123"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Thank you so much."
+        },
+        {
+          "character": "LAWYER",
+          "parenthetical": "",
+          "text": "You"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "I’ll"
+        },
+        {
+          "character": "LAWYER",
+          "parenthetical": "",
+          "text": "Yes,"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "("
+        },
+        {
+          "character": "DAMIAN",
+          "parenthetical": "",
+          "text": "("
+        },
+        {
+          "character": "CUT",
+          "parenthetical": "",
+          "text": "TO:"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "(To"
+        },
+        {
+          "character": "DAMIAN",
+          "parenthetical": "",
+          "text": "He"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Not"
+        },
+        {
+          "character": "DAMIAN",
+          "parenthetical": "",
+          "text": "What do you want to do?"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "I"
+        },
+        {
+          "character": "ID.",
+          "parenthetical": "",
+          "text": "She"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Yes, speaking. (To Damian) It’s Michelle…"
+        },
+        {
+          "character": "DAMIAN",
+          "parenthetical": "",
+          "text": "Martha’s daughter."
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Yes…"
+        },
+        {
+          "character": "DAMIAN",
+          "parenthetical": "",
+          "text": "Well,"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "(Sincere)"
+        },
+        {
+          "character": "MICHELLE",
+          "parenthetical": "",
+          "text": "Hello, I’m Michelle."
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "I’m Ingrid."
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Let’s go inside."
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Do you want to see your mother’s room?"
+        },
+        {
+          "character": "MICHELLE",
+          "parenthetical": "",
+          "text": "Yes, please."
+        },
+        {
+          "character": "CUT",
+          "parenthetical": "",
+          "text": "TO:"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "I made some coffee."
+        },
+        {
+          "character": "MICHELLE",
+          "parenthetical": "",
+          "text": "Thank you."
+        },
+        {
+          "character": "MICHELLE",
+          "parenthetical": "",
+          "text": "Did she tell you about me?"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Of"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "So, she told you about my father?"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "She did."
+        },
+        {
+          "character": "MICHELLE",
+          "parenthetical": "",
+          "text": "Don’t"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "She"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "(CONT’D)",
+          "text": "And"
+        },
+        {
+          "character": "MICHELLE",
+          "parenthetical": "",
+          "text": "("
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "It"
+        },
+        {
+          "character": "MICHELLE",
+          "parenthetical": "",
+          "text": "(Without"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "By"
+        },
+        {
+          "character": "CUT",
+          "parenthetical": "",
+          "text": "TO:"
+        },
+        {
+          "character": "MICHELLE",
+          "parenthetical": "",
+          "text": "So,"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "You"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Don’t"
+        },
+        {
+          "character": "MICHELLE",
+          "parenthetical": "",
+          "text": "(Without"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Of course! This is your mother’s house."
+        },
+        {
+          "character": "CUT",
+          "parenthetical": "",
+          "text": "TO:"
+        },
+        {
+          "character": "MICHELLE",
+          "parenthetical": "",
+          "text": "I came out to listen to the birds…"
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "Your"
+        },
+        {
+          "character": "MICHELLE",
+          "parenthetical": "",
+          "text": "Look, it’s snowing."
+        },
+        {
+          "character": "INGRID",
+          "parenthetical": "",
+          "text": "(Her"
+        }
+      ],
+      "actionPreview": "Ingrid looks with curiosity at the interior of the apartment and makes some comments. She recognizes some of the objects that hark back to a time when they saw each other daily. Ingrid gives Martha some flowers. Martha gratefully takes them. to the flowers) These are for you… Ingrid follows Martha i"
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "slug": "blast-from-the-past-the",
+  "title": "Blast from the Past, The",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 6,
+  "characters": [
+    "HELEN",
+    "CALVIN",
+    "ADAM",
+    "EVE",
+    "ARON",
+    "TROY"
+  ],
+  "total_words": 27313,
+  "total_dialogue": 26,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "HELEN",
+        "CALVIN",
+        "ADAM",
+        "EVE",
+        "ARON",
+        "TROY"
+      ],
+      "action_text": "<b><HTML> </b><b><HEAD> </b>      <TITLE>BLAST FROM THE PAST - by Bill Kelly and Hugh Wilson</TITLE> <b></HEAD> </b> <b><BODY> </b><b>   <PRE> </b> <b>       FADE IN: </b> <b>       SCENE 1 OMITTED </b> <b>       EXT. SAN FERNANDO VALLEY - NIGHT </b> OPEN on a MOVING WIDE SHOT of a mountain range with the distant lights of the San Fernando Valley behind it. BEGIN CREDITS as a NAVY JET drops down into the picture. PUSH IN on the jet's exhaust flame. Have the words \"THE BLAST\" come out of the flam",
+      "dialogue_count": 26,
+      "word_count": 27313
+    }
+  ]
+}

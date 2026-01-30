@@ -1,0 +1,22 @@
+{
+  "slug": "a-quiet-place",
+  "title": "A Quiet Place",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 23384,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                          A QUIET PLACE </b> Screenplay by Bryan Woods, Scott Beck & John Krasinski Story by Bryan Woods & Scott Beck <b>    BLACK </b> We hear, very clearly, the sound of light wind. <b>1   EXT. TOWN - MAIN ST. - LATE AFTERNOON                        1 </b> We come up on... a streetlight. There is no illumination... and no movement. We hold on it for a long moment when suddenly... The streetlight bobs... and then begins to sway. We slowly begin to rise up on the streetlight t",
+      "dialogue_count": 0,
+      "word_count": 23384
+    }
+  ]
+}

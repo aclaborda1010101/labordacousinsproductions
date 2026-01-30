@@ -1,0 +1,22 @@
+{
+  "slug": "burn-after-reading",
+  "title": "Burn After Reading",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 23141,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                          BURN AFTER READING </b> Written by Joel Coen & Ethan Coen <b>    FADE IN </b> <b>1   EXT. EASTERN SEABOARD - AERIALS - DAY                           1 </b> High in the air----so high we an see the curvature of the earth. The eastern seaboard stretches away, flecked with clouds. As we dissolve in closer the picture bleaches of color.   We are looking down at the city of Washington, D.C. Dissolve closer still: a black-and-white aerial photograph of a neighborhood in su",
+      "dialogue_count": 0,
+      "word_count": 23141
+    }
+  ]
+}

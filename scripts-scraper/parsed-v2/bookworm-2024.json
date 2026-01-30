@@ -1,0 +1,5684 @@
+{
+  "slug": "bookworm-2024",
+  "title": "Bookworm",
+  "parsedWith": "v2",
+  "parsedAt": "2026-01-29T22:09:05.256Z",
+  "stats": {
+    "scenes": 66,
+    "dialogues": 946,
+    "characters": 41
+  },
+  "characters": [
+    {
+      "name": "STRAWN",
+      "dialogueLines": 388,
+      "totalWords": 2151
+    },
+    {
+      "name": "MILDRED",
+      "dialogueLines": 350,
+      "totalWords": 2538
+    },
+    {
+      "name": "ARNOLD",
+      "dialogueLines": 74,
+      "totalWords": 669
+    },
+    {
+      "name": "ANGELINA",
+      "dialogueLines": 23,
+      "totalWords": 159
+    },
+    {
+      "name": "DOTTY",
+      "dialogueLines": 21,
+      "totalWords": 159
+    },
+    {
+      "name": "ANNE",
+      "dialogueLines": 20,
+      "totalWords": 130
+    },
+    {
+      "name": "ZO",
+      "dialogueLines": 12,
+      "totalWords": 71
+    },
+    {
+      "name": "DOCTOR",
+      "dialogueLines": 9,
+      "totalWords": 73
+    },
+    {
+      "name": "HER POV",
+      "dialogueLines": 6,
+      "totalWords": 98
+    },
+    {
+      "name": "THE PANTHER",
+      "dialogueLines": 4,
+      "totalWords": 56
+    },
+    {
+      "name": "ANCHORWOMAN",
+      "dialogueLines": 2,
+      "totalWords": 14
+    },
+    {
+      "name": "MOTHER",
+      "dialogueLines": 2,
+      "totalWords": 10
+    },
+    {
+      "name": "VOICE",
+      "dialogueLines": 2,
+      "totalWords": 6
+    },
+    {
+      "name": "CLOSER",
+      "dialogueLines": 2,
+      "totalWords": 14
+    },
+    {
+      "name": "AHEAD",
+      "dialogueLines": 2,
+      "totalWords": 13
+    },
+    {
+      "name": "BEHIND THEM",
+      "dialogueLines": 2,
+      "totalWords": 29
+    },
+    {
+      "name": "SCREAMING",
+      "dialogueLines": 2,
+      "totalWords": 12
+    },
+    {
+      "name": "REALITY",
+      "dialogueLines": 2,
+      "totalWords": 27
+    },
+    {
+      "name": "ON THE TV SCREEN",
+      "dialogueLines": 1,
+      "totalWords": 21
+    },
+    {
+      "name": "ON TV",
+      "dialogueLines": 1,
+      "totalWords": 16
+    },
+    {
+      "name": "REPORTER",
+      "dialogueLines": 1,
+      "totalWords": 26
+    },
+    {
+      "name": "FARMER",
+      "dialogueLines": 1,
+      "totalWords": 32
+    },
+    {
+      "name": "STRAWN WISE",
+      "dialogueLines": 1,
+      "totalWords": 21
+    },
+    {
+      "name": "FLOOD",
+      "dialogueLines": 1,
+      "totalWords": 11
+    },
+    {
+      "name": "IN THE VIEWFINDER",
+      "dialogueLines": 1,
+      "totalWords": 13
+    },
+    {
+      "name": "THE BOTTOM OF THE HILL",
+      "dialogueLines": 1,
+      "totalWords": 11
+    },
+    {
+      "name": "I...",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "TENT",
+      "dialogueLines": 1,
+      "totalWords": 14
+    },
+    {
+      "name": "AT THE TENT",
+      "dialogueLines": 1,
+      "totalWords": 9
+    },
+    {
+      "name": "INSIDE THE TENT",
+      "dialogueLines": 1,
+      "totalWords": 9
+    },
+    {
+      "name": "MILDRED AND STRAWN",
+      "dialogueLines": 1,
+      "totalWords": 12
+    },
+    {
+      "name": "CAMERA FOOTAGE",
+      "dialogueLines": 1,
+      "totalWords": 11
+    },
+    {
+      "name": "ROARS",
+      "dialogueLines": 1,
+      "totalWords": 4
+    },
+    {
+      "name": "FRAYING",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "SNAP",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "WHITE.",
+      "dialogueLines": 1,
+      "totalWords": 3
+    },
+    {
+      "name": "FROM ABOVE",
+      "dialogueLines": 1,
+      "totalWords": 14
+    },
+    {
+      "name": "OVER BLACK",
+      "dialogueLines": 1,
+      "totalWords": 8
+    },
+    {
+      "name": "CREDITS ROLL",
+      "dialogueLines": 1,
+      "totalWords": 12
+    },
+    {
+      "name": "IPHONE CAMERA FOOTAGE",
+      "dialogueLines": 1,
+      "totalWords": 12
+    },
+    {
+      "name": "THE END.",
+      "dialogueLines": 1,
+      "totalWords": 1
+    }
+  ],
+  "scenes": [
+    {
+      "number": 1,
+      "heading": "EXT. SUBURBAN BACK YARD -- NIGHT",
+      "characters": [
+        "MILDRED",
+        "ON THE TV SCREEN",
+        "ANCHORWOMAN",
+        "ON TV",
+        "REPORTER",
+        "FARMER",
+        "MOTHER",
+        "ZO"
+      ],
+      "dialogues": [
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(11, red-cheeked, bespectacled) at the window, looks through binoculars, into the backyard:"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Come on... dinner is served. Come on, you little bugger..."
+        },
+        {
+          "character": "ON THE TV SCREEN",
+          "parenthetical": "",
+          "text": "A NEWS ANCHORWOMAN (20s) sits at a desk, a graphic of a BLACK PANTHER behind her as she addresses camera --"
+        },
+        {
+          "character": "ANCHORWOMAN",
+          "parenthetical": "(ON TV)",
+          "text": "The hunt is on for a mysterious black cat prowling the wilds of"
+        },
+        {
+          "character": "ON TV",
+          "parenthetical": "",
+          "text": "-- The image CUTS to rapid-fire shots: a field -- sheep -- a grassy hillside --"
+        },
+        {
+          "character": "REPORTER",
+          "parenthetical": "(V.O.)",
+          "text": "Brian was fixing a fence when he saw the creature, a moment he says he’ll never forget. CUT to a FARMER (50s) interviewed on camera --"
+        },
+        {
+          "character": "FARMER",
+          "parenthetical": "(ON TV)",
+          "text": "It just looked like a big black cat. Like a normal house cat, but really big, actually huge, just like a really extra-big black cat with big yellow eyes and big teeth."
+        },
+        {
+          "character": "ANCHORWOMAN",
+          "parenthetical": "",
+          "text": "(O.S.)"
+        },
+        {
+          "character": "MOTHER",
+          "parenthetical": "(O.S.)",
+          "text": "Mildred! You want anything to eat?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Mum, be"
+        },
+        {
+          "character": "MOTHER",
+          "parenthetical": "(O.S.)",
+          "text": "What!? Can’t hear you!"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(whisper-shout)"
+        },
+        {
+          "character": "ZO",
+          "parenthetical": "",
+          "text": "(40) peers around the door, cigarette clenched ‘twixt her teeth --"
+        },
+        {
+          "character": "ZO",
+          "parenthetical": "",
+          "text": "Sure, love. I know how you like it."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "That’s right."
+        },
+        {
+          "character": "ZO",
+          "parenthetical": "",
+          "text": "One thing though, Mildred..."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "What? I’m in the middle of something here..."
+        },
+        {
+          "character": "ZO",
+          "parenthetical": "",
+          "text": "What are the magic words?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Please..?"
+        },
+        {
+          "character": "ZO",
+          "parenthetical": "",
+          "text": "That’s the magic"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Mum, can’t you see I’m busy trying to catch Jonesie in an intricate home-made trap?"
+        },
+        {
+          "character": "ZO",
+          "parenthetical": "",
+          "text": "And why in the name of buggery would you want to trap our poor sweet innocent cat?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Practice."
+        },
+        {
+          "character": "ZO",
+          "parenthetical": "",
+          "text": "For?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "For the"
+        },
+        {
+          "character": "ZO",
+          "parenthetical": "",
+          "text": "Panthera Pardus ."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "I’m a card-carrying bookworm. So yes, I sure do know a crapload of words."
+        },
+        {
+          "character": "ZO",
+          "parenthetical": "",
+          "text": "But do you know the"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(sighs, resigned) I .. love .. you."
+        },
+        {
+          "character": "ZO",
+          "parenthetical": "",
+          "text": "Go on?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "... with all .. my heart."
+        },
+        {
+          "character": "ZO",
+          "parenthetical": "",
+          "text": "There. Was that so difficult?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Yes. It was, actually."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "(O.S.)",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "A crackly LP plays on a turntable somewhere. Items in a tomboy’s lair as CREDITS roll -- maps on the walls, stacks and stacks of books, folk LP’s, framed photos of New Zealand’s wilderness, a bonsai tree, well-loved toys... Where a chunk of raw beef glistens under a BEER-CRATE TRAP, held up by a sti"
+    },
+    {
+      "number": 2,
+      "heading": "INT. CORRIDOR",
+      "characters": [
+        "MILDRED"
+      ],
+      "dialogues": [
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Mum!?"
+        }
+      ],
+      "actionPreview": "Mildred steps out of her room, the light’s beam sweeping -- No reply."
+    },
+    {
+      "number": 3,
+      "heading": "INT. STAIRWAY",
+      "characters": [
+        "MILDRED"
+      ],
+      "dialogues": [
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Mum!? What are you doing?"
+        }
+      ],
+      "actionPreview": "Mildred hurries down a corridor --"
+    },
+    {
+      "number": 4,
+      "heading": "INT. HALLWAY",
+      "characters": [
+        "MILDRED"
+      ],
+      "dialogues": [
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Mum, come on. This is not amusing. I am not amused! Let’s be grownups, shall we? (then) I swear, if you sneak up on me again... I’ll pee myself, and you’ll have to clean it up."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "Mildred steps into a cramped hallway, flashlight roaming -- The flashlight’s beam finds -- In a DOORWAY AHEAD -- ZO’S BARE FEET, twitching, convulsing on the floor. Mildred freezes, face falling in shock and fear. 4. 5. Mum..? HARD CUT TO:"
+    },
+    {
+      "number": 5,
+      "heading": "INT. HOSPITAL CORRIDOR",
+      "characters": [
+        "DOCTOR",
+        "MILDRED"
+      ],
+      "dialogues": [
+        {
+          "character": "DOCTOR",
+          "parenthetical": "",
+          "text": "(40s) exits the room, taking a seat beside Mildred."
+        },
+        {
+          "character": "DOCTOR",
+          "parenthetical": "",
+          "text": "It’s Mildred, isn’t it? (Mildred nods)"
+        },
+        {
+          "character": "DOCTOR",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DOCTOR",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DOCTOR",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(stunned)"
+        },
+        {
+          "character": "DOCTOR",
+          "parenthetical": "",
+          "text": "She’s not dead. But she’s not fully alive either. She’s in a kind of dreamlike netherworld between life--"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "I know what a coma is. Can you save her?"
+        },
+        {
+          "character": "DOCTOR",
+          "parenthetical": "",
+          "text": "Now you listen to me carefully,"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(impatient)"
+        },
+        {
+          "character": "DOCTOR",
+          "parenthetical": "",
+          "text": "Yes. We can, and we will. But she has something called a brain bleed."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "A"
+        },
+        {
+          "character": "DOCTOR",
+          "parenthetical": "",
+          "text": "My poor darling. I’m afraid camping will have to wait. But first things first... Where’s your dad?"
+        }
+      ],
+      "actionPreview": "Mildred sits outside an operating room. Foot tapping. Eyes wide and scared. A Mildred looks at them. Fearful, hopeful. The Doctor pauses, choosing the right words. Then -- My darling, I have some good news and I have some bad news. Mildred winces, truly scared, bracing herself... The bad news is... "
+    },
+    {
+      "number": 6,
+      "heading": "INT. HALLWAY -- DAY",
+      "characters": [
+        "DOTTY",
+        "STRAWN WISE",
+        "STRAWN"
+      ],
+      "dialogues": [
+        {
+          "character": "DOTTY",
+          "parenthetical": "",
+          "text": ", opens a front door to reveal --"
+        },
+        {
+          "character": "STRAWN WISE",
+          "parenthetical": "",
+          "text": "(40), Mildred’s father, on the doorstep. He’s an illusionist with a dated look. Leather jacket, trilby, eyeshadow, black fingernails, reptile-skin suitcase."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Hi. I’m Strawn. Strawn Wise."
+        },
+        {
+          "character": "DOTTY",
+          "parenthetical": "",
+          "text": "The magician."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Illusionist. (beat)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DOTTY",
+          "parenthetical": "",
+          "text": "Can I see some I.D?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "I.D?"
+        },
+        {
+          "character": "DOTTY",
+          "parenthetical": "",
+          "text": "It stands for Identification"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "I’d love to show you some I.D, but there’s a problem. You see,"
+        },
+        {
+          "character": "DOTTY",
+          "parenthetical": "",
+          "text": "I"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "That’s right."
+        },
+        {
+          "character": "DOTTY",
+          "parenthetical": "",
+          "text": "What do you mean, mate?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "You have my I.D."
+        },
+        {
+          "character": "DOTTY",
+          "parenthetical": "",
+          "text": "I do? Where?"
+        },
+        {
+          "character": "DOTTY",
+          "parenthetical": "",
+          "text": "(CONT’D) I have to say. Normally I find magicians skin-crawlingly embarrassing, but you’re actually half decent."
+        },
+        {
+          "character": "DOTTY",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "A middle-aged woman with very curly red hair, Mildred’s... biological father. 6. 7. Magician sounds... cheap? Silence. Dotty eyes Strawn up and down. Can I come in? Document. Strawn considers this, lips curling into a knowing smirk. you currently have my I.D. have it? Strawn reaches out towards her "
+    },
+    {
+      "number": 7,
+      "heading": "INT. HALLWAY",
+      "characters": [
+        "DOTTY",
+        "STRAWN"
+      ],
+      "dialogues": [
+        {
+          "character": "DOTTY",
+          "parenthetical": "",
+          "text": "Look, mate. Just so you know. I didn’t hug the girl. Even though"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "I’m sorry, what?"
+        },
+        {
+          "character": "DOTTY",
+          "parenthetical": "",
+          "text": "Your daughter. I specifically"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Why?"
+        },
+        {
+          "character": "DOTTY",
+          "parenthetical": "",
+          "text": "I just... I’ve heard so many horror stories. You can’t be too careful, with other peoples’ kids, these days... Touching them. Even hugs are a no-go."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "I guess so."
+        },
+        {
+          "character": "DOTTY",
+          "parenthetical": "",
+          "text": "My cousin Geoffrey was a teacher at the local school here. One day he hugged a little girl who’d grazed her knee. Guess what?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "DOTTY",
+          "parenthetical": "",
+          "text": "The girl’s parents pressed charges."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "That’s awful."
+        },
+        {
+          "character": "DOTTY",
+          "parenthetical": "",
+          "text": "Yeah, he went downhill after that."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Jesus. I’m so sorry."
+        },
+        {
+          "character": "DOTTY",
+          "parenthetical": "",
+          "text": "It’s alright. He didn’t pull the trigger. 8."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Oh. That’s good."
+        },
+        {
+          "character": "DOTTY",
+          "parenthetical": "",
+          "text": "No it’s not. He hung himself after that."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Oh no. Oh, I am so,"
+        },
+        {
+          "character": "DOTTY",
+          "parenthetical": "",
+          "text": "It’s okay. The rope broke."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Is he..."
+        },
+        {
+          "character": "DOTTY",
+          "parenthetical": "",
+          "text": "Dead? (Strawn nods)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Okay. That’s great."
+        },
+        {
+          "character": "DOTTY",
+          "parenthetical": "",
+          "text": "No it’s not, mate. He’s in jail for 20 years. (whispered)"
+        },
+        {
+          "character": "DOTTY",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Yeah. Thanks."
+        }
+      ],
+      "actionPreview": "Strawn enters, setting his suitcase down, kicking his platform boots off. Dotty looks to him, suddenly serious -- Lord knows she needs one. didn’t hug her. Old Geoffrey lost his job. He’ll never teach again. Ended up putting both barrels of a shotgun in his gob. 9. so sorry. Strawn cringes, awaiting"
+    },
+    {
+      "number": 8,
+      "heading": "INT. LIVING ROOM",
+      "characters": [
+        "STRAWN",
+        "MILDRED"
+      ],
+      "dialogues": [
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Mildred. It’s me. Strawn. Your Dad. I just flew across the world to be with you, little lady. (silence) I’m sorry about your mom. But she’s going to be okay. It’s official."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "A licensed medical professional has"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Well... no, what I mean is... you know, she’s going to be okay. I’m sure she is. (unsure) I’m pretty sure."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D) I said, do you want to see something amazing?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Does it take a long time?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Fine. Show me something amazing."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Pick a card. Go on."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "What? For a second, it sounded like you said no."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "It sounded like I said no because I did, indeed, say no."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "No..?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Yes. By which I mean no. As in: No, it’s not my card."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Okay. Is"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "I’m afraid it’s not."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "I’m afraid it’s not..."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Is"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "I can lie and say yes, if that helps? I understand if you’re feeling... a little fragile..."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "This?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "No. I’m sorry."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Jesus."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Look, Mr. Wise, you just got off an eighteen-hour flight, and I’m sure you’re--"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "God damn it!"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Right. Before I get to whether that was or wasn’t my card, let me get one thing straight."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "What’s that?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Am I right in assuming you snuck into the back garden to glue that card to the window, before scrambling back around to the front of the house to ring the doorbell? 12."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "What? No, it’s... it’s called magic. I used the power of magic."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(ignoring that)"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(admonished)"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "How did you get back there?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "I went round the alley at the end of the street. Then I had to climb over two garden fences."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "So... you trespassed on private property?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "I mean... I guess I did? I didn’t really think of it that way, but..."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "I’m struggling to comprehend why you’d think that was acceptable behavior. I can only assume the trespassing laws in America are"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "That"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "It"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "No, it’s not."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "It is."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "You appear to have misheard me the previous two times, so I’ll say it again: It. Is. Not. My. Card."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Of course it is."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Fine. I give up. It’s my card."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Are you being sarcastic?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "Strawn steps into the room, looking at Mildred, who’s slumped on the sofa, engrossed in a Willard Price book. 9. 10. Mildred looks up at last. officially told you she’s officially going to be okay? Is that what you mean by official? Mildred raises an eyebrow... and returns to her book. Strawn just s"
+    },
+    {
+      "number": 9,
+      "heading": "INT. BEDROOM",
+      "characters": [
+        "STRAWN",
+        "MILDRED",
+        "CAMPERS WASHED AWAY IN",
+        "FLOOD"
+      ],
+      "dialogues": [
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "I can’t say I spend much time in eleven year-old girls’ bedrooms, but this isn’t what I expected."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "What"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Basically."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "What was on"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "A lot of David Copperfield posters. 14."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(surprised)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Like? More like"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Same. I’m borderline obsessed, to tell the truth."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "David Copperfield was my"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(warming)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(smiles)"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "What are the odds of us having the exact same favorite book?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "No, no. I’m talking about David"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Oh. I’m talking about David"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Oh. I have no idea what that is."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "I guess we don’t have anything in common, after all."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "What is this?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "The Canterbury Panther. Something of an obsession lately. There have been sightings for decades, but nobody’s ever caught it on camera."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "I don’t really understand New"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Yes. It’s a lot of money. Money mum and I could"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "I mean... I could take you, maybe?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Really?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Sure. It might your mind off everything happening with your mom."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(brightening)"
+        },
+        {
+          "character": "FLOOD",
+          "parenthetical": "",
+          "text": "”, “ VANISHED: 700 MISSING IN NZ WILD THIS YEAR ”."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "You know... now that I think about it, I don’t know if it’s such a great idea."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "We leave at first light."
+        }
+      ],
+      "actionPreview": "The door opens. Mildred steps in, followed by Strawn, who takes in the decor -- did you expect? A pink dollhouse? Pictures of princesses and palaces and horsies? your walls when you were eleven? 15. Wait. You like David Copperfield? love . life growing up. Okay, so we have something in common. This "
+    },
+    {
+      "number": 10,
+      "heading": "EXT. REMOTE BUS STOP -- DAWN",
+      "characters": [
+        "MILDRED",
+        "STRAWN"
+      ],
+      "dialogues": [
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Stick with me, you’ll be fine."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "You know where we’re going, right?"
+        }
+      ],
+      "actionPreview": "A bus pulls up at a desolate stop. The door hisses open. Strawn and Mildred, carrying large back-packs, step off. The bus door shudders closed. It drives off, kicking up dust. Strawn looks down at Mildred, unsure. But she nods sagely. She sets out across the road, determined. Strawn calls out -- No "
+    },
+    {
+      "number": 11,
+      "heading": "EXT. HIKING TRAIL",
+      "characters": [
+        "VOICE",
+        "ANNE",
+        "MILDRED",
+        "STRAWN"
+      ],
+      "dialogues": [
+        {
+          "character": "VOICE",
+          "parenthetical": "(O.S.)",
+          "text": "Hey! I know you!"
+        },
+        {
+          "character": "ANNE",
+          "parenthetical": "",
+          "text": ". 17."
+        },
+        {
+          "character": "ANNE",
+          "parenthetical": "",
+          "text": "I know you!"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Who, me?"
+        },
+        {
+          "character": "ANNE",
+          "parenthetical": "",
+          "text": "(to Strawn)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Illusionist. But yes."
+        },
+        {
+          "character": "ANNE",
+          "parenthetical": "",
+          "text": "I just knew it was you. And who’s this cute little nipper?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "This is my biological daughter,"
+        },
+        {
+          "character": "ANNE",
+          "parenthetical": "",
+          "text": "Biological daughter, is she? (to Mildred)"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "You look like an Anne. That name suits you. You have a perfect name- to-face correspondence."
+        },
+        {
+          "character": "ANNE",
+          "parenthetical": "",
+          "text": "I used to watch your show when it was on the telly."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Oh, thanks. Thank you. Really, that means a lot."
+        },
+        {
+          "character": "ANNE",
+          "parenthetical": "",
+          "text": "I used to watch it after my night shift. It was on at 4am."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(interjecting)"
+        },
+        {
+          "character": "ANNE",
+          "parenthetical": "",
+          "text": "It’s such a shame we don’t get it here anymore."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(hurt)"
+        },
+        {
+          "character": "ANNE",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "It’s no longer running, here or anywhere else. It was cancelled."
+        },
+        {
+          "character": "ANNE",
+          "parenthetical": "",
+          "text": "I guess that other guy sort of hijacked the spotlight, a little bit? Is that fair to say?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Who, David?"
+        },
+        {
+          "character": "ANNE",
+          "parenthetical": "",
+          "text": "Yeah. Never liked him, myself. Up his own arse, from the looks of it."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Thanks. That’s kind of you to say, in a strange way."
+        },
+        {
+          "character": "ANNE",
+          "parenthetical": "",
+          "text": "Can you still levitate?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "I certainly can."
+        },
+        {
+          "character": "ANNE",
+          "parenthetical": "",
+          "text": "What are you waiting for? Go on."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "What? Now? Here?"
+        },
+        {
+          "character": "ANNE",
+          "parenthetical": "",
+          "text": "Yeah, go on Strawn. Levitate for an old fan."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(to Strawn)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(ignoring her)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D) I feel the power, specifically in my feet. I’m talking about the power of levitation. Specifically."
+        },
+        {
+          "character": "ANNE",
+          "parenthetical": "",
+          "text": "(thrilled)"
+        },
+        {
+          "character": "ANNE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "No, he’s not."
+        },
+        {
+          "character": "ANNE",
+          "parenthetical": "",
+          "text": "What do you mean?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "He’s put all his weight on his back foot, and he’s lifting his front foot off the ground, thus creating the illusion of levitation from your vantage point."
+        },
+        {
+          "character": "ANNE",
+          "parenthetical": "",
+          "text": "Oh yeah. You’re right."
+        },
+        {
+          "character": "ANNE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Do you... want an autograph?"
+        },
+        {
+          "character": "ANNE",
+          "parenthetical": "",
+          "text": "Yeah, go on. CUT TO:"
+        }
+      ],
+      "actionPreview": "Mildred, map in hand, marches ahead. Strawn lags behind, struggling under the weight of his backpack. Suddenly, a woman’s VOICE calls from somewhere -- Strawn and Mildred stop, turning to see a smiling HIKER (20s) approaching. She wears an old-style fisherman’s hat and spiky- soled boots. This is 18"
+    },
+    {
+      "number": 12,
+      "heading": "EXT. HIKING TRAIL",
+      "characters": [
+        "MILDRED",
+        "STRAWN"
+      ],
+      "dialogues": [
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Something on your mind?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "I thought there might be something on your mind. It’s why I asked if there was something on your mind."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "You didn’t have to, you know... shatter the illusion back there."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "You were conning her with fake magic. It was painful to watch."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "You’re a child, so maybe you can’t understand this, but people need magic. It helps them cope. 21."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Hate to break it to you, but putting all your weight on one foot while raising the other foot slightly off the ground isn’t helping anyone."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "A brutal realist who actually believes there’s a real giant panther out here."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Panthers exist. Levitation doesn’t."
+        }
+      ],
+      "actionPreview": "Mildred and Strawn trudge along a weathered path between large overgrown bramble bushes. Mildred looks up at Strawn, who looks vaguely upset. They walk on. Strawn thinks. Okay, yeah. There actually is something on my mind. (MORE) 22. Strawn tries to think of a comeback. You’ll have to pardon my blun"
+    },
+    {
+      "number": 13,
+      "heading": "EXT. HILLSIDE",
+      "characters": [
+        "MILDRED",
+        "STRAWN"
+      ],
+      "dialogues": [
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "You alright there?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "I just need to rest for a while."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "When you’re out of breath, the key is to breathe."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Thanks. I had no idea."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "In through the nose, out through the mouth. There you go."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(winded)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "(CONT’D)",
+          "text": "23."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "That’s quite alright. But I’m going to impose a five-minute cap on our breaks, going forward. We’ve got a lot of terrain to cover today."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D) I’m not having a go at you."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "Mildred marches up a steep hill. Strawn lags behind, winded. She turns, calling to him -- Strawn doubles over, gasping for air. He staggers to a rock, sitting, sighing. Mildred approaches. Sorry. It’s been a while since I walked this much. (MORE) 22. Back at home, I usually get around on an electric"
+    },
+    {
+      "number": 14,
+      "heading": "EXT. VALLEY",
+      "characters": [
+        "CLOSER",
+        "STRAWN",
+        "MILDRED"
+      ],
+      "dialogues": [
+        {
+          "character": "CLOSER",
+          "parenthetical": "",
+          "text": "They trudge along. Mildred is deep in a lecture."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Are there toilets here? You know, the portable kind?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "(CONT’D)",
+          "text": "23."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "No, Strawn. There are no toilets here. (then)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Okay."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "It’s a delicate ecosystem out here, and human feces can really throw things off balance for the flora and fauna in the area."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "As if from a hidden POV, through branches and shrubbery: From afar, Strawn and Mildred make their way through a verdant valley, like tiny ants. 24. Wee-wees are a relatively simple affair. But if you need what the Germans call a Scheisser, I do ask that you dig a hole. She admires the terrain, with "
+    },
+    {
+      "number": 15,
+      "heading": "EXT. HILLTOP",
+      "characters": [
+        "STRAWN",
+        "MILDRED"
+      ],
+      "dialogues": [
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Peanut butter and jelly. What do you think? Old Strawn’s got some sandwich-making skills?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Must be an American delicacy. Can’t say I’m a fan, myself. But calories are calories, and they’re in short supply out here."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "You know, you don’t talk like a..."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Like a normal child?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "I wasn’t going to put it"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Says the magician who"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Do you even know where we’re going?"
+        }
+      ],
+      "actionPreview": "Strawn and Mildred sit on the grass overlooking the valley below, eating sandwiches wrapped in tinfoil. Strawn looks at her strangely. that way, exactly... but yeah. Mildred raises an eyebrow, looking out at the vista beyond. 24. 25. My point is: you don’t have to dress everything up to sound more s"
+    },
+    {
+      "number": 16,
+      "heading": "EXT. HILLSIDE",
+      "characters": [
+        "STRAWN",
+        "MILDRED"
+      ],
+      "dialogues": [
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "How are you finding school? (delicately)"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(sharp)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "No, no, I didn’t mean any--"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "If you must know, I’m top of my class. Straight A’s all the way. I’m captain of the netball team, and I’ve got so many trophies our mantelpiece literally collapsed under the weight. And believe it or not, I was officially voted Most"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Wow."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "My boyfriend, Clarence Hargreaves, is the dreamiest guy in the entire school - making"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(surprised)"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "No. Not really. I despise school and everyone in it."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "They walk on. Strawn thinks a moment, debating whether or not to ask... but does it anyway -- Are you... having a hard time there? Why would I be having a hard time there, Strawn? Popular Girl In School last winter. 25. 26. Strawn’s eyes widen slightly, impressed, relieved. me the envy of all and su"
+    },
+    {
+      "number": 17,
+      "heading": "EXT. WOODS -- DUSK",
+      "characters": [
+        "STRAWN",
+        "MILDRED"
+      ],
+      "dialogues": [
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Jesus..."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(whispered)"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D) (whispered)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Oh god..."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Bugger."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Sorry."
+        }
+      ],
+      "actionPreview": "Mildred and Strawn trudge through deep woods. The sun is sinking through the tree-line, bathing them in amber half- light. Strawn freezes, gasping when he sees -- A DEER CARCASS on the ground before them. Mildred approaches the carcass -- nervous, glancing around. Strawn notices deep bloody claw-mar"
+    },
+    {
+      "number": 18,
+      "heading": "EXT. LAKESIDE -- DUSK",
+      "characters": [
+        "MILDRED",
+        "STRAWN"
+      ],
+      "dialogues": [
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Having fun? Must be nice, just standing there idly like that, soaking it all in."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Do you... want me to help?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "I thought you’d"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "What can I do? 27."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "You can start a fire."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "How does one... do that?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "It’s shockingly simple, really."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D) I’d give you a tutorial, but, at present, I’m slightly in the middle of putting up our bloody tent."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "I have an idea."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "I bet you do. HARD CUT TO:"
+        }
+      ],
+      "actionPreview": "The sun sets over a glorious glistening lake, shrouded by snow-capped mountains. At the lake’s shore, Mildred works to erect a tent. Strawn just stands there, uselessly. Mildred looks over to him -- never ask. 28. Strawn looks lost. You gather a load of dry wood, you put it in a big old pile, and yo"
+    },
+    {
+      "number": 19,
+      "heading": "EXT. STREAM -- NIGHT",
+      "characters": [
+        "MILDRED",
+        "STRAWN"
+      ],
+      "dialogues": [
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Long day, right?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Long day."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "She’s in an induced coma, hovering between life and death. Thanks for asking. 28."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "No, I mean apart from the whole coma thing. You know, generally."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "She smokes too much, drinks too much, and has"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "With?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "What do you"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "I don’t..."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "The"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "What debt?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "She didn’t tell you?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "No. She never said anything."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Her sister - my aunt’s - afflicted with a bit of the old substance abuse nonsense. (shakes head)"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "(CONT’D)",
+          "text": "30."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "50"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Why’d you think I’m on the hunt for this panther? The reward is fifty K for a video of the thing. Problem solved, right? Mum’ll be off the hook, clean slate, not having to juggle three stupid jobs."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "What’s that?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "I know you have a belly full of beans, but this tent is a fart-free zone. If you feel any bum-blasters brewing, kindly take them outside."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Sure."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "(CONT’D)",
+          "text": "30."
+        }
+      ],
+      "actionPreview": "The stream shimmers in the moonlight. Crickets chirp. The tent is up and a campfire burns, sparks spiraling skyward. Mildred and Strawn sit by the fire, eating beans from cans. Strawn looks exhausted. He looks out at the gleaming rushing water. How’s your mom doing? (MORE) 29. How is she? terrible t"
+    },
+    {
+      "number": 20,
+      "heading": "INT. TENT -- NIGHT",
+      "characters": [
+        "STRAWN",
+        "MILDRED"
+      ],
+      "dialogues": [
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "I’m sorry things never worked out with your mom. I did ask her to stay in Vegas with me, you know."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Goodnight, Strawn."
+        }
+      ],
+      "actionPreview": "A small electrical lamp illuminates the tent. Strawn and Mildred lie in separate sleeping bags, next to each other. Strawn looks at the roof of the tent. He thinks. He sighs. Then -- When she told me she was... when you... when she was pregnant, you know. I did offer, but she wanted to stay here. I "
+    },
+    {
+      "number": 21,
+      "heading": "EXT. CAMPSITE -- NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "As if from a hidden POV: The tent, small, isolated in the vast moonlit wilds. 31. 32. A twig SNAPS somewhere, as we -- SMASH TO:"
+    },
+    {
+      "number": 22,
+      "heading": "INT. TENT",
+      "characters": [
+        "MILDRED",
+        "STRAWN",
+        "I..."
+      ],
+      "dialogues": [
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Jesus. What? What is it?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "You..?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(sheepish) I heard a scary sound."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Am I still dreaming, or did a forty- one year-old man"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "I’m sorry. Never mind. Go back to sleep."
+        }
+      ],
+      "actionPreview": "Strawn wakes, reacting to the sound. He sits up, listening. Rustling from outside... His eyes gleam with terror. He turns, shaking Mildred -- she stirs awake, looking up at him, bleary-eyed. really just wake an eleven year-old girl to tell her he heard a scary sound in the night? He looks self-consc"
+    },
+    {
+      "number": 23,
+      "heading": "EXT. STREAM -- DAWN",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Sun rises over the mountain range. Birds chirp in the woods. Steam coils off the lake’s glassy surface."
+    },
+    {
+      "number": 24,
+      "heading": "INT. TENT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Strawn wakes, sitting up with a weary groan. He sees Mildred’ empty sleeping bag beside him. 32. 33."
+    },
+    {
+      "number": 25,
+      "heading": "EXT. CAMPSITE -- DAWN",
+      "characters": [
+        "MILDRED",
+        "STRAWN"
+      ],
+      "dialogues": [
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Sleep well?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "No, not really."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Ready to cover some of New"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "My stomach feels weird and bubbly."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "I know. I’m super excited too."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "You know, you"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Why would I do"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Normally, daughters call their dads “dad”."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Normally, daughters see their dads more than twice a decade."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Maybe oneday you’ll actually call me dad."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Maybe oneday you’ll actually do a magic trick that impresses me. 33."
+        }
+      ],
+      "actionPreview": "Strawn emerges from the tent, to see -- Mildred, seated on a large rock, drinking coffee, consulting maps and books. She turns, seeing Strawn -- Zealand’s most unforgivingly treacherous terrain? Mildred nods at a cup of coffee beside the campfire. Get some caffeine in you, and let’s move. Come on, S"
+    },
+    {
+      "number": 26,
+      "heading": "EXT. MOUNTAIN RANGE -- DAY",
+      "characters": [
+        "CLOSER",
+        "STRAWN",
+        "MILDRED"
+      ],
+      "dialogues": [
+        {
+          "character": "CLOSER",
+          "parenthetical": "",
+          "text": "Mildred stops, looking around, disturbed."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "What is it..?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "We need to find shelter. It’s going to rain very heavily, and very soon."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "What? The sky is spotless."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "That’s what concerns me."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "I don’t--"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "It’s spotless. What’s missing?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "What’s missing from the sky?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Clouds?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "What else?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Planes?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Birds , Strawn. They make themselves scarce before a big old downpour. I don’t want to pitch a tent here on this soft terrain. We’ll have to find a cave."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "I think you’re mistaken. I’m pretty confident it’s"
+        }
+      ],
+      "actionPreview": "You’re gliding over a jagged mountain range. You see Mildred and Strawn, tiny creatures that they are, marching through wild terrain beneath cobalt sky. Mildred looks around, thinking. 34. (MORE) 35. Strawn looks up at the spotless sky, skeptical. not going to rain. HARD CUT TO:"
+    },
+    {
+      "number": 27,
+      "heading": "EXT. CAVE OPENING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Torrential rain hammers the rock face."
+    },
+    {
+      "number": 28,
+      "heading": "INT. CAVE",
+      "characters": [
+        "STRAWN",
+        "MILDRED"
+      ],
+      "dialogues": [
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "You must go camping a lot."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Believe it or not, this is my first time."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "What? But you know so much about... terrain, and rain, and..."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Oh, it’s all from books. I always ask mum to take me, but you know what"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "(CONT’D)",
+          "text": "36."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Does she ever talk about me?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Why would she do"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "She’s going to be okay. She’s in good hands, I promise you."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "She said you used to be on telly."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Illusionist."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Right, sorry. So what does the average working day look like for you now?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "I do appearances. Parties. I actually did a major celebrity’s birthday last week."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Excuse me while I hyperventilate."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "You know, you could try being a little more respectful."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "(CONT’D)",
+          "text": "36."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Oh, I’m sure I"
+        }
+      ],
+      "actionPreview": "Mildred and Strawn are crouched in a small cramped cave, eating protein bars in silence. RAIN blasts down outside. Mildred chews her bar, sadly. she’s like. (beat) Actually you don’t. You’ve only met her a couple of times. I forgot. She sighs. She’s got me wrapped in cotton wool. And bubble wrap. Sh"
+    },
+    {
+      "number": 29,
+      "heading": "EXT. WOODS -- DAY",
+      "characters": [
+        "STRAWN",
+        "MILDRED",
+        "AHEAD",
+        "SEEING MILDRED AND STRAWN.",
+        "IN THE VIEWFINDER"
+      ],
+      "dialogues": [
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "I work hard, you know. To provide for you and your mom."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Levitation and card tricks? Back- breaking stuff, I’m sure."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "What I do is physically and mentally exhausting. My wrist strength is equivalent to that of a professional wrestler. You think it’s easy making balloon animals for Michael Bolton’s kids?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Balloon animals. My, oh my. And they say air traffic controllers have stressful jobs. (then)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "A major celebrity. Anyway, whatever. People need magic in their lives. I’m doing my best."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "And I’m"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(piss and vinegar)"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "You"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(backing down)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Don’t move. Stay completely still."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Is this a trick so you can punch me in the “goolies”? Whatever goolies are."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Oh no... oh no oh no..."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Strawn. Listen to me very carefully. Do not - I repeat - do not move."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "It’s the p...p...p..."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "P-p-p-panther. Yes, it is."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "What do we do?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Shh... just be quiet... 38."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(whispering)"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "I said be"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Why wouldn’t it kill us?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(toughening) A) It hasn’t seen us. And B) we’re going to stay very still, and very quiet, and very calm."
+        },
+        {
+          "character": "AHEAD",
+          "parenthetical": "",
+          "text": "The panther prowls, sniffing the ground. And suddenly --"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "That’s not good is it?"
+        },
+        {
+          "character": "IN THE VIEWFINDER",
+          "parenthetical": "",
+          "text": "The panther just stands there, watching Mildred and Strawn with shining yellow eyes."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Do we run?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Think you can outrun a panther? 39."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(unsure) I don’t know. Can I?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "No, Strawn. You can’t."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Then what do we do?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "It’s alright. I’ve read all about this. We make ourselves big and loud. Stretch out, and speak really loud."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "It’s"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Really?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "You’re"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Bugger. Sorry. I was wrong."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Wrong?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Making yourself big and loud is for bears."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Then what about panthers!?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Stay really still and don’t make a sound."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D) (whispered)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Mildred... tell me you got the footage."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "I got it. I got the bugger."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "That... was a close encounter."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Of the fifty thousandth kind."
+        }
+      ],
+      "actionPreview": "Bright sunlight slashes woodland. Birds chirp all around. Mildred leads the way through damp woods, Strawn lagging. And who the hell is Michael Bolton? Mildred stops, turning to face her father -- doing my best not to punch you in the goolies. Wheteve What did I ever do to you? Why are you so angry "
+    },
+    {
+      "number": 30,
+      "heading": "EXT. RIVER",
+      "characters": [
+        "MILDRED",
+        "STRAWN"
+      ],
+      "dialogues": [
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "How about some scrambled mallard eggs with wild fennel for dinner?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Hey, look. Mildred. I’m... I’m sorry."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "For being an absent father?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "What? No. I mean... for doubting you about the panther."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "And I’m sorry about threatening to punch you in the goolies. That was rude, and un-called for."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "And pretty Freudian, when you think about it."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Yeah. Sorry."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "It’s alright. Really."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "I’m sorry to change the subject, but you’re being eaten alive."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Not me. I’m not a murderer. I always used to feel guilty killing bugs as a kid. Made me sad, thinking about their babies wondering where they went."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Speaking of bugs... don’t move."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Why?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "You’ve got a Weta on your shoulder."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "A what?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "A Weta. Basically a giant flightless cricket that looks like the alien from Alien. They’ve got razor-sharp mandibles and an agonising bite. Now... slowly turn your head, and behold the beautiful bugger for yourself."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "What is that!? What the--"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Think its babies will wonder where it went?"
+        }
+      ],
+      "actionPreview": "At the banks of a roiling river... Strawn sits on a rock, still shaken from the panther encounter. He looks at his HANDS, which tremble, adrenaline still surging. He shakes them off, exhaling hard. 41. 42. Mildred stands at water’s edge, foraging in the wild reeds. Strawn nods reservedly. She heads "
+    },
+    {
+      "number": 31,
+      "heading": "EXT. CAMPSITE -- NIGHT",
+      "characters": [
+        "MILDRED",
+        "STRAWN"
+      ],
+      "dialogues": [
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Do you miss being on telly?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "No. It’s a horrible business. The people are terrible. Egomaniacs."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D) I miss it more than anything."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Who’s David? That hiker lady mentioned him."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Oh. David Blaine. Guy I used to be friends with. Until he stabbed me in the back. He stabbed me, and he stabbed me, and he"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(sardonic smirk) I sense you want to open up and tell me the entire story, in unflinching detail."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "We met doing illusions on the streets of New York. We became inseparable. He was like a big brother to me. (then)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "(CONT’D)",
+          "text": "(MORE) 45."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Twiz-ted."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "One day me and David went on a ride around Central Park in a horse- drawn carriage. We were both wearing burgundy velvet shorts. I told him I was going to do a series of TV specials. I had them all worked out, and I talked him through the whole thing. I was going to be buried alive for a week in Central Park, the very park we were riding through at the time."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "(CONT’D)",
+          "text": "(MORE) 45."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "(CONT’D)",
+          "text": "46."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "And what did you do?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "What I always do when I see something scary. I ran away."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D) I moved back in with my mom for a while. I just... couldn’t do much, you know. My show got cancelled. A year later, I slowly go back to basics. Card tricks on the street, booking gigs, parties."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "And somewhere in all this, you met my mum."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "I met your mom, yeah."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "I found my her secret diary once."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "(CONT’D)",
+          "text": "46."
+        }
+      ],
+      "actionPreview": "Another campsite has been set up near the water. Tent assembled, campfire burning. Strawn and Mildred sit fireside, eating eggs off tin plates. Strawn smirks, memories flooding back. He sours. Bullies. Greedy, soul-sucking vampires, all of them. He looks up at her, vulnerability in his eyes. He look"
+    },
+    {
+      "number": 32,
+      "heading": "EXT. TENT",
+      "characters": [
+        "MILDRED",
+        "STRAWN"
+      ],
+      "dialogues": [
+        {
+          "character": "MILDRED",
+          "parenthetical": "(O.S.)",
+          "text": "You’re wrong about one thing though."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "(O.S.)",
+          "text": "What’s that?"
+        }
+      ],
+      "actionPreview": "The tent, softly glowing in the darkness. Strawn and Mildred’s voices lilt from within --"
+    },
+    {
+      "number": 33,
+      "heading": "INT. TENT",
+      "characters": [
+        "MILDRED",
+        "STRAWN"
+      ],
+      "dialogues": [
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "You don’t run away from"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "You sure about that?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "You’re here, aren’t you? You flew to the other side of the planet to take care of a kid you barely know."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Thank you."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Now let’s get some sleep, shall we?"
+        }
+      ],
+      "actionPreview": "every scary thing. And in the wilderness , to boot. Maybe you have a backbone after all. He smiles tiredly. She reaches for the lamp."
+    },
+    {
+      "number": 34,
+      "heading": "EXT. TENT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The tent goes dark. Crickets chirp. Frogs croak. Fireflies twinkle all around. CUT TO:"
+    },
+    {
+      "number": 35,
+      "heading": "EXT. CAMPSITE -- MORNING",
+      "characters": [
+        "STRAWN",
+        "MILDRED"
+      ],
+      "dialogues": [
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "So I was thinking. We have the panther video. Shall we... maybe head home?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Yes. But there’s a hot springs I’d like to see first. You can handle another night in a tent, I hope?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Sure. What’s one more night?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Hey. There’s a place near here where we can do a scree run."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "What’s a scree run? HARD CUT TO:"
+        }
+      ],
+      "actionPreview": "Mildred and Strawn sip coffee by the glowing embers of the campfire. 47. 48. Strawn nods, reluctant, but smiling. Mildred is about to crack wise, but checks herself and consults the map, then a book. She looks to Strawn."
+    },
+    {
+      "number": 36,
+      "heading": "EXT. SCREE HILL",
+      "characters": [
+        "THE BOTTOM OF THE HILL",
+        "MILDRED"
+      ],
+      "dialogues": [
+        {
+          "character": "THE BOTTOM OF THE HILL",
+          "parenthetical": "",
+          "text": "Where they lie on their backs -- laughing, gasping for air."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "That’s"
+        }
+      ],
+      "actionPreview": "Mildred and Strawn are running down a hill comprised of loose stones, moving with incredible speed. Strawn loses his footing, rolling down the hill with Mildred. Mildred also loses her footing -- falling hard, skidding down the hill beside Strawn, towards -- a scree run. Strawn looks over to Mildred"
+    },
+    {
+      "number": 37,
+      "heading": "EXT. WATERFALL -- DAY",
+      "characters": [
+        "VOICE",
+        "ARNOLD",
+        "ANGELINA",
+        "STRAWN",
+        "MILDRED"
+      ],
+      "dialogues": [
+        {
+          "character": "VOICE",
+          "parenthetical": "(O.S.)",
+          "text": "Kia ora!"
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "and"
+        },
+        {
+          "character": "ANGELINA",
+          "parenthetical": "",
+          "text": "."
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "Kia ora."
+        },
+        {
+          "character": "ANGELINA",
+          "parenthetical": "",
+          "text": "Kia ora."
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "A father and daughter on a wee trek into the rugged wilderness of New"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Yeah. Hi."
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "My name’s Arnold. And this here is my missus, Angelina."
+        },
+        {
+          "character": "ANGELINA",
+          "parenthetical": "",
+          "text": "His long-suffering missus."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "I’m Strawn. And this is my... (stops himself)"
+        },
+        {
+          "character": "ANGELINA",
+          "parenthetical": "",
+          "text": "You’re a real American person."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Yes, I am."
+        },
+        {
+          "character": "ANGELINA",
+          "parenthetical": "",
+          "text": "I’ve never met a real American person before. I watch a lot of"
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "All she does is watch those bloody"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "They can be addictive. That’s why they end with cliffhangers. It’s to make you desperate to watch the next episode. It’s to get you to watch commercials, basically."
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "So. How are you finding New"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "I quite like it, I think."
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "We’re heading down to a lake that looks like it’s made of glass. Yes, it really is that glossy. Come on, walk with us. I could do with some grown-up conversation."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "So could I."
+        }
+      ],
+      "actionPreview": "Mildred and Strawn walk beside a roaring waterfall, admiring its ferocious majesty. 48. 49. Then, a man’s VOICE calls from somewhere -- They turn, seeing -- A COUPLE (40s) trudging towards them, in hiking gear, carrying backpacks. Meet They approach. Arnold is Irish, Angelina a New Zealander -- Mild"
+    },
+    {
+      "number": 38,
+      "heading": "EXT. TRAIL",
+      "characters": [
+        "ANGELINA",
+        "MILDRED",
+        "AHEAD",
+        "ARNOLD",
+        "STRAWN"
+      ],
+      "dialogues": [
+        {
+          "character": "ANGELINA",
+          "parenthetical": "",
+          "text": "So, tell me everything. What’s it like growing up in America?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "I’d love to tell you, but since I’ve never set foot on American soil, I don’t have a bloody clue."
+        },
+        {
+          "character": "ANGELINA",
+          "parenthetical": "",
+          "text": "But your dad..."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "He"
+        },
+        {
+          "character": "ANGELINA",
+          "parenthetical": "",
+          "text": "You don’t want to live there with him? If I was a kid, I’d rather live in America than boring old New"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Let’s see. I don’t like assault rifles. I don’t like high-fives. I don’t like corn syrup. I don’t like people who say “hell yeah” or “buddy”. And I despise the word “dude” with every atom of my being. (then) I’m not sure America has much to offer me."
+        },
+        {
+          "character": "ANGELINA",
+          "parenthetical": "",
+          "text": "You don’t..."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Talk like a normal child. I know."
+        },
+        {
+          "character": "AHEAD",
+          "parenthetical": "",
+          "text": "Strawn walks alongside Arnold."
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "So. What’s your trade?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Me? I’m an illusionist."
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "Like a magician?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Yeah."
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "Like David Blaine? I just adore that man. He’s literally magical."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(stung)"
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "Me? I’m a heart surgeon. Not to toot my own trombone, but I’m one the top five leading heart surgeons in all of Oceania."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Wow. I’m impressed by that. 51."
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "A lot of people are. And rightly so. It’s an impressive job to have. I literally save lives. Lives would literally end if I didn’t intervene. So if anything,"
+        }
+      ],
+      "actionPreview": "Mildred walks beside Angelina, making chit-chat. lives there. I live here. Zealand. 50. 51. Angelina looks at her in confusion and bewilderment. League of his own. Nobody else comes close, or even close to close. Yeah. What about you? 52. I’m the real magician here. No offense. They walk on. DISSOLV"
+    },
+    {
+      "number": 39,
+      "heading": "EXT. LAKE",
+      "characters": [
+        "ARNOLD",
+        "STRAWN",
+        "ANGELINA",
+        "MILDRED",
+        "I..."
+      ],
+      "dialogues": [
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "She’s good with kids. They love her, they do. It’s a natural parental warmth she radiates. Some people have it... (looking at Strawn) ... some people don’t. (then) I’m sure you do, though."
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "(CONT’D) I have to tell you something, mate."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "What’s that?"
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "You have to promise you’ll stay cool, calm and collected."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "I think I can do that."
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "Promise?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Yeah. Sure. I promise."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "I’ve kidnapped your daughter."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Excuse me?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D) I don’t..."
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "It may not look like a kidnapping, in the conventional sense... but a kidnapping is exactly what’s happening here."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "I don’t understand..."
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "Well, try to keep up. The girl is now in our custody. I’m about to state a few demands. If said demands aren’t met, the girl will remain in our custody. And we actually might drown her, because she’s not exactly the kind of child you’d want to keep around. Sorry."
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Do you really? 53."
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "Yes. I do."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Are you telling the truth?"
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "I am, actually."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "I don’t believe you."
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "You should believe me."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Do a karate move then."
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "I’m not a performing monkey. I’m not doing a karate move on command."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Yeah, because you don’t know karate."
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "I"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "I"
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "Fine. I won’t do a karate move."
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Yeah."
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "Is it green? 54."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "Is it yellow?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "Is it red?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "Tell me honestly. What color is that belt?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(resigned)"
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "That’s right. The belt is black. As in: it’s a black belt. As in: I could karate seven shades of crap out of you if I wanted to. Now, currently, as it happens, I don’t particularly"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Yeah."
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "Okay. Down to business. Down to the real nitty gritty of things. You’re probably wondering what I want from yous."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "What do you want from me?"
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "Your valuables. 55."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "You’re not actually serious..?"
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "I am actually serious. I’m actually incredibly serious. If you want your darling daughter back, I’ll require your stuff."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Wait, wait. What is this?"
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "Have you heard of a blood transfusion?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "What? Yes."
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "This is a stuff transfusion. Your stuff is now my stuff. You can start by handing over your mobile. I believe you yanks call them “cellular phones”."
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Please... you don’t have to--"
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "Passcode. I’ve asked for it twice."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "1981. It’s the year I was born."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "I wasn’t actually planning on looking at your photos. But now that you’ve said that, I just"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "No, please. Don’t."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "There are pumps for that, and I’m told they actually work."
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Please don’t do this. It’s my daughter’s. It means a lot to her."
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "And now it’ll mean a lot to me."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "I’ll call the cops. I know your names."
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "Arnold and Angelina. Where have you heard those names before? Think."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "I don’t know. Arnold Schwarzenegger and Angelina Jolie? 57."
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "Bingo. What do they have in common?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "They’re... actors."
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "And what do actors do?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(realizing)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D) I know your job. One of the leading heart surgeons in... (resigned)"
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "Why would a heart surgeon need to relieve hikers of their valuables?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "I know what you both look like. The cops will do a composite sketch."
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "When we get home, I’m going to shave my mustache off. I look completely different without it."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "And Angelina?"
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "She’ll shave hers off too."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "You’re both bastards."
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "We"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "That’s not what I meant and you know it."
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "Wallet. Hand it over. 58."
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ANGELINA",
+          "parenthetical": "",
+          "text": "All done?"
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "Yep. It was a relatively painless operation."
+        },
+        {
+          "character": "ANGELINA",
+          "parenthetical": "",
+          "text": "Nice rod."
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "(winking at Strawn)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(to Angelina)"
+        },
+        {
+          "character": "ANGELINA",
+          "parenthetical": "",
+          "text": "My nephew is desperate for a fishing rod. That’s his birthday pressie sorted. Cheers."
+        },
+        {
+          "character": "ANGELINA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "You’re a criminal mastermind, love."
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ANGELINA",
+          "parenthetical": "",
+          "text": "You don’t want to know what he charged"
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "I’m sorry, mate. Nothing personal."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "What if I come after you?"
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "You don’t seem the type. Let’s be honest."
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ANGELINA",
+          "parenthetical": "",
+          "text": "Kia ora."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "No..."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Where’d they go? 60."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D) I said where’d they go?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "I have to tell you something."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "You’re going to get mushy too? Look at us. It’s like we’re in a detergent commercial. Sickening."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "I have to tell you something, and you have to promise you’ll stay cool, calm and collected."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Alright."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Promise?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Yes. I promise."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "They robbed us."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Pardon me?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "They kidnapped you."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Good one, Strawn. Very funny."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "They held you to ransom. They took my phone, my money. The map. The matches. The fishing rod... (pained) ... your camera."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D) I know it didn’t feel like a kidnapping, but that’s what just happened. All we have left is the tent and our sleeping bags."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Don’t. The contents of your stomach just quadrupled in value."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "They took everything... the camera... the proof..."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "And you just"
+        },
+        {
+          "character": "I...",
+          "parenthetical": "",
+          "text": "62."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "You just handed it over, on a silver platter."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "I’m so sorry."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Do I need to remind you that that fifty thousand was going to save mum and me from becoming another depressing welfare statistic? It was going to save our"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "You hate me, don’t you?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "More than you could possibly imagine."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D) I actually can’t even put into words how much hate I’m feeling towards you right now. You know what? I can’t stand the sight of you. Your idiotic eyeliner and your crap low-budget TV magician clothes. And your greasy ratty hair, and those big dumb dopey donkey eyes. You know what? You need to move away from me, right now."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "What was I supposed to do? He was a karate master, and--"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Move. Away. From. Me. Now."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Mildred... be serious..."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "I’m dead serious. At least 20 paces. Like we’re in a duel. Now go. Move away. I can’t stand the sight of you. Vacate my eyeline entirely. Go!"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "It all makes sense now."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "What makes sense?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Now I know why you don’t have any friends at school and your mom never wants to take you camping."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(shocked)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "This whole trip, you’ve been nothing but a Grade-A D-bag."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Yeah? Takes one to know one."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "A pretentious, prickly little..."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "I know you are, but what am I?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "You know something?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "You’re an asshole."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D) 1.2.3.4.5.6.7..."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "(O.S.)",
+          "text": "(CONT’D) 32.33.34.35.36....."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "(O.S.)",
+          "text": "(CONT’D) 45.46.47.48.49.50"
+        }
+      ],
+      "actionPreview": "Mildred and Angelina skim stones at the sandy shore of a glittering blue lake. Strawn and Arnold sit beside each other on a large rock nearby, drinking coffee. Strawn looks at Mildred and Angelina, with a twinge of jealousy. Strawn sighs, trying to smile. After some thought, Arnold turns to Strawn w"
+    },
+    {
+      "number": 40,
+      "heading": "EXT. WOODS",
+      "characters": [
+        "STRAWN"
+      ],
+      "dialogues": [
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Someone there?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "Strawn storms off deeper into the woods. He stops counting his paces. He looks around... WIND howls through the trees. Twigs snap around him, echoing. An unseen bird lets out a chilling screech. He picks up his pace, descending deeper into the woods, which darken all around him. A low guttural GROWL"
+    },
+    {
+      "number": 41,
+      "heading": "EXT. CLEARING",
+      "characters": [
+        "MILDRED",
+        "STRAWN"
+      ],
+      "dialogues": [
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "What’s the matter, Mister Twizted"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Now, listen to me and listen carefully. The way I see it, we have two options."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Yeah? And they are..?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Live or die. It really is that simple, Strawn. We can live, or we can die. I don’t know about you, but I’d quite like to live. And I plan on getting that fifty grand back, too. With or without you."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "We’re days from anywhere. We have no map, no food, no fishing rod, no matches. They took--"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Everything. They took everything."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "So. What now?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Are you familiar with Maslow’s hierarchy of needs?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Is that an album? Like classical music, or something?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Abraham Maslow. 1943. The hierarchy of needs. At the base of the pyramid, the fundamental physiological human needs. The very foundations of survival: shelter, warmth, food, and water."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Can I what? HARD CUT TO:"
+        }
+      ],
+      "actionPreview": "Mildred inhales deeply, eyes closed, regaining her composure. Then -- Strawn sheepishly re-emerges from the brush, hair a mess, covered in leaves and twigs, clothes soaked in muddy water. Illusions? You got scared in the big dark spooky woods? He sags, defeated. Okay, yeah. I did. I heard some creep"
+    },
+    {
+      "number": 42,
+      "heading": "EXT. LAKE -- LATER",
+      "characters": [
+        "MILDRED",
+        "STRAWN"
+      ],
+      "dialogues": [
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Keep going."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "You sure about that?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Yes, I’m sure about that. 68."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "I’m just saying, it doesn’t look like--"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Silence. I need to concentrate. Go and whittle."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(winks)"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Alright. I’ll give you that one."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "I’m sorry. I really don’t think I’m very good at whittling."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "No, I didn’t think you would be."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "What? Why?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "I wanted to give you a task to focus on, something to occupy your mind. I’m glad I did. You’ve calmed down, haven’t you?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "We’re still stranded out here."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "I’m afraid we’re going to have a very salmon-heavy diet over the next few days."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "You really think you can..."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Look at this great big bugger..!"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Oh god... I can’t watch."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(sombre) I’m sorry, mate. I really am."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "It’s okay..."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "I was talking to the fish."
+        }
+      ],
+      "actionPreview": "Mildred finishes erecting the tent. She looks to Strawn, who is attempting to whittle a tree branch into a spear. It’s not going well. Strawn nods, continuing. The “spear” is uneven, ragged, poorly done. Mildred gets up, assembling a camp fire with care. She tries rubbing two sticks together, to no "
+    },
+    {
+      "number": 43,
+      "heading": "EXT. CAMPSITE -- NIGHT",
+      "characters": [
+        "MILDRED",
+        "STRAWN"
+      ],
+      "dialogues": [
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(posh Brit accent)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Very funny, Mildred. God. I’d kill for a cup of tea right now."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Piper Excelsum . Known around these parts as Kawakawa."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Kawakawa..."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "It has powerful antiseptic properties, and it happens to taste scrump-diddly-umptious too. Sling that down your gullet."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "It’s good. It’s"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "You know, Strawn... I don’t think less of you."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "That’s what you’re thinking, isn’t it? You failed to be a man. You crapped the bed as a protector. (MORE) 71."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "(CONT’D)",
+          "text": "72."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Is that what you think?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "No, that’s what I think"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Which part of it isn’t true? I really messed this up, didn’t I?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D) (bitter) I just let him take everything. I"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Are you talking about Arnold, or"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Mildred. Hey..."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(turns)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "I’m going to look after you."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "(CONT’D)",
+          "text": "72."
+        }
+      ],
+      "actionPreview": "The mellow fire softly crackles. Mildred and Strawn eat roasted salmon chunks, drinking boiled water from tin cans. Strawn stares into the flames, lost. Fancy a spot of tea, old chap? Mildred gets up, wandering over to a bush. She plucks a few leaves off. She then returns to her position by the fire"
+    },
+    {
+      "number": 44,
+      "heading": "INT. TENT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "In the murky half-light, Mildred sleeps, snoring loudly. Strawn lies beside her, wide awake, thinking. CUT TO:"
+    },
+    {
+      "number": 45,
+      "heading": "EXT. WOODS",
+      "characters": [
+        "MILDRED",
+        "STRAWN"
+      ],
+      "dialogues": [
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "See those mushrooms there?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Why? What happens?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Full body numbness. Powerful hallucinations. Total freakout."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Sounds fun."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D) I’m obviously kidding. Don’t ever take drugs. Drugs are bad. Drugs tear families and communities apart."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Here we go."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D) I’ve always wanted to try these."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Why? They look absolutely disgusting."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "You know what looks absolutely disgusting?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Corpses that have succumbed to starvation in the wilderness. (then)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Okay."
+        }
+      ],
+      "actionPreview": "Strawn and Mildred, back-packs on, walk through misty woods in silence. Mildred crouches when she sees -- An area filled with wild mushrooms. She unpockets the knife, cutting the fungi loose, gathering them. She points to a clump of brownish conical MUSHROOMS growing out of a damp tree stump -- Stra"
+    },
+    {
+      "number": 46,
+      "heading": "EXT. FIELD -- DUSK",
+      "characters": [
+        "STRAWN",
+        "MILDRED"
+      ],
+      "dialogues": [
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Hey. What is it?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "I have to tell you something. It’ll change the way you look at me forever, probably. But I have to just say it. 74."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Okay..."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "I used to wish my mum would just disappear. I’d lie awake at night, just hoping she’d not be there when I woke up. And then you’d come, and we’d be together. And you’d understand me. Really understand me, like she never could. And we’d do stuff together. All the things mum is too scared to do. Like go camping. Hunting. Fishing. The stuff of adventures."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Here. Wipe those eyes. Hold on, I have a hankie..."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "I’m sorry. Now might be a good time to admit something atrocious about yourself."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "David Blaine didn’t screw me over."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "But..."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "He asked me to be his partner on his show. He wanted us to be the new Penn and Teller. And I chickened out. I got scared. I said no."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "(CONT’D)",
+          "text": "76. I see something scary, I run away."
+        }
+      ],
+      "actionPreview": "Mildred trudges on, mind racing, still plagued by fear and worry. Strawn struggles to keep up. Strawn finally catches up to her. She looks tormented, mind racing. He looks to her -- She thinks. Insects scream all around. Mildred? Are you okay..? (MORE) 75. She sighs. Strawn considers this, shocked. "
+    },
+    {
+      "number": 47,
+      "heading": "INT. HOSPITAL ROOM -- NIGHT",
+      "characters": [
+        "ZO"
+      ],
+      "dialogues": [
+        {
+          "character": "ZO",
+          "parenthetical": "",
+          "text": "IS THIS WHAT YOU WANTED!? IS IT!?"
+        }
+      ],
+      "actionPreview": "Mildred’s mother ZO lies unconscious in bed, EKG monitor beeping. She’s still, peaceful. Until, suddenly -- She BOLTS UP in bed -- eyes manic, staring RIGHT AT US, screaming angrily -- Suddenly -- JONESIE THE CAT bounds onto the bed beside her, claws bared, emitting a deafening HISS as we -- SMASH T"
+    },
+    {
+      "number": 48,
+      "heading": "INT. TENT -- NIGHT",
+      "characters": [
+        "STRAWN",
+        "MILDRED"
+      ],
+      "dialogues": [
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "What? What is it?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "(CONT’D)",
+          "text": "76."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "I had a bad dream and now I need a wee. I don’t want to go on my own."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Yeah. Sure. Okay."
+        }
+      ],
+      "actionPreview": "Mildred WAKES with a gasp, cutting the nightmare short. She sits up, breathing hard, eyes wild. She grabs Strawn’s arm, shaking it -- Strawn stirs awake, looking up at her, confused -- She just looks at him, embarrassed. If you’re going to wake me up in the middle of the night, at least tell me why."
+    },
+    {
+      "number": 49,
+      "heading": "EXT. TENT -- DAWN",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The sky is bruise-purple, pre-dawn. Birds chatter in the trees. Strawn and Mildred emerge from the tent. Strawn pulls on his boots, heaving and huffing tiredly."
+    },
+    {
+      "number": 50,
+      "heading": "EXT. HILLSIDE",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "In the half-light -- Mildred and Strawn traipse up a hillside in silence."
+    },
+    {
+      "number": 51,
+      "heading": "EXT. WOODS",
+      "characters": [
+        "MILDRED",
+        "TENT",
+        "STRAWN"
+      ],
+      "dialogues": [
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Stay here."
+        },
+        {
+          "character": "TENT",
+          "parenthetical": "",
+          "text": ", illuminated from within. Two shadowy forms are discernible inside. Their hands move, gesticulating."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Yeah..?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "It’s them."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Who?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "John, Paul, Ringo and George. Who’d you"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "What do we do?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Isn’t it obvious?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Obvious? No, it’s not obvious. It’s actually very far from obvious."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "I’m going to pick a fight."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Hold on!"
+        }
+      ],
+      "actionPreview": "Dark woods, damp from yesterday’s downpour. Strawn and Mildred approach a clump of bushes. Strawn yawns, nodding. Mildred heads into the bushes. Strawn moves to the edge of the woods, looking out at the vast dim expanse beyond. And there, at the bottom of the hillside -- A Mildred walks to Strawn’s "
+    },
+    {
+      "number": 52,
+      "heading": "EXT. TENT",
+      "characters": [
+        "MILDRED",
+        "ARNOLD",
+        "ANGELINA",
+        "STRAWN",
+        "AT THE TENT",
+        "INSIDE THE TENT",
+        "BEHIND THEM"
+      ],
+      "dialogues": [
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(whispered)"
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "(O.S.)",
+          "text": "I know you’ve been seeing Ronnie"
+        },
+        {
+          "character": "ANGELINA",
+          "parenthetical": "(O.S.)",
+          "text": "Christ, not this again. He’s just a friend."
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "(O.S.)",
+          "text": "Why did I find his laser-pointer under our bed, then?"
+        },
+        {
+          "character": "ANGELINA",
+          "parenthetical": "(O.S.)",
+          "text": "Now, hold up. I can explain."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(whispered)"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(whispered)"
+        },
+        {
+          "character": "ANGELINA",
+          "parenthetical": "(O.S.)",
+          "text": "Look. I’m knackered. Tiring business, kidnapping and extortion. I need to sleep. Can we iron this out in the morning?"
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "(O.S.)",
+          "text": "You’re a deep-fried anus on a stick. And so is Ronnie Reynolds."
+        },
+        {
+          "character": "ANGELINA",
+          "parenthetical": "(O.S.)",
+          "text": "Oh, you silver-tongued devil. Sweet dreams to you too."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "You’re not"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "I’m"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "What, and lead them straight to our headquarters?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Yeah. You’re totally right."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "What if they catch us?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "They won’t."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Why?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Because I’m going to steal their boots and snap the tent zipper off."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "That is officially the craziest thing I’ve ever heard."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "I know. I’m bloody jazzed too."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Wait, wait, wait..."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "No, no, no... 80."
+        },
+        {
+          "character": "AT THE TENT",
+          "parenthetical": "",
+          "text": "Mildred drops to a crawl. She listens carefully --"
+        },
+        {
+          "character": "INSIDE THE TENT",
+          "parenthetical": "",
+          "text": "Arnold and Angelina are asleep in separate sleeping bags."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Watches the tent nervously, nibbling his fingernail, muttering to himself."
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "(O.S.)",
+          "text": "What the hell!? Wake up, Syd!"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Go! Run!"
+        },
+        {
+          "character": "BEHIND THEM",
+          "parenthetical": "",
+          "text": "Arnold bursts out of the tent, ripping the zipper seam apart, shouting with rage..."
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "Come back here"
+        }
+      ],
+      "actionPreview": "Mildred hides behind a bush, close to the tent. Strawn scrambles to her side, breath fast and shallow. He’s about to speak, but Mildred motions him to hush. Shh. Listen... Strawn leans forward, peering out at the tent. 78. 79. Arnold and Angelina’s VOICES emanate from within -- a heated argument is "
+    },
+    {
+      "number": 53,
+      "heading": "EXT. FIELD",
+      "characters": [
+        "STRAWN",
+        "MILDRED",
+        "BEHIND THEM",
+        "ARNOLD",
+        "MILDRED AND STRAWN"
+      ],
+      "dialogues": [
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(breathless)"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(breathless)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "How can you be so sure!?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Look at the ground!"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BEHIND THEM",
+          "parenthetical": "",
+          "text": "Arnold runs onto the jagged gravel, instantly falling, clasping his feet in agony, screaming --"
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "Bastarding ballsacks --"
+        },
+        {
+          "character": "MILDRED AND STRAWN",
+          "parenthetical": "",
+          "text": "Speed up, giggling maniacally, stealing glances back at their felled pursuer --"
+        }
+      ],
+      "actionPreview": "Strawn and Mildred run -- desperate, frantic -- He’s going to catch us! No he’s not! Strawn looks down as he runs -- beneath his feet, grass gives way to sharp jagged GRAVEL -- Not ideal terrain for barefoot running, I’m sure you’ll agree! Strawn smiles, wild-eyed, as they race towards the hills -- "
+    },
+    {
+      "number": 54,
+      "heading": "EXT. CLIFF",
+      "characters": [
+        "ARNOLD",
+        "MILDRED",
+        "STRAWN",
+        "CAMERA FOOTAGE",
+        "ANGELINA"
+      ],
+      "dialogues": [
+        {
+          "character": "ARNOLD",
+          "parenthetical": "(O.S.)",
+          "text": "Listen, you muppets! It wasn’t personal before, but it’s highly personal now! I’m going to find you and I’m going to use lethal karate moves on you both! I’m not bluffing!"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "I’ve made a catastrophic blunder."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "What? Why?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "I appear to have led us to a cliff edge."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "We can just slowly amble back to our tent now, right?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Not yet. Wait a minute."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CAMERA FOOTAGE",
+          "parenthetical": "",
+          "text": "POV of Arnold in the tent, tiredly staring right at us."
+        },
+        {
+          "character": "ANGELINA",
+          "parenthetical": "(O.S.)",
+          "text": "This is a pukka little camera."
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "Do I look as handsome as Ronnie"
+        },
+        {
+          "character": "ANGELINA",
+          "parenthetical": "(O.S.)",
+          "text": "Now wait just a mi--"
+        }
+      ],
+      "actionPreview": "They run to the top of the hill. Mildred’s face falls as she scans the terrain ahead -- They slow down, catching their breath. Arnold’s voice echoes from somewhere in the distance -- Mildred looks to Strawn. Strawn looks ahead -- They are, indeed, at the precipice of a vertiginous cliff- edge, preca"
+    },
+    {
+      "number": 55,
+      "heading": "EXT. CLIFF",
+      "characters": [
+        "MILDRED",
+        "STRAWN",
+        "THE PANTHER",
+        "ROARS"
+      ],
+      "dialogues": [
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "No... They recorded over it..."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Fifty grand, gone... again."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(whispering)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "What could"
+        },
+        {
+          "character": "THE PANTHER",
+          "parenthetical": "",
+          "text": "CAMOUFLAGED IN NEARBY BUSH, BLOCKING THEIR PATH, yellow EYES fixed on them, a rope of saliva swinging from its maw -- 84."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Yeah. That’s quite pressing."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "My thoughts exactly."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "What do we do? Make ourselves big and loud? Or was it quiet and still?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "No. He’s hungry. They get bold when they’re hungry. They take risks."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Oh god..."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "As far as"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Maybe there’s food in their bag."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Reach in and have a look."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Do panthers eat ham sandwiches?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Let’s find out."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(whispered) I have a dumb question."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(whispered)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Okay. Can panthers climb ropes?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "No, they can’t."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ROARS",
+          "parenthetical": "",
+          "text": ", ready to pounce..."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "Mildred, glassy-eyed, pushes STOP on the camera. Mildred lowers the camera, face constricted in rage. She’s about to speak, but suddenly freezes, noticing SOMETHING -- Strawn... we may have more pressing issues right now. possibly be more pressing than this? Mildred puts her finger to her lips. Stra"
+    },
+    {
+      "number": 56,
+      "heading": "EXT. ROPE BRIDGE",
+      "characters": [
+        "STRAWN",
+        "MILDRED",
+        "FRAYING",
+        "SNAP",
+        "THE PANTHER",
+        "SCREAMING"
+      ],
+      "dialogues": [
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Move! Lets go! Quick!"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Wait, wait."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "What is it? What’s wrong?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Stop moving."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Because..?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "I think I can film it."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Are you kidding? You’re going to get us killed... get across, NOW!"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "But what if it disappears?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "There’s a time and a place for filming wildlife, and guess what?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "I can’t hold on... my hands are slipping..."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "You can do it... keep going... 87."
+        },
+        {
+          "character": "FRAYING",
+          "parenthetical": "",
+          "text": "--"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(looking back) I don’t like this..."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "No, no..."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "I can’t hold on! Help!"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "I’ve got you. I’ve got you."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D) I told you I had the wrist strength of a professional wrestler. Did you believe me?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Honestly... no."
+        },
+        {
+          "character": "SNAP",
+          "parenthetical": "",
+          "text": "more!"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "THE PANTHER",
+          "parenthetical": "",
+          "text": "At the precipice, growls and swats at the rope --"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Tries to reach Mildred’s flailing HAND --"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Stop moving. Stay calm. I’ve got you. Hey... (simmering) I’ve got you."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D) HOLD ON!"
+        },
+        {
+          "character": "SCREAMING",
+          "parenthetical": "",
+          "text": "--"
+        },
+        {
+          "character": "THE PANTHER",
+          "parenthetical": "",
+          "text": "Cocks its head, confused by their sudden disappearance. It turns, creeping off, gone. CUT TO:"
+        }
+      ],
+      "actionPreview": "Mildred and Strawn grab the rope, gripping on for dear life, bodies flailing, legs kicking -- narrowly evading -- THE PANTHER, who pounces to the cliff edge, CLAWS swatting futilely, ROARING in anger -- It’s not now, and it’s not here! Mildred starts climbing underneath the rope, monkey-bar style. S"
+    },
+    {
+      "number": 57,
+      "heading": "EXT. RAVINE",
+      "characters": [
+        "STRAWN",
+        "SCREAMING",
+        "MILDRED"
+      ],
+      "dialogues": [
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(delirious)"
+        },
+        {
+          "character": "SCREAMING",
+          "parenthetical": "",
+          "text": ", ringing out from somewhere close -- loud and desperate --"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Please! Help!"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Jesus..."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Help me... help me... please oh god help me..."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "It’s going to be okay, Mildred."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(pained, breathless)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Oh Jesus."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(breathless)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "What? 90."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Mushrooms."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Why are you talking about mushrooms?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "For... the pain..."
+        }
+      ],
+      "actionPreview": "STRAWN’S FACE . Pale, eyes half-open, drifting in and out of consciousness, muttering to himself in a daze -- Get a drink... have a good time now... welcome to paradise... He’s lying on his back at the bottom of the ravine, a small bloody wound on his forehead. He blinks, regaining consciousness, di"
+    },
+    {
+      "number": 58,
+      "heading": "EXT. WOODS",
+      "characters": [
+        "STRAWN"
+      ],
+      "dialogues": [
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Mushrooms... mushrooms... come on, where are you?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D) I’m not scared... I’m not scared... I’m not scared..."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "Strawn rushes into the woods, frantically scanning for fungi. He walks deeper into the woods, which seem to darken with each step he takes. Twigs snap somewhere. A low howl... wind, or beast? He steels himself, muttering, burying the fear... He steps forth, coming face-to-face with -- Another WETA, "
+    },
+    {
+      "number": 59,
+      "heading": "EXT. RAVINE",
+      "characters": [
+        "STRAWN",
+        "MILDRED",
+        "HER POV",
+        "REALITY",
+        "WHITE."
+      ],
+      "dialogues": [
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "I got them all. Just nod which ones are the magic ones when I hold them up, okay?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "... hold... hold my hand..."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "I’m so sorry."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D) I guess this is better than being a panther’s bangers and mash, though."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "I think it’s starting to work. I feel fizzy. Like I’ve got Lemon &"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "I’m thinking that between getting you kidnapped and feeding you psychedelics, I’ve secured my place on the Mount Rushmore of disappointing dads."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Oh, your place was secured long before all of that."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D) I’m kidding. It’s great. It’s all great.... You’re great. I’m great."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "(CONT’D)",
+          "text": "94."
+        },
+        {
+          "character": "HER POV",
+          "parenthetical": "",
+          "text": "-- the sky brightens, deepens, streaks of light emanating from the sun like glowing tendrils."
+        },
+        {
+          "character": "REALITY",
+          "parenthetical": "",
+          "text": "-- she looks at Strawn. She suddenly bursts into a fit of breathless giggling."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "What’s so funny?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Light waves. They’re hilarious, aren’t they?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Oh god... did I give you too much? I gave you too much, didn’t I?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Can you pop my elbow back into place now?"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "How?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "You know how it doesn’t look like a normal arm now? Just make it look like a normal arm. Make it straight. Pop. Snap. Straight."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(stunned)"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "What? Nothing."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "You called me dad."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "(CONT’D)",
+          "text": "94."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "No I didn’t."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Yes you did."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Really? (smiles) I"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Ready?"
+        },
+        {
+          "character": "HER POV",
+          "parenthetical": "",
+          "text": "-- Strawn glows, celestial, reality throbbing and undulating --"
+        },
+        {
+          "character": "REALITY",
+          "parenthetical": "",
+          "text": "-- Strawn looks down at her, then to the tree on her legs."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "(CONT’D) I can’t do it... it’s too heavy."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "No it’s not."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "I can’t do it."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Ace of Hearts..."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "What..?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "The one you threw... at the window... remember? I lied... I was just winding you up... that"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D) (fading)"
+        },
+        {
+          "character": "HER POV",
+          "parenthetical": "",
+          "text": "-- through swirling pulsating light, Strawn clasps the tree tight -- MILDRED watches, eyes wide, rapt..."
+        },
+        {
+          "character": "HER POV",
+          "parenthetical": "",
+          "text": "-- Strawn strains to lift the tree... MILDRED watches. Tears well in her eyes..."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "HER POV",
+          "parenthetical": "",
+          "text": "-- Strawn, as if by magic, begins to RISE OFF THE GROUND, clasping the tree... MILDRED stares up at him, in disbelief --"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "HER POV",
+          "parenthetical": "",
+          "text": "-- STRAWN RISES, levitating, tree held in his arms -- he rises, higher and higher, casting the tree aside with ease."
+        },
+        {
+          "character": "WHITE.",
+          "parenthetical": "",
+          "text": "Endless, infinite, pristine."
+        }
+      ],
+      "actionPreview": "Strawn rushes back to Mildred, mushrooms in his hands -- Her face is clenched in pain, skin pale and sweaty. She stares at the mushrooms, nodding at a clump of brownish conical ones when Strawn raises them -- How much? Mildred is nearly passing out from pain, forcing Strawn to make a fast judgement "
+    },
+    {
+      "number": 60,
+      "heading": "EXT. MEADOW -- DAY",
+      "characters": [
+        "MILDRED",
+        "STRAWN"
+      ],
+      "dialogues": [
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(whispered, rasped) I’ve had... enough of camping. Take ... me home..."
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "What’s the magic word?"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "I love you... with all my heart..."
+        }
+      ],
+      "actionPreview": "Strawn, cradling the sleeping Mildred in his arms, wading through long grass. His face is haggard and bloody, lips cracked. He moves with purpose and resolve. Mildred stirs in his arms. Her eyes blearily open. She looks up at him, vulnerable, a child... a real child. 96. 97. He smiles tiredly. He lo"
+    },
+    {
+      "number": 61,
+      "heading": "EXT. PARKING AREA",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Strawn carries Mildred through woodlands, struggling, each step an arduous effort."
+    },
+    {
+      "number": 62,
+      "heading": "EXT. PARKING LOT",
+      "characters": [
+        "ARNOLD",
+        "ANGELINA"
+      ],
+      "dialogues": [
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "I drive!"
+        },
+        {
+          "character": "ANGELINA",
+          "parenthetical": "",
+          "text": "It was"
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "You’re carrying on with Ronnie"
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "(CONT’D) I drive! I drive! I DRIVE!"
+        },
+        {
+          "character": "ANGELINA",
+          "parenthetical": "",
+          "text": "Oh shut up, Jethro. Just shut up and stay shut up forever."
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "You stay shut up forever."
+        },
+        {
+          "character": "ARNOLD",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "He carries her onto the threshold of the small parking lot. In it, a JEEP is idling. Nearby -- ARNOLD AND ANGELINA are standing, in the midst of an argument, oblivious to Strawn and Mildred’s presence. your fault we lost them, so I get to drive. Reynolds, so I get to drive! Behind them -- Strawn sil"
+    },
+    {
+      "number": 63,
+      "heading": "INT. JEEP",
+      "characters": [
+        "STRAWN"
+      ],
+      "dialogues": [
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "It’s okay... everything’s going to be okay... I promise..."
+        }
+      ],
+      "actionPreview": "Strawn drives fast, pedal to the metal. He glances at the half-asleep Mildred in the rear-view mirror --"
+    },
+    {
+      "number": 64,
+      "heading": "EXT. MOUNTAIN ROAD",
+      "characters": [
+        "FROM ABOVE"
+      ],
+      "dialogues": [
+        {
+          "character": "FROM ABOVE",
+          "parenthetical": "",
+          "text": ": The car tears off down a vertiginous winding road, kicking up dust --"
+        }
+      ],
+      "actionPreview": ""
+    },
+    {
+      "number": 65,
+      "heading": "INT. JEEP",
+      "characters": [
+        "STRAWN",
+        "MILDRED",
+        "THE PANTHER",
+        "OVER BLACK"
+      ],
+      "dialogues": [
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Smile for your Mum. She’ll never believe this."
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "(pained)"
+        },
+        {
+          "character": "THE PANTHER",
+          "parenthetical": "",
+          "text": "Standing motionless in the road, right up ahead --"
+        },
+        {
+          "character": "STRAWN",
+          "parenthetical": "",
+          "text": "Look out!"
+        },
+        {
+          "character": "OVER BLACK",
+          "parenthetical": "",
+          "text": "A deafening cacophony -- metal crushed, glass shattered."
+        }
+      ],
+      "actionPreview": "Strawn, one hand on the wheel, grabs his recovered iPhone, attempting to shoot a video of Mildred whilst driving -- Shouldn’t you be watching the road? Dad! Strawn turns, looking forward -- eyes wide as he sees -- about to get hit -- Strawn swerves hard to avoid the beast, as we -- SMASH TO BLACK: S"
+    },
+    {
+      "number": 66,
+      "heading": "INT. HOSPITAL ROOM",
+      "characters": [
+        "CREDITS ROLL",
+        "IPHONE CAMERA FOOTAGE",
+        "MILDRED",
+        "THE END."
+      ],
+      "dialogues": [
+        {
+          "character": "CREDITS ROLL",
+          "parenthetical": "",
+          "text": "Credits begin, but are interrupted by STATIC VIDEO FUZZ, resolving into --"
+        },
+        {
+          "character": "IPHONE CAMERA FOOTAGE",
+          "parenthetical": "",
+          "text": "We see MILDRED IN THE CAR, panicked, staring past the lens --"
+        },
+        {
+          "character": "MILDRED",
+          "parenthetical": "",
+          "text": "Shouldn’t you be watching the road?"
+        },
+        {
+          "character": "THE END.",
+          "parenthetical": "",
+          "text": "99."
+        }
+      ],
+      "actionPreview": "Mildred’s eyes open, adjusting to the fluorescent light. She’s on a hospital bed, face scraped up, head bandaged, leg in a plaster cast. She slowly glances to her right -- STRAWN sleeps peacefully on a bed next to hers. His legs are elevated in plaster casts. Mildred looks to her left -- Mother ZO, "
+    }
+  ]
+}

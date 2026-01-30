@@ -1,0 +1,22 @@
+{
+  "slug": "big",
+  "title": "Big",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 8076,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "Big <b>SCENE 1 </b> <b>JOSH </b>You are standing in the cavern of the evil wizard.  All around you are the carcasses of slain ice dwarfs...Melt the wizard.  What do you want to melt him with?  What do you think I want to melt him with...(Josh, don't forget to take out the garbage)  Just a second!  Throw the...(Josh, did you hear what your mother said?)  One minute!  (Josh Baskin!)  Your hesitancy has cost you dearly.  The wizard, sensing your apprehension, unleashes a fatal blow from the ice sce",
+      "dialogue_count": 0,
+      "word_count": 8076
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "slug": "color-purple-the",
+  "title": "Color Purple, The",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 27761,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                        THE COLOR PURPLE </b> Screenplay By Marcus Gardley Based on the novel by Alice Walker Based on the Musical Stage Play, Book (of the Musical Stage Play) by Marsha Norman Music & Lyrics by Brenda Russell Allee Willis Stephen Bray October 31, 2023 <b>                                                             1. </b> WE HEAR A BLUEGRASS BANJO PLAY as... <b>TITLE CARD: SPRING OF 1909. THE GEORGIA COAST. </b> <b>EXT. DIRT ROAD - DAY </b> MISTER (a handsome indigo farmer) r",
+      "dialogue_count": 0,
+      "word_count": 27761
+    }
+  ]
+}

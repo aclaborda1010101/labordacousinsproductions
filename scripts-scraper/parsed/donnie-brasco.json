@@ -1,0 +1,26 @@
+{
+  "slug": "donnie-brasco",
+  "title": "Donnie Brasco",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 1,
+  "characters": [
+    "DONNIE BRASCO"
+  ],
+  "total_words": 27858,
+  "total_dialogue": 1,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "DONNIE BRASCO"
+      ],
+      "action_text": "DONNIE BRASCO by Paul Attanasio Based on the book, \"Donnie Brasco,\" by Joseph D. Pistone with Richard Woodley <b>                           REVISED DRAFT </b>                           July 27, 1992 <b> </b><b>1   EXT. DAY.    WASHINGTON, D.C. </b>    An AERIAL VIEW of the nation's capital, MOVING IN on the stolid limestone box of FBI HEADQUARTERS. Supered below: <b>                FBI HEADQUARTERS.   WASHINGTON, </b><b>                D.C. 1981. </b><b>",
+      "dialogue_count": 1,
+      "word_count": 27858
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "slug": "army-of-darkness",
+  "title": "Army of Darkness",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 1,
+  "characters": [
+    "THE ARMY OF DARKNESS"
+  ],
+  "total_words": 17190,
+  "total_dialogue": 1,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "THE ARMY OF DARKNESS"
+      ],
+      "action_text": "THE ARMY OF DARKNESS Property of: Western Renaissance Pictures, Inc. 6381 Hollywood Blvd., Suite 680 Hollywood, California 90028 <b>\t\t\t\t    THE ARMY OF DARKNESS </b>Screenplay by Sam Raimi and Ivan Raimi January 3, 1991 Registered with the Writers Guild of America, 1991 c 1991 by Sam and Ivan Raimi.  All rights reserved. Shooting Script  2/26/91 <b>------------------------------------------------------------------------------ </b><b>1\t  GRAINY BLACK AND WHITE - CLOSE-UP - A MAN'S DESPERATE FACE",
+      "dialogue_count": 1,
+      "word_count": 17190
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "slug": "a-good-person",
+  "title": "A Good Person",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 20828,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                     A GOOD PERSON </b> Written by Zach Braff <b>FINAL MOVIE SCRIPT </b><b>1                                                               1 </b><b>    INT. DANIEL'S HOUSE - BASEMENT - DAY </b> THE CAMERA CRESTS an evergreen-covered mountain and DIVES down into a picture-perfect small town. It takes a moment for our eyes to realize it isn't a real place, but rather an incredibly intricate MODEL TRAIN TOWN. THE CAMERA FLOATS DOWN MAIN STREET: All of the people are happy, frozen",
+      "dialogue_count": 0,
+      "word_count": 20828
+    }
+  ]
+}

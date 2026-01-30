@@ -1,0 +1,22 @@
+{
+  "slug": "breakfast-club-the",
+  "title": "Breakfast Club, The",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 14830,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<html> <head> <script> <b><!-- </b>if (window!= top) top.location.href=location.href <b>// --> </b></script> <title>THE BREAKFAST CLUB</title> </head> <pre> The Breakfast Club written and directed by John Hughes <b>BLANK SCREEN: </b>     Against Black, TITLE CARD: \"...and these children that you spit on, as they try to change their worlds are immune to your consultations.  They're quite aware of what they're going through... - David Bowie\" The Blank Screen and Title Card SHATTER to reveal... <b>",
+      "dialogue_count": 0,
+      "word_count": 14830
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "slug": "chasing-sleep",
+  "title": "Chasing Sleep",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 19852,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>INT. BEDROOM - NIGHT </b> Ed lies awake in bed.  He is sweaty and nervous.  His eyes are wide-open, blood-shot and tired. He picks up his bedside clock which is ticking loudly.  It is 3:37. He looks over at the other side of the queen-size bed. It is still made. He picks a long, blonde hair from the pillow and examines it curiously. There is a noise outside and Ed gets up to investigate. <b>INT. HALLWAY - NIGHT </b> Ed walks through the dark hallway and into the living room of his small house",
+      "dialogue_count": 0,
+      "word_count": 19852
+    }
+  ]
+}

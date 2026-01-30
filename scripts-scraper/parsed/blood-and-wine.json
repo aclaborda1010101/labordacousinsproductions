@@ -1,0 +1,22 @@
+{
+  "slug": "blood-and-wine",
+  "title": "Blood and Wine",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 26122,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                             BLOOD AND WINE </b> Written by Nick Villiers <b>                                                   SECOND DRAFT </b> <b>                                              DECEMBER 12, 1994 </b> <b>          FADE IN: </b> <b>          A PAIR OF HANDS </b>          men's hands, nicely groomed, hold a small white terry towel spoiled by blood-red spots. The hands rinse the towel in a copper bar sink. The stains soften but stay. A tan jacket sleeve, spotted the same way, mo",
+      "dialogue_count": 0,
+      "word_count": 26122
+    }
+  ]
+}

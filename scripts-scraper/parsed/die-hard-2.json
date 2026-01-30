@@ -1,0 +1,26 @@
+{
+  "slug": "die-hard-2",
+  "title": "Die Hard 2",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 1,
+  "characters": [
+    "OLDER WOMAN"
+  ],
+  "total_words": 29069,
+  "total_dialogue": 1,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "OLDER WOMAN"
+      ],
+      "action_text": "<b>                                     DIE HARD 2 </b> Written by Doug Richardson Revisions by Steven E. de Souza <b>                                                        SHOOTING SCRIPT </b>                                                      November 16, 1989 <b>                         (X) </b> <b>                         DIE HARD 2 </b>          WHILE WE'RE IN BLACK we HEAR a PNEUMATIC \"KA-CHUNK\" and then <b>                         MCCLANE'S VOICE </b>          Holy shit, whoa, whoa - <",
+      "dialogue_count": 1,
+      "word_count": 29069
+    }
+  ]
+}

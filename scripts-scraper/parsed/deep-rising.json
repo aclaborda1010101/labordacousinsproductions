@@ -1,0 +1,22 @@
+{
+  "slug": "deep-rising",
+  "title": "Deep Rising",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 24753,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<html> <head> <script> <b><!-- </b>if (window!= top) top.location.href=location.href <b>// --> </b></script> <title>Deep Rising</title> </head> <pre> Deep Rising formerly known as TENTACLE by Steven Sommers & Robert Mark Kamen extended revisions by Robert Mark Kamen Revised Draft Jan. 1st, 1996 <b>                                                       OPEN TO: </b> A FLASH OF LIGHTNING rips the HOLLYWOOD PICTURES LOGO away, and we find ourselves in the middle of... <b>         1     STORMY SEA -",
+      "dialogue_count": 0,
+      "word_count": 24753
+    }
+  ]
+}

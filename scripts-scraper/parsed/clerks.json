@@ -1,0 +1,22 @@
+{
+  "slug": "clerks",
+  "title": "Clerks",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 27060,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<html> <head> <script> <b><!-- </b>if (window!= top) top.location.href=location.href <b>// --> </b></script> <title>\"CLERKS\" by Kevin Smith</title> </head> <pre> \"Clerks.\" by Kevin Smith <b>\tINT: BEDROOM. EARLY-MORNING HOURS </b> A DOG sleeps on a neatly made bed. A CLOCK reads twenty to six. A SHELF OF BOOKS holds such classics as Dante's Inferno, Beyond Good and Evil, The Catcher in the Rye, and The Dark Knight Returns. A FRAMED DIPLOMA, dusty and unkempt, hangs askew on the wall. A snapshot o",
+      "dialogue_count": 0,
+      "word_count": 27060
+    }
+  ]
+}

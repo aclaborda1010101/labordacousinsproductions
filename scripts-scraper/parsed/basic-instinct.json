@@ -1,0 +1,26 @@
+{
+  "slug": "basic-instinct",
+  "title": "Basic Instinct",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 1,
+  "characters": [
+    "THE END"
+  ],
+  "total_words": 22219,
+  "total_dialogue": 1,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "THE END"
+      ],
+      "action_text": "<HTML><HEAD><script> <b><!-- </b>if (window!= top) top.location.href=location.href <b>// --> </b></script> <title>Basic Instinct - by Joe Eszterhas</title> <BODY><pre>                                  BASIC INSTINCT by <b>                                  JOE ESZTERHAS </b> <b> </b> <b>          INT. A BEDROOM - NIGHT </b> It is dark; we don't see clearly.  a man and woman make love on a brass bed.  There are mirrors on the walls and ceiling. On a side table, atop a small mirror, lines of cocain",
+      "dialogue_count": 1,
+      "word_count": 22219
+    }
+  ]
+}

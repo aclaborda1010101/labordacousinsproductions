@@ -1,0 +1,22 @@
+{
+  "slug": "bourne-identity-the",
+  "title": "Bourne Identity, The",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 24540,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                  \"THE BOURNE IDENTITY\" </b> by Tony Gilroy Based on the novel by Robert Ludlum <b>                                   PARIS DRAFT 9/20/00 </b> <b> </b> <b>               DARKNESS. THE SOUND OF WIND AND SPRAY. </b> <b>               MUSIC. TITLES. </b> <b>               EXT. OCEAN -- NIGHT </b> The darkness is actually water. A SEARCHLIGHT arcs across heavy ocean swells. Half-a-dozen flashlights -- weaker beams -- racing along what we can see is the deck of an a",
+      "dialogue_count": 0,
+      "word_count": 24540
+    }
+  ]
+}

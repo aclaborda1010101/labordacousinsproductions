@@ -1,0 +1,26 @@
+{
+  "slug": "after-school-special",
+  "title": "After School Special",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 1,
+  "characters": [
+    "AFTER SCHOOL SPECIAL"
+  ],
+  "total_words": 25412,
+  "total_dialogue": 1,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "AFTER SCHOOL SPECIAL"
+      ],
+      "action_text": "AFTER SCHOOL SPECIAL written by David H. Steinberg <b>                       FINAL SHOOTING SCRIPT </b>                           December 21, 2001 <b> </b><b>     FADE IN: </b><b>1    INT. WILLIAM WALL HIGH SCHOOL - HALLWAY - DAY                    1 </b>     As we wind down the crowded hallway in this typical American high school... <b>1A   ANOTHER CORRIDOR                                                1A </b>     ...we hear all the sounds of a STANDARD PORNO FLICK, from the unenthusiastic sc",
+      "dialogue_count": 1,
+      "word_count": 25412
+    }
+  ]
+}

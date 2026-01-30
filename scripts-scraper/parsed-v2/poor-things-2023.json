@@ -1,0 +1,2403 @@
+{
+  "slug": "poor-things-2023",
+  "title": "Poor Things",
+  "parsedWith": "v2",
+  "parsedAt": "2026-01-29T22:09:16.732Z",
+  "stats": {
+    "scenes": 2,
+    "dialogues": 439,
+    "characters": 28
+  },
+  "characters": [
+    {
+      "name": "BELLA",
+      "dialogueLines": 167,
+      "totalWords": 1691
+    },
+    {
+      "name": "ALFIE",
+      "dialogueLines": 43,
+      "totalWords": 597
+    },
+    {
+      "name": "DUNCAN",
+      "dialogueLines": 41,
+      "totalWords": 388
+    },
+    {
+      "name": "MAX",
+      "dialogueLines": 36,
+      "totalWords": 275
+    },
+    {
+      "name": "SWINEY",
+      "dialogueLines": 33,
+      "totalWords": 328
+    },
+    {
+      "name": "BAXTER",
+      "dialogueLines": 28,
+      "totalWords": 311
+    },
+    {
+      "name": "TOINETTE",
+      "dialogueLines": 19,
+      "totalWords": 119
+    },
+    {
+      "name": "HARRY",
+      "dialogueLines": 10,
+      "totalWords": 115
+    },
+    {
+      "name": "GUY",
+      "dialogueLines": 8,
+      "totalWords": 24
+    },
+    {
+      "name": "MAN",
+      "dialogueLines": 7,
+      "totalWords": 78
+    },
+    {
+      "name": "PRIM",
+      "dialogueLines": 7,
+      "totalWords": 17
+    },
+    {
+      "name": "OMITTED",
+      "dialogueLines": 6,
+      "totalWords": 6
+    },
+    {
+      "name": "STEWARD",
+      "dialogueLines": 5,
+      "totalWords": 24
+    },
+    {
+      "name": "CHAPELLE",
+      "dialogueLines": 5,
+      "totalWords": 16
+    },
+    {
+      "name": "FELICITY",
+      "dialogueLines": 5,
+      "totalWords": 17
+    },
+    {
+      "name": "DOCTOR",
+      "dialogueLines": 3,
+      "totalWords": 31
+    },
+    {
+      "name": "OFFICER",
+      "dialogueLines": 2,
+      "totalWords": 33
+    },
+    {
+      "name": "SAVEUR",
+      "dialogueLines": 2,
+      "totalWords": 3
+    },
+    {
+      "name": "MERSAULT",
+      "dialogueLines": 2,
+      "totalWords": 7
+    },
+    {
+      "name": "PRIEST",
+      "dialogueLines": 2,
+      "totalWords": 29
+    },
+    {
+      "name": "INT ALEXANDRIA HOTEL",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "BELLLE",
+      "dialogueLines": 1,
+      "totalWords": 7
+    },
+    {
+      "name": "INT PARIS BROTHEL FOYER",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "BOY",
+      "dialogueLines": 1,
+      "totalWords": 7
+    },
+    {
+      "name": "INT PARIS BROTHEL BEDROOM",
+      "dialogueLines": 1,
+      "totalWords": 3
+    },
+    {
+      "name": "ALLISON",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "DAVID",
+      "dialogueLines": 1,
+      "totalWords": 7
+    },
+    {
+      "name": "ALFIE O.S",
+      "dialogueLines": 1,
+      "totalWords": 11
+    }
+  ],
+  "scenes": [
+    {
+      "number": 1,
+      "heading": "EXT. SEA - DAY",
+      "characters": [
+        "INT ALEXANDRIA HOTEL",
+        "HARRY",
+        "BELLA",
+        "I...",
+        "STEWARD",
+        "DUNCAN",
+        "OFFICER",
+        "BAXTER",
+        "SHUT. THE. FUCK. UP.",
+        "SWINEY",
+        "CHAPELLE"
+      ],
+      "dialogues": [
+        {
+          "character": "INT ALEXANDRIA HOTEL",
+          "parenthetical": "",
+          "text": "-"
+        },
+        {
+          "character": "HARRY",
+          "parenthetical": "",
+          "text": "Can you hear that?"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "What is it?"
+        },
+        {
+          "character": "HARRY",
+          "parenthetical": "",
+          "text": "Lot of dead babies. Guess it’s hot."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "We must go help them!"
+        },
+        {
+          "character": "HARRY",
+          "parenthetical": "",
+          "text": "And how will we do that?"
+        },
+        {
+          "character": "HARRY",
+          "parenthetical": "",
+          "text": "We go down there, they’ll quite rightfully rope us, rob us and rape us. And if they were here and we were there we would do the same to them."
+        },
+        {
+          "character": "STEWARD",
+          "parenthetical": "",
+          "text": "We are casting off ma’am."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "But I must go back? I must give this money to the poor near the hotel, in something called a slum. STEWARD 2"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "You can?"
+        },
+        {
+          "character": "STEWARD",
+          "parenthetical": "",
+          "text": "Of course, it is generous of you."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "They need money."
+        },
+        {
+          "character": "STEWARD",
+          "parenthetical": "",
+          "text": "Everyone does."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "Thank you."
+        },
+        {
+          "character": "DUNCAN",
+          "parenthetical": "",
+          "text": "(to the steward)"
+        },
+        {
+          "character": "DUNCAN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "You haven’t been robbed. I took it."
+        },
+        {
+          "character": "DUNCAN",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "I took it."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "(CONT’D)",
+          "text": "I am so tired. Or maybe just my spirit is. My soul has been buckled, crumpled, flattened,"
+        },
+        {
+          "character": "STEWARD",
+          "parenthetical": "",
+          "text": "So, no need for the Captain then sir?"
+        },
+        {
+          "character": "DUNCAN",
+          "parenthetical": "",
+          "text": "Fuck off before I break all your teeth!"
+        },
+        {
+          "character": "STEWARD",
+          "parenthetical": "",
+          "text": "Indeed sir."
+        },
+        {
+          "character": "DUNCAN",
+          "parenthetical": "",
+          "text": "Where is it?"
+        },
+        {
+          "character": "DUNCAN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "I did not hide it. I gave it all away to these poor people, out there. Money is its own form of sickness or at least the scarcity of it. And who am I lying on a featherbed as dead babies lie in a...Oh Duncan."
+        },
+        {
+          "character": "DUNCAN",
+          "parenthetical": "",
+          "text": "You what?"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "I am expecting a hug of solace."
+        },
+        {
+          "character": "DUNCAN",
+          "parenthetical": "",
+          "text": "You..."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "I need to offer something to the world and yet I have nothing."
+        },
+        {
+          "character": "DUNCAN",
+          "parenthetical": "",
+          "text": "Where is my fucking money?!"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "I just told you I gave it away to the poor."
+        },
+        {
+          "character": "DUNCAN",
+          "parenthetical": "",
+          "text": "I thought I told you to fuck off?!"
+        },
+        {
+          "character": "OFFICER",
+          "parenthetical": "",
+          "text": "The steward informs me you may not have sufficient funds to make good your account sir."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "That is probably true, I gave it all away to some nice men to pass onto the slum poor."
+        },
+        {
+          "character": "OFFICER",
+          "parenthetical": "",
+          "text": "You will be offloaded at the next port and confined to staff rations until then. Good evening."
+        },
+        {
+          "character": "DUNCAN",
+          "parenthetical": "",
+          "text": "How dare you?!"
+        },
+        {
+          "character": "BAXTER",
+          "parenthetical": "",
+          "text": "(reading)"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "How is your hand?"
+        },
+        {
+          "character": "HARRY",
+          "parenthetical": "",
+          "text": "Fine. I’m sorry."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "You were trying to help me understand."
+        },
+        {
+          "character": "HARRY",
+          "parenthetical": "",
+          "text": "No. I actually wanted to hurt you. I couldn’t bear to see such dumb beautiful happiness in someone. It was cruel of me."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "I am not sorry. If I know the world I can improve it."
+        },
+        {
+          "character": "HARRY",
+          "parenthetical": "",
+          "text": "You can’t Bella. That is the real point. Don’t accept the lie, of religion, socialism, capitalism, we are a fucked species. Know it. Hope is smashable. Realism is not."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "I realize what you are now Harry, just a broken little boy who cannot bear the pain of the world."
+        },
+        {
+          "character": "HARRY",
+          "parenthetical": "",
+          "text": "I suppose so."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "Goodbye Harry. We get thrown off in"
+        },
+        {
+          "character": "HARRY",
+          "parenthetical": "",
+          "text": "Why do you stay with him."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "I always think it will be better."
+        },
+        {
+          "character": "HARRY",
+          "parenthetical": "",
+          "text": "Of course you do."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "I have heard great things of the beauty of Paris."
+        },
+        {
+          "character": "DUNCAN",
+          "parenthetical": "",
+          "text": "I will kick your dog to death."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "I will get us a hotel. Do not worry."
+        },
+        {
+          "character": "DUNCAN",
+          "parenthetical": "",
+          "text": "Uh huh. With what?! We have no money!"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "Is it not an interesting experiment? We have nothing, how will we live now?"
+        },
+        {
+          "character": "DUNCAN",
+          "parenthetical": "",
+          "text": "I don’t know!"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "Exactly. That is the experiment. We are now the poor. Also many adventurers have faced these odds."
+        },
+        {
+          "character": "DUNCAN",
+          "parenthetical": "",
+          "text": "Selfish, thoughtless, careless bitch."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "I’m not thoughtless Duncan. And while it is true my ability to think things through to the logical conclusions is not strong, I did help those suffering people. I have ruined us as you point out, but I still believe my actions came from a good-"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "I will get us a hotel. EXT SQUARE PARIS - DAY 107"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "Good afternoon Madam."
+        },
+        {
+          "character": "SWINEY",
+          "parenthetical": "",
+          "text": "Good day my fresh, darling, English rose."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "Is this a hotel?"
+        },
+        {
+          "character": "SWINEY",
+          "parenthetical": "",
+          "text": "We have rooms. Are you looking for work?"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "How much is a room?"
+        },
+        {
+          "character": "SWINEY",
+          "parenthetical": "",
+          "text": "I charge you 10 francs an hour. You charge them thirty, everyone’s happy."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "Hmmm. I see."
+        },
+        {
+          "character": "SWINEY",
+          "parenthetical": "",
+          "text": "Monsieur Chapelle. Fresh from"
+        },
+        {
+          "character": "CHAPELLE",
+          "parenthetical": "",
+          "text": "Enchanté. Hello. Elle fera l’affaire."
+        },
+        {
+          "character": "SWINEY",
+          "parenthetical": "",
+          "text": "Take room 16."
+        },
+        {
+          "character": "CHAPELLE",
+          "parenthetical": "",
+          "text": "Merci."
+        },
+        {
+          "character": "SWINEY",
+          "parenthetical": "",
+          "text": "So. Off you go?"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "At this point I am confused."
+        },
+        {
+          "character": "SWINEY",
+          "parenthetical": "",
+          "text": "You are not here to work? C’mon, lay with him, let him cock you a bit and make some nice francs."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "I see. He would pay me for this?"
+        },
+        {
+          "character": "SWINEY",
+          "parenthetical": "",
+          "text": "Yes. If you need money, it is the shortest route to it."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "I have never been ‘cocked’ by another man, and yet have wondered on that. And am in need of funds."
+        }
+      ],
+      "actionPreview": "93 93 The ship is approaching Alexandria. INT SHIP HALLWAY - DAY 94 94 Bella and Harry, walk past the casino. Can see Duncan playing. EXT ALEXANDRIA LIGHTHOUSE TO HOTEL - DAY 95 95 Bella and Harry travelling in a cable car. CHAPTER HEADING: 96 96 ABSTRACT IMAGE OF BELLA ARRIVING IN ALEXANDRIA - BUBB"
+    },
+    {
+      "number": 2,
+      "heading": "INT. PARIS BROTHEL FOYER - DAY",
+      "characters": [
+        "SWINEY",
+        "CHAPELLE",
+        "BELLA",
+        "DUNCAN",
+        "SAVEUR",
+        "TOINETTE",
+        "MERSAULT",
+        "GUY",
+        "BELLLE",
+        "PRIEST",
+        "INT PARIS BROTHEL FOYER",
+        "MAN",
+        "BOY",
+        "FELICITY",
+        "MAX",
+        "BAXTER",
+        "INT PARIS BROTHEL BEDROOM",
+        "OMITTED",
+        "PRIM",
+        "ALFIE",
+        "ALLISON",
+        "DAVID",
+        "DOCTOR",
+        "ALFIE O.S"
+      ],
+      "dialogues": [
+        {
+          "character": "SWINEY",
+          "parenthetical": "",
+          "text": "Room 16."
+        },
+        {
+          "character": "CHAPELLE",
+          "parenthetical": "",
+          "text": "Allonge toi."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "Your name?"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "(CONT’D)",
+          "text": "Should we warm me up a bit fir-"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "(CONT’D)",
+          "text": "Ow."
+        },
+        {
+          "character": "CHAPELLE",
+          "parenthetical": "",
+          "text": "Aaaaaaaagh!"
+        },
+        {
+          "character": "CHAPELLE",
+          "parenthetical": "(CONT’D)",
+          "text": "Merci. INT PARK PARIS - DAY 110"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "Good day sir. Eclair au chocolat. I have come into some money, and some enlightenment."
+        },
+        {
+          "character": "DUNCAN",
+          "parenthetical": "",
+          "text": "You stole it?!"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "You have always said you are the best bedman in the world, and I have never known another so knew not whether this was true. But now I do! And he was terrible and made an ungodly noise as he thrust himself into me, and a mere three thrusts Duncan Wedderburn was all he could manage! Well I stifled a laugh out of polites of course, took his money, thanked him, laughed all the way to buy us this eclair, and thought so fondly as I remembered all the fierce sweaty nights of ours."
+        },
+        {
+          "character": "DUNCAN",
+          "parenthetical": "",
+          "text": "You... fucked for money?"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "And as an experiment. Which I think will aid us in our relationship as it gladdens my heart for you, and my heart has been a little bit dim on your weepy sweary person lately."
+        },
+        {
+          "character": "DUNCAN",
+          "parenthetical": "",
+          "text": "YOU ARE A MONSTER. A WHORE AND A MONSTER! You are a demon sent from hell to rip my spirit to shreds to punish my tiny sins with a tsunami of destruction. To take my heart and pull it like taffy, to ruin me. I look at you and see nothing but ugliness."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "That last bit was uncalled for and makes no sense as your odes to my beauty have been boring but constant and now a simple act of letting old wrinkled man ride on me seems to erase this."
+        },
+        {
+          "character": "DUNCAN",
+          "parenthetical": "",
+          "text": "Fuuuck! You whored yourself."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "Which now you are going to explain to me is bad. Can I never win with you?!"
+        },
+        {
+          "character": "DUNCAN",
+          "parenthetical": "",
+          "text": "It is the worst thing a woman can do."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "We should definitely not ever marry. I am a flawed experimenting person so I will need a husband with a more forgiving disposition."
+        },
+        {
+          "character": "DUNCAN",
+          "parenthetical": "",
+          "text": "Cunnnnt."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "My instinct now tells me you are not that. Our adventure is clearly over."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "(CONT’D) I shall buy you a passage back to"
+        },
+        {
+          "character": "DUNCAN",
+          "parenthetical": "",
+          "text": "You had money?! The whole time!"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "It is God’s money for emergencies."
+        },
+        {
+          "character": "DUNCAN",
+          "parenthetical": "",
+          "text": "It has been a fucking emergency for weeks!"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "I believed in you the whole time."
+        },
+        {
+          "character": "DUNCAN",
+          "parenthetical": "",
+          "text": "You broke that something in me!"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "I feel this conversation has become circular."
+        },
+        {
+          "character": "DUNCAN",
+          "parenthetical": "",
+          "text": "Cuuuunt!"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "Madam Swiney, I have examined my situation. I need sex and money. I could take a lover, another"
+        },
+        {
+          "character": "SWINEY",
+          "parenthetical": "",
+          "text": "A woman plotting her course to freedom. How delightful. Come."
+        },
+        {
+          "character": "SWINEY",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "SAVEUR",
+          "parenthetical": "",
+          "text": "Filet mignon."
+        },
+        {
+          "character": "SWINEY",
+          "parenthetical": "",
+          "text": "A prime cut. Et pour vous?"
+        },
+        {
+          "character": "SWINEY",
+          "parenthetical": "(CONT’D)",
+          "text": "Bella."
+        },
+        {
+          "character": "TOINETTE",
+          "parenthetical": "",
+          "text": "Say ‘formidable’ at the end. House rules."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "Is that smell you?"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "(CONT’D) .... Formidable?"
+        },
+        {
+          "character": "SAVEUR",
+          "parenthetical": "",
+          "text": "Merci."
+        },
+        {
+          "character": "TOINETTE",
+          "parenthetical": "",
+          "text": "C’est un mouchoir à la lavende."
+        },
+        {
+          "character": "TOINETTE",
+          "parenthetical": "(CONT’D)",
+          "text": "And.. tea just... because tea is nice. Un petit peu English."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "Merci. It was brutal, in a strangely not unpleasant way."
+        },
+        {
+          "character": "TOINETTE",
+          "parenthetical": "",
+          "text": "Pamphlet. Read. Je suis socialiste."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "What is that?"
+        },
+        {
+          "character": "TOINETTE",
+          "parenthetical": "",
+          "text": "Une personne qui veut changer..change the world pour le meilleur! Make it better. A better world."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "Then I am that too."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "Ah Mrs Swiney, this line up system."
+        },
+        {
+          "character": "SWINEY",
+          "parenthetical": "",
+          "text": "That is the way it is my darling."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "I suppose. But.."
+        },
+        {
+          "character": "MERSAULT",
+          "parenthetical": "",
+          "text": "Nouvelle fille?"
+        },
+        {
+          "character": "SWINEY",
+          "parenthetical": "",
+          "text": "Oui Monsieur Mersault. Bella."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "Sir would you not prefer it if the women chose? As it would be a sign of enthusiasm for you rather than the vague sense that they are in a state of horror as you jump them."
+        },
+        {
+          "character": "MERSAULT",
+          "parenthetical": "",
+          "text": "Horreur? Elles ne sont pas-"
+        },
+        {
+          "character": "SWINEY",
+          "parenthetical": "",
+          "text": "Elles vous aiment Monsieur. Bella is new and may have a mental illness. Elle ne comprend pas encore comment cela fonctionne."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "As God my father says, it is only the way it is until we discover the new way it is and then that is the way it is until we discover the new way it is and so it goes until the world is no longer flat, electricity lights the night and shoes no longer are tied with ribbons. You see."
+        },
+        {
+          "character": "TOINETTE",
+          "parenthetical": "",
+          "text": "Je suis d’accord. As a socialist I agree entirely. Formidable."
+        },
+        {
+          "character": "SWINEY",
+          "parenthetical": "",
+          "text": "Toinette, you have such a clever mouth, Monsieur Mersault will enjoy it for free. Go now."
+        },
+        {
+          "character": "SWINEY",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "SWINEY",
+          "parenthetical": "",
+          "text": "You have the most delicious looking lobes."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "Thank you, you are most.."
+        },
+        {
+          "character": "SWINEY",
+          "parenthetical": "",
+          "text": "I must-"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "Aha ah."
+        },
+        {
+          "character": "SWINEY",
+          "parenthetical": "",
+          "text": "I am sorry, I drew blood. Here here."
+        },
+        {
+          "character": "SWINEY",
+          "parenthetical": "(CONT’D)",
+          "text": "I sometimes give into myself when I see beauty, young beauty. For one day my dear you will be a wrinkled old husk, and no one will want you, either to pay you for it or have it for free."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "I still believe everyone would be happier if we could choose."
+        },
+        {
+          "character": "SWINEY",
+          "parenthetical": "",
+          "text": "An idealist, like me. How delightful you are. But we must give into the demands of the world sometimes. Grapple with it, try to defeat it but-"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "So you believe as me?"
+        },
+        {
+          "character": "SWINEY",
+          "parenthetical": "",
+          "text": "Of course. But some men enjoy that you do not like it."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "What? That is--"
+        },
+        {
+          "character": "SWINEY",
+          "parenthetical": "",
+          "text": "Sick! But good business. Come with me."
+        },
+        {
+          "character": "SWINEY",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "Of course not-"
+        },
+        {
+          "character": "SWINEY",
+          "parenthetical": "",
+          "text": "You don’t? You are so lovely."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "I thought you were going for my lobes."
+        },
+        {
+          "character": "SWINEY",
+          "parenthetical": "",
+          "text": "We must work. We must make money."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "I want that."
+        },
+        {
+          "character": "SWINEY",
+          "parenthetical": "",
+          "text": "Now go and fuck someone and bring me ten francs."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "First I suggest a short quiz."
+        },
+        {
+          "character": "GUY",
+          "parenthetical": "",
+          "text": "A...quiz?"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "Tell me a childhood memory...un souvenir d’enfant, then I will tell you a joke, Toc toc, and then a quick sniff and if necessary a quick douse in lavender oil. It will all enhance our experience making it formidable. Toc toc!"
+        },
+        {
+          "character": "GUY",
+          "parenthetical": "",
+          "text": "Um... Toc toc?"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "Non. I am doing the joke. You the memory. Le souvenir?"
+        },
+        {
+          "character": "GUY",
+          "parenthetical": "",
+          "text": "Um... je me souviens être tombé de mon..velo.."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "You fell from your bicycle..et..."
+        },
+        {
+          "character": "GUY",
+          "parenthetical": "",
+          "text": "je l’ai regardé, attendant de voir s’il.."
+        },
+        {
+          "character": "GUY",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "Joie. Joy! You watched the blood with joy."
+        },
+        {
+          "character": "GUY",
+          "parenthetical": "",
+          "text": "Oui!"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "Knock knock."
+        },
+        {
+          "character": "GUY",
+          "parenthetical": "",
+          "text": "Oui c’est?"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "Fromage."
+        },
+        {
+          "character": "GUY",
+          "parenthetical": "",
+          "text": "Fromage?"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "Cheese to meet you!"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "(CONT’D)",
+          "text": "You smell okay. Let us fuck. CUT TO"
+        },
+        {
+          "character": "BELLLE",
+          "parenthetical": "",
+          "text": "God gave you a gift my friend."
+        },
+        {
+          "character": "PRIEST",
+          "parenthetical": "",
+          "text": "C’est une malediction."
+        },
+        {
+          "character": "INT PARIS BROTHEL FOYER",
+          "parenthetical": "",
+          "text": "116"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "Very inelegant work."
+        },
+        {
+          "character": "TOINETTE",
+          "parenthetical": "",
+          "text": "This is what you do when you’re homesick?"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "You wish what?"
+        },
+        {
+          "character": "MAN",
+          "parenthetical": "",
+          "text": "My boys are of an age for education. Sexual. I will demonstrate."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "I see."
+        },
+        {
+          "character": "MAN",
+          "parenthetical": "",
+          "text": "Vous pouvez jouer avec les seins de la femme. Cela engorge le penis et ça l’excite."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "At times."
+        },
+        {
+          "character": "MAN",
+          "parenthetical": "",
+          "text": "Si votre penis ne s’engorge pas vous pouvez faire appelle à son assistance manuelle."
+        },
+        {
+          "character": "MAN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "Shall I lay, bend, astride?"
+        },
+        {
+          "character": "MAN",
+          "parenthetical": "",
+          "text": "Let’s starts simple, please."
+        },
+        {
+          "character": "MAN",
+          "parenthetical": "",
+          "text": "(CONT’D) ...commence doucement le va et vient. J’aime bien commencer par un quatre, quatre, puis un trois trois, ensuite un deux deux qui généralement ammène au climax."
+        },
+        {
+          "character": "BOY",
+          "parenthetical": "",
+          "text": "Et si ça ne vient pas père?"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "Ah, to aid things along a finger in the arse or a slight choking may do it."
+        },
+        {
+          "character": "MAN",
+          "parenthetical": "",
+          "text": "C’est Vrai!! CUT TO"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "Go home! EXT PARIS MULTIPLE VIEWS SQUARE - DAY 121"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "Swiney was right. I am discovering parts of myself hitherto unknown."
+        },
+        {
+          "character": "TOINETTE",
+          "parenthetical": "",
+          "text": "It is a way to look at it."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "The variety of desires being made manifest is fascinating."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "(CONT ’ D)"
+        },
+        {
+          "character": "TOINETTE",
+          "parenthetical": "",
+          "text": "Oui, Jacques. Il est gentil."
+        },
+        {
+          "character": "DUNCAN",
+          "parenthetical": "",
+          "text": "Bella. I have decided to forgive you. I have booked our berths home. I have told mother to prepare our wedding bed. Did you fuck the guy with hooks for hands? You did. I know. I beat the tar out of that guy."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "Duncan I thought you went."
+        },
+        {
+          "character": "DUNCAN",
+          "parenthetical": "",
+          "text": "I went to the boat, but started to ache and vomit, so am here to save you."
+        },
+        {
+          "character": "TOINETTE",
+          "parenthetical": "",
+          "text": "Le Duncan! Quel gâchis!"
+        },
+        {
+          "character": "DUNCAN",
+          "parenthetical": "",
+          "text": "Charmé."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "Go home Duncan. Our time has ended. I look at you and feel nothing but the lingering question of how did I ever want you?"
+        },
+        {
+          "character": "TOINETTE",
+          "parenthetical": "",
+          "text": "Oooo. And we must go to the meeting of socialists."
+        },
+        {
+          "character": "DUNCAN",
+          "parenthetical": "",
+          "text": "You’re whores!"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "We are our own means of production."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "FELICITY",
+          "parenthetical": "",
+          "text": "Foot. Paint foot."
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "Very good."
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "FELICITY",
+          "parenthetical": "",
+          "text": "Gmmmf. Paint. Foot."
+        },
+        {
+          "character": "BAXTER",
+          "parenthetical": "",
+          "text": "Genius."
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "Can you not be so cruel to her?"
+        },
+        {
+          "character": "BAXTER",
+          "parenthetical": "",
+          "text": "I made a mistake with Bella. I allowed feelings to develop. But there are none for her, she is no different to the chicken dog. It is better this way perhaps, and gives some insight to my father’s coolness to me. It was a necessity of science."
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "Good God man!"
+        },
+        {
+          "character": "BAXTER",
+          "parenthetical": "",
+          "text": "I do not expect you to understand village doctor. By the way I need you to operate on me."
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "Shall I put a beating heart in your monstrous form?"
+        },
+        {
+          "character": "BAXTER",
+          "parenthetical": "",
+          "text": "If you have time while taking this out."
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "I will take some cells from around the tumour."
+        },
+        {
+          "character": "BAXTER",
+          "parenthetical": "",
+          "text": "No need. You may close me up. It has spread. I can see tiny polyps."
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "Oh."
+        },
+        {
+          "character": "BAXTER",
+          "parenthetical": "",
+          "text": "I am dying. How to break it to the patient hey?"
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "Baxter."
+        },
+        {
+          "character": "BAXTER",
+          "parenthetical": "",
+          "text": "Do not cry into the wound. You will kill me faster with sepsis. Quiet now and close me up."
+        },
+        {
+          "character": "BAXTER",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "I am closed!"
+        },
+        {
+          "character": "SWINEY",
+          "parenthetical": "",
+          "text": "Hot chocolate my dear. And pain au chocolat. You are my favourite."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "I have heard you say that to others. We are a machine you feed with compliments and chocolate."
+        },
+        {
+          "character": "SWINEY",
+          "parenthetical": "",
+          "text": "You are my children I feed with love."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "A terrible thing has happened"
+        },
+        {
+          "character": "SWINEY",
+          "parenthetical": "",
+          "text": "This is fabulous."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "It is?"
+        },
+        {
+          "character": "SWINEY",
+          "parenthetical": "",
+          "text": "You are in the dark period before light and wisdom come to you. You must forge through it, and once on the other side you will be grateful to this moment. But you must keep going."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "I see."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "INT PARIS BROTHEL BEDROOM",
+          "parenthetical": "",
+          "text": "- DAY 125"
+        },
+        {
+          "character": "TOINETTE",
+          "parenthetical": "",
+          "text": "Où est ton bébé?"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "Quel bébé?"
+        },
+        {
+          "character": "TOINETTE",
+          "parenthetical": "",
+          "text": "You’ve got a baby scar. Moi aussi."
+        },
+        {
+          "character": "TOINETTE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "I don’t have one... It is an accident scar. But you are not the first to make the mistake."
+        },
+        {
+          "character": "TOINETTE",
+          "parenthetical": "",
+          "text": "Why lie?!"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "I am not lying! My God told me himself."
+        },
+        {
+          "character": "TOINETTE",
+          "parenthetical": "",
+          "text": "Un homme?"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "Oui."
+        },
+        {
+          "character": "TOINETTE",
+          "parenthetical": "",
+          "text": "Voilà."
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "Wedderburn. INT ASYLUM - DAY 127"
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "Good day sir."
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "(CONT’D)",
+          "text": "You wrote to Mr Godwin Baxter."
+        },
+        {
+          "character": "DUNCAN",
+          "parenthetical": "",
+          "text": "He has set a demon at large in the world, the devil has wrapped her in an alluring body that cannot be satiated and a mind that picks people apart stitch by stitch like a bloodied and burned rag doll that has been shat out an elephant’s arse!"
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "Bella. Where is she?"
+        },
+        {
+          "character": "DUNCAN",
+          "parenthetical": "",
+          "text": "Who are you?"
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "I am her fiancé sir."
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DUNCAN",
+          "parenthetical": "",
+          "text": "Did not?....she destroyed me!"
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "We are all masters of our own ship so there’s that."
+        },
+        {
+          "character": "DUNCAN",
+          "parenthetical": "",
+          "text": "I do not like you and your words!"
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "Where is she?!"
+        },
+        {
+          "character": "DUNCAN",
+          "parenthetical": "",
+          "text": "I would not wish her on my worst enemy, I will save you sir from-"
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "Forgive my frustration, just tell me."
+        },
+        {
+          "character": "DUNCAN",
+          "parenthetical": "",
+          "text": "It does not hurt, I have no insides, she has hollowed me out, my soul, my bank account."
+        },
+        {
+          "character": "DUNCAN",
+          "parenthetical": "",
+          "text": "(CONT ’ D)"
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "I do not wish to be like this, you force my hand."
+        },
+        {
+          "character": "DUNCAN",
+          "parenthetical": "",
+          "text": "We are all masters of our own ship you cunting cuntfaced deadshit."
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "Please I ask you as politely as I can. Where is she? INT PARIS BROTHEL BEDROOM - DAY 128"
+        },
+        {
+          "character": "TOINETTE",
+          "parenthetical": "",
+          "text": "Tu as une lettre."
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "129"
+        },
+        {
+          "character": "PRIM",
+          "parenthetical": "",
+          "text": "The whore’s back!"
+        },
+        {
+          "character": "DUNCAN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "God! Max wrote me, you are ill?"
+        },
+        {
+          "character": "BAXTER",
+          "parenthetical": "",
+          "text": "I am not. I am dying. A subtle difference, but one I take seriously as a physician."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "You cannot die."
+        },
+        {
+          "character": "BAXTER",
+          "parenthetical": "",
+          "text": "Empirical data says different. I missed you. I now have to lie down."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "It is not all sunshine I bring, I also bring beady eyes and hard questions for you. Did I have a baby in me? And if so where is it?"
+        },
+        {
+          "character": "BAXTER",
+          "parenthetical": "",
+          "text": "I see. Well, technically you are your baby. And also I suppose you are your mother. But also neither."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "What do you mean I am mother and daughter? INT BAXTER’S HOUSE OPERATING THEATER - DAY 133"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "You knew? And did not tell?"
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "I...did not see good reason too.."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "And were too cowardly to."
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "A bit of that as well. I just wanted to be with you and was not sure you would even understand and"
+        },
+        {
+          "character": "FELICITY",
+          "parenthetical": "",
+          "text": "Bam. Bam. Bam. Bam."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "Who’s this?"
+        },
+        {
+          "character": "FELICITY",
+          "parenthetical": "",
+          "text": "Bell whore, bell whore, Bell whore."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "You have introduced me already then Prim?"
+        },
+        {
+          "character": "PRIM",
+          "parenthetical": "",
+          "text": "I like this one though."
+        },
+        {
+          "character": "PRIM",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "PRIM",
+          "parenthetical": "(CONT’D)",
+          "text": "Fucker!"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "She is another?"
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "Well...we missed you."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "Monsters."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "It is hard to be in a position where one wants to hit someone who is already in obvious pain."
+        },
+        {
+          "character": "BAXTER",
+          "parenthetical": "",
+          "text": "It is a conundrum for sure. Would you rather be a grey slab of flesh with a fish hook in your nose?"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "I will feel good for a second, and bad for longer so... I really had a fish hook in my nose?"
+        },
+        {
+          "character": "BAXTER",
+          "parenthetical": "",
+          "text": "You did."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "So I am your creation. As is the other one."
+        },
+        {
+          "character": "BAXTER",
+          "parenthetical": "",
+          "text": "Neither of you are that. She wanders the halls with a hammer and a song, that is not my doing, and I have read your cards and letters home and watched you fearlessly create Bella Baxter with wonder."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "I am finding being alive fascinating so I will forgive you the act, but always hate the lies and trapping that followed."
+        },
+        {
+          "character": "BAXTER",
+          "parenthetical": "",
+          "text": "Understood. Good to see you."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "You too. Anger, confusion and brain dissonance aside. I missed you."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "(CONT’D) I arrived home and I smelt the fomeldahyde and I knew what is next. I will be a doctor."
+        },
+        {
+          "character": "BAXTER",
+          "parenthetical": "",
+          "text": "My surgery is yours. My father once said to me, always carve with compassion. He was a fucking idiot, but it’s not bad advice. EXT LONDON PARK - DAY 138"
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "He does not have long."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "I know."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "(CONT’D)",
+          "text": "You have not mentioned our betrothal."
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "You were much younger, there is no...bind. I was mesmerised by you and Baxter took advantage of it."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "So you are mesmerised no more?"
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "I am still... mesmerised."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "I have been a whore you understand."
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "I find myself merely jealous of the men’s time with you, rather than a moral aspersion against you. It is your body Bella Baxter. Yours to give freely."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "I generally charged thirty francs."
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "Seems low."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "Do you believe people improvable"
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "I do, as a human body can be cured of illness, so can men and women be cured of aspects."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "Will you marry me Max McCandles?"
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "I will."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "We will need less of your tongue in the future but overall most agreeable."
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "I will take a note. And have you been checked for um... disease?"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "I have not, but I shall. I am enjoying this practical love we have."
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "Mine is also passionate! I assure you."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "You are adorable. You always were. CUT TO INT LONDON CHURCH - DAY 139"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "God! You are walking?"
+        },
+        {
+          "character": "BAXTER",
+          "parenthetical": "",
+          "text": "I have taken 5 milligrams of heroin through the toes for the pain, amphetamines for energy,"
+        },
+        {
+          "character": "PRIEST",
+          "parenthetical": "",
+          "text": "And so by the powers vested in me by the church I will solemnize this union. Do you Bella Baxter take this man as your husband?"
+        },
+        {
+          "character": "ALFIE",
+          "parenthetical": "",
+          "text": "Did we miss the part about anyone objecting to this? Or has that been removed in some kind faux modernization of the catechism."
+        },
+        {
+          "character": "ALFIE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "Do you refer to me sir?"
+        },
+        {
+          "character": "ALFIE",
+          "parenthetical": "",
+          "text": "Man doesn’t normally introduce himself to his wife. But if I must-"
+        },
+        {
+          "character": "DUNCAN",
+          "parenthetical": "",
+          "text": "He is the God of it. I do not know if he is in her power or she in his. It is a devil’s hand at work as you see. He coughs not air as a normal man but blood."
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "He has cancer you fucking idiot!"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "Duncan?"
+        },
+        {
+          "character": "DUNCAN",
+          "parenthetical": "",
+          "text": "Do not lay your eyes on me you demon."
+        },
+        {
+          "character": "ALFIE",
+          "parenthetical": "",
+          "text": "As I was saying. General Alfred"
+        },
+        {
+          "character": "DUNCAN",
+          "parenthetical": "",
+          "text": "I remembered that old bird at the hotel called you Victoria"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "You are-"
+        },
+        {
+          "character": "ALFIE",
+          "parenthetical": "",
+          "text": "Your dear Alfie. You left in a state of some mental addlement and hysteria over your pregnancy. On the discovery of your absence I felt disembowelled. I have disembowelled men on the field of battle and I always imagined a dull hollow throbbing. And that is what it was like. There is also a stench, but that does not apply as a metaphor here. Here you are my darling. Here you are."
+        },
+        {
+          "character": "BAXTER",
+          "parenthetical": "",
+          "text": "Oh God."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "I have no recollection of you. I am"
+        },
+        {
+          "character": "ALFIE",
+          "parenthetical": "",
+          "text": "Hurtful but perhaps you hit your head. And these men have clearly taken advantage of you."
+        },
+        {
+          "character": "BAXTER",
+          "parenthetical": "",
+          "text": "Please go sir!"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "You were my husband?"
+        },
+        {
+          "character": "ALFIE",
+          "parenthetical": "",
+          "text": "Your dear Alfie."
+        },
+        {
+          "character": "BAXTER",
+          "parenthetical": "",
+          "text": "Bella. I am sorry."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "Actually I would like to go."
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "What?!"
+        },
+        {
+          "character": "BAXTER",
+          "parenthetical": "",
+          "text": "Bella!"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "Do you have a carriage sir?"
+        },
+        {
+          "character": "ALFIE",
+          "parenthetical": "",
+          "text": "..Yes!"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "Let us go then."
+        },
+        {
+          "character": "BAXTER",
+          "parenthetical": "",
+          "text": "Bella!"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "Let me go God."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "140"
+        },
+        {
+          "character": "ALFIE",
+          "parenthetical": "",
+          "text": "It is good to have you back"
+        },
+        {
+          "character": "ALFIE",
+          "parenthetical": "",
+          "text": "The servants and I have not been getting along. I fear an uprising."
+        },
+        {
+          "character": "ALFIE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ALFIE",
+          "parenthetical": "(CONT’D)",
+          "text": "Allison look who’s back."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "You know me?"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "(CONT’D)",
+          "text": "Was I nice?"
+        },
+        {
+          "character": "ALFIE",
+          "parenthetical": "",
+          "text": "Eat. All your favourites. Kippers."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "What do you think was the root of the unhappiness, what drove her to the bridge to leap off?"
+        },
+        {
+          "character": "ALFIE",
+          "parenthetical": "",
+          "text": "You hated the baby, and called it ‘the monster’."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "I see. I have noticed a lack of maternal instinct."
+        },
+        {
+          "character": "ALFIE",
+          "parenthetical": "",
+          "text": "And yet I am happy to have you home."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "How did we meet?"
+        },
+        {
+          "character": "ALFIE",
+          "parenthetical": "",
+          "text": "At a ball."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "Why did we like each other?"
+        },
+        {
+          "character": "ALFIE",
+          "parenthetical": "",
+          "text": "We shared a love of good times."
+        },
+        {
+          "character": "ALFIE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ALLISON",
+          "parenthetical": "",
+          "text": "Fuck."
+        },
+        {
+          "character": "ALFIE",
+          "parenthetical": "",
+          "text": "We’ll have some cheese when you can."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "A love of cruelty. I was not a kind person it seems."
+        },
+        {
+          "character": "ALFIE",
+          "parenthetical": "",
+          "text": "Kind? You would never be so dull"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "I was. In Paris. I tired of it but it was fascinating."
+        },
+        {
+          "character": "ALFIE",
+          "parenthetical": "",
+          "text": "Right."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "These kippers are strangely delicious. Vinegary or something."
+        },
+        {
+          "character": "ALFIE",
+          "parenthetical": "",
+          "text": "Marriage is a constant challenge some we bend to some we bend to us. I will try to forgive you for the whoring, your sexual hysteria was often out of hand, and also for the killing of our unborn child. In fact when I list how you’ve wronged me Jesus Christ himself would probably beat your head in with a bat. You are blessed with a forgiving husband."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "I have not wronged you. For I do not know you Alfie."
+        },
+        {
+          "character": "ALFIE",
+          "parenthetical": "",
+          "text": "You’re in luck as I’ve had a lot of experience in the field with amnesia, either men who wished to forget where they were, or a mortar exploded nearby ringing their cranium like a church bell. I suggest we stick close to the house for several months or a year until you have made a full recovery."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "I will leave at my leisure but I am flattered by your desire to trap me. You are not the first."
+        },
+        {
+          "character": "ALFIE",
+          "parenthetical": "",
+          "text": "I will have to shoot you in the fucking head if you try to leave darling."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "The front or the back of the head?"
+        },
+        {
+          "character": "ALFIE",
+          "parenthetical": "",
+          "text": "The back as to be sure you were leaving and I was not being rash. I have missed you."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "So I am a prisoner?"
+        },
+        {
+          "character": "ALFIE",
+          "parenthetical": "",
+          "text": "This conversation has gone down an unfortunate route. I am sure you will be as happy as you were before."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "As I was before? When I threw myself from a bridge?"
+        },
+        {
+          "character": "ALFIE",
+          "parenthetical": "",
+          "text": "I suspect you fell while looking for fish."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "Why would you want to keep me here if I did not wish to stay?"
+        },
+        {
+          "character": "ALFIE",
+          "parenthetical": "",
+          "text": "If one is to drown let it be in a river of love."
+        },
+        {
+          "character": "ALFIE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "It was a misjudgement sir. I apologize."
+        },
+        {
+          "character": "ALFIE",
+          "parenthetical": "",
+          "text": "Desert darling?"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "147"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "148"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "149"
+        },
+        {
+          "character": "ALFIE",
+          "parenthetical": "",
+          "text": "It comes off easy?"
+        },
+        {
+          "character": "DOCTOR",
+          "parenthetical": "",
+          "text": "Like a button on a suit. I saw them do it in Africa with sharpened rocks but had my own more precise device made."
+        },
+        {
+          "character": "DOCTOR",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ALFIE",
+          "parenthetical": "",
+          "text": "The whole infernal packet."
+        },
+        {
+          "character": "DOCTOR",
+          "parenthetical": "",
+          "text": "It will calm her no end."
+        },
+        {
+          "character": "ALFIE",
+          "parenthetical": "",
+          "text": "This time we will get it done. I shall get her sedated and bring her to your surgery this evening. INT ALFIE’S HOUSE BELLA’S BEDROOM - DAY 152"
+        },
+        {
+          "character": "ALFIE O.S",
+          "parenthetical": "",
+          "text": "Victoria darling, where are you?! CUT TO INT ALFIE’S DINING ROOM"
+        },
+        {
+          "character": "ALFIE",
+          "parenthetical": "",
+          "text": "Ah, perfect timing. Martini."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "Rather not. I would however like to leave. I found our time together interesting, but having now ascertained why I threw myself from a bridge. I wish to now go see my near dead God."
+        },
+        {
+          "character": "ALFIE",
+          "parenthetical": "",
+          "text": "Adorable idea. Unfortunately my darling my life is dedicated to the taking of territory. You are mine and that is the long and short of it."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "I am not territory."
+        },
+        {
+          "character": "ALFIE",
+          "parenthetical": "",
+          "text": "The root of the problem is between your legs and I will have it off and it will not distract and divert you anymore. A man spends his life wrangling his sexual compulsions, it’s a curse, and yet in some ways his life’s work. A woman’s life’s work is children, I intend to rid you of that infernal packet between your legs and plant a seed straight after."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "Let me explain what has happened."
+        },
+        {
+          "character": "ALFIE",
+          "parenthetical": "",
+          "text": "Uh huh."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "I’ll bring you the file. It’s actually quite fascinating."
+        },
+        {
+          "character": "ALFIE",
+          "parenthetical": "",
+          "text": "They talk and talk, and at some point there is nothing left but to pull a gun. It is the way with women."
+        },
+        {
+          "character": "ALFIE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "I’d rather you shot me in the fucking heart."
+        },
+        {
+          "character": "ALFIE",
+          "parenthetical": "",
+          "text": "I will oblige if I have to. Drink the drink my darling. Chloroform and gin, delicious."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "In some ways it would be a relief to be rid of my questing self."
+        },
+        {
+          "character": "ALFIE",
+          "parenthetical": "",
+          "text": "Sip deeply and that freedom is yours."
+        },
+        {
+          "character": "ALFIE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "OMITTED",
+          "parenthetical": "",
+          "text": "154"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "We must get him up to the surgery."
+        },
+        {
+          "character": "PRIM",
+          "parenthetical": "",
+          "text": "He’s bleeding a lot."
+        },
+        {
+          "character": "ALFIE",
+          "parenthetical": "",
+          "text": "You’re....fucking...de..ad.."
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "Bella, if he lives...I sense he is not a man who will stop."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "I will not watch him bleed to death"
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "I have controlled the bleeding."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "I have the notes."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "(CONT’D) I am never happier than when I am in here."
+        },
+        {
+          "character": "BAXTER",
+          "parenthetical": "",
+          "text": "Bella."
+        },
+        {
+          "character": "BAXTER",
+          "parenthetical": "(CONT’D)",
+          "text": "You’re back."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "It was just a story of someone else, not Bella Baxter."
+        },
+        {
+          "character": "BAXTER",
+          "parenthetical": "",
+          "text": "All my life people’s eyes looked at me, horror, pity..."
+        },
+        {
+          "character": "BAXTER",
+          "parenthetical": "(CONT’D)",
+          "text": "But you."
+        },
+        {
+          "character": "BAXTER",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "Anatomy exam is making me nervous."
+        },
+        {
+          "character": "MAX",
+          "parenthetical": "",
+          "text": "I have tested you many times, you know it."
+        },
+        {
+          "character": "TOINETTE",
+          "parenthetical": "",
+          "text": "No one knows anatomy better than you. Crois-moi."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "Certainement- effectivement."
+        },
+        {
+          "character": "PRIM",
+          "parenthetical": "",
+          "text": "Please."
+        },
+        {
+          "character": "FELICITY",
+          "parenthetical": "",
+          "text": "Gin."
+        },
+        {
+          "character": "BELLA",
+          "parenthetical": "",
+          "text": "And we should get water for the general."
+        },
+        {
+          "character": "PRIM",
+          "parenthetical": "",
+          "text": "Felicity. Water."
+        }
+      ],
+      "actionPreview": "108 108 Bella makes her way upstairs. INT HOTEL ROOM PARIS - DAY 109 109 Bella enters the room. The man sits naked on a chair smoking a pipe. He shakes his head no. Mysterious. She lays down. He pushes her dress up. Lays down on her. Starts to position himself. He thrusts himself into her. He thrust"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "slug": "blackberry",
+  "title": "Blackberry",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 23551,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                         BLACKBERRY </b> Written by Matt Johnson & Matthew Miller Shooting Script Based on, \"Losing the Signal\" by Jacquie McNish & Sean Silcoff <b>TEXT ON SCREEN: </b> The following fictionalization is inspired by real people and real events that took place in Waterloo, Ontario. <b>CORPORATE CREDITS BEGIN AS MUSIC FADES IN. </b> An authoritative male voice. <b>                    MALE VOICE (O.S.) </b>          I'm thinking of the incredible breakthrough which has been made p",
+      "dialogue_count": 0,
+      "word_count": 23551
+    }
+  ]
+}

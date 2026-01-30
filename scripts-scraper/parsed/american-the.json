@@ -1,0 +1,28 @@
+{
+  "slug": "american-the",
+  "title": "American, The",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 2,
+  "characters": [
+    "CLARA",
+    "FATHER BENEDETTO"
+  ],
+  "total_words": 25336,
+  "total_dialogue": 2,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "CLARA",
+        "FATHER BENEDETTO"
+      ],
+      "action_text": "<b>                             THE AMERICAN </b> Written by Rowan Joffe Based on the novel A Very Private Gentleman by Martin Booth Draft 2.1 <b>                                                        13.05.09 </b> <b>    FADE IN: </b> <b>1   EXT. DALSLAND, SWEDEN- TWILIGHT                            1 </b> A lake. A forest. A dacha. A Saab outside the dacha. A light within. <b>2   INT. DACHA- NIGHT                                          2 </b> JACK (dark, fit, mid-forties) is staring at the",
+      "dialogue_count": 2,
+      "word_count": 25336
+    }
+  ]
+}

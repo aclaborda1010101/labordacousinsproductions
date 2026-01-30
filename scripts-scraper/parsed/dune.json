@@ -1,0 +1,26 @@
+{
+  "slug": "dune",
+  "title": "Dune",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 1,
+  "characters": [
+    "DUNE"
+  ],
+  "total_words": 25845,
+  "total_dialogue": 1,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "DUNE"
+      ],
+      "action_text": "DUNE <b>                                        SEVENTH DRAFT </b> <b>                                        DAVID LYNCH </b>                                        December 9, 1983 <b>-- </b><b>1.   ARRAKIS - A SCENE FROM SPACE </b> Also known as DUNE, home of the Fremen, former Zenzunni wanderers. <b>1A.  INT. ROCK LEDGE - SIETCH TABR - NIGHT </b> <b>     BLACK </b> FADE IN to the dark eyes of the mysterious face of the REVEREND MOTHER RAMALLO, who sits against smooth black rock. Her eyes are",
+      "dialogue_count": 1,
+      "word_count": 25845
+    }
+  ]
+}

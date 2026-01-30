@@ -1,0 +1,22 @@
+{
+  "slug": "birthday-girl",
+  "title": "Birthday Girl",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 19150,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "\"BIRTHDAY GIRL\" Screenplay by Tom Butterworth and Jez Butterworth <b> </b> <b>               FADE IN: </b> In a Russian summer meadow, a young girl spins around and around. A simple guitar theme plays as the low sun catches her hair. Around her neck is a pair of field binoculars, and she runs through the meadow with them pressed to her face, spying butterflies, birds, rabbits. She reaches the top of a hillock, and jumps into the air, and flies up into the sky. We float up and up with her as she",
+      "dialogue_count": 0,
+      "word_count": 19150
+    }
+  ]
+}

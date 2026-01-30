@@ -1,0 +1,22 @@
+{
+  "slug": "austin-powers-international-man-of-mystery",
+  "title": "Austin Powers - International Man of Mystery",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 21143,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<html> <head> <script> <b><!-- </b>if (window!= top) top.location.href=location.href <b>// --> </b></script> <title>Austin Powers: International Man of Mystery - by Mike Myers</title> </head> <pre> <b>\t\t       AUSTIN POWERS: INTERNATIONAL MAN OF MYSTERY </b> <b>                                  \t   BY </b> Mike Myers <b>               \tFINAL DRAFT - 5/24/96 </b><b>\t\tPINK REVISION - 5/17/96 </b><b>\t\tBLUE REVISION - 7/12/96 </b><b>\t\tYELLOW REVISION - 7/17/96 </b> <b>               EXT.  LAS VEGAS",
+      "dialogue_count": 0,
+      "word_count": 21143
+    }
+  ]
+}

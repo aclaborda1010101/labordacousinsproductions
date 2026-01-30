@@ -1,0 +1,52 @@
+{
+  "slug": "big-white-the",
+  "title": "Big White, The",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 14,
+  "characters": [
+    "DETECTIVE BOYLE",
+    "HOWARD",
+    "TED",
+    "BRANCH",
+    "PAUL",
+    "TIFFANY",
+    "AVIS",
+    "MARGARET",
+    "GARY",
+    "CAM",
+    "MRS. WHERRY",
+    "MINISTER",
+    "RAYMOND",
+    "JIMBO"
+  ],
+  "total_words": 24939,
+  "total_dialogue": 83,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "DETECTIVE BOYLE",
+        "HOWARD",
+        "TED",
+        "BRANCH",
+        "PAUL",
+        "TIFFANY",
+        "AVIS",
+        "MARGARET",
+        "GARY",
+        "CAM",
+        "MRS. WHERRY",
+        "MINISTER",
+        "RAYMOND",
+        "JIMBO"
+      ],
+      "action_text": "<b>                                       THE BIG WHITE </b> Written by Collin Friesen <b>      FADE IN: </b> <b>      EXT. ROAD - WINTER DAY </b> A police car, nothing more than a speck on the landscape, is intermittently visible through the blowing snow. <b>      INT. POLICE CAR - SAME </b> A CORPORAL (20s), behind the wheel, with a bored DETECTIVE BOYLE (60s) at his side. <b>                                  CORPORAL </b>              So his hand is like, off, right.  So he puts on a tourniqu",
+      "dialogue_count": 83,
+      "word_count": 24939
+    }
+  ]
+}

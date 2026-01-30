@@ -1,0 +1,22 @@
+{
+  "slug": "debt-the",
+  "title": "Debt, The",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 28080,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                THE DEBT </b> Written by Matthew Vaughn, Jane Goldman & Peter Straughan <b>1   INT. CARGO PLANE. MILITARY AIRBASE. ISRAEL - DAY              1 </b> A strange ROARING sound... <b>    CLOSE ON A YOUNG WOMAN </b> ...in darkness. Light begins to spill on her from the right - revealing her face, lost in thought. This is RACHEL SINGER - pretty, painfully young looking. A surgical dressing covers half her face. As we pull back a little we see that two YOUNG MEN sit ei",
+      "dialogue_count": 0,
+      "word_count": 28080
+    }
+  ]
+}

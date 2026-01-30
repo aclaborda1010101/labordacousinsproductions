@@ -1,0 +1,58 @@
+{
+  "slug": "2001-a-space-odyssey",
+  "title": "2001: A Space Odyssey",
+  "genre": "Action",
+  "genres": [
+    "Action",
+    "Adventure",
+    "Animation",
+    "Comedy",
+    "Crime",
+    "Drama",
+    "Family",
+    "Fantasy",
+    "Film-Noir",
+    "Horror",
+    "Musical",
+    "Mystery",
+    "Romance",
+    "Sci-Fi",
+    "Short",
+    "Thriller",
+    "War",
+    "Western"
+  ],
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 7,
+  "characters": [
+    "FLOYD",
+    "POOLE",
+    "MISSION CONTROL",
+    "BOWMAN",
+    "SIMONSON",
+    "REST OF THIS SEQUENCE",
+    "NARRATOR"
+  ],
+  "total_words": 17871,
+  "total_dialogue": 16,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "FLOYD",
+        "POOLE",
+        "MISSION CONTROL",
+        "BOWMAN",
+        "SIMONSON",
+        "REST OF THIS SEQUENCE",
+        "NARRATOR"
+      ],
+      "action_text": "<b> </b><b>\t\t\t\t    2001: A SPACE ODYSSEY </b> Screenplay by <b> </b>\t\t\t   Stanley Kubrick and Arthur C. Clark Hawk Films Ltd., c/o. M-G-M Studios, Boreham Wood, Herts. <b>TITLE\t\t\t\t\t    PART I </b><b>\t\t\t\t\t    AFRICA </b><b>\t\t\t\t\t    3,000,000 YEARS AGO </b> <b>A1 </b><b>VIEWS OF AFRICAN DRYLANDS - DROUGHT </b> The remorseless drought had lasted now for ten million years, and would not end for another million. The reign of the ter- rible lizards had long since passed, but here on the continent whic",
+      "dialogue_count": 16,
+      "word_count": 17871
+    }
+  ]
+}

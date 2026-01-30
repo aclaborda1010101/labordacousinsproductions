@@ -1,0 +1,26 @@
+{
+  "slug": "cobb",
+  "title": "Cobb",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 1,
+  "characters": [
+    "COBB"
+  ],
+  "total_words": 30760,
+  "total_dialogue": 1,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "COBB"
+      ],
+      "action_text": "COBB Written by RON SHELTON Based on material by AL STUMP July 1993 Draft <b>  FOR EDUCATIONAL </b><b>   PURPOSES ONLY </b><b> </b>Do not go gentle into that good night, Old age should burn and rave at close of day; Rage, rage against the dying of the light. Dylan Thomas Nice guys finish last. Leo Durocher <b> </b><b>1   INT. OLD OFFICE (SANTA BARBARA, CA) - DAY (1960)          1 </b> The room is California Spanish, thick walls, arches, and light spills in from a mission window. But we don't hav",
+      "dialogue_count": 1,
+      "word_count": 30760
+    }
+  ]
+}

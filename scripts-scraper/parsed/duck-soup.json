@@ -1,0 +1,22 @@
+{
+  "slug": "duck-soup",
+  "title": "Duck Soup",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 20677,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<html> <head> <script> <b><!-- </b>if (window!= top) top.location.href=location.href <b>// --> </b></script> <title>THE BREAKFAST CLUB</title> </head> <pre> Duck Soup (1933) Screenplay by Harry Ruby, Bert Kalmar and Grover Jones <b> </b> The story begins with an opening shot on the exterior of the executive mansion.  It is a gala day.  Soldiers are lined up in front of the entrance; expensive cars and carriages are arriving and depositing distinguished notables from the adjoining countries.  Two",
+      "dialogue_count": 0,
+      "word_count": 20677
+    }
+  ]
+}

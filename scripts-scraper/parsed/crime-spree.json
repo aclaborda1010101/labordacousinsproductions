@@ -1,0 +1,22 @@
+{
+  "slug": "crime-spree",
+  "title": "Crime Spree",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 28181,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                   CRIME SPREE </b> <b> </b>                                   Written by <b> </b>                                   Brad Mirman <b> </b> <b> </b>                             First Draft, March 1996 <b>                          FOR EDUCATIONAL PURPOSES ONLY </b> <b> </b> <b>               FADE IN: </b> <b> </b> <b>               INT. DARK ROOM - NIGHT </b> Pitch dark. We hear two men speaking FRENCH in hushed voices. NOTE: All dialogue is in French until otherw",
+      "dialogue_count": 0,
+      "word_count": 28181
+    }
+  ]
+}

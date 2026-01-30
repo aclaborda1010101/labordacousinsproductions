@@ -1,0 +1,22 @@
+{
+  "slug": "a-real-pain",
+  "title": "A Real Pain",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 19439,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                       A REAL PAIN </b> Written by Jesse Eisenberg <b>                                                  FINAL DRAFT </b> <b>INT. JFK AIRPORT - MORNING </b> As the credits roll, we very slowly zoom in on a young man sitting alone on a bench at a busy airport. CUE: Chopin's Nocturne Op. 9 No. 2 We get glimpses of the young man's face as morning travelers pass in front of him. This is BENJI KAPLAN. He has an absent look on his face that borders on melancholy. When we finally arri",
+      "dialogue_count": 0,
+      "word_count": 19439
+    }
+  ]
+}

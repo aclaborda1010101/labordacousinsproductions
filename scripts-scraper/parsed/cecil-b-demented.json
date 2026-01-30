@@ -1,0 +1,26 @@
+{
+  "slug": "cecil-b-demented",
+  "title": "Cecil B. Demented",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 1,
+  "characters": [
+    "HONEY"
+  ],
+  "total_words": 24252,
+  "total_dialogue": 1,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "HONEY"
+      ],
+      "action_text": "<b>                            CECIL B. DEMENTED </b> Written by John Waters Fourth Draft: 1 June 1998 1. Film opens with beautiful shot of the skyline of downtown Baltimore in the spring. Credits begin. Cut to \"The Hippodrome Theater,\" one-time downtown movie palace, now abandoned and boarded up with broken and blank marquee. The credits to our movie continue by fading in on marquee. Cut to thriving \"Harbor Court\" theaters, downtown chain. All six marquees list the same two mega-budget Hollywoo",
+      "dialogue_count": 1,
+      "word_count": 24252
+    }
+  ]
+}

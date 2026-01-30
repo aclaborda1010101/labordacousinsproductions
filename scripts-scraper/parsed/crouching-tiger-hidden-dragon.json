@@ -1,0 +1,22 @@
+{
+  "slug": "crouching-tiger-hidden-dragon",
+  "title": "Crouching Tiger, Hidden Dragon",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 12726,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "Crouching Tiger, Hidden Dragon by Wang Hui Ling, James Schamus, Tsai Kuo Jung based on the novel by Wang Du Lu <b>EXT. YUAN COMPOUND - DAY </b> Security men and porters are loading wagons for a convoy. As they work, we see across the lake a lone horseman entering the village.  One of the men recognizes him. <b>\t\t\t\tWORKER </b>\t\tMaster Li is here! ANGLE ON: Li Mu Bai, thirties, powerful and handsome. In the background, old Aunt Wu, at the sight of Li Mu Bai, drops her parcels and runs excitedly in",
+      "dialogue_count": 0,
+      "word_count": 12726
+    }
+  ]
+}

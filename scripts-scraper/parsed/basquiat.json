@@ -1,0 +1,26 @@
+{
+  "slug": "basquiat",
+  "title": "Basquiat",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 1,
+  "characters": [
+    "BLACK"
+  ],
+  "total_words": 20499,
+  "total_dialogue": 1,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "BLACK"
+      ],
+      "action_text": "BLACK We HEAR \"Waltzing Matilde,\" by Tom Waits. <b>INT. MUSEUM OF MODERN ART - DAY (DREAM SEQUENCE IN GRAINY BLACK </b><b>AND WHITE) </b> Fade out music. Silence. A well-dressed black BOY and his MOTHER walk through several galleries. They stand before Picasso's \"Guernica,\" holding hands. The mother is disturbed. Crying. The boy looks up, confused and frightened, concerned to see his mother crying in public. She looks at him tenderly. Her brow furrows. She stops crying. She stares just above his",
+      "dialogue_count": 1,
+      "word_count": 20499
+    }
+  ]
+}

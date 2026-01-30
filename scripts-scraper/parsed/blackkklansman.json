@@ -1,0 +1,22 @@
+{
+  "slug": "blackkklansman",
+  "title": "BlacKkKlansman",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 26109,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                    BLACKKKLANSMAN </b> Written by Charlie Wachtel & David Rabinowitz and Kevin Willmott & Spike Lee <b>                         FADE IN: </b> <b>          SCENE FROM \"GONE WITH THE WIND\" </b> Scarlett O'Hara, played by Vivian Leigh, walks through the Thousands of injured Confederate Soldiers pulling back to reveal the Famous Shot of the tattered Confederate Flag in \"Gone with the Wind\" as The Max Stein Music Score swells from Dixie to Taps. <b>",
+      "dialogue_count": 0,
+      "word_count": 26109
+    }
+  ]
+}

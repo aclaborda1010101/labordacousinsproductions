@@ -1,0 +1,26 @@
+{
+  "slug": "bodyguard",
+  "title": "Bodyguard",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 1,
+  "characters": [
+    "THE BODYGUARD"
+  ],
+  "total_words": 37209,
+  "total_dialogue": 1,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "THE BODYGUARD"
+      ],
+      "action_text": "THE BODYGUARD Written by LAWRENCE KASDAN Clean Shooting Draft February 1992 <b>  FOR EDUCATIONAL </b><b>   PURPOSES ONLY </b><b> </b><b>    SCREEN IS BLACK </b>    In the darkness we hear dripping water, the echoing approach of two sets of footsteps. There is the sound of a sudden, quick scuffle, a heavy fall of bodies. THREE BOOMING GUNSHOTS. Two from one gun, one from another. So fast and close, they're barely distinguish- able. The sound of the SHOTS ECHOES against concrete walls and dies awa",
+      "dialogue_count": 1,
+      "word_count": 37209
+    }
+  ]
+}

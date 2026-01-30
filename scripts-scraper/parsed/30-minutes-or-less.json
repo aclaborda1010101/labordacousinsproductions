@@ -1,0 +1,22 @@
+{
+  "slug": "30-minutes-or-less",
+  "title": "30 Minutes or Less",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 26152,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                 30 MINUTES OR LESS </b> Written by Michael Diliberti & Matthew Sullivan <b>                                                                 12-11-09 </b> The following is very loosely based on some shit that actually happened... <b>                         OVER BLACK </b> We hear the roar of a V8 engine, piped out through some throaty, fucked up muffler, as <b>          EXT. HIGHWAY - DAY </b> An '89 Mustang bursts like a shot over a rise in the highway. It's",
+      "dialogue_count": 0,
+      "word_count": 26152
+    }
+  ]
+}

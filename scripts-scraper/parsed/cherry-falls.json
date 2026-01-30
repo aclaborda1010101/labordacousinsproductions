@@ -1,0 +1,28 @@
+{
+  "slug": "cherry-falls",
+  "title": "Cherry Falls",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 2,
+  "characters": [
+    "ROD",
+    "CINDY"
+  ],
+  "total_words": 21233,
+  "total_dialogue": 2,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "ROD",
+        "CINDY"
+      ],
+      "action_text": "<b>                         CHERRY FALLS </b><b>                   SCREENPLAY BY KEN SELDEN </b><b>                         FIRST DRAFT </b> <b>FEBRUARY 14, 1998 </b> <b>FADE IN: </b> <b>EXT.  TOWN - NIGHT </b> The hanging sign says 'Entering Cherry Falls, Ohio' We see Cherry Falls - A small town in rural Northeastern Ohio. This is Norman Rockwell land, red barns on dirt roads, a square in the center of town. But things are hidden here. The barns are locked, the shades are drawn. Dissolve to: <b",
+      "dialogue_count": 2,
+      "word_count": 21233
+    }
+  ]
+}

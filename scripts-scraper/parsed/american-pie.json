@@ -1,0 +1,42 @@
+{
+  "slug": "american-pie",
+  "title": "American Pie",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 9,
+  "characters": [
+    "JIM",
+    "NADIA",
+    "KEVIN",
+    "JIM'S DAD",
+    "VICKY",
+    "MICHELLE",
+    "COACH MARSHALL",
+    "CENTRAL GIRL",
+    "OZ"
+  ],
+  "total_words": 22958,
+  "total_dialogue": 35,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "JIM",
+        "NADIA",
+        "KEVIN",
+        "JIM'S DAD",
+        "VICKY",
+        "MICHELLE",
+        "COACH MARSHALL",
+        "CENTRAL GIRL",
+        "OZ"
+      ],
+      "action_text": "<html> <head> <title>\"American Pie\", production draft, by Adam Herz</title> <script> <b><!-- </b> <b>/* </b>Break-out-of-frames script By Website Abstraction (http://wsabstract.com) Over 400+ free scripts here! Above notice MUST stay entact for use <b>*/ </b> if (window!= top) top.location.href=location.href <b>// --> </b></script></head> <body bgcolor=\"#FFFFFF\"> <pre> <u>East Great Falls High</u> by Adam Herz <b>                                              WHITE REVISION: 7/7/98 </b> <b>     N",
+      "dialogue_count": 35,
+      "word_count": 22958
+    }
+  ]
+}

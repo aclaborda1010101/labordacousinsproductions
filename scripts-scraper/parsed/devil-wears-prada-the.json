@@ -1,0 +1,22 @@
+{
+  "slug": "devil-wears-prada-the",
+  "title": "Devil Wears Prada, The",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 26230,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                        THE DEVIL WEARS PRADA </b> Written by Aline Brosh McKenna Based on the novel by Lauren Weisberger Shooting Draft - September 9, 2005 Blue Revisions - September 15, 2005 Pink Revisions - September 20, 2005 Green Revisions - October 9, 2005 Yellow Revisions - November 9, 2005 Goldenrod Revisions - November 14, 2005 Salmon Revisions - December 9, 2005 2nd Blue In Progress <b>       MUSIC UP </b> <b>       FADE IN </b> <b>       STEAM ON A MIRROR </b> 1      ...wiped off b",
+      "dialogue_count": 0,
+      "word_count": 26230
+    }
+  ]
+}

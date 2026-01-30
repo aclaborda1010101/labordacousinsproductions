@@ -1,0 +1,22 @@
+{
+  "slug": "braveheart",
+  "title": "Braveheart",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 29281,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "\"BRAVEHEART\" by Randall Wallace Early Draft <b> </b> <b>               FADE IN: </b> <b>               EXT. THE SCOTTISH COUNTRYSIDE - DAY </b> Epic beauty: cobalt mountains beneath a glowering purple sky fringed with pink, as if the clouds were a lid too small for the earth; a cascading landscape of boulders shrouded in deep green grass; and the blue lochs, reflecting the sky. We hear a voice, husky, Scottish... <b>                                     VOICE OVER </b>                         I w",
+      "dialogue_count": 0,
+      "word_count": 29281
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "slug": "asteroid-city",
+  "title": "Asteroid City",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 7,
+  "characters": [
+    "HOST",
+    "GENERAL GIBSON",
+    "WOODROW",
+    "MONTANA",
+    "CLIFFORD",
+    "PLAYWRIGHT",
+    "STANLEY"
+  ],
+  "total_words": 29496,
+  "total_dialogue": 9,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "HOST",
+        "GENERAL GIBSON",
+        "WOODROW",
+        "MONTANA",
+        "CLIFFORD",
+        "PLAYWRIGHT",
+        "STANLEY"
+      ],
+      "action_text": "<b>                         ASTEROID CITY </b> <b>INT. TELEVISION STUDIO. EVENING </b> Black and white. A 1950's-era broadcast soundstage. Cameras on pneumatic pedestals. Microphones on telescoping booms. A team of technicians encircling the studio floor. The lights come up on our host, Brylcreemed in a dark suit and necktie. He addresses the audience: <b>                    HOST </b>          Tonight's program takes us backstage to witness first-hand the creation, start to finish, of a new play",
+      "dialogue_count": 9,
+      "word_count": 29496
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "slug": "believer-the",
+  "title": "Believer, The",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 26159,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b> </b><b> </b><b> </b><b>                                THE BELIEVER </b><b> </b><b> </b> Written by <b> </b>                         Henry Bean & Mark Jacobson <b> </b><b> </b><b> </b><b> </b><b> </b><b>                                                                2000 </b>                                               Final Shooting Script <b> </b><b> </b><b> </b><b> </b><b> </b><b> </b><b> </b><b>          BLACK SCREEN </b><b> </b><b>                              RAV ZINGESSER </b>",
+      "dialogue_count": 0,
+      "word_count": 26159
+    }
+  ]
+}

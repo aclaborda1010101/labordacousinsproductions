@@ -1,0 +1,42 @@
+{
+  "slug": "abyss-the",
+  "title": "Abyss, The",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 9,
+  "characters": [
+    "MCBRIDE",
+    "BUD",
+    "DEMARCO",
+    "WILHITE",
+    "MONK",
+    "SCHOENICK",
+    "HIPPY",
+    "SONNY",
+    "LINDSEY"
+  ],
+  "total_words": 32870,
+  "total_dialogue": 13,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "MCBRIDE",
+        "BUD",
+        "DEMARCO",
+        "WILHITE",
+        "MONK",
+        "SCHOENICK",
+        "HIPPY",
+        "SONNY",
+        "LINDSEY"
+      ],
+      "action_text": "<html> <head> <script> <b><!-- </b>if (window!= top) top.location.href=location.href <b>// --> </b></script> <title>The Abyss - by James Cameron </title> </head> <pre> <b>                                  THE ABYSS </b> <b>                            AN ORIGINAL SCREENPLAY </b><b>                                      BY </b><b>                                JAMES CAMERON </b> August 2, 1988 Director's Revision <b>------------------------------------------------------------------------------ </b",
+      "dialogue_count": 13,
+      "word_count": 32870
+    }
+  ]
+}

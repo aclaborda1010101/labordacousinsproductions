@@ -1,0 +1,22 @@
+{
+  "slug": "double-indemnity",
+  "title": "Double Indemnity",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 33830,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "\"DOUBLE INDEMNITY\" Screenplay by Billy Wilder and Raymond Chandler Based on the novel \"Double Indemnity In Three Of A Kind\" by James M. Cain <b> </b> <b>               CHARACTERS </b> <b>               WALTER NEFF </b><b>               PHYLLIS DIETRICHSON </b><b>               BARTON KEYES </b><b>               LOLA DIETRICHSON </b><b>               MR. DIETRICHSON </b><b>               NINO ZACHETTI </b><b>               MR. NORTON </b><b>               MR. JACKSON </b><b>               SAM GOR",
+      "dialogue_count": 0,
+      "word_count": 33830
+    }
+  ]
+}

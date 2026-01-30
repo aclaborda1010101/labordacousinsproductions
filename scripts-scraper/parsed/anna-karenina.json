@@ -1,0 +1,22 @@
+{
+  "slug": "anna-karenina",
+  "title": "Anna Karenina",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 31043,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                          ANNA KARENINA </b> Written by Tom Stoppard Based on the novel by Leo Tolstoy. <b>          INT. POKROVSKOE--NIGHT </b> CLOSE--Expert fingers--female, unlovely, capable--shape a small lump of dough which, with some shreds of cabbage, becomes a filled bun called a pirozhok . . . which is now placed on a baking tray to join rows of pirozhoki ready for the oven. CLOSE-- One hand opens the oven, and, mittened by an apron, removes a tray of perfectly baked",
+      "dialogue_count": 0,
+      "word_count": 31043
+    }
+  ]
+}

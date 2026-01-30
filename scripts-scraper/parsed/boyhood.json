@@ -1,0 +1,30 @@
+{
+  "slug": "boyhood",
+  "title": "Boyhood",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 2,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 33981,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                        BOYHOOD </b> Written by Richard Linklater <b>EXT.   OUTSIDE SCHOOL - DAY </b> MASON waits outside his elementary school, laying in the grass staring up at the clouds. In the distance, the school door opens and Mason's MOM, Olivia, walks toward him. <b>                         MOM </b>             Hey, love bug. You ready? He is quickly on his feet and they are walking toward the car. <b>                            MASON </b>             Yeah.     Hey, guess what, Mom?",
+      "dialogue_count": 0,
+      "word_count": 3905
+    },
+    {
+      "scene_number": 2,
+      "slugline": "EXT. Street as car burns (on TV screen)",
+      "characters": [],
+      "action_text": "<b>                      TV NEWSMAN (V.O.) </b>          Four Blackwater operatives have been viciously attacked in their cars in <b>                      (MORE) </b><b>                                                          22. </b> <b>                      TV NEWSMAN (V.O.) (CONT'D) </b>          Fallujah. The bodies and cars were set on fire, after insurgents started shooting, killing American citizens. <b>                      DAD (O.S.) </b>          Look at this. It's a disaster. <b>",
+      "dialogue_count": 0,
+      "word_count": 30076
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "slug": "dark-star",
+  "title": "Dark Star",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 7553,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<html> <head> <title>\"Dark Star\", short film script, by John Carpenter & Dan O'Bannon</title> </head> <body bgcolor=\"#ffffff\"> <pre> <u>DARK STAR: A SCIENCE FICTION ADVENTURE</u> A Screenplay by John Carpenter and Dan O'Bannon <b>     OPEN ON BLACK SILENCE. </b> The sound of electronic music rises, hollow, metallic. FADE IN on a long TRACKING SHOT through the universe.  As the NARRATOR speaks we move through galaxies, nebulae, solar systems, moving from the infinite slowly down to a particular p",
+      "dialogue_count": 0,
+      "word_count": 7553
+    }
+  ]
+}

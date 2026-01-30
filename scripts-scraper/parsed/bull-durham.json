@@ -1,0 +1,22 @@
+{
+  "slug": "bull-durham",
+  "title": "Bull Durham",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 26399,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "\"BULL DURHAM\" by Ron Shelton <b> </b> In baseball, you don't know nothing. --Yogi Berra <b> </b> Whoever wants to know the heart and mind of America had better learn baseball. --Jacques Barzun <b> </b> You could look it up. --Casey Stengel <b> </b> Titles over -- <b>               FADE IN: </b> A series of still photos. Black and white. Ancient. BABE RUTH SWINGS -- An icon of American history. His giant upper body balanced delicately on tiny ankles and feet. The huge bat in an elegant follow-thr",
+      "dialogue_count": 0,
+      "word_count": 26399
+    }
+  ]
+}

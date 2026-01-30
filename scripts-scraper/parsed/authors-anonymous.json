@@ -1,0 +1,22 @@
+{
+  "slug": "authors-anonymous",
+  "title": "Authors Anonymous",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 22631,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                       AUTHORS ANONYMOUS </b> Written by David Congalton July 14 2012 <b>                                                            REVISED </b> <b>                                      FOR EDUCATIONAL PURPOSES ONLY </b> <b>    FADE IN: </b> <b>1   EXT. FITZGERALD/GRAHAM APARTMENT -- HOLLYWOOD - DAY </b> North Hayworth Avenue, off Sunset Boulevard. A quiet, tree- lined residential street. Note the small apartment complex set back from the curb. <b>    CAPTION: HOLLYWOOD, CALI",
+      "dialogue_count": 0,
+      "word_count": 22631
+    }
+  ]
+}

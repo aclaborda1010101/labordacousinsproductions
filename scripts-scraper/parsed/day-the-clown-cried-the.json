@@ -1,0 +1,22 @@
+{
+  "slug": "day-the-clown-cried-the",
+  "title": "Day the Clown Cried, The",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 37744,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<html> <head> <script> <b><!-- </b>if (window!= top) top.location.href=location.href <b>// --> </b></script> <title>The Day the Clown Cried</title> </head> <pre> <b>\tTHE DAY THE CLOWN CRIED </b><b>\tORIGINAL SCREENPLAY </b>\tBy <b>\tJOAN O'BRIEN </b>\tAnd <b>\tCHARLES DENTON </b>\tBased on a Story Idea by <b>\tJOAN O'BRIEN </b>\tAdditional Material by Jerry Lewis <b>\tI TOOK A CHILD BY THE HAND... </b><b>\tTO LEAD HIM ON HIS WAY. </b><b>\tI TOLD HIM OF THE LOVE OF GOD... </b><b>\tAND TAUGHT HIM HOW TO PRAY.",
+      "dialogue_count": 0,
+      "word_count": 37744
+    }
+  ]
+}

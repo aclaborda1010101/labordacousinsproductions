@@ -1,0 +1,22 @@
+{
+  "slug": "death-at-a-funeral",
+  "title": "Death at a Funeral",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 23377,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                            DEATH AT A FUNERAL </b> Written by Chris Rock & Aeysha Carr Based on \"Death at a Funeral\" by Dean Craig <b>                                                                  02/6/09 </b> <b>                         FADE IN: </b>          MUSIC CUE: \"DON'T WORRY, BE HAPPY\" by Bobby McFerrin plays as we <b>                         BEGIN CREDITS </b> <b>          INT. FUNERAL HOME - DAY </b> We pan across a room filled with caskets. <b>          EXT. CHURCH - DAY </b>",
+      "dialogue_count": 0,
+      "word_count": 23377
+    }
+  ]
+}

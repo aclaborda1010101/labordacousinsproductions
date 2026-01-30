@@ -1,0 +1,26 @@
+{
+  "slug": "dogma",
+  "title": "Dogma",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 1,
+  "characters": [
+    "DOGMA"
+  ],
+  "total_words": 33878,
+  "total_dialogue": 1,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "DOGMA"
+      ],
+      "action_text": "DOGMA <b>EXT ASBURY PARK BOARDWALK - DAY </b> Jersey spring day. Beyond the wooden planks that make up the aged fun pier, the ocean waves crash into the sandy shoreline. An OLD MAN stares at the empty beach. Sun-worshipers hours away from besmirching the dunes. His features are simple. He wears an old overcoat. His face belies good years gone by - a face that has seen more sunrises than one would suspect. He inhales the crisp, salty air and lets a small, satisfied smile cross his face. Behind hi",
+      "dialogue_count": 1,
+      "word_count": 33878
+    }
+  ]
+}

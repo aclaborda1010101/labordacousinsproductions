@@ -1,0 +1,26 @@
+{
+  "slug": "analyze-this",
+  "title": "Analyze This",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 1,
+  "characters": [
+    "ANALYZE THIS"
+  ],
+  "total_words": 26115,
+  "total_dialogue": 1,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "ANALYZE THIS"
+      ],
+      "action_text": "ANALYZE THIS Screenplay by PETER TOLAN and HAROLD RAMIS and KENNETH LONERGAN Story by KENNETH LONERGAN and PETER TOLAN July 1998 Draft <b>              FOR EDUCATIONAL </b><b>               PURPOSES ONLY </b><b> </b><b>1   CREDITS BEGIN OVER BLACK.                                    1 </b> <b>    DOMINIC MANETTA </b> a man in his 70s, narrates nostalgically OVER a MONTAGE of related news photos. <b>                            MANETTA (V.O.) </b>              1957 was a big year. The Russians put",
+      "dialogue_count": 1,
+      "word_count": 26115
+    }
+  ]
+}

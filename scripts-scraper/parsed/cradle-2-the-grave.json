@@ -1,0 +1,26 @@
+{
+  "slug": "cradle-2-the-grave",
+  "title": "Cradle 2 the Grave",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 1,
+  "characters": [
+    "CRADLE TO THE GRAVE"
+  ],
+  "total_words": 20041,
+  "total_dialogue": 1,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "CRADLE TO THE GRAVE"
+      ],
+      "action_text": "CRADLE TO THE GRAVE Written by John O'Brien and Channing Gibson Story by John O'Brien May 2002 Draft <b>      FOR EDUCATIONAL </b><b>       PURPOSES ONLY </b><b> </b><b>                                                                 2. </b> <b>FADE IN: </b> <b>EXT. STREETS (LOS ANGELES) - DAY </b> End of the day.     An armored truck moves through the city of Los Angeles. <b>EXT. JEWELRY EXCHANGE - DAY </b>The armored truck pulls up. An ARMORED TRUCK GUARD emerges from the back with a satchel a",
+      "dialogue_count": 1,
+      "word_count": 20041
+    }
+  ]
+}

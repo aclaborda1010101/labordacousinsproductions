@@ -1,0 +1,22 @@
+{
+  "slug": "brutalist-the",
+  "title": "Brutalist, The",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 30127,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                            THE BRUTALIST </b> Written by Brady Corbet & Mona Fastvold <b>                                                FINAL SHOOTING DRAFT </b><b>                                                      MARCH 12, 2023 </b> A black and white montage of architectural elements; a flurry of shapes, curves, angles, and shadows. <b>                                                       INSERT TITLE: </b><b>                           OVERTURE </b>    CUE: The sonic boom of a ship's",
+      "dialogue_count": 0,
+      "word_count": 30127
+    }
+  ]
+}

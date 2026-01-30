@@ -1,0 +1,22 @@
+{
+  "slug": "croods-the",
+  "title": "Croods, The",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 18722,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                           THE CROODS </b> Written by Kirk DeMicco & Chris Sanders <b>                                                       12.12.2012 </b> <b>          SEQ. 75 - PROLOGUE </b> <b>                         FADE IN: </b> A cave painting of the Dreamworks logo. Push past the moon to the sun. Bright. Beautiful. The sun DISSOLVES <b>                         TO: </b> Cave paintings of a family of cavemen -- we will come to know them as The Croods. <b>                          EEP (",
+      "dialogue_count": 0,
+      "word_count": 18722
+    }
+  ]
+}

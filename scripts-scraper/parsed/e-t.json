@@ -1,0 +1,22 @@
+{
+  "slug": "e-t",
+  "title": "E.T.",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 17455,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "\"E.T.\" Commentary by Richard Michaels <b>TITLES: \"E.T. - THE EXTRA-TERRESTIAL\" </b> [The letters are in soft-purple against a black background. Purple is traditionally the color of that which is sacred.] <b>EXT: NIGHT SKY: NIGHT </b> The black screen becomes a night sky. The camera angles lowers to show a forest against the night sky. <b>EXT: LANDING SITE: NIGHT </b> In an opening in the forest stands a spacecraft. The view of the craft is obscured by tree branches. The atmosphere is misty, with",
+      "dialogue_count": 0,
+      "word_count": 17455
+    }
+  ]
+}

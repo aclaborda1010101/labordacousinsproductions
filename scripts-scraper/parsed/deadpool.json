@@ -1,0 +1,22 @@
+{
+  "slug": "deadpool",
+  "title": "Deadpool",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 28745,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                         DEADPOOL </b> Written by Rhett Reese & Paul Wernick Final Shooting Script - November 16, 2015 OVER BLACK. Low volume, through a tinny speaker, JUICE <b>    NEWTON'S `ANGEL OF THE MORNING.' </b> <b>                                                          FADE UP ON: </b> <b>1   EXT./INT.   TAXI CAB - MORNING                                        1 </b> DEADPOOL, in full DRESS REDS and MASK, quietly FIDGETS in the BACK SEAT of a TAXI CAB as it proceeds along a CITY FR",
+      "dialogue_count": 0,
+      "word_count": 28745
+    }
+  ]
+}

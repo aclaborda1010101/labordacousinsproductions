@@ -1,0 +1,42 @@
+{
+  "slug": "ace-ventura-pet-detective",
+  "title": "Ace Ventura: Pet Detective",
+  "genre": "Action",
+  "genres": [
+    "Action",
+    "Adventure",
+    "Animation",
+    "Comedy",
+    "Crime",
+    "Drama",
+    "Family",
+    "Fantasy",
+    "Film-Noir",
+    "Horror",
+    "Musical",
+    "Mystery",
+    "Romance",
+    "Sci-Fi",
+    "Short",
+    "Thriller",
+    "War",
+    "Western"
+  ],
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 20375,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<HTML> <HEAD>       <TITLE>\"ACE VENTUREA, PET DETECTIVE by Jack Bernstein, Tom Shadyac, Jim Carrey</TITLE> <LINK rel=\"stylesheet\" type=\"text/css\" href=\"style.css\" title=\"style1\"> <META http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\"> <script> <b><!-- </b>if (window!= top) top.location.href=location.href <b>// --> </b></script> </HEAD> <div id=\"Layer1\"> <b></HEAD> </b> <b><BODY> </b> </p><p><p ID=\"act\">ACE VENTURA <b>PET DETECTIVE </b></p><p><p ID=\"act\">Written by Jack Bernstein",
+      "dialogue_count": 0,
+      "word_count": 20375
+    }
+  ]
+}

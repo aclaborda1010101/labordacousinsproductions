@@ -1,0 +1,22 @@
+{
+  "slug": "dune-part-one",
+  "title": "Dune Part One",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 26566,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                    DUNE </b> Screenplay by Jon Spaihts, Denis Villeneuve & Eric Roth Based on the novel 'Dune' by Frank Herbert June 19, 2020 Salmon Revisions Final Shooting Draft <b>      TITLES ON BLACK, APPEARING ONE AFTER THE OTHER </b> Prologue about SPICE TBD <b>                                                      FADE IN: </b> <b>1    DREAM SEQUENCE: EXT. ARRAKIS - END OF DAY                     1 </b> The planet Arrakis, as seen from space. Track across its endless w",
+      "dialogue_count": 0,
+      "word_count": 26566
+    }
+  ]
+}

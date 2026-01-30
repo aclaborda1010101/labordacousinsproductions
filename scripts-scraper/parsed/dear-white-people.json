@@ -1,0 +1,22 @@
+{
+  "slug": "dear-white-people",
+  "title": "Dear White People",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 23644,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                DEAR WHITE PEOPLE </b> Written by Justin Simien <b>                     REVISED: </b>                August 21st, 2013 <b>1    NEWS BROADCAST - VARIOUS SCREENS, VARIOUS PLACES             1 </b> <b>                         ANCHOR </b>               A \"race war\" has erupted at one of the nation's oldest and most prestigious institutions. Glued to this are our story's subjects, who we meet in... <b>2    A SERIES OF SHOTS                                            2 </b> TROY FAI",
+      "dialogue_count": 0,
+      "word_count": 23644
+    }
+  ]
+}

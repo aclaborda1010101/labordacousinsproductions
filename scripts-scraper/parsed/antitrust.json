@@ -1,0 +1,22 @@
+{
+  "slug": "antitrust",
+  "title": "Antitrust",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 27521,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                       \"ANTITRUST\" </b> Screenplay by Howard Franklin <b>                                      SHOOTING DRAFT </b> <b>                                           2001 </b> <b> </b> <b>               ON A BLACK SCREEN </b> it says: \"The coolest thing?\" <b>                                     VOICE </b>                         Wow. That's hard. I'd have to say it's the day we launched Outpost <b>                         '98. </b> We hear a (famous) Seattle alterna",
+      "dialogue_count": 0,
+      "word_count": 27521
+    }
+  ]
+}

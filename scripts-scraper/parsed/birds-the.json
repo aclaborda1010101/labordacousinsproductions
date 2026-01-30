@@ -1,0 +1,22 @@
+{
+  "slug": "birds-the",
+  "title": "Birds, The",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 36367,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<html> <head> <script> <b><!-- </b>if (window!= top) top.location.href=location.href <b>// --> </b></script> <title>\"THE BIRDS\" - by Evan Hunter - 2nd Revision</title> </head> <pre> <b>                                  \"THE BIRDS\" </b> by Evan Hunter Based on the novel \"Birds\" By Daphne Du Maurier FINAL DRAFT 2nd Revision March 2, 1962 <b> </b> <b>\tFADE IN: </b> <b>\tFULL SHOT - GRANT STREET - SAN FRANCISCO - DAY </b> It is mid-afternoon, and there is a tempo and pace to the people walking, the d",
+      "dialogue_count": 0,
+      "word_count": 36367
+    }
+  ]
+}

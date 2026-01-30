@@ -1,0 +1,22 @@
+{
+  "slug": "alone-in-the-dark",
+  "title": "Alone in the Dark",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 28883,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                    ALONE IN THE DARK </b> Written by Elan Mastai & Michael Roesch <b> </b><b> </b><b> </b><b>                                                                     FADE IN: </b><b> </b><b>          1                                                                     1 </b><b>               EXT. FOREST - NIGHT </b><b> </b>               A dense forest on a dark, misty night. <b> </b>               YOUNG EDWARD CARNBY (age 10), small, thin, and terrified, runs fo",
+      "dialogue_count": 0,
+      "word_count": 28883
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "slug": "copycat",
+  "title": "Copycat",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 2,
+  "characters_count": 5,
+  "characters": [
+    "COP",
+    "HELEN",
+    "M.J.",
+    "WOMAN",
+    "QUINN"
+  ],
+  "total_words": 33066,
+  "total_dialogue": 6,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "COP",
+        "HELEN",
+        "M.J.",
+        "WOMAN"
+      ],
+      "action_text": "<b><HTML> </b><HEAD><script> <b><!-- </b>if (window!= top) top.location.href=location.href <b>// --> </b></script><TITLE>Copycat</TITLE> <!--MadeByWZ--> <b></HEAD> </b><b><BODY> </b><center><h1>COPYCAT</h1></center> <center><h3>third draft by Frank Pierson Participating writers: Ann Biderman Jay Presson Allen</h3></center> <hr width=85%> <pre> <b>\tINT. LECTURE HALL BERKELEY - DAY </b> The hall is full.  On the stage, DR. HELEN HUDSON is speaking.  HELEN is a forensic psychologist.  Behind her is",
+      "dialogue_count": 5,
+      "word_count": 30415
+    },
+    {
+      "scene_number": 2,
+      "slugline": "INT. CAR as she slides into the driver's seat, slamming the",
+      "characters": [
+        "QUINN"
+      ],
+      "action_text": "door and locking it.  She drives off into the night. <b>\tEXT. MULUSKEY AUDITORIUM -  NIGHT </b> A broad view through shadowy trees shows it's lighted facade.  Parked in front of is M.J.'s car.  SUDDENLY FROM <b>\tBEHIND THE TREES, SAKS STEPS OUT IN FRONT, BLOCKING THE WAY! </b> <b>\tREVERSE:  HELEN'S CAR IS COMING UP THE STREET TOWARDS US. </b><b>\tSAKS (AND NOW WE SEE OTHER SWAT TYPES IN THE SHADOWS, HIDDEN </b><b>\tFROM THE VIEW OF THE AUDITORIUM) STANDS IN THE STREET </b><b>\tFLAGGING HER DOWN --",
+      "dialogue_count": 1,
+      "word_count": 2651
+    }
+  ]
+}

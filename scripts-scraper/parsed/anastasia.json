@@ -1,0 +1,34 @@
+{
+  "slug": "anastasia",
+  "title": "Anastasia",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 2,
+  "characters_count": 1,
+  "characters": [
+    "ANASTASIA"
+  ],
+  "total_words": 22686,
+  "total_dialogue": 1,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "ANASTASIA"
+      ],
+      "action_text": "ANASTASIA <b>FADE IN: </b> on a well-worn PHOTOGRAPH ALBUM. An ELDERLY WOMAN'S HAND touched the album, caressing it lovingly for a moment, as WE HEAR her voice. <b>                       TATIANA (O.C.) </b>          Once we lived in an enchanted world. . . She opend the ALBUM to reveal a BLACK AND WHITE PHOTOGRAPH of the PALACE AT ST. PETERSBERG on a brilliant summer day. <b>                       TATIANA (CONT) </b>          A world of Tsars and Princesses and elegant palaces. . . CAMERA MOVES",
+      "dialogue_count": 1,
+      "word_count": 11301
+    },
+    {
+      "scene_number": 2,
+      "slugline": "INT. ROOF oF TRAIN",
+      "characters": [],
+      "action_text": "Dmitri struggles to got Vlad to the roof but he's losing his grasp. Anya puts Meetoo down and reaches to help the dangling Vlad. Even Meetoo helps by pulling an Vladimir's  scarf . <b>EXT. PLATFORM </b> Minion one grabs for Vladimir's legs, just as they disappear. <b>EXT. ROOF OF TRAIN </b> Dmitri and Anya let out a sigh of relief as Vlad in safe, but it's short lived as they both SIMULTANEOUSLY lot out a yell. <b>DMITRI & ANYA'S POV: </b> a TUNNEL rapidly approaching. They hit the deck, Vlad on",
+      "dialogue_count": 0,
+      "word_count": 11385
+    }
+  ]
+}

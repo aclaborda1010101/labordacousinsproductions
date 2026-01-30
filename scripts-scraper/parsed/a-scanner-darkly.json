@@ -1,0 +1,32 @@
+{
+  "slug": "a-scanner-darkly",
+  "title": "A Scanner Darkly",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 4,
+  "characters": [
+    "FAT BUSINESSMAN",
+    "BOB ARCTOR",
+    "DONNA HAWTHORNE",
+    "JIM BARRIS"
+  ],
+  "total_words": 30175,
+  "total_dialogue": 6,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "FAT BUSINESSMAN",
+        "BOB ARCTOR",
+        "DONNA HAWTHORNE",
+        "JIM BARRIS"
+      ],
+      "action_text": "<b>                   A SCANNER DARKLY </b> Written by Charlie Kaufman Adapted from the novel by Philip K. Dick First Draft December 20, 1997 <b>   SHOT OF NOTEBOOK PAGE DAPPLED WITH SUNLIGHT </b> POV of someone skimming a hand-written entry. The corresponding voice-over is offhand, dispassionate. In the background, children can be heard laughing and playing. <b>                       BOB ARCTOR (V.O.) </b>          Lately, Jerry Fabin stands all day shaking bugs from his hair. The doctor says t",
+      "dialogue_count": 6,
+      "word_count": 30175
+    }
+  ]
+}

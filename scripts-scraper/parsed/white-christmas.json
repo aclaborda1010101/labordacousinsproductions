@@ -1,0 +1,22 @@
+{
+  "slug": "white-christmas",
+  "title": "White Christmas",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 18443,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<html> <head> <script> <b><!-- </b>if (window!= top) top.location.href=location.href <b>// --> </b></script> <title>WHITE CHRISTMAS</title> </head> <pre> <b>                                    \"WHITE CHRISTMAS\" </b> by Melvin Frank, Norman Krasna and Norman Panama <b> </b> <b>               FULL SHOT - REAR AREA - (DAY) - (GLASS) </b> This is December 24, 1944, in the first safe area directly behind the battle line, in the Italian theatre. In the distance occasional artillery light flashes are s",
+      "dialogue_count": 0,
+      "word_count": 18443
+    }
+  ]
+}

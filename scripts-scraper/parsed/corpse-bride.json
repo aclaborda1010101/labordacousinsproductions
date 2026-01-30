@@ -1,0 +1,22 @@
+{
+  "slug": "corpse-bride",
+  "title": "Corpse Bride",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 15370,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                           TIM BURTON'S CORPSE BRIDE </b> Screenplay by Caroline Thompson, Pamela Pettler & John August February 18, 2004 <b>                         FADE IN: </b> <b>          INT. VICTOR'S ROOM - EXTREME CLOSEUP - DAY </b> We GLIDE OVER beautiful, shimmering lakes of color. PULLING OUT, we find the colors make up the patterns on a butterfly's wing, drawn in miraculous detail on a large sketch pad. VICTOR, a handsome 19-year-old with a gentle, slightly dreaming quality, adds",
+      "dialogue_count": 0,
+      "word_count": 15370
+    }
+  ]
+}

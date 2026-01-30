@@ -1,0 +1,1057 @@
+{
+  "ok": 525,
+  "err": 0,
+  "changed": 175,
+  "changes": [
+    {
+      "title": "22 Jump Street",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "A Monster Calls",
+      "from": "horror",
+      "to": "action",
+      "reason": "R7: action dominante"
+    },
+    {
+      "title": "A Most Violent Year",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "A Star Is Born",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "After The Wedding",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "All Is Lost",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "American Sniper",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Annihilation",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Anthropoid",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Assassination Nation",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "August Osage County",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "Awkward 101 Pilot",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "Babylon",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Baywatch",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "Beauty And The Beast",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Big Little Lies 103 Living The Dream",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "Big Little Lies 105 Once Bitten",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Big Time Adolescence",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "Bird Box",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "Birdman",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "Black Mirror 101 The National Anthem",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "Blackberry",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "Blue Ruin",
+      "from": "horror",
+      "to": "action",
+      "reason": "R7: action dominante"
+    },
+    {
+      "title": "Breaking Bad 311 Abiquiu",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "Breathe",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Brightburn",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "Brooklyn Nine Nine 113 The Bet",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "Cassandro",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Cobra Kai 105 Counterbalance",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Cobra Kai 107 All Valley",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "Colette",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Community 107 Introduction To Statistics",
+      "from": "comedy",
+      "to": "thriller",
+      "reason": "R3: claustrofóbico (int alto, diálogo bajo)"
+    },
+    {
+      "title": "Creed Ii",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Darkest Hour",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Dave 101 The Gander",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "Deadwood 104 Here Was A Man",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Dear White People",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "Death Note",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Den Of Thieves",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Dickinson 101 Because I Could Not Stop",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Doctor Sleep",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Dr Ken 101 Pilot",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "Emma",
+      "from": "comedy",
+      "to": "romance",
+      "reason": "R5: romance score alto"
+    },
+    {
+      "title": "Euphoria 101 Pilot",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "Ex Machina",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "Fighting With My Family",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "First Man",
+      "from": "drama",
+      "to": "scifi",
+      "reason": "R6: scifi score significativo"
+    },
+    {
+      "title": "Flatliners",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Foxcatcher",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Free Guy",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Fresh",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Freuds Last Session",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Friday Night Lights 110 Its Different For Girls",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "Game Night",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Gemini Man",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Girls Trip",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Guardians Of The Galaxy Vol 2",
+      "from": "scifi",
+      "to": "action",
+      "reason": "R7: action dominante"
+    },
+    {
+      "title": "Gunpowder Milkshake",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Gypsy 101 The Rabbit Hole",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "Hail Caesar",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Happy 101 Saint Nick",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Her",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "His Dark Materials 101 Lyras Jordan",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "I Tonya",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Ingrid Goes West",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "Initiation",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Insecure 101 Insecure As Fuck",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "Intelligence 101 Pilot",
+      "from": "action",
+      "to": "scifi",
+      "reason": "R6: scifi score significativo"
+    },
+    {
+      "title": "It Follows",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Jojo Rabbit",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "Joker",
+      "from": "comedy",
+      "to": "thriller",
+      "reason": "R1: thriller >50 descalifica comedy"
+    },
+    {
+      "title": "Killing Eve 101 Nice Face",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "Kin",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Kings Of Summer",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Labor Day",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Leave No Trace",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Legend",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Lion",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Lodge 49 101 As Above So Below",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "Love And Friendship",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "Loving",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "Mandy",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Me Him Her",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "Miles Ahead",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Miss Sloane",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "Motherless Brooklyn",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Mudbound",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Nebraska",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "No Activity 101 Night 35",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Oceans 8",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Overboard",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Overlord",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Paddington 2",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Palm Springs",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Parks And Recreation 102 Canvassing",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "Parks And Recreation 202 The Stakeout",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Parks And Recreation 207 Greg Pikitis",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "Pitch Perfect 2",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Pitch Perfect",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Priscilla",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "Promising Young Woman",
+      "from": "comedy",
+      "to": "romance",
+      "reason": "R5: romance score alto"
+    },
+    {
+      "title": "Puzzle",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "Recovery Road 101 Blackout",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "Room",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Rush",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Saving Mr Banks",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Sex Education 101 Episode 1 1",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "Sharp Objects 101 Vanish",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "Sicario",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Silicon Valley 508 Fifty One Percent",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Skyscraper",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Slender Man",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Smilf 101 A Box Of Dunkies And Two Squirts Of Maple Syrup",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "Spartacus 102 Sacramentum Gladiatorum",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "Spider Man Into The Spider Verse",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Spotlight",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Steve Jobs",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Stranger Things 101 Chapter One The Vanishing Of Will Byers",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "Strawberry Mansion",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Stuber",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Suicide Squad",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "Sully",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Suspiria",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Ted Lasso 101 Pilot",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "Tell Me A Story 101 Chapter 1 Hope",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "The 100 101 Pilot",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "The Beguiled",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "The Birth Of A Nation",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "The Boxtrolls",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "The Boy",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "The Comey Rule 101 Night One",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "The Conjuring",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "The First 101 Separation",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "The Florida Project",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "The Founder",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "The Front Runner",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "The Good Dinosaur",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "The Good Place 101 Everything Is Great",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "The Good Wife 101 Pilot",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "The Greatest Showman",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "The Hummingbird Project",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "The Hunger Games Catching Fire",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "The Internship",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "The Interview",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "The Lighthouse",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "The Lone Ranger",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "The Lost City Of Z",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "The Lunchbox",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R3: claustrofóbico (int alto, diálogo bajo)"
+    },
+    {
+      "title": "The Man In The High Castle 101 The New World",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "The Man Who Fell To Earth 101 Hallo Spaceboy",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "The Man Who Invented Christmas",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "The Marvelous Mrs Maisel 101 Pilot",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "The Maze Runner",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "The Midnight Sky",
+      "from": "action",
+      "to": "scifi",
+      "reason": "R6: scifi score significativo"
+    },
+    {
+      "title": "The Peanut Butter Falcon",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "The Post",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "The Queens Gambit 101 Openings",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "The Rider",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "The Theory Of Everything",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "The Way Back",
+      "from": "comedy",
+      "to": "romance",
+      "reason": "R5: romance score alto"
+    },
+    {
+      "title": "The Wife",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "The Worlds End",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "To Catch A Killer",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Tom Clancys Jack Ryan 101 Pilot",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Trumbo",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Twin Peaks 101 Pilot",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Twin Peaks 102 Episode 1 2",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Under The Silver Lake",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "Vikings 101 Rites Of Passage",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "Vox Lux",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "Whiplash",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "Work It",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "Yellowstone 101 Daybreak",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    },
+    {
+      "title": "You 101 Pilot",
+      "from": "comedy",
+      "to": "drama",
+      "reason": "R2: comedy/drama empatados, drama gana"
+    },
+    {
+      "title": "Zombieland Double Tap",
+      "from": "action",
+      "to": "drama",
+      "reason": "R1c: action no dominante, drama significativo"
+    }
+  ]
+}

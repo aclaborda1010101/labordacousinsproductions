@@ -1,0 +1,22 @@
+{
+  "slug": "american-gangster",
+  "title": "American Gangster",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 33715,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                        AMERICAN GANGSTER </b> Written by Steven Zaillian <b>                                                      FINAL SHOOTING SCRIPT </b>                                                              July 27, 2006 <b> </b> <b>1   EXT. JAZZ CLUB - DAY                                                  1 </b> A tall, handsome man in a dark suit emerges from a Lincoln Towncar and enters a small, basement R&B/Jazz club. <b>2   INT. JAZZ CLUB - DAY",
+      "dialogue_count": 0,
+      "word_count": 33715
+    }
+  ]
+}

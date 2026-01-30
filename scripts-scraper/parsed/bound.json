@@ -1,0 +1,30 @@
+{
+  "slug": "bound",
+  "title": "Bound",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 2,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 21135,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                           BOUND </b> Written by Larry & Andy Wachowski <b>               FADE IN: </b> Inside a closet. It is a large closet with double doors, a crisp line of light cutting down through the center of the darkness. As we begin to descend, voices echo in our head. <b>                                     VIOLET (V.O.) </b>                         I had this image of you, inside of me, like a part of me. We move past a shelf filled with hatboxes and handbags.  It",
+      "dialogue_count": 0,
+      "word_count": 15058
+    },
+    {
+      "scene_number": 2,
+      "slugline": "INT.  EMPTY APARTMENT Corky is pressed against the door, eye",
+      "characters": [],
+      "action_text": "at the peephole. She sees that Violet is afraid as the two women seem to speak to each other with their eyes. <b>                                     CORKY </b>                         ...  shit. <b>               EXT.  PARKING LOT - NIGHT </b> Caesar is on his knees, searching under the seats of Johnnie's Mercedes.  Unable to find the money, he is ready to snap. From the main doors, Corky slips out of the building.  Hiding behind a column, she sees Violet and Caesar across the lot. Corky moves",
+      "dialogue_count": 0,
+      "word_count": 6077
+    }
+  ]
+}

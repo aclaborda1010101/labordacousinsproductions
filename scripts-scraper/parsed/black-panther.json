@@ -1,0 +1,26 @@
+{
+  "slug": "black-panther",
+  "title": "Black Panther",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 1,
+  "characters": [
+    "IT'S ULYSSES KLAUE"
+  ],
+  "total_words": 29160,
+  "total_dialogue": 1,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "IT'S ULYSSES KLAUE"
+      ],
+      "action_text": "<b>                          BLACK PANTHER </b> Written by Ryan Coogler & Joe Robert Cole <b>          EXT. DEEP SPACE </b> A dark screen is lit up by twinkling stars . <b>                          SON </b>           Baba? <b>                          FATHER </b>           Yes, my son? <b>                          SON </b>           Tell me a story . <b>                          FATHER </b>           Which one? <b>                          SON </b>           The story of home . A meteorite drift",
+      "dialogue_count": 1,
+      "word_count": 29160
+    }
+  ]
+}

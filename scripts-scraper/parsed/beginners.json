@@ -1,0 +1,22 @@
+{
+  "slug": "beginners",
+  "title": "Beginners",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 20607,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                   BEGINNERS </b> Written by Mike Mills <b>          INT. HAL FIELDS HOME. </b> A single daisy stands in a vase in an empty kitchen. <b>          INT. HAL'S BEDROOM </b> OLIVER FIELDS clicks on the light to the closet. He looks at the rack of his parents' clothes. He begins to put some in a box marked \"home\", some in a box marked \"thrift\". <b>          INT. HAL'S BATHROOM </b> Oliver enters the bathroom and flushes bottle after bottle of pills and liquids down",
+      "dialogue_count": 0,
+      "word_count": 20607
+    }
+  ]
+}

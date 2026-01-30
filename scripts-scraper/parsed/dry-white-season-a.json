@@ -1,0 +1,26 @@
+{
+  "slug": "dry-white-season-a",
+  "title": "Dry White Season, A",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 1,
+  "characters": [
+    "A DRY WHITE SEASON"
+  ],
+  "total_words": 37202,
+  "total_dialogue": 1,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "A DRY WHITE SEASON"
+      ],
+      "action_text": "A DRY WHITE SEASON Rewrite by <b>      EUZHAN PALCY </b> May 1987 Revised First Draft <b>   FOR EDUCATIONAL </b><b>    PURPOSES ONLY </b><b> </b><b>\"IN THE WHOLE WORLD </b><b>THERE IS NOT A SINGLE </b><b>POOR DEVIL WHO IS LYNCHED, </b><b>NOT ONE MISERABLE MAN </b><b>WHO IS TORTURED IN WHOM </b><b>I TOO, I AM NOT MURDERED </b><b>AND DEGRADED.\" </b> Aime Cesaire <b> </b><b>PRE-TITLE: </b> <b>FADE IN: </b><b>EXT. DAN PIENAAR SECONDARY SCHOOL FOR BOYS - DAY </b> Dan Pienaar school is a typical Johan",
+      "dialogue_count": 1,
+      "word_count": 37202
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "slug": "adventures-of-buckaroo-banzai-across-the-eighth-dimension-the",
+  "title": "Adventures of Buckaroo Banzai Across the Eighth Dimension, The",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 1,
+  "characters": [
+    "BUCKAROO BANZAI"
+  ],
+  "total_words": 25216,
+  "total_dialogue": 1,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "BUCKAROO BANZAI"
+      ],
+      "action_text": "BUCKAROO BANZAI by Earl Mac Rauch <b>SHOOTING SCRIPT </b>Revised Third Draft March 30, 1983 Becherman/Canton-Richter <b>BUCKAROO BANZAI </b> <b>CARD OVER...WHITE LETTERS ON A DARK BACKGROUND: </b> <b>\t\tFREEDOM OF INFORMATION ACT </b>\t\tClassified File #2TC1695 Dept. of Defense 3-1-50 thru 8-31-53 Re:  Project Sawtooth <b>FADE IN: </b> <b>EXT.  SMALL TEXAS TOWN - DAY\t1 </b> Beside a 1950 Ford, a quartet of elite intellectuals poses playfully...dressed in the local custom of boots and cowboy hats,",
+      "dialogue_count": 1,
+      "word_count": 25216
+    }
+  ]
+}

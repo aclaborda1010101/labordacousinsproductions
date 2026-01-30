@@ -1,0 +1,22 @@
+{
+  "slug": "american-beauty",
+  "title": "American Beauty",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 22622,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "INT. FITTS HOUSE - RICKY'S BEDROOM - NIGHT",
+      "characters": [],
+      "action_text": "On VIDEO: JANE BURNHAM lays in bed, wearing a tank top. She's sixteen, with dark, intense eyes. <b>                    JANE </b>          I need a father who's a role model, not some horny geek-boy who's gonna spray his shorts whenever I bring a girlfriend home from school. (snorts) What a lame-o. Somebody really should put him out of his misery. Her mind wanders for a beat. <b>                    RICKY (O.C.) </b>          Want me to kill him for you? Jane looks at us and sits up. <b>",
+      "dialogue_count": 0,
+      "word_count": 22622
+    }
+  ]
+}

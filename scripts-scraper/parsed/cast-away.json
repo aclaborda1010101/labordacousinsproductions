@@ -1,0 +1,22 @@
+{
+  "slug": "cast-away",
+  "title": "Cast Away",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 28965,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<html> <head> <script> <b><!-- </b>if (window!= top) top.location.href=location.href <b>// --> </b></script> <title>CAST AWAY</title> </head> <pre> <b>                           CAST AWAY </b> by William Broyles <b>                                               THIRD DRAFT </b> March 13, 1998 <b>FADE IN: </b> <b>EXT.  MARFA, TEXAS - 1993 - WIDE - DAY </b> The Texas plains, horizon to horizon, nothing but the browns and ochres of earth and the blue and violet of the sky.  The sheer scope of it si",
+      "dialogue_count": 0,
+      "word_count": 28965
+    }
+  ]
+}

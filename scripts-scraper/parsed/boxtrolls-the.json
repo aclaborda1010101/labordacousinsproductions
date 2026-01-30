@@ -1,0 +1,22 @@
+{
+  "slug": "boxtrolls-the",
+  "title": "Boxtrolls, The",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 29112,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                THE BOXTROLLS </b> Written by Irena Brignull & Adam Pava Based on the book \"Here Be Monsters\" by Alan Snow <b>                                                                   1. </b> <b>                         (0050 PRO) PROLOGUE </b> <b>          EXT. CHEESEBRIDGE ALLEY - NIGHT </b> Lightning strikes, illuminating a vine covered wall as the camera moves across a dark alley filled with CARDBOARD BOXES and CRATES. They boxes have stylized LABELS; the box in f",
+      "dialogue_count": 0,
+      "word_count": 29112
+    }
+  ]
+}

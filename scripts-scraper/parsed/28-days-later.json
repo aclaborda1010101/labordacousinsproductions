@@ -1,0 +1,22 @@
+{
+  "slug": "28-days-later",
+  "title": "28 Days Later",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 21844,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                          28 DAYS LATER </b> Written by Alex Garland <b>          CLOSE ON A MONITOR SCREEN: </b> Images of stunning violence. Looped. Soldiers in a foreign war shoot an unarmed civilian at point- blank range; a man is set on by a frenzied crowd wielding clubs and machetes; a woman is necklaced while her killers cheer and howl. Pull back to reveal that we are seeing one of many screens in a bank of monitors, all showing similar images... Then revealing that the monitors are in",
+      "dialogue_count": 0,
+      "word_count": 21844
+    }
+  ]
+}

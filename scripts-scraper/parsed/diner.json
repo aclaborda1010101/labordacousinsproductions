@@ -1,0 +1,54 @@
+{
+  "slug": "diner",
+  "title": "Diner",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 5,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 22287,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                  DINER </b> Written by Barry Levinson <b>                         FADE IN: </b>          The SCREEN IS BLACK. We hear MUFFLED ROCK and ROLL MUSIC. Then we read: <b>                         BALTIMORE </b> <b>                         1959 </b> <b>          FADE OUT. </b> <b>                         :FADE IN: </b> <b>          INT. DANCE HALL BASEMENT - NIGHT </b> FENWICK walks along the dimly lit basement. Heavy wiatei coats hang from hooks on the wall. In the b",
+      "dialogue_count": 0,
+      "word_count": 6475
+    },
+    {
+      "scene_number": 2,
+      "slugline": "INT. CREST TT-iEATER - NIGiT",
+      "characters": [],
+      "action_text": "Shrevie stands in the lobby with his wife, Beth, an attrac- tive girl. Eddie and Fenwick enter and walk over to Shrevie. <b>                         SH 1ZEVIE </b> <b>                         (ALMOST APOLOGIZING </b>          for bringing Beth) Beth heard the movie was pretty good. <b>                         BETH </b>          Eddie, where's Elyse? <b>                         I </b> <b>                         EDDIE </b>          She's hcme studying for the football test. (CO,rTINTJ D) <b>",
+      "dialogue_count": 0,
+      "word_count": 2108
+    },
+    {
+      "scene_number": 3,
+      "slugline": "INT. CONTROL ROOM - NIGdT",
+      "characters": [],
+      "action_text": "The control room overlooks the studio floor. Technicians are setting up the cameras, microphones, lights. -over- the control room a bank of monitors hang down from a metal shelf. The TEC:=`iICAI. DI? CTOR is talking over a headset, balancing video levels. Barbara slips cis a headset and shuffles through some papers. <b>          BA_R.QARA </b> <b>                         (INTO HEADSET) </b>          Telecine, you want to. run down the file. chains for me? Silly takes in all the activity. He is.",
+      "dialogue_count": 0,
+      "word_count": 5636
+    },
+    {
+      "scene_number": 4,
+      "slugline": "EXT. MOV t.E Tr.?T - NIG'T",
+      "characters": [],
+      "action_text": "Eddie and Billy walk toward the theatre. he marquee reads: \"La Dolce Vita.\" <b>          F.?D; </b>          So, what are you going to do? <b>                         B ILLY </b>          It's up to her. Her? Ycu've got a big decision to make. We could make it a double wedding. They reach the box office and hand over a dollar apiece and get t-.;o tickets in return. <b>                         CU TO: </b> <b>                         I </b> Iti'T. LOBBY - NIGHT <b>                         V </b>",
+      "dialogue_count": 0,
+      "word_count": 4681
+    },
+    {
+      "scene_number": 5,
+      "slugline": "INT. BEDROOM - ANG't ON r-: SLIGHTLY OPENED CLOSET DOOR -",
+      "characters": [],
+      "action_text": "<b>                         NIGHT </b> <b>          FENW1C{ (O.S.) </b>          They should be here now. <b>          SH VIE (C..S.) </b>          Let's wait. <b>           C. T TO </b> <b>          INT. CAR - NIGHT </b> Boogie is very urser, with hi=self. Beth is calm. <b>                          SHE HOLDS </b>          the blonde wi'g in tier lap. <b>                         BETH </b>          I was suppose to be Carol Heathrow? <b>                         BOOGIE </b>          That's right.",
+      "dialogue_count": 0,
+      "word_count": 3387
+    }
+  ]
+}

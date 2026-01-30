@@ -1,0 +1,22 @@
+{
+  "slug": "detroit-rock-city",
+  "title": "Detroit Rock City",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 28267,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                    DETROIT ROCK CITY </b> Written by Carl V Dupre <b> </b> <b>               FADE IN: </b> <b>               INT. MRS. BRUCE'S LIVING ROOM - NIGHT </b> Decorated in Carol Brady chic. When it's not gaudy, tacky, and loud, it's blander than toast. Colors like lime green and sunshine orange should be reserved for popsicles only. MRS. BRUCE, late 30's, enters looking exhausted. She carries a glass of wine in one hand and a book in the other, Erma Bombeck's The Gra",
+      "dialogue_count": 0,
+      "word_count": 28267
+    }
+  ]
+}

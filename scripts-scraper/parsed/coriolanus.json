@@ -1,0 +1,22 @@
+{
+  "slug": "coriolanus",
+  "title": "Coriolanus",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 23195,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                 CORIOLANUS </b> Written by William Shakespeare Screenplay by John Logan <b>          INT. DARKENED ROOM - DAY </b> The blade of a knife. Pulled from its sheath, intricate tribal etchings on the blade catching the light. The blade being pulled across a sharpening stone. Swoosh- swoosh-swoosh. Rhythmic. A well-practiced hand. A muscular, tattooed arm. The blade held up. Razor sharp. The glow of a TV in the darkened room is the only illumination. We see images on",
+      "dialogue_count": 0,
+      "word_count": 23195
+    }
+  ]
+}

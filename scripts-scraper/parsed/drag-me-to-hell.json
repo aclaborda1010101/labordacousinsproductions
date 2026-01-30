@@ -1,0 +1,30 @@
+{
+  "slug": "drag-me-to-hell",
+  "title": "Drag Me to Hell",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 2,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 20143,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b> </b><b>                                  DRAG ME TO HELL </b> Written by Ivan Raimi & Sam Raimi <b> </b> <b> </b> September, 2007 <b>          INT. BEDROOM - BEFORE DAWN </b> 22 year old Stephanie Browne is jarred from a peaceful sleep as the alarm clock BUZZES. She hits the snooze button and plops back down onto the pillow. After a few seconds of pure sleeping bliss, she wills herself up. She moves through her Ikea furnished bedroom, past a \"Hang in there, baby\" poster and into the bathroom",
+      "dialogue_count": 0,
+      "word_count": 9266
+    },
+    {
+      "scene_number": 2,
+      "slugline": "INT. BACK ROOM OF RHAM Jas'S STOREFRONT - DAY",
+      "characters": [],
+      "action_text": "on a plain wooden table.a samovar brews a musty tea. Rham Jas is reading from an ancient text. He looks up from the book,- solemn. <b>          RHAM JAS </b>          What did it sound like. <b>          STEPHANIE </b>          Like... shrieking. It was awful. He nods. Closes the book. <b>          RHAM JAS </b>          That would be the Lamia. The \"Black Goat\". <b>          4 </b> <b> </b> <b> </b> <b> </b> <b> </b> <b>          43. </b> <b>          STEPHANIE </b>          Lamia. Right. That'",
+      "dialogue_count": 0,
+      "word_count": 10877
+    }
+  ]
+}

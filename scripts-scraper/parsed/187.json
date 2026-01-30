@@ -1,0 +1,22 @@
+{
+  "slug": "187",
+  "title": "187",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 32832,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "187 <br>                by <br> <br>          Scott Yagemann <br> <br> <br> <br> <br>       REVISED SHOOTING DRAFT <br> <br>         November 4, 1996 <br> <br> <br> <br> <br>FOR EDUCATIONAL PURPOSES ONLY <br> <br>    Rev. 7/10/96 <br> <br> <br>                             1   8   7 <br> <br> <br>1   EXT. LOWER MANHATTAN SKYLINE - BROOKLYN BRIDGE - MORNING    1 <br>    RUSH HOUR <br> <br>    ON a pair of black Dexter penny loafers diligently <br>    pedaling an old Schwinn mountain bike. ADJUST A",
+      "dialogue_count": 0,
+      "word_count": 32832
+    }
+  ]
+}

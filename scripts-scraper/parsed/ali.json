@@ -1,0 +1,22 @@
+{
+  "slug": "ali",
+  "title": "Ali",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 36954,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b> </b><b> </b><b> </b><b>                                  ALI </b> <b> </b><b> </b>                               Written by <b> </b>                Stephen J Rivele, Christopher Wilkinson, <b> </b>                         Eric Roth & Michael Mann <b> </b><b> </b>                                Story by <b> </b>                         Gregory Allen Howard <b> </b><b>                                                        FADE IN: </b><b> </b><b>          EXT. MIAMI STREET - MOVEMENT - NIGHT",
+      "dialogue_count": 0,
+      "word_count": 36954
+    }
+  ]
+}

@@ -1,0 +1,280 @@
+{
+  "version": "2.0",
+  "totalScreenplays": 525,
+  "processedAt": "2026-01-29T20:32:41.777Z",
+  "qualityMetrics": {
+    "screenplaysWithCharacters": 525,
+    "screenplaysWithCharactersPercent": 100,
+    "screenplaysWithDialogue": 521,
+    "screenplaysWithDialoguePercent": 99,
+    "screenplaysWithScenes": 377,
+    "screenplaysWithScenesPercent": 72,
+    "avgCharactersPerScreenplay": 22,
+    "avgDialoguesPerScreenplay": 32.5
+  },
+  "avgMetrics": {
+    "avgScenes": 11,
+    "avgRuntime": 21,
+    "avgCharacters": 22,
+    "avgLocations": 5.9,
+    "avgDialogueRatio": 0.04,
+    "avgIntRatio": 0.63,
+    "avgNightRatio": 0.5
+  },
+  "genreDistribution": {
+    "action": 273,
+    "thriller": 186,
+    "drama": 51,
+    "horror": 6,
+    "scifi": 4,
+    "romance": 3,
+    "comedy": 2
+  },
+  "formatDistribution": {
+    "film": 350,
+    "series": 175
+  },
+  "wellStructuredExamples": [
+    {
+      "title": "22 July",
+      "slug": "22-july-2018",
+      "scenes": 31,
+      "runtime": 53,
+      "characters": 25,
+      "dialogueLines": 52,
+      "genre": "action",
+      "topCharacters": [
+        "LIPPESTAD",
+        "VILJAR",
+        "LAWYER",
+        "EXTREMIST",
+        "MINISTER"
+      ]
+    },
+    {
+      "title": "A Monster Calls",
+      "slug": "a-monster-calls-2016",
+      "scenes": 125,
+      "runtime": 85,
+      "characters": 25,
+      "dialogueLines": 40,
+      "genre": "horror",
+      "topCharacters": [
+        "CONOR",
+        "GRANDMA",
+        "DAD",
+        "MONSTER",
+        "MUM"
+      ]
+    },
+    {
+      "title": "Alex Cross",
+      "slug": "alex-cross-2012",
+      "scenes": 24,
+      "runtime": 46,
+      "characters": 25,
+      "dialogueLines": 54,
+      "genre": "thriller",
+      "topCharacters": [
+        "ALEX",
+        "TOMMY",
+        "DAWSON",
+        "MARIA",
+        "SULLIVAN"
+      ]
+    },
+    {
+      "title": "All Quiet On The Western Front",
+      "slug": "all-quiet-on-the-western-front-2022",
+      "scenes": 24,
+      "runtime": 52,
+      "characters": 25,
+      "dialogueLines": 26,
+      "genre": "thriller",
+      "topCharacters": [
+        "PAUL",
+        "KAT",
+        "KROPP",
+        "LLER",
+        "CHURCH"
+      ]
+    },
+    {
+      "title": "American Animals",
+      "slug": "american-animals-2018",
+      "scenes": 45,
+      "runtime": 93,
+      "characters": 25,
+      "dialogueLines": 129,
+      "genre": "action",
+      "topCharacters": [
+        "WARREN",
+        "SPENCER",
+        "ERIC",
+        "CHAS",
+        "INTERVIEWER"
+      ]
+    },
+    {
+      "title": "American Hustle",
+      "slug": "american-hustle-2013",
+      "scenes": 20,
+      "runtime": 39,
+      "characters": 25,
+      "dialogueLines": 83,
+      "genre": "drama",
+      "topCharacters": [
+        "ROSENFELD",
+        "DIMASO",
+        "POLITO",
+        "GREENSLY",
+        "THORSEN"
+      ]
+    },
+    {
+      "title": "Argo",
+      "slug": "argo-2012",
+      "scenes": 34,
+      "runtime": 52,
+      "characters": 25,
+      "dialogueLines": 84,
+      "genre": "action",
+      "topCharacters": [
+        "MENDEZ",
+        "DONNELL",
+        "CHAMBERS",
+        "ANDERS",
+        "LIJEK"
+      ]
+    },
+    {
+      "title": "Black Mirror 101 The National Anthem",
+      "slug": "black-mirror-101-the-national-anthem-2011",
+      "scenes": 21,
+      "runtime": 37,
+      "characters": 25,
+      "dialogueLines": 55,
+      "genre": "action",
+      "topCharacters": [
+        "MICHAEL",
+        "JANE",
+        "BRIAN",
+        "ALEX",
+        "PIKE"
+      ]
+    },
+    {
+      "title": "Blue Ruin",
+      "slug": "blue-ruin-2013",
+      "scenes": 29,
+      "runtime": 43,
+      "characters": 25,
+      "dialogueLines": 31,
+      "genre": "action",
+      "topCharacters": [
+        "DWIGHT",
+        "SAM",
+        "BEN",
+        "EDDY",
+        "HOPE"
+      ]
+    },
+    {
+      "title": "Boy Erased",
+      "slug": "boy-erased-2018",
+      "scenes": 23,
+      "runtime": 42,
+      "characters": 25,
+      "dialogueLines": 36,
+      "genre": "action",
+      "topCharacters": [
+        "JARED",
+        "NANCY",
+        "SYKES",
+        "MARSHALL",
+        "CHLOE"
+      ]
+    },
+    {
+      "title": "Breathe",
+      "slug": "breathe-2017",
+      "scenes": 28,
+      "runtime": 49,
+      "characters": 25,
+      "dialogueLines": 109,
+      "genre": "action",
+      "topCharacters": [
+        "ROBIN",
+        "DIANA",
+        "PADDY",
+        "DAWNAY",
+        "ENTWISTLE"
+      ]
+    },
+    {
+      "title": "Conclave",
+      "slug": "conclave-2024",
+      "scenes": 154,
+      "runtime": 5,
+      "characters": 25,
+      "dialogueLines": 0,
+      "genre": "thriller",
+      "topCharacters": [
+        "ROME",
+        "VATICAN",
+        "CASA",
+        "SANTA",
+        "MARTA"
+      ]
+    },
+    {
+      "title": "Da 5 Bloods",
+      "slug": "da-5-bloods-2020",
+      "scenes": 23,
+      "runtime": 43,
+      "characters": 25,
+      "dialogueLines": 58,
+      "genre": "thriller",
+      "topCharacters": [
+        "OTIS",
+        "DAVID",
+        "PAUL",
+        "MELVIN",
+        "EDDIE"
+      ]
+    },
+    {
+      "title": "Dallas Buyers Club",
+      "slug": "dallas-buyers-club-2013",
+      "scenes": 21,
+      "runtime": 42,
+      "characters": 25,
+      "dialogueLines": 66,
+      "genre": "thriller",
+      "topCharacters": [
+        "RON",
+        "EVE",
+        "VASS",
+        "RAYON",
+        "BARKLEY"
+      ]
+    },
+    {
+      "title": "Doctor Sleep",
+      "slug": "doctor-sleep-2019",
+      "scenes": 25,
+      "runtime": 46,
+      "characters": 25,
+      "dialogueLines": 63,
+      "genre": "action",
+      "topCharacters": [
+        "DAN",
+        "ABRA",
+        "CROW",
+        "ROSE",
+        "ANDI"
+      ]
+    }
+  ],
+  "errors": []
+}

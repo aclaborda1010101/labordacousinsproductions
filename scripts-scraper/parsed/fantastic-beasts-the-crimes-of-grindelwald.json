@@ -1,0 +1,46 @@
+{
+  "slug": "fantastic-beasts-the-crimes-of-grindelwald",
+  "title": "Fantastic Beasts: The Crimes of Grindelwald",
+  "genre": "Action",
+  "genres": [
+    "Action",
+    "Adventure",
+    "Animation",
+    "Comedy",
+    "Crime",
+    "Drama",
+    "Family",
+    "Fantasy",
+    "Film-Noir",
+    "Horror",
+    "Musical",
+    "Mystery",
+    "Romance",
+    "Sci-Fi",
+    "Short",
+    "Thriller",
+    "War",
+    "Western"
+  ],
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 1,
+  "characters": [
+    "END"
+  ],
+  "total_words": 23426,
+  "total_dialogue": 1,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "END"
+      ],
+      "action_text": "<b>            FANTASTIC BEASTS: THE CRIMES OF GRINDELWALD </b> Written by J.K. Rowling <b>                                           FINAL SHOOTING SCRIPT   2017/11/16   1. </b> <b>1        EXT. NEW YORK, AMERICAN MINISTRY OF MAGIC 1927 (NIGHT)                           1 </b> AERIAL SHOT: New York and MACUSA building. <b>2        INT. MACUSA BASEMENT, BARE, BLACK-WALLED ROOM (NIGHT)                              2 </b> The long-haired, bearded GRINDELWALD sits motionless, magically fixed to a c",
+      "dialogue_count": 1,
+      "word_count": 23426
+    }
+  ]
+}

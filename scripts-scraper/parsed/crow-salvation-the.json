@@ -1,0 +1,26 @@
+{
+  "slug": "crow-salvation-the",
+  "title": "Crow Salvation, The",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 1,
+  "characters": [
+    "THE END"
+  ],
+  "total_words": 22946,
+  "total_dialogue": 1,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "THE END"
+      ],
+      "action_text": "<b><HTML> </b><b><HEAD> </b>      <TITLE>\"THE CROW: SALVATION\" -- by Chip Johannessen</TITLE> <b></HEAD> </b> <!-- Screenplay scanned by 'T-Mic' / � Dimension Films --> <b><BODY> </b><b>   <PRE> </b> The Crow : SALVATION By Chip Johannessen <b>               OVER BLACKNESS. </b> Silence. Broken by the faint clink of precision tools. Accurately, patiently wielded. <b>               INT. MYSTERY ROOM - DIMNESS </b> X-CLOSE. A SCALPEL returned to its place in a neat array of TAXIDERMY TOOLS. Long s",
+      "dialogue_count": 1,
+      "word_count": 22946
+    }
+  ]
+}

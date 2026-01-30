@@ -1,0 +1,34 @@
+{
+  "slug": "bruce-almighty",
+  "title": "Bruce Almighty",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 5,
+  "characters": [
+    "BRUCE ALMIGHTY",
+    "BRUCE",
+    "JANITOR",
+    "DEBBIE",
+    "GOD"
+  ],
+  "total_words": 25258,
+  "total_dialogue": 11,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "BRUCE ALMIGHTY",
+        "BRUCE",
+        "JANITOR",
+        "DEBBIE",
+        "GOD"
+      ],
+      "action_text": "BRUCE ALMIGHTY by Steve Koren & Mark O'Keefe Rewrite by Steve Oedekerk <b>           7/30/02 </b> Shady Acres Entertainment <b> </b><b>INT. KOWOLSKI'S BAKERY - KITCHEN - DAY </b> A news crew shuttles around a GIGANTIC COOKIE. Standing by are the KOWOLSKI BROTHERS, GUSTOV and VOL, two SHORT, STOCKY, MEN, along with MOTHER KOWOLSKI and other bakery family employees. A \"30 YEAR ANNIVERSARY\" sign hangs in the background. BRUCE NOLAN looks into a make-up mirror, desperately trying to place a large se",
+      "dialogue_count": 11,
+      "word_count": 25258
+    }
+  ]
+}

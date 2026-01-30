@@ -1,0 +1,22 @@
+{
+  "slug": "boondock-saints-the",
+  "title": "Boondock Saints, The",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 27942,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                   THE BOONDOCK SAINTS </b> Written by <b>                                        TROY DUFFY </b> Shooting Script:  White August 28, 1997 <b> </b> <b>               INT.  GOTHIC CHURCH  10:00 A.M.  ST. PATRICK'S DAY </b> <b>               DOWNTOWN BOSTON </b> As we open we see the inside of an enormous church. A young looking PRIEST in his mid-thirties is finishing the delivery of the Lord�s Prayer. In the back of the church, in the last pew, there are two who",
+      "dialogue_count": 0,
+      "word_count": 27942
+    }
+  ]
+}

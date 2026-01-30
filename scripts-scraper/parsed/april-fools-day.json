@@ -1,0 +1,54 @@
+{
+  "slug": "april-fools-day",
+  "title": "April Fool's Day",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 2,
+  "characters_count": 9,
+  "characters": [
+    "FERRYMAN",
+    "SKIP",
+    "KIT",
+    "MUFFY",
+    "NIKKI",
+    "ROB",
+    "NAN",
+    "UNCLE FRANK",
+    "CHAZ"
+  ],
+  "total_words": 23183,
+  "total_dialogue": 20,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "FERRYMAN",
+        "SKIP",
+        "KIT",
+        "MUFFY",
+        "NIKKI"
+      ],
+      "action_text": "<b>                                    APRIL FOOL'S DAY </b> Written by Danilo Bach rev 1st draft July 30, 1986 <b>                         FADE IN </b> <b>          EXT. FERRY LANDING - NEW ENGLAND SHORE - DAY </b>          The sparkling waters. The chirping spring day. We are on an isolated stretch of country shore , and a quiet, sheltered island is visible distantly across the Sound. There is asense of anticipation, excitement. VOICES can be heard. THE CAMERA is the POV of a VIDEO CAMERA, and",
+      "dialogue_count": 6,
+      "word_count": 7357
+    },
+    {
+      "scene_number": 2,
+      "slugline": "INT. ROB and KIT'S ROOM - NIGHT",
+      "characters": [
+        "ROB",
+        "MUFFY",
+        "NAN",
+        "NIKKI",
+        "KIT",
+        "UNCLE FRANK",
+        "CHAZ"
+      ],
+      "action_text": "Rob and Kit are standing together staring INTO CAMERA. REVERSE to see the object of their attention. Hanging on the wall in front of them is a large oil portrait with the eyes out out. Something is moving behind the canvas �watching them. Rob steps forward and lifts the painting off the wall. Behind it is an inset bookcase. Sitting on one of the shelves, at the proper height to have lined up with the holes in the portrait, is a child's Felix-the- cat nursery clock. The eyes of the plastic cat mo",
+      "dialogue_count": 14,
+      "word_count": 15826
+    }
+  ]
+}

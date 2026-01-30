@@ -1,0 +1,22 @@
+{
+  "slug": "big-lebowski-the",
+  "title": "Big Lebowski, The",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 24038,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<html> <head> <script> <b><!-- </b>if (window!= top) top.location.href=location.href <b>// --> </b></script> <title>THE BIG LEBOWSKI</title> </head> <pre> <b>\t\t\tTHE BIG LEBOWSKI </b> We are floating up a steep scrubby slope.  We hear male voices gently singing \"Tumbling Tumbleweeds\" and a deep, affable, Western-accented voice--Sam Elliot's, perhaps: <b>\t\t\t\tVOICE-OVER </b>\t\tA way out west there was a fella, fella I want to tell you about, fella by the name of Jeff Lebowski.  At least, that was th",
+      "dialogue_count": 0,
+      "word_count": 24038
+    }
+  ]
+}

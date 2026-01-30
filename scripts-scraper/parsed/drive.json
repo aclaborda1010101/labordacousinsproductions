@@ -1,0 +1,22 @@
+{
+  "slug": "drive",
+  "title": "Drive",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 23872,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                        DRIVE </b> Written by Hossein Amini Based on the novel by James Sallis <b>                                                                   09.24.10 </b> <b>          1 INT. CAR ENGINE - NIGHT. 1 </b> We're close on a maze of metal rods, tubes, and wires. It's only as we pull out that we realize it's the engine of a car. Over the image we hear a voice talking on a phone. <b>           DRIVER O/S </b>           ...hundred thousand streets in this city,",
+      "dialogue_count": 0,
+      "word_count": 23872
+    }
+  ]
+}

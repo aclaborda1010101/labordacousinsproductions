@@ -1,0 +1,26 @@
+{
+  "slug": "breakdown",
+  "title": "Breakdown",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 1,
+  "characters": [
+    "BREAKDOWN"
+  ],
+  "total_words": 24992,
+  "total_dialogue": 1,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "BREAKDOWN"
+      ],
+      "action_text": "BREAKDOWN by Jonathan Mostow March 1996 Revised First Draft <b>FOR EDUCATIONAL </b><b> PURPOSES ONLY </b><b> </b><b>FADE IN: </b> <b>EXTREMELY TIGHT ON ELECTRONIC GUTS </b> of a video camera. The screwdriver blade of a Swiss Army knife ENTERS FRAME, methodically tightening a row of screws. PULL BACK to reveal: <b>EXT. BOMBARDED NEIGHBORHOOD (WAR-TORN COUNTRY) - DAY </b> On the backslope of a mound of rubble, a three-man TV crew (field producer, reporter, and cameraman, all wearing flak jackets)",
+      "dialogue_count": 1,
+      "word_count": 24992
+    }
+  ]
+}

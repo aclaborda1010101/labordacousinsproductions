@@ -1,0 +1,42 @@
+{
+  "slug": "american-shaolin-king-of-kickboxers-ii",
+  "title": "American Shaolin: King of Kickboxers II",
+  "genre": "Action",
+  "genres": [
+    "Action",
+    "Adventure",
+    "Animation",
+    "Comedy",
+    "Crime",
+    "Drama",
+    "Family",
+    "Fantasy",
+    "Film-Noir",
+    "Horror",
+    "Musical",
+    "Mystery",
+    "Romance",
+    "Sci-Fi",
+    "Short",
+    "Thriller",
+    "War",
+    "Western"
+  ],
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 30121,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "FADE IN: <b>EXT. NEW YORK CITY SKYLINE � NIGHT </b><b>ESTABLISHING SHOT OF THE NEW YORK CITY SKYLINE AT NIGHT, THE LIGHTS </b><b>OF THE CITY SHINING BRIGHTLY. </b><b>EXT. WORKOUT AREA � SAME NIGHT </b><b>ESTABLISHING SHOT OF MASTER KWAN'S SCHOOL, A RAMSHACKLE BUILDING IN A </b><b>BURNED OUT ROW OF STORES. </b>His is the only one still    occupied, and it doesn't look that permanent. In the window    is a cardboard, handwritten sign that reads \"Kwan's Shaolin Kung Fu\".    What remains visible beh",
+      "dialogue_count": 0,
+      "word_count": 30121
+    }
+  ]
+}

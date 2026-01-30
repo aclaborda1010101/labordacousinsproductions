@@ -1,0 +1,26 @@
+{
+  "slug": "disturbia",
+  "title": "Disturbia",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 1,
+  "characters": [
+    "KALE"
+  ],
+  "total_words": 28600,
+  "total_dialogue": 1,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "KALE"
+      ],
+      "action_text": "<b>                            DISTURBIA </b> Written by Christopher Landon Revised by Carl Ellsworth March 2006 <b> </b><b>    OVER BLACK: </b> <b>                           KALE (V.O.) </b>                   (tense) Do you think he sees us? <b>                            JEFF (V.O.) </b>               No, he can't see us. But he feels us watching. <b>    FADE IN: </b> <b>    DEEP BLUE WATER FILLS THE FRAME. </b> And there... a few feet beneath the surface... something SHIMMERS in the sunlight.",
+      "dialogue_count": 1,
+      "word_count": 28600
+    }
+  ]
+}

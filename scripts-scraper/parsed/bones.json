@@ -1,0 +1,22 @@
+{
+  "slug": "bones",
+  "title": "Bones",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 30234,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<html> <head> <title>Bones</title> <b><!-- </b> <b>/* </b>Break-out-of-frames script By Website Abstraction (http://wsabstract.com) Over 400+ free scripts here! Above notice MUST stay entact for use <b>*/ </b> if (window!= top) top.location.href=location.href <b>// --> </b></script> </head> <body> <center><a href=\"index.html\">back</a></center> <pre> This portion of the screenplay is originally pages 14-26.  It is presented out of order to reflect the final film. <b>\t\t\tEXT. BLACKSTONE AVE. - 2000",
+      "dialogue_count": 0,
+      "word_count": 30234
+    }
+  ]
+}

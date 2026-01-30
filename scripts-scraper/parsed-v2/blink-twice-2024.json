@@ -1,0 +1,5461 @@
+{
+  "slug": "blink-twice-2024",
+  "title": "Blink Twice",
+  "parsedWith": "v2",
+  "parsedAt": "2026-01-29T22:09:03.958Z",
+  "stats": {
+    "scenes": 131,
+    "dialogues": 762,
+    "characters": 48
+  },
+  "characters": [
+    {
+      "name": "FRIDA",
+      "dialogueLines": 209,
+      "totalWords": 1294
+    },
+    {
+      "name": "SLATER KING",
+      "dialogueLines": 86,
+      "totalWords": 549
+    },
+    {
+      "name": "SLATER",
+      "dialogueLines": 78,
+      "totalWords": 442
+    },
+    {
+      "name": "SARAH",
+      "dialogueLines": 76,
+      "totalWords": 663
+    },
+    {
+      "name": "JESS",
+      "dialogueLines": 56,
+      "totalWords": 334
+    },
+    {
+      "name": "CODY",
+      "dialogueLines": 45,
+      "totalWords": 403
+    },
+    {
+      "name": "HEATHER",
+      "dialogueLines": 28,
+      "totalWords": 194
+    },
+    {
+      "name": "VIC",
+      "dialogueLines": 25,
+      "totalWords": 140
+    },
+    {
+      "name": "CAMILLA",
+      "dialogueLines": 24,
+      "totalWords": 183
+    },
+    {
+      "name": "LUCAS",
+      "dialogueLines": 22,
+      "totalWords": 182
+    },
+    {
+      "name": "STACY",
+      "dialogueLines": 18,
+      "totalWords": 140
+    },
+    {
+      "name": "TOM",
+      "dialogueLines": 15,
+      "totalWords": 97
+    },
+    {
+      "name": "INTERVIEWER",
+      "dialogueLines": 10,
+      "totalWords": 26
+    },
+    {
+      "name": "RICH",
+      "dialogueLines": 8,
+      "totalWords": 66
+    },
+    {
+      "name": "MAMA",
+      "dialogueLines": 8,
+      "totalWords": 27
+    },
+    {
+      "name": "ASSHOLE BOSS",
+      "dialogueLines": 7,
+      "totalWords": 59
+    },
+    {
+      "name": "CAROLINE",
+      "dialogueLines": 5,
+      "totalWords": 84
+    },
+    {
+      "name": "BEN",
+      "dialogueLines": 5,
+      "totalWords": 42
+    },
+    {
+      "name": "STAN",
+      "dialogueLines": 5,
+      "totalWords": 15
+    },
+    {
+      "name": "JEFF",
+      "dialogueLines": 2,
+      "totalWords": 8
+    },
+    {
+      "name": "EMCEE",
+      "dialogueLines": 2,
+      "totalWords": 38
+    },
+    {
+      "name": "OMIT",
+      "dialogueLines": 2,
+      "totalWords": 9
+    },
+    {
+      "name": "DRIP.",
+      "dialogueLines": 1,
+      "totalWords": 20
+    },
+    {
+      "name": "SLATER KING NET WORTH",
+      "dialogueLines": 1,
+      "totalWords": 3
+    },
+    {
+      "name": "SLATER KING ISLAND",
+      "dialogueLines": 1,
+      "totalWords": 3
+    },
+    {
+      "name": "SLATER KING INTERVIEW",
+      "dialogueLines": 1,
+      "totalWords": 13
+    },
+    {
+      "name": "JAMES BROWN",
+      "dialogueLines": 1,
+      "totalWords": 5
+    },
+    {
+      "name": "GARRET",
+      "dialogueLines": 1,
+      "totalWords": 7
+    },
+    {
+      "name": "BACK TO THE BALLROOM",
+      "dialogueLines": 1,
+      "totalWords": 29
+    },
+    {
+      "name": "BLONDE WOMAN",
+      "dialogueLines": 1,
+      "totalWords": 8
+    },
+    {
+      "name": "SHITHEADS",
+      "dialogueLines": 1,
+      "totalWords": 2
+    },
+    {
+      "name": "EXT.",
+      "dialogueLines": 1,
+      "totalWords": 7
+    },
+    {
+      "name": "EXT GROUNDS DAY",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "CHICKEN.",
+      "dialogueLines": 1,
+      "totalWords": 4
+    },
+    {
+      "name": "RED GIFT BAGS.",
+      "dialogueLines": 1,
+      "totalWords": 4
+    },
+    {
+      "name": "A MOMENT LATER",
+      "dialogueLines": 1,
+      "totalWords": 11
+    },
+    {
+      "name": "THE GIRLS",
+      "dialogueLines": 1,
+      "totalWords": 4
+    },
+    {
+      "name": "STACYSTACY",
+      "dialogueLines": 1,
+      "totalWords": 14
+    },
+    {
+      "name": "I... I...",
+      "dialogueLines": 1,
+      "totalWords": 18
+    },
+    {
+      "name": "JINGLE JINGLE.",
+      "dialogueLines": 1,
+      "totalWords": 10
+    },
+    {
+      "name": "EVERYBODY",
+      "dialogueLines": 1,
+      "totalWords": 8
+    },
+    {
+      "name": "SARAHSARAH",
+      "dialogueLines": 1,
+      "totalWords": 63
+    },
+    {
+      "name": "OUTSIDE",
+      "dialogueLines": 1,
+      "totalWords": 8
+    },
+    {
+      "name": "SLATER.",
+      "dialogueLines": 1,
+      "totalWords": 7
+    },
+    {
+      "name": "LAWN",
+      "dialogueLines": 1,
+      "totalWords": 27
+    },
+    {
+      "name": "A VOICE",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "COCKTAIL WAITRESS",
+      "dialogueLines": 1,
+      "totalWords": 6
+    },
+    {
+      "name": "FIN",
+      "dialogueLines": 1,
+      "totalWords": 8
+    }
+  ],
+  "scenes": [
+    {
+      "number": 1,
+      "heading": "EXT. JUNGLE - DAY",
+      "characters": [
+        "DRIP. DRIP. DRIP."
+      ],
+      "dialogues": [],
+      "actionPreview": "(Existing shot) LIZARD SITS ON A ROCK WATCHING... SOMETHING"
+    },
+    {
+      "number": 2,
+      "heading": "INT. BATHROOM - DAY",
+      "characters": [
+        "THEM.",
+        "DRIP.",
+        "SLATER KING NET WORTH",
+        "SLATER KING ISLAND",
+        "SLATER KING INTERVIEW",
+        "SLATER KING"
+      ],
+      "dialogues": [
+        {
+          "character": "DRIP.",
+          "parenthetical": "",
+          "text": "CLOSE ON: FRIDAS’ CAT NAILS AS SHE TYPES: aNAILmals by Frida. LIZARD EMOJI. PAINTING NAIL EMOJI. BLOWS SMOKE EMOJI. POST."
+        },
+        {
+          "character": "SLATER KING NET WORTH",
+          "parenthetical": "",
+          "text": "SLATER KING KING-TECH"
+        },
+        {
+          "character": "SLATER KING ISLAND",
+          "parenthetical": "",
+          "text": "SlATER KING APOLOGY"
+        },
+        {
+          "character": "SLATER KING INTERVIEW",
+          "parenthetical": "",
+          "text": "FRIDA CLICKS ON THE LAST ONE. CLOSE ON HER EYES AS WE HEAR:"
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "* I Slater King would like to"
+        }
+      ],
+      "actionPreview": "CLOSE ON A GRIMY LEAKY SINK. DRIP. DRIP. DRIP. SPARK! Close on: A YELLOW LIGHTER with a lil smilie face on it LIGHTING a stick of incense. FRIDA blows out the flame, then looks back to: HER PHONE SCREEN WHERE WE SEE: A PICTURE OF A WOMEN’S HANDS SHOWING OFF NAIL ART WITH LITTLE GREEN LIZARDS PAINTED"
+    },
+    {
+      "number": 3,
+      "heading": "INT. INTERVIEW - DAY",
+      "characters": [
+        "INTERVIEWER",
+        "SLATER KING",
+        "JESS",
+        "FRIDA",
+        "BEAT."
+      ],
+      "dialogues": [
+        {
+          "character": "INTERVIEWER",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "* (CONT'D) I like this chair."
+        },
+        {
+          "character": "INTERVIEWER",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "INTERVIEWER",
+          "parenthetical": "",
+          "text": "* I was going to say since you"
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "INTERVIEWER",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "INTERVIEWER",
+          "parenthetical": "",
+          "text": "* (CONT'D)"
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "* (CONT'D) I just needed to disappear for a"
+        },
+        {
+          "character": "INTERVIEWER",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "INTERVIEWER",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "* I know it sounds obnoxious, but Uh,"
+        },
+        {
+          "character": "INTERVIEWER",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "INTERVIEWER",
+          "parenthetical": "",
+          "text": "* I’m sure you can have it, if you"
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "INTERVIEWER",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "* I guess, uh, I dunno, I’m just"
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "(O.S.)",
+          "text": "Hey dude, you got my lighter?"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Oh, yeah, sorry!"
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "The super should be here soon, Will you grab the rent money?"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Ok, we uh, might be a little short."
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "What did you do???"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "It’s a"
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "Oh boy..."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Wait! Do we have any more--"
+        }
+      ],
+      "actionPreview": "* You released that 2 years ago * today. I’m sure a lots happened * since then. * Yes, ma’m. A lots happened. * He shifts in his seat. He’s nervous in a a way that makes him * relatable. * * Right. Well lets get to question * that everybody is dying for you to * answer. Where have you been since * y"
+    },
+    {
+      "number": 4,
+      "heading": "INT. FRIDA’S BATHROOM - MOMENTS LATER - DAY",
+      "characters": [
+        "FRIDA",
+        "JAMES BROWN"
+      ],
+      "dialogues": [
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "I need a fuckin’ vacation."
+        },
+        {
+          "character": "JAMES BROWN",
+          "parenthetical": "",
+          "text": "1 2 3. Get down!"
+        }
+      ],
+      "actionPreview": "Frida’s washes her hands in the grimy sink. She turns off the water, but the sinks still like- DRIP. DRIP. DRIP. She looks in the mirror. Fusses with her hair. We clock A SCAR next to her left eye. She REACHES behind the vanity mirror and pulls out a small wad of cash. She looks at her reflection. T"
+    },
+    {
+      "number": 5,
+      "heading": "INT. KITCHEN - DAY",
+      "characters": [
+        "ASSHOLE BOSS",
+        "FRIDA"
+      ],
+      "dialogues": [
+        {
+          "character": "ASSHOLE BOSS",
+          "parenthetical": "",
+          "text": "Frida...Frida. FRIDA!!!"
+        },
+        {
+          "character": "ASSHOLE BOSS",
+          "parenthetical": "(CONT'D)",
+          "text": "You’re late."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "I know sorry I- 5."
+        },
+        {
+          "character": "ASSHOLE BOSS",
+          "parenthetical": "",
+          "text": "SO, as know the KING TECH gala is our most important event of the year, and well, last year you were a little too... .chatty ."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "No I--He started talking to"
+        },
+        {
+          "character": "ASSHOLE BOSS",
+          "parenthetical": "",
+          "text": "Anyway, It would be great if this time you could be a little more, ya know,"
+        },
+        {
+          "character": "ASSHOLE BOSS",
+          "parenthetical": "(CONT'D)",
+          "text": "Aren’t we forgetting something?"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "If I’m inviable why does it matter if I-"
+        },
+        {
+          "character": "ASSHOLE BOSS",
+          "parenthetical": "",
+          "text": "If you’re gonna difficult--"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Ok, ok, I’m sorry. We’re good. No one’s difficult. See?"
+        },
+        {
+          "character": "ASSHOLE BOSS",
+          "parenthetical": "",
+          "text": "Just don’t forget to smile."
+        }
+      ],
+      "actionPreview": "We follow Fridas’ red backpack through the kitchen. The godfather of soul blasts in her ear buds. A muffled voice: Frida finally hears him. Takes out her earbuds 6. me. He told me he liked my nails that was it-- invisible. Frida nods. Turns to open her locker Frida smiles. Boss walks away. Frida smi"
+    },
+    {
+      "number": 6,
+      "heading": "INT. EVENT STAGING AREA - NIGHT",
+      "characters": [
+        "CAROLINE",
+        "TITLE CARD",
+        "BEN",
+        "JEFF",
+        "FRIDA",
+        "JESS",
+        "GARRET"
+      ],
+      "dialogues": [
+        {
+          "character": "CAROLINE",
+          "parenthetical": "",
+          "text": "You know what they used to call that place?"
+        },
+        {
+          "character": "BEN",
+          "parenthetical": "",
+          "text": "Yeah, and it was legendary and also a million years ago."
+        },
+        {
+          "character": "JEFF",
+          "parenthetical": "",
+          "text": "Frida, you’re late."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Sorry."
+        },
+        {
+          "character": "CAROLINE",
+          "parenthetical": "",
+          "text": "All I’m sayin’ is I don’t buy this whole fucking"
+        },
+        {
+          "character": "BEN",
+          "parenthetical": "",
+          "text": "Oh, they definitely playin’ with they chess. I’m just sayin’ he’s a billionaire. What do you want him to do, take girls to Applebees?"
+        },
+        {
+          "character": "CAROLINE",
+          "parenthetical": "",
+          "text": "How was your date by the way?"
+        },
+        {
+          "character": "BEN",
+          "parenthetical": "",
+          "text": "She was sweet."
+        },
+        {
+          "character": "CAROLINE",
+          "parenthetical": "",
+          "text": "All I’m saying is, if you’re at one of these charity events, it’s not because you’re a good person. It’s because you cannot fuckin’ sleep at night and you’re trying to buy back your soul, one five-hundred- thousand dollar plate of Branzino at a time. I’m just sayin’--"
+        },
+        {
+          "character": "BEN",
+          "parenthetical": "",
+          "text": "I’m just sayin’..."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "That’s so cynical. You don’t have to be a monster to have power."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CAROLINE",
+          "parenthetical": "",
+          "text": "Okay. Go hang out with your best friend, Slater King."
+        },
+        {
+          "character": "BEN",
+          "parenthetical": "",
+          "text": "*"
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "Do you have my lighter?"
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "So, I’ve learned that when a client over fifty says they want to"
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "Rich people have no sense of time."
+        },
+        {
+          "character": "GARRET",
+          "parenthetical": "",
+          "text": "Yo Jess, can I grab your lighter?"
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "(hands it off) I want it back. (then)"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Ugh, this haircut is stupid. I look like a boy."
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "It’s cute."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Heard ya sneakin’ out at like three am. Where’d you go last night?"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "Please don’t be mad at me."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "I’m not mad at you! I just can’t magically erase shit from my brain so when you get back together I’m not gonna pretend I don’t want to stab him."
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "It’s complicated --"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "It’s not. Stop giving away your power."
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "I think I’m afraid of being alone."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "You’re not alone. You have me."
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "I know."
+        },
+        {
+          "character": "JEFF",
+          "parenthetical": "",
+          "text": "Don’t forget to smile, ladies."
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "Anyway. It’s tonight."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "I’m dead."
+        }
+      ],
+      "actionPreview": "TRACK WITH FRIDA as she heads to some LOCKERS, passing between her co-worker buds, CAROLINE and BEN. Frida drops her RED BACKPACK into a locker. “my island is my safe space where I learn to talk less and listen more and think about my soul.” What do you think they do on this “ legendary ” island now"
+    },
+    {
+      "number": 7,
+      "heading": "INT. THE DOWN TO EARTH GALA - BALLROOM - NIGHT",
+      "characters": [
+        "EMCEE"
+      ],
+      "dialogues": [
+        {
+          "character": "EMCEE",
+          "parenthetical": "",
+          "text": "Ok, ok, let’s get serious, people."
+        }
+      ],
+      "actionPreview": "2 2 CLOSE ON: An EMCEE’S FACE. It is now time for me to introduce to you, your host. You all know him as the CEO and founder of KingTech, but tonight we are here for his exquisite taste and his boundless generosity. And it is my distinct pleasure to introduce you to Mr. Slater King. GO WIDE. A fancy"
+    },
+    {
+      "number": 8,
+      "heading": "INT. STORAGE ROOM - BALLROOM - MOMENTS LATER - NIGHT",
+      "characters": [
+        "JESS",
+        "FRIDA",
+        "BACK TO THE BALLROOM"
+      ],
+      "dialogues": [
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "Careful, you’re gonna sprain your neck."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "I don’t care if I break it."
+        },
+        {
+          "character": "BACK TO THE BALLROOM",
+          "parenthetical": "",
+          "text": "A woman TAPS her champagne flute. A HAND appears--nails PAINTED BLUE, with NAIL ART OF CATS--starts to pour. Frida glances at THE BACK OF SLATER’S HEAD AT HIS TABLE."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "3 3 Frida and Jess struggle with CASES OF DOM. Frida cranes her neck, staring through the door at Slater, still talking. She DROPS her case of Dom next to the freezer. TIME CUT: Back to Frida, the champagne flute is OVERFLOWING. Sorry. Shit. I’m sorry. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REV"
+    },
+    {
+      "number": 9,
+      "heading": "INT. GALA - LOCKERS - A LITTLE LATER",
+      "characters": [
+        "JESS"
+      ],
+      "dialogues": [
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "(to co-worker)"
+        }
+      ],
+      "actionPreview": "Frida opens her locker with the RED BACK PACK. Yo. Seriously? Co-worker tosses the lighter back."
+    },
+    {
+      "number": 10,
+      "heading": "INT. BALLROOM - A MOMENT LATER - NIGHT",
+      "characters": [
+        "BACKPACK."
+      ],
+      "dialogues": [],
+      "actionPreview": "4A 4A Frida and Jess weave through the dense crowd with the RED"
+    },
+    {
+      "number": 11,
+      "heading": "INT. STALL - LADIES ROOM - NIGHT",
+      "characters": [
+        "FRIDA",
+        "JESS"
+      ],
+      "dialogues": [
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Red or blue?"
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "Uhhhh--"
+        }
+      ],
+      "actionPreview": "6 6 Frida and Jess are squeezed into the stall. Frida reaches into the backpack--"
+    },
+    {
+      "number": 12,
+      "heading": "INT. LADIES ROOM - MOMENTS LATER - NIGHT",
+      "characters": [
+        "JESS",
+        "BLONDE WOMAN"
+      ],
+      "dialogues": [
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "Twinsies. NEXT TO THEM:"
+        },
+        {
+          "character": "BLONDE WOMAN",
+          "parenthetical": "",
+          "text": "I’ve asked Charlie to pull the car around."
+        }
+      ],
+      "actionPreview": "7 7 Frida and Jess fight the crowd of women for a spot at the mirror. Both in the same dress. Frida in RED. Jess in BLUE. A BLONDE WOMAN, stares at her reflection."
+    },
+    {
+      "number": 13,
+      "heading": "INT. BALLROOM - A FEW MINUTES LATER - NIGHT",
+      "characters": [
+        "JESS",
+        "FRIDA",
+        "STAN",
+        "SLATER",
+        "RICH",
+        "END MONTAGE"
+      ],
+      "dialogues": [
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "Oh, she’s gorgeous. I have one of those in my summer house, but I need more."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Oh, shit, sorry. I just don’t know how to walk in these fuckin’ things."
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "Ok, do this thing my aunt taught me. It’s easy. East. West. East."
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "Oh, shit, it’s Jennifer."
+        },
+        {
+          "character": "STAN",
+          "parenthetical": "",
+          "text": "Ladies, this is a private area."
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "How much do you think that little head costs? Like, a million dollars? I wonder if an alarm would go off if I stole it."
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "Frida! What are you doing??"
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "Are you alright? Is it ok if I help you up?"
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Yeah..."
+        },
+        {
+          "character": "RICH",
+          "parenthetical": "",
+          "text": "Slater!"
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "Rich!"
+        },
+        {
+          "character": "RICH",
+          "parenthetical": "",
+          "text": "The speech turned out great."
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "Really, you sure it wasn’t too long?"
+        },
+        {
+          "character": "STAN",
+          "parenthetical": "",
+          "text": "Ma’am."
+        },
+        {
+          "character": "RICH",
+          "parenthetical": "",
+          "text": "I’m sorry to interrupt."
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "No, no, you’re not interrupting."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "I’m Frida."
+        }
+      ],
+      "actionPreview": "8 8 The gala is now in full party mode. Frida and Jess strut, lookin’ good. Like, real good. On stage in the b.g., the Emcee is auctioning off a PIECE OF ART. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)5. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)6. FRIDA"
+    },
+    {
+      "number": 14,
+      "heading": "INT. STAIRS - BALLROOM - CONTINUOUS - NIGHT",
+      "characters": [
+        "STACY",
+        "SLATER",
+        "FRIDA",
+        "VIC",
+        "JESS"
+      ],
+      "dialogues": [
+        {
+          "character": "STACY",
+          "parenthetical": "",
+          "text": "Hi. Sorry to interrupt."
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "(not breaking eye contact with Frida)"
+        },
+        {
+          "character": "STACY",
+          "parenthetical": "",
+          "text": "Hiiii. So nice to see you. So, Miss"
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "Yeah, ok. Thanks Stace."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Where ya off to?"
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "The island. Just for a few days."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Oh. “The island.” Casual."
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "So casual."
+        },
+        {
+          "character": "VIC",
+          "parenthetical": "",
+          "text": "Alright, that’s very cute. C’mon."
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "Ok, I’ll, uhh..."
+        },
+        {
+          "character": "VIC",
+          "parenthetical": "",
+          "text": "Let’s goooooo!"
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "-- I’ll see ya."
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "Another chapter for the memoir."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Totally."
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "Ok, uhm, I don’t wanna sound uhm..."
+        }
+      ],
+      "actionPreview": "10D 10D STACY (Slater’s assistant, all smiles, kinda hangin’ on by a thread). Frida, Stacy. Stacy, Frida. Party Pooper, I know, but it’s-- Stacy steps away, quietly takes a little ZIPLOCK of SKITTLES out of her FANNY PACK. Pops one in her mouth. Slater picks up his jacket. PUSSY ISLAND - Kravitz/Him"
+    },
+    {
+      "number": 15,
+      "heading": "INT. SLATER’S JET - MOMENTS LATER - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "14B 14B Frida opens her eyes, blinks, looks around. Slater is asleep on her shoulder. Holy shit, Slater King is asleep on my shoulder. She peeks out the window to see: THE ISLAND. Deep green jungle. White sand beaches. Crystal clear water. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/"
+    },
+    {
+      "number": 16,
+      "heading": "EXT. MOVING TESLA / ISLAND DIRT ROAD - LATER - DAY",
+      "characters": [
+        "OMIT"
+      ],
+      "dialogues": [
+        {
+          "character": "OMIT",
+          "parenthetical": "",
+          "text": "16"
+        }
+      ],
+      "actionPreview": "15 15 BIRDSEYE SHOT, à la THE SHINING: a caravan of Teslas winding along the dirt road through dense trees. 16 INT./EXT. MOVING TESLA / THE COMPOUND - DAY 17 17 Frida, Jess, and Slater ride in the back, Stan up front with the driver. The caravan pulls up to the compound. Stacy jumps out, enters a co"
+    },
+    {
+      "number": 17,
+      "heading": "EXT. COMPOUND DRIVEWAY - DAY",
+      "characters": [
+        "VIC",
+        "SLATER",
+        "FRIDA",
+        "JESS",
+        "STACY",
+        "MAMA",
+        "TOM",
+        "SARAH",
+        "SMILEY FACE LIGHTER.",
+        "SHITHEADS"
+      ],
+      "dialogues": [
+        {
+          "character": "VIC",
+          "parenthetical": "",
+          "text": "It’s good to be back."
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "I’m redecorating. You like it?"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "I love it."
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "What do you think?"
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "(sotto to Frida)"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "He’s not a stranger. He’s Slater"
+        },
+        {
+          "character": "STACY",
+          "parenthetical": "",
+          "text": "Hi friends! (trips a little)"
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "Yeah, you don’t have to do anything you don’t want to do."
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MAMA",
+          "parenthetical": "",
+          "text": "Welcome home."
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "The place looks great. So much new growth."
+        },
+        {
+          "character": "TOM",
+          "parenthetical": "",
+          "text": "Hi Mama!"
+        },
+        {
+          "character": "MAMA",
+          "parenthetical": "",
+          "text": "Welcome home, uhm..."
+        },
+        {
+          "character": "TOM",
+          "parenthetical": "",
+          "text": "... Tom. Mama, it’s me, Tom."
+        },
+        {
+          "character": "MAMA",
+          "parenthetical": "",
+          "text": "Oh I know I know. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)11."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Casual basket of snakes."
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "Do we consider that a red flag?"
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "Not no."
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "So I guess we should ignore it? And like, date it for eight months?"
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "Cute."
+        },
+        {
+          "character": "VIC",
+          "parenthetical": "",
+          "text": "Ok everyone"
+        },
+        {
+          "character": "SHITHEADS",
+          "parenthetical": "",
+          "text": "Makin’ memories!!"
+        }
+      ],
+      "actionPreview": "17 17 Everyone gets out of their cars. The staff awaits them with trays of drinks. Vic puts on his FAVORITE HAT. Slater tries out his RED CHAIR in the middle of the driveway. Is it too red? Eventually he lets the crew take it away and follows them down the path. Jess turns to Frida. Did we’re really"
+    },
+    {
+      "number": 18,
+      "heading": "INT. FRIDA’S BUNGALOW - LATER - DAY",
+      "characters": [
+        "SLATER",
+        "FRIDA"
+      ],
+      "dialogues": [
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "I hope it’s ok. It’s my favorite one."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "I think I’ll survive."
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "I keep meaning to fix that. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)12."
+        }
+      ],
+      "actionPreview": "18 18 Slater opens the door. It’s elegant, minimal, perfect. Frida sniffs the bouquet of BIG RED FLOWERS. They cross through the room. Slater twists the knob on the back door, and it sticks. He wrestles with it for a beat, a little embarrassed. Finally gets it open. PUSSY ISLAND - Kravitz/Himelstein"
+    },
+    {
+      "number": 19,
+      "heading": "INT. FRIDA’S ROOM - DAY",
+      "characters": [
+        "FRIDA",
+        "MAMA"
+      ],
+      "dialogues": [
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Holy shit, you scared me."
+        },
+        {
+          "character": "MAMA",
+          "parenthetical": "",
+          "text": "Sorry, I forgot."
+        },
+        {
+          "character": "MAMA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Sorry, what?"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "Refreshed, having just showered off the gala and the jet, still buzzing from the Slater tour, Frida wraps herself in a towel, and JUMPS/SCREAMS: Mama stands in her bathroom, holding the WHITE DRESS. Frida clocks SNAKE TATTOO’S on her forearms as Mama hangs up the dress. Red Rabbit. Mama pinches her "
+    },
+    {
+      "number": 20,
+      "heading": "INT. BATHROOM - FRIDA’S BUNGALOW - CONTINUOUS - DAY",
+      "characters": [
+        "FRIDA"
+      ],
+      "dialogues": [
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Better luck next time, bitch. ... And TOSSES it in the trash."
+        }
+      ],
+      "actionPreview": "22 22 Frida opens the vanity mirror. Q-tips. Tampons. Lotion. Electric toothbrush (from the future). A SMALL BOTTLE OF PERFUME - “Desideria”. She SPRITZES it on herself. Delicious. In a drawer: a used LIP GLOSS. She opens it. There’s a LONG DARK HAIR stuck to the grimy tube. She looks at it..."
+    },
+    {
+      "number": 21,
+      "heading": "EXT. BUNGALOWS - DAY",
+      "characters": [
+        "JESS"
+      ],
+      "dialogues": [
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "Twinsies."
+        }
+      ],
+      "actionPreview": "22A 22A Frida steps out her door to find Jess, smoking. They’re both in bikinis, white linen skirts, sun hats, sunglasses. They look dope. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)13. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)14."
+    },
+    {
+      "number": 22,
+      "heading": "EXT. PROPERTY - DAY",
+      "characters": [
+        "FRIDA",
+        "JESS",
+        "CODY"
+      ],
+      "dialogues": [
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Excuse me? Do you know where we’re supposed to go?"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "Is it weird there’s like, clothes for us?"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "I don’t think it’s weird. I think it’s just -- rich."
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "Right. So, you think the human sacrifice is before or after dinner?"
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CODY",
+          "parenthetical": "",
+          "text": "Sashimi at the pool."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Wait, where’s the pool?"
+        },
+        {
+          "character": "CODY",
+          "parenthetical": "",
+          "text": "Oh right, you’ve never been here before. Sorry. It’s straight back."
+        }
+      ],
+      "actionPreview": "Frida and Jess wander, not sure where to go. They pass some GARDENERS with baskets of flowers and weeds. The gardeners just smile revealing STAINED, GREEN, TEETH. We’ll figure it out. Thank you. They look up to find CODY, walking towards them from across the lawn, holding a KNIFE! Frida, frida. He s"
+    },
+    {
+      "number": 23,
+      "heading": "EXT. POOL AREA - LATER - DAY",
+      "characters": [
+        "CAMILLA",
+        "HEATHER",
+        "SLATER"
+      ],
+      "dialogues": [
+        {
+          "character": "CAMILLA",
+          "parenthetical": "",
+          "text": "That is a fat blunt, queen."
+        },
+        {
+          "character": "HEATHER",
+          "parenthetical": "",
+          "text": "That’s why they call me the Fat"
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "I’m good. Thanks Mama."
+        }
+      ],
+      "actionPreview": "26 26 CLOSE ON: RASPBERRIES being dropped into CHAMPAGNE FLUTES. Sarah hops out of the pool, sits next to Heather and Camilla. Heather’s rolling a blunt. Blunt Queen. Who’s got a lighter? Jess tosses over her lighter. Stacy passes, carrying TOO MANY CANDLES, balanced awkwardly. Frida gazes at Slater"
+    },
+    {
+      "number": 24,
+      "heading": "EXT. POOL AREA - LATER - DAY",
+      "characters": [
+        "SARAH",
+        "CODY",
+        "LUCAS"
+      ],
+      "dialogues": [
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "Mmmm. Cody. What in the fuck."
+        },
+        {
+          "character": "CODY",
+          "parenthetical": "",
+          "text": "Bluefin. Belly cut. Best in the world. Just melts in your mouth."
+        },
+        {
+          "character": "LUCAS",
+          "parenthetical": "",
+          "text": "Whoa. Sick!"
+        },
+        {
+          "character": "CODY",
+          "parenthetical": "",
+          "text": "Hey! You don’t touch my dick, you don’t touch my knife. Get it? FLASH! Vic takes a polaroid of Cody and his knife. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)15."
+        },
+        {
+          "character": "LUCAS",
+          "parenthetical": "",
+          "text": "Totally."
+        }
+      ],
+      "actionPreview": "26A 26A CLOSE ON: Cody slices SASHIMI. He hands a slice to Sarah. Lucas picks up Cody’s CHEF’S KNIFE. It’s beautiful, ornate. Totally unique. Cody snatches it back right away. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)16. Sorry. It’s an original Hatori, and it’s very special. "
+    },
+    {
+      "number": 25,
+      "heading": "EXT. CHICKEN COOP - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "59B 59B Heather discovers the coop. Smokes a joint and watches the chicks."
+    },
+    {
+      "number": 26,
+      "heading": "EXT. POOL - CONTINUOUS - DAY",
+      "characters": [
+        "SLATER",
+        "FRIDA"
+      ],
+      "dialogues": [
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "You two ok? Having a good time?"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "We’re having a great time."
+        }
+      ],
+      "actionPreview": "26A 26A A WAITER hands Frida and Jess fresh champagnes with raspberries. Jess plucks out her raspberry. Tries to cheers Frida with it, but Frida’s attention is on Slater, swimming past. Jess pops her raspberry in her mouth. Slater smiles, lifts himself out of the pool. Frida watches as he walks away"
+    },
+    {
+      "number": 27,
+      "heading": "EXT. POOL - CONTINUOUS - DAY",
+      "characters": [
+        "TOM",
+        "CAMILLA",
+        "SARAH",
+        "LUCAS",
+        "SLATER",
+        "JESS"
+      ],
+      "dialogues": [
+        {
+          "character": "TOM",
+          "parenthetical": "",
+          "text": "There’s the head. Arms. Little buttons. One two three. Gingerbread man. See it?"
+        },
+        {
+          "character": "CAMILLA",
+          "parenthetical": "",
+          "text": "Aww yeah. Let’s find him a cute little house."
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "(O.S.)",
+          "text": "Think fast!"
+        },
+        {
+          "character": "LUCAS",
+          "parenthetical": "",
+          "text": "Whoa!"
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "Well look at you."
+        },
+        {
+          "character": "CAMILLA",
+          "parenthetical": "",
+          "text": "Go off, HSB!!!"
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "I knew it! (to Frida)"
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "Season eighteen."
+        },
+        {
+          "character": "CAMILLA",
+          "parenthetical": "",
+          "text": "You went cuckoo bananas on that show."
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "They edit out a lot."
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "(CONT’D) I did what I had to do to survive."
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "You ok?"
+        }
+      ],
+      "actionPreview": "26D 26D Camilla steps into the pool, puffing the blunt. Tom is there, staring up into the sky. She follows his gaze. He points: She searches the sky, puffs the blunt. Frida is still staring at Slater, lazing in his lounge chair. He vapes, catches her eye. They look at each other. PU: FRIDA NOTICES M"
+    },
+    {
+      "number": 28,
+      "heading": "EXT. PATH - DAY",
+      "characters": [
+        "SLATER KING",
+        "FRIDA",
+        "SLATER",
+        "GIFT BAGS.",
+        "STACY"
+      ],
+      "dialogues": [
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "Desideria. It only grows here."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "This is not what I thought it was gonna be."
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "What do you mean?"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "I mean, the legendary parties of slater king. Debauchery, drugs -- sounded kinda fun."
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "We still do drugs, just with intention. And we still have fun, it’s just different now."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "I’m just saying, I know what they use to call this place."
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "Ah man, you must think I’m an asshole."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "No. I think you’re a boy. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)18."
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "I was. I was a young, stupid, boy with all this money and power and no one gives you a rule book."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Why would you want rules?"
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "The world needs rules, otherwise you’ve got a bunch of traumatized kid with abandonment issues running around, actin’ like psychopaths because they can’t accept love. But that’s not an excuse. A lot of shame. Shame’s a big one."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Hey, your life was bananas."
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "I’m figuring it out."
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "You call your house keeper mama?"
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "It’s her nickname."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Oh, okay."
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Nothing, just -- she’s a real person who, maybe, shouldn’t have to live with a “nickname” because her boss has mommy issues. But, no I’m sorry, I’m sure it’s fine. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)19."
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "Oh my god, no, you’re right. I thought we had a cute thing but she probably wants to burn this place to the ground. Goddamnit, I’m still an asshole."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "No, I’m sorry. I don’t know why I said that."
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "No, you’re right. (then)"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "No. I actually think therapy’s kind of self-indulgent bullshit."
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "You sound like my sister."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "I don’t need to pay someone to talk about the time my mom tried to kill herself in front of me. I mean, who didn’t have a fucked up childhood? I survived, I’m here."
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "Wow. I’m sorry."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "What can’t you remember?"
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "Anything before ten -- it’s just, shooop. So it was probably pretty bad."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "I don’t get it, why do you want to remember?"
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "I dunno."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Let me help you."
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "Don’t even try. She’s got it."
+        },
+        {
+          "character": "STACY",
+          "parenthetical": "",
+          "text": "I got it."
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "She physically can’t accept help."
+        },
+        {
+          "character": "STACY",
+          "parenthetical": "",
+          "text": "(frazzled)"
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "Thanks Stace."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "So, she does everything for you?"
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "Yeah, she’s my assisstant."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "And this guy just follows you everywhere?"
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "Who? Oh, Stan? Don’t even notice him anymore. Yeah, just in case. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)21."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "I have bad news for you."
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Your life is still bananas."
+        }
+      ],
+      "actionPreview": "Frida looks over to find Slater, just down the path. Some GARDENERS approach with LARGE BASKETS OF FLOWERS. Slater says “hi guys,” steals a flower, and offers one to her. This place is really special. The people are beautiful. We’re fully sustainable. Everything we use here is native to the island. "
+    },
+    {
+      "number": 29,
+      "heading": "EXT. FRONT LAWN - MAGIC HOUR - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "26E 26E"
+    },
+    {
+      "number": 30,
+      "heading": "EXT. TERRACE - SAME - MAGIC HOUR - DAY",
+      "characters": [
+        "VIC",
+        "HEATHER"
+      ],
+      "dialogues": [
+        {
+          "character": "VIC",
+          "parenthetical": "",
+          "text": "Something weird is going on here."
+        },
+        {
+          "character": "HEATHER",
+          "parenthetical": "",
+          "text": "If by ‘weird’ you mean ‘you’re losing’, then yeah, shit’s gettin’ pretty fuckin’ ‘weird,’ dogg."
+        },
+        {
+          "character": "HEATHER",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "27 27 Heather and Vic play chess on a HEAVY MARBLE CHESSBOARD. He studies the position, utterly perplexed. Vic studies the board. Heather takes a big blunt hit. She watches Mama walking in the distance. Stonily- What happened to your pinky? Vic makes his move. Heather, blasé, makes her move. Vic sta"
+    },
+    {
+      "number": 31,
+      "heading": "EXT. LAWN - A LITTLE LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "26E 26E Behind them, on the lawn, Frida steps ahead of Slater, and he speeds up playfully. In a moment, they’re suddenly racing across the lawn, laughing. Aww."
+    },
+    {
+      "number": 32,
+      "heading": "INT. BATHROOM - FRIDA’S BUNGALOW - NIGHT",
+      "characters": [
+        "FRIDA"
+      ],
+      "dialogues": [
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "... I’ve aaasked Charlie to pull the car around."
+        }
+      ],
+      "actionPreview": "28A 28A Frida spritzes perfume, stares at herself in the mirror. She picks up a YELLOW TOWEL, puts it on her head, tucks it behind her ears like straight blonde hair. And then, THE LIGHTS GO OUT. Frida, startled, looks around. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)22. PUSS"
+    },
+    {
+      "number": 33,
+      "heading": "EXT. BUNGALOW PATH - NIGHT",
+      "characters": [
+        "FRIDA AND JESS",
+        "TWINSIES."
+      ],
+      "dialogues": [],
+      "actionPreview": "28B 28B Frida and Jess--now dressed in the WHITE LINEN GARMENT--walk in the dark."
+    },
+    {
+      "number": 34,
+      "heading": "EXT. DINING AREA - A LITTLE LATER - NIGHT",
+      "characters": [
+        "CODY",
+        "HEATHER",
+        "CAMILLA",
+        "SLATER",
+        "FRIDA",
+        "VIC",
+        "JESS",
+        "SARAH",
+        "LUCAS"
+      ],
+      "dialogues": [
+        {
+          "character": "CODY",
+          "parenthetical": "",
+          "text": "Ladies and gentlemen, tonight you have zucchini blossoms from the garden, a yuca mofongo, also grown right here at chez King, and some absolutely beautiful dry aged steak from the Mie prefecture in Japan."
+        },
+        {
+          "character": "CODY",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "HEATHER",
+          "parenthetical": "",
+          "text": "Wow. Wooow. Cody. Wow."
+        },
+        {
+          "character": "CAMILLA",
+          "parenthetical": "",
+          "text": "Oh fuck off."
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "I don’t eat red meat."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Why not?"
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "I don’t like it. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)23."
+        },
+        {
+          "character": "CODY",
+          "parenthetical": "",
+          "text": "I love cooking for friends. It just hits different."
+        },
+        {
+          "character": "VIC",
+          "parenthetical": "",
+          "text": "Can you pass the salt?"
+        },
+        {
+          "character": "CODY",
+          "parenthetical": "",
+          "text": "Really? INSERT PU:"
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "Sarah, you gonna be on All-Stars?"
+        },
+        {
+          "character": "CODY",
+          "parenthetical": "",
+          "text": "Oh yeah. That’s gonna open up beautifully."
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "I was gonna be, but of course after twenty-two years, they just now decide to notice that their show about girls in bikinis fighting for their lives in the jungle is “exploitative.” Like--"
+        },
+        {
+          "character": "CODY",
+          "parenthetical": "",
+          "text": "Babe--"
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "-- you can’t wait to have that epiphany until after I’ve won a million dollars?"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "I’m sure it’ll come in handy."
+        },
+        {
+          "character": "CODY",
+          "parenthetical": "",
+          "text": "Sip it, dude, sip it. That wine is older than you."
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "Camilla. Congratulations."
+        },
+        {
+          "character": "LUCAS",
+          "parenthetical": "",
+          "text": "Whoa. Awesome. What’s your app?"
+        },
+        {
+          "character": "CAMILLA",
+          "parenthetical": "",
+          "text": "Oh, it’s an astrology app. It’s called The Cycle."
+        }
+      ],
+      "actionPreview": "29 29 They’re all seated around the DINING TABLE. Everyone’s laughing and talking. All the girls wear those RAW WHITE LINE GARMENTS. The power’s still out; candles everywhere. A team of WAITERS stands behind them, PLATES in hand, like storm troopers in black suits. Cody stands. The waiters--sharply "
+    },
+    {
+      "number": 35,
+      "heading": "EXT. POOL AREA - LATER - NIGHT",
+      "characters": [
+        "TOM",
+        "JESS",
+        "CAMILLA",
+        "LUCAS",
+        "VIC",
+        "CODY",
+        "SLATER"
+      ],
+      "dialogues": [
+        {
+          "character": "TOM",
+          "parenthetical": "",
+          "text": "I got it. I got it. I got it."
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "Something bit me!"
+        },
+        {
+          "character": "CAMILLA",
+          "parenthetical": "",
+          "text": "Oh hell no."
+        },
+        {
+          "character": "TOM",
+          "parenthetical": "",
+          "text": "Right there! Right there!"
+        },
+        {
+          "character": "LUCAS",
+          "parenthetical": "",
+          "text": "Jesus, that was..."
+        },
+        {
+          "character": "VIC",
+          "parenthetical": "",
+          "text": "The word you’re looking for, young man, is ‘fucking awesome.’ PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)25."
+        },
+        {
+          "character": "CODY",
+          "parenthetical": "",
+          "text": "Nice one, Slate."
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "You ok?"
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "What is it? Is it poisonous?"
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "It is venomous, but you’re not gonna die."
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "Oh my god."
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "Look at me. You’re gonna be fine."
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "Should I be like, going to a hospital or something?"
+        },
+        {
+          "character": "VIC",
+          "parenthetical": "",
+          "text": "You’ll be fine. Also there is no hospital. FLASH! Vic snaps a photo of the champagne-covered dead snake."
+        }
+      ],
+      "actionPreview": "38A 38A They’re all huddled around Tom. He’s flipping through songs on an iPad. He presses play. The song starts. The gang dances their asses off. Fun, crazy energy. Frida grabs a champagne bottle out of Slater’s hand, takes a messy swig. They dance together. And just then: a SCREAM. They all run ov"
+    },
+    {
+      "number": 36,
+      "heading": "INT. JESS’S ROOM - NIGHT",
+      "characters": [
+        "JESS",
+        "FRIDA",
+        "DEAD SNAKE."
+      ],
+      "dialogues": [
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "I want my phone."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Okay, I’ll go ask --"
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "No, no, no."
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Hey, hey, we can’t go home, that’s crazy."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "Do you want to continue your speech about how everything is normal and nothing is weird?"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Nothing else is..."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Nothing. (then)"
+        }
+      ],
+      "actionPreview": "Frida, still kinda high, helps Jess into bed. Jess winces. Don’t go. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)26. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)27. Jess rocks back and forth, suddenly emotional. Frida rubs her back. This place is weird, I wa"
+    },
+    {
+      "number": 37,
+      "heading": "EXT. LAWN - BONFIRE - NIGHT",
+      "characters": [
+        "FRIDA",
+        "SLATER KING",
+        "SLATER"
+      ],
+      "dialogues": [
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Hi."
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "Hi."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Here."
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "Sorry about your friend. We were all having such a good time."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "She’s fine."
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "Good. I didn’t want to scare her but sometimes people have a bad reaction. (re: vape)"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "What is this? Strawberry?"
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "Wild berry. Yummy right?"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "At first I guess -- (getting the aftertaste) -- but then it’s kinda --"
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "I know it’s bad but at least it doesn’t kill you. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)28."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "You never know what’s in those things, man."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "Thinkin’ of lighting this chair on fire."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Why?"
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "Just tried it in like, every room and I cannot -- it just feels weird everywhere. This is a problem."
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "I know. That’s what’s so funny."
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "I know, I know, you’re right. I’m obsessing. I gotta get away from this thing."
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Uh-huh."
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "I asked mama her name."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "What is it? PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)29."
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "It’s -- uhhh -- shit."
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Thanks. I do them myself."
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "What do we got here?"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "A-nail-mals."
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Animal nails."
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "Anailmals!"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "It’s stupid."
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "It’s not. You should Trademark that."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "I did."
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "Oh, okay. Someone’s on their shit."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "I got into Haas."
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "Damn. Berkley."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Full ride. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)30."
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "Wanna be my CFO? Pretty sure Vic only comes into the office to hide from his wife."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "I don’t know if you can afford me."
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "Want some?"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "What flavor is it?"
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "Pistachio."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Oh my god, that’s my favorite."
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "Really? No one likes pistachio."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "This is scary perfect."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "My mom always used say that."
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "She wasn’t wrong. Nothing lasts."
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Where?"
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "Business school. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)31."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "How do you know I didn’t go?"
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "You’re doing nails."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "My mother. Couldn’t leave her."
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "Couldn’t"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "It was a full on hostage situation."
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "Never again, what?"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Never again will I let someone else’s suffering get in the way of getting what I want."
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "Rich would not like this."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Why?"
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "Because you’re co-dependent and I have abandonment issues."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Good thing I don’t believe in therapy."
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "This will be fun. Or really fucked up. Or both."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Or both."
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "Or both. (then)"
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Really?"
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "Yeah. Got therapy in the morning."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Wait you forgot your --"
+        }
+      ],
+      "actionPreview": "Frida approaches Slater who sips from a bottle of champagne, alone in front of the fire -- IN THE RED CHAIR! Vibe’s a little dark. You came back. He struggles to refill the vape. He’s kinda fucked up. He hands her the vape and the fluid to refill it. She’s sleeping. We’re still having a good time. Y"
+    },
+    {
+      "number": 38,
+      "heading": "INT. FRIDA’S ROOM - MORNING",
+      "characters": [
+        "JESS",
+        "FRIDA",
+        "EXT."
+      ],
+      "dialogues": [
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "Frida?"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Holy shit, you scared me."
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "What do you mean?"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "I just didn’t know you were in here."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "What did I just say? PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)33."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Huh?"
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "What happened?"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Last night?"
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "Yeah, did you have a good time?"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "I had a great time."
+        },
+        {
+          "character": "EXT.",
+          "parenthetical": "",
+          "text": "BIG HOUSE - A LITTLE LATER 60"
+        }
+      ],
+      "actionPreview": "Frida sits up in bed, looking at Slater’s vape in her hand when she clocks DIRT UNDER HER FINGERNAILS. She crosses to the bathroom, washes her hands, looks back up to the mirror and jumps at JESS STANDING BEHIND HER IN THE REFLECTION. Jess stares at her, strange look in her eyes. Jess looks around, "
+    },
+    {
+      "number": 39,
+      "heading": "INT. GREAT ROOM - BIG HOUSE - CONTINUOUS - DAY",
+      "characters": [
+        "SLATER",
+        "FRIDA",
+        "VIC",
+        "RICH",
+        "STACY"
+      ],
+      "dialogues": [
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "Frida. Hi."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Hi. Sorry. I... thought you might want this."
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "Oh. Thanks."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "... Whatcha doin’?"
+        },
+        {
+          "character": "VIC",
+          "parenthetical": "",
+          "text": "Aww, hi. Frida, Rich. Rich, Frida."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "I remember you."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "RICH",
+          "parenthetical": "",
+          "text": "That’s right.... Amazing."
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "(re: the chair)"
+        },
+        {
+          "character": "STACY",
+          "parenthetical": "",
+          "text": "Ok well... We haven’t tried the driveway. Or the bathroom. Ooo! We could light it on fire. That might make it feel less weird."
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "It’s a process. We’re gonna find it. Don’t get discouraged."
+        },
+        {
+          "character": "STACY",
+          "parenthetical": "",
+          "text": "No no, it’s groovy. Like... deck chairs on the titanic."
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "Don’t do that. That bums me out."
+        },
+        {
+          "character": "STACY",
+          "parenthetical": "",
+          "text": "Sorry."
+        },
+        {
+          "character": "RICH",
+          "parenthetical": "",
+          "text": "Alright, my man I gotta get back to the mountain top. Excited about all these new ideas. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)35."
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "I’ll walk you out. (to Frida)"
+        }
+      ],
+      "actionPreview": "61 61 CREAAAAAK. Frida opens the door, pokes her head into the Great Room. It’s a big open space. A huge CLOCK FACE is built into the wall. TICK. TICK. TICK. Under the clock: the BIG RED CHAIR. Frida runs her finger along it. She sits. Puffs the vape. #BigDickEnergy CUE: “BLUES IN HOSS FLAT” by COUN"
+    },
+    {
+      "number": 40,
+      "heading": "EXT. TERRACE - DAY",
+      "characters": [
+        "JESS",
+        "HEATHER",
+        "SLATER",
+        "FRIDA",
+        "VIC"
+      ],
+      "dialogues": [
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "(looking for her lighter) I had crazy dreams last night. (to Heather)"
+        },
+        {
+          "character": "HEATHER",
+          "parenthetical": "",
+          "text": "Sorry."
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "Almond or oat?"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Uhm, oat?"
+        },
+        {
+          "character": "HEATHER",
+          "parenthetical": "(O.C.)",
+          "text": "You moved your knight. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)36."
+        },
+        {
+          "character": "VIC",
+          "parenthetical": "(O.C.)",
+          "text": "Did not."
+        },
+        {
+          "character": "HEATHER",
+          "parenthetical": "(O.C.)",
+          "text": "Your knight was on B I’m stoned, bro, I’m not stupid."
+        },
+        {
+          "character": "VIC",
+          "parenthetical": "(O.C.)",
+          "text": "My knight was there!"
+        },
+        {
+          "character": "HEATHER",
+          "parenthetical": "(O.C.)",
+          "text": "You think I don’t remember where your fucking knight was? You cheater. You fucking cheated! I’m not playing with a cheater!!!!! FRIDA COPIES SLATER WHO DRIPS HONEY INTO HIS COFFEE."
+        }
+      ],
+      "actionPreview": "52A 52A Breakfast on the lawn. The gang’s all there, except Lucas. Sarah spreads jam on a piece of toast, takes a sensuous bite. A little jam drips down her wrist. She licks it off. Fucking yum. She glances at Tom with his PLAIN SOFT-BOILED EGGS. ANGLE ON: Heather and Vic, playing chess. A FAT BLUNT"
+    },
+    {
+      "number": 41,
+      "heading": "INT. SAUNA - DAY",
+      "characters": [
+        "EXT GROUNDS DAY",
+        "CAMILLA",
+        "JESS"
+      ],
+      "dialogues": [
+        {
+          "character": "EXT GROUNDS DAY",
+          "parenthetical": "",
+          "text": "53"
+        },
+        {
+          "character": "CAMILLA",
+          "parenthetical": "",
+          "text": "Gimme your hand."
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "Thank you."
+        },
+        {
+          "character": "CAMILLA",
+          "parenthetical": "",
+          "text": "I make it myself. Use it on my son all the time. He’s a wild one, just like his mama."
+        }
+      ],
+      "actionPreview": "52B 52B Camilla WHISKS a EUCALYPTUS SPRIG through the air. The gang’s all in Finnish sauna caps. Slater waves a eucalyptus at her. Jess takes a cursory breath. She looks really tired. Vic pours water on the hot stones. Frida stares at his missing pinky. He notices. Jess CHUGS a glass of water. 53 Je"
+    },
+    {
+      "number": 42,
+      "heading": "INT. FRIDA’S ROOM (RA59)",
+      "characters": [
+        "FRIDA",
+        "SLATER KING"
+      ],
+      "dialogues": [
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "I used to do my mom’s nails."
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "I think it’s working. No one ever takes care of me. Well, everyone takes care of me but only because I pay them."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Well I’m here now."
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "Yes you are."
+        }
+      ],
+      "actionPreview": "Frida gives Slater a manicure in her room. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)37. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)38. It would calm her down when she went to the dark side."
+    },
+    {
+      "number": 43,
+      "heading": "EXT. POOL AREA - LATER - DAY (FRIDA CUT OUT OF THIS SCENE)",
+      "characters": [
+        "JESS",
+        "SARAH",
+        "HEATHER",
+        "CODY",
+        "CAMILLA"
+      ],
+      "dialogues": [
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "Could I just have some water?"
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "Hey hon do you have the light?"
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "HEATHER",
+          "parenthetical": "",
+          "text": "I just had the most craziest déjà vu."
+        },
+        {
+          "character": "HEATHER",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CODY",
+          "parenthetical": "",
+          "text": "Where’s my knife? Who has my knife?"
+        },
+        {
+          "character": "CAMILLA",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "CODY",
+          "parenthetical": "",
+          "text": "My knife! I can’t find my special knife!"
+        },
+        {
+          "character": "CAMILLA",
+          "parenthetical": "",
+          "text": "Aye! Chill."
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "Nobody has your special knife."
+        },
+        {
+          "character": "CODY",
+          "parenthetical": "",
+          "text": "What are you doing to him?"
+        },
+        {
+          "character": "CAMILLA",
+          "parenthetical": "",
+          "text": "It’s acupuncture man."
+        }
+      ],
+      "actionPreview": "59 59 CLOSE ON: Tom’s face. Long NEEDLES stick out of his bald patch like Pinhead. He looks more than a little wary. Camilla takes another needle from her pouch. Tom WINCES as she slides it into his head. Heather, Sarah, Jess, Lucas, and Frida hang nearby. Slater is noticeably absent. She looks over"
+    },
+    {
+      "number": 44,
+      "heading": "EXT. POOL - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Existing Sarah looking through Heather’s arms and swatting fly, to RESHOOT PU of Slater and Frida walking and talking again."
+    },
+    {
+      "number": 45,
+      "heading": "EXT. JESS’S ROOM - COURTYARD - DAY",
+      "characters": [
+        "CHICKEN."
+      ],
+      "dialogues": [
+        {
+          "character": "CHICKEN.",
+          "parenthetical": "",
+          "text": "Stops for a moment."
+        }
+      ],
+      "actionPreview": "Jess sobs inside of her room. Cody crosses frame, CHASING A Listens. Continues chasing chicken."
+    },
+    {
+      "number": 46,
+      "heading": "EXT. LAWN - DAY",
+      "characters": [
+        "FRIDA",
+        "SLATER KING"
+      ],
+      "dialogues": [
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Something horrible is about to happen."
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "When things are too good, that’s when the bad stuff happens."
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "What makes you think that?"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Life."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "I don’t know."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "You people have no sense of time."
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "Whenever we want."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "That’s not an answer."
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "Okay, you tell me."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Gotta go back, pour champagne --"
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "For who?"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "There’s mold."
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "Where?"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Everywhere."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "(CONT’D)",
+          "text": "PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)41."
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "Frida, are you having a good time?"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "Let’s start fresh."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "Let’s be in moment."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "You’re evil."
+        }
+      ],
+      "actionPreview": "Frida and Slater, lying on blankets with champagne, looking up at the sky, laughing. Suddenly, Frida stops. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)39. (MORE) PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)40. A worker appears, topping off their champagne. "
+    },
+    {
+      "number": 47,
+      "heading": "EXT. PATH - DAY",
+      "characters": [
+        "FRIDA"
+      ],
+      "dialogues": [
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Slater?"
+        }
+      ],
+      "actionPreview": "Slater chases Frida through the property. It’s cute. She rounds a corner and he’s gone. She looks around. Nothing. She hears something. Walks a bit further, coming upon a RED GIFT BAG. Hmm. She walk a little further, THE SHED."
+    },
+    {
+      "number": 48,
+      "heading": "INT. STORAGE SHED - CONTINUOUS",
+      "characters": [
+        "RED GIFT BAGS.",
+        "FRIDA",
+        "MAMA"
+      ],
+      "dialogues": [
+        {
+          "character": "RED GIFT BAGS.",
+          "parenthetical": "",
+          "text": "She peers inside one:"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Oh, sorry, I was looking for"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "(CONT’D)",
+          "text": "PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)41."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MAMA",
+          "parenthetical": "",
+          "text": "Red Rabbit."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Right."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MAMA",
+          "parenthetical": "",
+          "text": "Venom."
+        },
+        {
+          "character": "MAMA",
+          "parenthetical": "",
+          "text": "(CONT’D) (giggling)"
+        }
+      ],
+      "actionPreview": "Frida pushes the shed door open to find shelves lined with THE PERFUME! CLANK, she looks over to see mama standing in the corner, next to a shelf of cleaning supplies. Slater. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)42. Mama waves Frida over. Hey, what’s your name. I’m Frida"
+    },
+    {
+      "number": 49,
+      "heading": "EXT. SHED - CONTINUOUS",
+      "characters": [
+        "CODY",
+        "FRIDA"
+      ],
+      "dialogues": [
+        {
+          "character": "CODY",
+          "parenthetical": "",
+          "text": "What are you doing over here?"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Sorry."
+        },
+        {
+          "character": "CODY",
+          "parenthetical": "",
+          "text": "Someone let the chickens out last night."
+        }
+      ],
+      "actionPreview": "Frida backs out of the shed and jumps, running into Cody, a chicken under each arm. I got lost. Fuckin’ nightmare. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)42. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)43."
+    },
+    {
+      "number": 50,
+      "heading": "EXT. DINING AREA - LATER - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "69 69 Another candlelight dinner. The perfectly-synchronized waiters serve the main course. CHICKEN. Heather eyes it sadly."
+    },
+    {
+      "number": 51,
+      "heading": "EXT. DINING AREA - LATER - NIGHT",
+      "characters": [
+        "VIC",
+        "SARAH",
+        "SLATER"
+      ],
+      "dialogues": [
+        {
+          "character": "VIC",
+          "parenthetical": "",
+          "text": "Ugh. Pistachio? Fuck off, man."
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "Lemme taste."
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "Wild berry."
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "Wild."
+        }
+      ],
+      "actionPreview": "69A 69A NOTE: JESS IS REMOVED FROM THIS SCENE. The waiters serve dessert: ICE CREAM. Slater takes a big puff off his vape. He hands it to her. She puffs it. Hands it back Strawberry."
+    },
+    {
+      "number": 52,
+      "heading": "EXT. FIRESIDE - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Frida and Slater kiss by the fire."
+    },
+    {
+      "number": 53,
+      "heading": "INT. FRIDA'S ROOM - MORNING",
+      "characters": [
+        "JESS"
+      ],
+      "dialogues": [
+        {
+          "character": "JESS",
+          "parenthetical": "(O.S.)",
+          "text": "Frida."
+        }
+      ],
+      "actionPreview": "Frida’s asleep. Frida. Frida opens her eyes, and sees Jess standing in the corner of her room."
+    },
+    {
+      "number": 54,
+      "heading": "INT. FRIDA’S BUNGALOW - MORNING - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "77 77 Frida, asleep. Eyes moving behind lids. Her NOSE IS BLEEDING. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)43. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)44."
+    },
+    {
+      "number": 55,
+      "heading": "INT. BATHROOM - FRIDA’S BUNGALOW - MINUTES LATER - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "79 79 Sounds of Frida VOMITING over a shot of the empty bathroom."
+    },
+    {
+      "number": 56,
+      "heading": "INT. FRIDA'S ROOM - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Frida’s empty bed. Blood stain on the pillow. TIME CUT:"
+    },
+    {
+      "number": 57,
+      "heading": "INT. FRIDA'S ROOM - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Frida flicks the dirt under her nails. OVER BLACK: “DAY 3”"
+    },
+    {
+      "number": 58,
+      "heading": "EXT. TERRACE - DAY",
+      "characters": [
+        "VIC",
+        "CODY",
+        "TOM",
+        "CAMILLA",
+        "SARAH",
+        "HEATHER",
+        "LUCAS",
+        "SLATER",
+        "FRIDA"
+      ],
+      "dialogues": [
+        {
+          "character": "VIC",
+          "parenthetical": "",
+          "text": "Why is it never not funny? REVEAL: Tom, a DICK drawn on his cheek. He is not amused."
+        },
+        {
+          "character": "CODY",
+          "parenthetical": "",
+          "text": "It’s classic."
+        },
+        {
+          "character": "TOM",
+          "parenthetical": "",
+          "text": "Seriously, who did this?"
+        },
+        {
+          "character": "CAMILLA",
+          "parenthetical": "",
+          "text": "It’s like someone is brushing their teeth with a lawnmower, but like, in my brain."
+        },
+        {
+          "character": "CAMILLA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "That’s what they tell me."
+        },
+        {
+          "character": "CODY",
+          "parenthetical": "",
+          "text": "You were like Dick Grayson. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)44."
+        },
+        {
+          "character": "HEATHER",
+          "parenthetical": "",
+          "text": "When did I cut bangs?"
+        },
+        {
+          "character": "VIC",
+          "parenthetical": "",
+          "text": "Who’s Dick Grayson?"
+        },
+        {
+          "character": "CODY",
+          "parenthetical": "",
+          "text": "Robin. What’s wrong with you?"
+        },
+        {
+          "character": "TOM",
+          "parenthetical": "",
+          "text": "I have a dick on my face."
+        },
+        {
+          "character": "LUCAS",
+          "parenthetical": "",
+          "text": "Greetings, excellent people!"
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "Buenos dias, Youngblood."
+        },
+        {
+          "character": "LUCAS",
+          "parenthetical": "",
+          "text": "Ooh, fuck yeah, blueberry muffins!"
+        },
+        {
+          "character": "CODY",
+          "parenthetical": "",
+          "text": "Slate’s Mom’s recipe."
+        },
+        {
+          "character": "LUCAS",
+          "parenthetical": "",
+          "text": "Spectacular. (to Frida)"
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "How’d you sleep?"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Amazing."
+        },
+        {
+          "character": "CODY",
+          "parenthetical": "",
+          "text": "Alright kids. Sail’s up. Who’s ready to catch some beautiful grouper?"
+        },
+        {
+          "character": "LUCAS",
+          "parenthetical": "",
+          "text": "Yeah baby! Can I bring the muffins? PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)45."
+        },
+        {
+          "character": "CODY",
+          "parenthetical": "",
+          "text": "Bring the muffins!"
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "How do we feel about... less loud?"
+        },
+        {
+          "character": "CODY",
+          "parenthetical": "",
+          "text": "Sorry babe."
+        },
+        {
+          "character": "CAMILLA",
+          "parenthetical": "",
+          "text": "I don’t think I should be on a boat right now."
+        },
+        {
+          "character": "VIC",
+          "parenthetical": "",
+          "text": "Come on. It’ll be fun. Bucket o worms."
+        },
+        {
+          "character": "HEATHER",
+          "parenthetical": "",
+          "text": "Maybe we’ll just have some girl time. You guys go... with the worms."
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "You cool if I go?"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Of course."
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "Enjoy girl time."
+        }
+      ],
+      "actionPreview": "80 80 Frida enters. Mimosas. Brunch. Everybody’s CRACKING UP. Frida’s in struggletown. She CHUGS a glass of water. Jess is nowhere to be seen. Tom sits, grabs two SOFT-BOILED EGGS, eats them. Sarah looks rough. BIG BRUISE on her arm. You fell out of a tree? PUSSY ISLAND - Kravitz/Himelstein 2ND WHIT"
+    },
+    {
+      "number": 59,
+      "heading": "EXT. SPA - DAY",
+      "characters": [
+        "CAMILLA",
+        "HEATHER",
+        "SARAH",
+        "JESS",
+        "THE SPA.",
+        "FRIDA"
+      ],
+      "dialogues": [
+        {
+          "character": "CAMILLA",
+          "parenthetical": "",
+          "text": "I needed this shit."
+        },
+        {
+          "character": "HEATHER",
+          "parenthetical": "",
+          "text": "Me too."
+        },
+        {
+          "character": "CAMILLA",
+          "parenthetical": "",
+          "text": "Bro. That shit you smoke is too fuckin’ strong. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)46."
+        },
+        {
+          "character": "HEATHER",
+          "parenthetical": "",
+          "text": "I know. Someone tried to sue my client over it. We won."
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "You’re a lawyer?"
+        },
+        {
+          "character": "HEATHER",
+          "parenthetical": "",
+          "text": "Allegedly."
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "It’s almost like he wants me to stab him. HEATHER/CAMILLA “Babe, why’d you stab me, babe??” OFF FRIDA, freaked out, we flash to -- JESS standing in the corner of the room."
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "Frida, Frida. JESS LIFTS CODY’S SPECIAL KNIFE and then we’re back to --"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "I need to talk to Jess."
+        },
+        {
+          "character": "HEATHER",
+          "parenthetical": "",
+          "text": "Who’s [COUGH] ‘Jess?’"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Are you... fucking with me?"
+        },
+        {
+          "character": "HEATHER",
+          "parenthetical": "",
+          "text": "Is she ok? PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)47."
+        },
+        {
+          "character": "CAMILLA",
+          "parenthetical": "",
+          "text": "You don’t look so good, mami."
+        }
+      ],
+      "actionPreview": "88C 88C Sarah, Camilla, Heather, and Frida, all in BRIGHT BLUE BEAUTY MASKS, get foot massages. The girls LAUGH LOUDLY. Frida’s hangin’ on by a thread. She CHUGS a glass of water. She offers the blunt. Sarah shakes her head. No fuckin’ way. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12"
+    },
+    {
+      "number": 60,
+      "heading": "EXT. WALKWAY - DAY",
+      "characters": [
+        "FRIDA",
+        "STACY",
+        "MY FRIEND.",
+        "JESS.",
+        "IN THE ROOM NEXT",
+        "TO MINE."
+      ],
+      "dialogues": [
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Where’s Jess?"
+        },
+        {
+          "character": "STACY",
+          "parenthetical": "",
+          "text": "What hon?"
+        },
+        {
+          "character": "STACY",
+          "parenthetical": "",
+          "text": "You mean the storage room?"
+        },
+        {
+          "character": "STACY",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "Frida looks over to find Stacy, fumbling more GIFT BAGS. Frida takes off. Relax, you’re on vacation!"
+    },
+    {
+      "number": 61,
+      "heading": "EXT. JESS’S BUNGALOW - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "88D 88D Frida, panicked, confused, throws open the door to Jess’s bungalow: BOXES. FURNITURE. OLD TERRACE CHAIRS. Stacked ceiling high. No bed. No bedroom, and definitely no Jess."
+    },
+    {
+      "number": 62,
+      "heading": "INT. FRIDA'S BUNGALOW - DAY",
+      "characters": [
+        "JESS",
+        "FRIDA"
+      ],
+      "dialogues": [
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "There’s something wrong with this place."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "(sitting up)"
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "It’s like no one knows."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Okay, okay, we’ll figure it out."
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "We need to hide this."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "You scared me."
+        },
+        {
+          "character": "JESS",
+          "parenthetical": "",
+          "text": "What do you mean?"
+        }
+      ],
+      "actionPreview": "Frida sits on the edge of her bed, IN THE BLUE MASK, disoriented and terrified. Looks up, suddenly remembering Jess, holding the knife, crying in the corner. What follows is a waking flashback that Frida experiences from the foot of the bed, looking back and forth between her past self (behind her o"
+    },
+    {
+      "number": 63,
+      "heading": "INT. BATHROOM - FRIDA’S BUNGALOW - LATER - DAY",
+      "characters": [
+        "KNOCK KNOCK KNOCK."
+      ],
+      "dialogues": [],
+      "actionPreview": "89 89 Frida stares into the mirror, slowly peels off her MASK. She SLAMS the vanity, screaming, an outburst of violence and utter frustration. She SLAMS the mirror. CLINKCLANK. Out from behind the mirror falls: CODY’S SPECIAL KNIFE."
+    },
+    {
+      "number": 64,
+      "heading": "INT. FRIDA’S BATHROOM - CURRENT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "89 89 Frida JUMPS, turns, holding the knife."
+    },
+    {
+      "number": 65,
+      "heading": "INT. FRIDA’S BUNGALOW - DAY",
+      "characters": [
+        "SARAH",
+        "FRIDA"
+      ],
+      "dialogues": [
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "I hear you and I don’t want to sound like a bitch, but, it’s just like -- I feel like I’d remember if there was a whole other person here."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "She was here and there’s dirt under my nails and I don’t know how it got there. Jess was here -- she was here -- (picks up knife and lighter) -- and she said something was wrong with this place but I forgot that she said that, but then I remembered and I don’t -- maybe you’ll forget me telling you this. I know this doesn’t make sense. I think we’re forgetting, like -- a lot of stuff. This doesn’t make sense. Oh my god, I sound crazy!"
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "How do we feel about putting down the knife?"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Sorry."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "Huh?"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Do you know what day it is?"
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "No, but like -- I never know what day it is."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Right. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)50."
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "I’m having a great time here -- but I also keep having this feeling that I’m like -- not. Does that make sense?"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "I’m sorry, what’s this? (reveals bruise on her arm)"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "So you don’t think I’m crazy?"
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "I think -- what’s crazy -- is -- that we got onto a plane with a bunch of dudes we don’t know."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Wait, I thought you all knew each other."
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "No. Cody chatted me up in a coffee shop. Talkin’ about how he knew"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Oh my god!"
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "(CONT’D) I knew it was too good to be true."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "I know right?! PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)51."
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "Of course they’re fuckin’ with our heads just like the producers on the show. Edit shit out and make me look crazy. Because that’s what they do. They distract us with these cute little outfits, and they shower us with raspberries and champagne but we know what’s goin on -- (picks up the knife) -- they’re trying to control us."
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Yeah."
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "Why?"
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Yeah, let’s table that."
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "Okay, but how?"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "“Forgetting is a gift!”"
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "Huh?"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Slater said,"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "What? PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)52."
+        }
+      ],
+      "actionPreview": "Sarah and Frida sit on the bed, LIGHTER and KNIFE between them. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)49. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)50. Ya know? Frida does. Sarah looks into her eyes. Shifts. What day is it? PUSSY ISLAND - Kravitz/Him"
+    },
+    {
+      "number": 66,
+      "heading": "INT. STORAGE SHED - MOMENTS LATER",
+      "characters": [
+        "GIFT BAGS.",
+        "SARAH",
+        "FRIDA",
+        "FBI."
+      ],
+      "dialogues": [
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "We need to call the cops."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "We need to call the FBI."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "We need to call the cops and the"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "I know where our phones are!"
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "I love that for us."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Yeah, but like... ok, let’s say we call the cops and the FBI, and are like,"
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "So wait, let’s get on the same page. Your friend. What’s her name, again?"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Jess."
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "Jess. Where is she?"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Maybe she got away."
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "Yeah. Maybe. So wait, you remembered. Your friend remembered."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "She got bit by a snake."
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "What’s in there?"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "I’m pretty sure it’s snake venom."
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "Oh god, that’s disgusting."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "(CONT’D) I know, how are we going to get Heather and Camilla to drink this shit?"
+        }
+      ],
+      "actionPreview": "Sarah and Frida look up at the rows of PERFUME BOTTLES and “Hi, hello, please send help, Slater King and his buddies-- whom we met at a charity event -- have been doing horrible things to us” and they’ll be like “What are they doing?” And we’ll be like “uhh, we don’t know, they’ve been secretly eras"
+    },
+    {
+      "number": 67,
+      "heading": "EXT. POOL AREA - AFTERNOON - DAY",
+      "characters": [
+        "HEATHER",
+        "SARAH",
+        "FRIDA",
+        "STACY",
+        "A MOMENT LATER",
+        "THE GIRLS",
+        "STACYSTACY"
+      ],
+      "dialogues": [
+        {
+          "character": "HEATHER",
+          "parenthetical": "",
+          "text": "Holy shit what’s in these?"
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "Snake venom."
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "So if this is gonna make us remember... what do we think is making us forget?"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "No fuckin’ clue."
+        },
+        {
+          "character": "STACY",
+          "parenthetical": "",
+          "text": "Whoo! Slam it girlfriend."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Hey Stace, do you want a shot?"
+        },
+        {
+          "character": "A MOMENT LATER",
+          "parenthetical": "",
+          "text": "Stacy DOES A SHOT with the girls. And another, and another."
+        },
+        {
+          "character": "THE GIRLS",
+          "parenthetical": "",
+          "text": "Mojave Mami! Mojave Mami!"
+        },
+        {
+          "character": "STACY",
+          "parenthetical": "",
+          "text": "Whoo! Tangy. [BURP] Uhm, Stan just radioooo’d, by the way, on the thingey."
+        },
+        {
+          "character": "STACYSTACY",
+          "parenthetical": "",
+          "text": "The guys should be back from fishing soon. So I better... Thanks ladies. FRIDA/SARAH"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "I’m going for the phones. Keep a lookout."
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "Wait wait! What do I do if the guys come back?"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "I dunno. Fuckin’ yell..."
+        }
+      ],
+      "actionPreview": "99 99 CLOSE ON: Frida and Sarah’s smiling faces. FRIDA/SARAH Shots, bitches!!! Frida shakes the COCKTAIL SHAKER. There’s a BOTTLE OF TEQUILA on the bar. She pours out a round of BRIGHT GREEN SHOTS. HEATHER/CAMILLA Ayeeeee!!!! “SHOTS” by Lil John plays (cuz duh). Heather and Camilla drink. Sarah and "
+    },
+    {
+      "number": 68,
+      "heading": "INT. GREAT ROOM - BIG HOUSE - AFTERNOON - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "64 64 CREEEAAAAK. Frida opens the door slowly, pokes her head in. The coast is clear. She takes a few steps forward. She SHIVERS -- the fresh shot of VENOM courses through her body. A DROP OF BLOOD lands on the floor. Her nose is bleeding. She looks up at the GIANT CLOCK - TICK TICK TICK - and stops"
+    },
+    {
+      "number": 69,
+      "heading": "EXT. JUNGLE - FLASHBACK - NIGHT",
+      "characters": [
+        "WITH HER FINGERS."
+      ],
+      "dialogues": [],
+      "actionPreview": "65 65 BRIGHT WHITE LIGHTS everywhere. Vic DRAGS Frida by her feet. She SCREAMS, CLAWS AT THE GROUND, MAKING LINES IN THE DIRT"
+    },
+    {
+      "number": 70,
+      "heading": "INT. GREAT ROOM - BIG HOUSE - BACK TO PRESENT -",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "67 67 AFTERNOON - DAY BANG! Frida’s eyes pop open. She GASPS, JOLTED from the memory. She’s shaking. Her eyes dart around the room. She tries to breathe. Finally, she peels herself off the floor. HOLD ON: the blood stain in the middle of the floor. 102-103 102-103 OMIT PUSSY ISLAND - Kravitz/Himelst"
+    },
+    {
+      "number": 71,
+      "heading": "EXT. POOL AREA - AFTERNOON - DAY",
+      "characters": [
+        "CAMILLA",
+        "SARAH",
+        "HEATHER",
+        "CODY",
+        "I... I..."
+      ],
+      "dialogues": [
+        {
+          "character": "CAMILLA",
+          "parenthetical": "",
+          "text": "Yo. You got a little..."
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "Yeah, hey, maybe we should cool it with the shots. They’re like, really strong."
+        },
+        {
+          "character": "HEATHER",
+          "parenthetical": "",
+          "text": "And I’m like, really hardcore, so..."
+        },
+        {
+          "character": "CAMILLA",
+          "parenthetical": "",
+          "text": "Whoa, how bout you just do you, ok, chica?"
+        },
+        {
+          "character": "CODY",
+          "parenthetical": "",
+          "text": "Ow! Ow! What the heck?! It’s just me babe!"
+        },
+        {
+          "character": "I... I...",
+          "parenthetical": "",
+          "text": "Slater and the guys roll up. Sarah swallows her fear. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)57."
+        }
+      ],
+      "actionPreview": "68 68 CLINK! CHEERS. Heather and Camilla drink and ‘AYYYEEEE!’ A RUSTLING in the trees. Sarah JUMPS. She’s tweaked out, paranoid. Her eyes dart around. She SLUGS a glass of water. Sarah touches her face. Her nose is bleeding. Camilla and Heather are pouring more snake venom shots. Sarah tries to gra"
+    },
+    {
+      "number": 72,
+      "heading": "INT. BIG HOUSE - AFTERNOON - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "69 69 Frida looks at the BIG CABINET. PADLOCKED SHUT. She TUGS at it. Nope. Looks around. Clocks something...."
+    },
+    {
+      "number": 73,
+      "heading": "INT. BACK ROOM - BIG HOUSE - CONTINUOUS - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "70 70 Frida darts into the room, grabs a big phallic TROPHY off the desk. The “Pillar of Integrity” award. Yeesh."
+    },
+    {
+      "number": 74,
+      "heading": "EXT. POOL AREA - AFTERNOON - DAY",
+      "characters": [
+        "LUCAS",
+        "SLATER",
+        "SARAH"
+      ],
+      "dialogues": [
+        {
+          "character": "LUCAS",
+          "parenthetical": "",
+          "text": "When I was like, four, my sister, she shoved me, like, by accident, she’s not like a sociopath, and my teeth, my baby teeth, went right back up into their teeth holes."
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "You guys seen Frida?"
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "Oh, I think she’s, uhm... freshening up."
+        }
+      ],
+      "actionPreview": "71 71 They grew back. How’s your nose? REVEAL: Cody’s got TWO TAMPON HALVES shoved in his bloody nostrils. FLASH! Vic snaps a photo."
+    },
+    {
+      "number": 75,
+      "heading": "INT. BIG HOUSE - AFTERNOON - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "72 72 KLANG KLANG KLANG. Frida SMASHES the shit out of the PADLOCK with the Pillar of Integrity."
+    },
+    {
+      "number": 76,
+      "heading": "EXT. POOL AREA - AFTERNOON - DAY",
+      "characters": [
+        "SLATER",
+        "SARAH",
+        "HEATHER"
+      ],
+      "dialogues": [
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "Oh. Ok. I’ll be back in a sec."
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "Wait!"
+        },
+        {
+          "character": "HEATHER",
+          "parenthetical": "",
+          "text": "Whoo! Go off, queen!"
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "Right? I’m, like, tryin’a smoke a big ole’ (even louder) FAT BLUUUUNT!!!"
+        },
+        {
+          "character": "HEATHER",
+          "parenthetical": "",
+          "text": "AYYYYYYEEEEE!!!"
+        }
+      ],
+      "actionPreview": "73 73 Slater starts towards the Big House. Slater turns. Sarah tries to act casual. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)58. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)59. (CONT’D) SARAH We were just gonna smoke a (loudly) Fat bluuuuuunt! Everyone ey"
+    },
+    {
+      "number": 77,
+      "heading": "INT. BIG HOUSE - AFTERNOON - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "74 74 KLANG KLANG KLANG. Frida can’t hear shit. She lifts the trophy again. Ok, one more time, with feeling........... CRAAACK! The padlock BREAKS OPEN. Frida looks down in her hands. The Big Dick Of Integrity has cracked in half. Oopsie. She SWINGS open the cabinet. BOXES. BAGS. FILES. A COUPLE OF "
+    },
+    {
+      "number": 78,
+      "heading": "EXT. POOL AREA - AFTERNOON - DAY",
+      "characters": [
+        "HEATHER",
+        "SARAH"
+      ],
+      "dialogues": [
+        {
+          "character": "HEATHER",
+          "parenthetical": "",
+          "text": "Oooo... we got ourselves a sticky situation."
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "... Yeah."
+        }
+      ],
+      "actionPreview": "75 75 Heather breaks up some sticky ass weed into Sarah’s hands. Sarah watches as Slater heads towards the Big House."
+    },
+    {
+      "number": 79,
+      "heading": "INT. BACK ROOM - BIG HOUSE - AFTERNOON - DAY",
+      "characters": [
+        "FRIDA"
+      ],
+      "dialogues": [
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Fuck."
+        }
+      ],
+      "actionPreview": "76 76 Frida digs through the bag, looking for her phone. Finds it. Yes! She punches in her code. At the top of the screen: No Service. Fuck. Tries the WiFi settings. No networks found. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)59. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE RE"
+    },
+    {
+      "number": 80,
+      "heading": "EXT. TUNNEL - AFTERNOON - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "77 77 Slater heads towards the Big House, WHISTLIN’ casually."
+    },
+    {
+      "number": 81,
+      "heading": "EXT. POOL AREA - AFTERNOON - DAY",
+      "characters": [
+        "TOM",
+        "SARAH",
+        "HEATHER",
+        "CODY"
+      ],
+      "dialogues": [
+        {
+          "character": "TOM",
+          "parenthetical": "",
+          "text": "See the little nose. Little tooth."
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "Uhuh. So cute."
+        },
+        {
+          "character": "HEATHER",
+          "parenthetical": "",
+          "text": "Awwwww. I had a puppy once. He died."
+        },
+        {
+          "character": "TOM",
+          "parenthetical": "",
+          "text": "I’m sorry. Losing animals is really hard. They’re like your family."
+        },
+        {
+          "character": "HEATHER",
+          "parenthetical": "",
+          "text": "Does anyone have a lighter?"
+        },
+        {
+          "character": "CODY",
+          "parenthetical": "",
+          "text": "You ok, babe?"
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "Yeah, I’m just super excited for this"
+        }
+      ],
+      "actionPreview": "78 78 Heather rolls the blunt. Sarah looks nervous. Camilla crosses, drying her hair. WATER drips on the ground. Tom points at it, to Sarah: He’s even got a paw sticking out, see? It’s a puppy. Heather finishes the blunt. Ta-dah! Sarah smiles weakly. Sarah reluctantly hands her the YELLOW SMILEY FAC"
+    },
+    {
+      "number": 82,
+      "heading": "INT. BIG HOUSE - AFTERNOON - DAY",
+      "characters": [
+        "OMIT"
+      ],
+      "dialogues": [],
+      "actionPreview": "79 79 Frida’s head SPINS around. She heard that one. Fuck. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)60. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)61. She frantically shoves the tote into the cabinet. She picks up the cardboard box, and the BOTTOM FALLS "
+    },
+    {
+      "number": 83,
+      "heading": "INT. GREAT ROOM - BIG HOUSE - AFTERNOON - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "80 80 Slater enters, and STOPS WHISTLING, sensing... something. He steps forward, peers into the BACK ROOM to see..."
+    },
+    {
+      "number": 84,
+      "heading": "INT. BACK ROOM - BIG HOUSE - AFTERNOON - DAY",
+      "characters": [
+        "SLATER"
+      ],
+      "dialogues": [
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "What are we gonna do about this?"
+        }
+      ],
+      "actionPreview": "81 81 ... Nothing. Nobody. Everything in its right place. He steps behind the desk, opens a drawer, takes out a VIAL, calmly refills his vape. He doesn’t seem to notice: the top half of the Dick Trophy, balanced precariously on its base. As he closes the drawer, we see: a bit of WHITE FABRIC under t"
+    },
+    {
+      "number": 85,
+      "heading": "INT. BIG HOUSE - CONTINUOUS - AFTERNOON - DAY",
+      "characters": [
+        "SLATER",
+        "STACY"
+      ],
+      "dialogues": [
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "... It’s weird here. It doesn’t work here. Right? Stace, is it weird here?"
+        },
+        {
+          "character": "STACY",
+          "parenthetical": "",
+          "text": "Noooo. I think it's... nice. I think it’s-- (clearing her throat) I think it's nice there. I'm just gonna.. I’m gonna get some water. RESHOOT: FRIDA HIDING UNDER THE DESK AND REACTING TO FLASHBACK"
+        }
+      ],
+      "actionPreview": "82 82 REVEAL: The Big Red Chair. Stacy looks a little... off. Stan steps out of the bathroom. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)61. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)62."
+    },
+    {
+      "number": 86,
+      "heading": "INT. GREAT ROOM - BIG HOUSE - FLASHBACK - NIGHT",
+      "characters": [
+        "VIC",
+        "TOM",
+        "CODY",
+        "LUCAS",
+        "SLATER",
+        "STAN"
+      ],
+      "dialogues": [
+        {
+          "character": "VIC",
+          "parenthetical": "",
+          "text": "You could help."
+        },
+        {
+          "character": "TOM",
+          "parenthetical": "",
+          "text": "I’m eatin’ here!"
+        },
+        {
+          "character": "VIC",
+          "parenthetical": "",
+          "text": "(under his breath)"
+        },
+        {
+          "character": "TOM",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "VIC",
+          "parenthetical": "",
+          "text": "Nothing!"
+        },
+        {
+          "character": "CODY",
+          "parenthetical": "",
+          "text": "Stop moving. Babe, just stop moving. SPLOOTCH. A gooey yellow glob lands on the floor in front of"
+        },
+        {
+          "character": "LUCAS",
+          "parenthetical": "(O.S.)",
+          "text": "(hysterical, yelling)"
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "Stan?"
+        },
+        {
+          "character": "STAN",
+          "parenthetical": "",
+          "text": "It’s a little weird."
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "Right? Ugh."
+        }
+      ],
+      "actionPreview": "66 66 Vic DRAGS Frida into the room. She STRUGGLES. Tom stands nearby, casually munching an EGG. Someone’s gettin’ a dick drawn on his face tonight. Vic RAMS his KNEE into Frida’s back, starts to tie her up. Frida’s POV: Heather, Camilla, Sarah, all tied up on the floor. Cody struggles to tie Sarah."
+    },
+    {
+      "number": 87,
+      "heading": "EXT. BIG HOUSE - AFTERNOON - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "83 83 Frida FLEES away from the Big House as fast as her little legs can carry her. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)63. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)64."
+    },
+    {
+      "number": 88,
+      "heading": "EXT. POOL AREA - AFTERNOON - DAY",
+      "characters": [
+        "HEATHER",
+        "SARAH",
+        "FRIDA",
+        "TOM",
+        "VIC",
+        "SLATER",
+        "CODY"
+      ],
+      "dialogues": [
+        {
+          "character": "HEATHER",
+          "parenthetical": "",
+          "text": "You didn’t get any. Go again, girl."
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "(spotting Frida)"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Oh.... Uhh... Yeah!"
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "I’m just gonna--"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "(still COUGHING)"
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "(holding back tears, still smiling broadly)"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Heather and Camilla? CUT TO: Heather and Camilla -- picking flowers. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)64."
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "Those chicks are a ticking fucking time bomb."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Great. So--"
+        },
+        {
+          "character": "TOM",
+          "parenthetical": "",
+          "text": "Hey buddies... FRIDA/SARAH"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "(passing the blunt)"
+        },
+        {
+          "character": "VIC",
+          "parenthetical": "",
+          "text": "'Sup stoners... SARAH/FRIDA"
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "We did?"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Uhuh. She wasn’t forgetting. FLASH! He takes the photo. Sarah hits the blunt. Heather dances over, hands them each a BIG RED FLOWER."
+        },
+        {
+          "character": "HEATHER",
+          "parenthetical": "",
+          "text": "Nostalgia for you. Nostalgia for you."
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "... What?"
+        },
+        {
+          "character": "HEATHER",
+          "parenthetical": "",
+          "text": "‘Desiderium.’ It means nostalgia."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "The perfume. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)65."
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "Mother fucker."
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "(O.S.)",
+          "text": "There she is."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Heeeyyyy... yoouu. I... missed you."
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "Aww, missed you too. You guys get into any trouble?"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Oh no, just, you know, girl time."
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "Girl time... Love it."
+        },
+        {
+          "character": "CODY",
+          "parenthetical": "",
+          "text": "Check it out, babe!"
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "Sweet catch, huh?"
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "Fuckin'... What do we do?"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "(through her teeth)"
+        }
+      ],
+      "actionPreview": "84 84 CLOSE ON: THE LIGHTER :) lighting the FAT FUCKIN’ BLUNT. Heather hands the blunt to Sarah, who eyes it warily. Cody’s right there. Sarah smiles... and takes a teeny hit. Sarah grimaces, takes a biiiiig hit. COUGHS. (CONT’D) HEATHER That’s what I’m talkin’ about. Frida! You want some of this? S"
+    },
+    {
+      "number": 89,
+      "heading": "EXT. DINING AREA - NIGHT",
+      "characters": [
+        "CODY",
+        "CAMILLA",
+        "OMIT"
+      ],
+      "dialogues": [
+        {
+          "character": "CODY",
+          "parenthetical": "",
+          "text": "Friends, this is a really special preparation of grouper. It’s poached in shoyu and young ginger, with local wild garlic. The artichoke and manchego croquettes are deep fried; which, I know, a little naughty. Those’ll go with the yuzu and pink pepper gribiche, if you wanna take your tongue to tang town. And then there’s the farro and kale with miso pickled asparagus. Blessings. Please enjoy."
+        },
+        {
+          "character": "CAMILLA",
+          "parenthetical": "(O.S.)",
+          "text": "No!"
+        },
+        {
+          "character": "OMIT",
+          "parenthetical": "",
+          "text": "PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)67."
+        }
+      ],
+      "actionPreview": "85 85 The waiters do their thing, perfect unison. The fish has been beautifully prepared, looks delicious. This is a nightmare. Everybody gushes over the food. Frida and Sarah, stoned and scared, nod like oooo... yummy. POP! Cody opens a wine. Holds the CORK out to Sarah. (CONT’D) CODY Chateau Monte"
+    },
+    {
+      "number": 90,
+      "heading": "EXT. DINING AREA - FLASHBACK TO NIGHT",
+      "characters": [
+        "JINGLE JINGLE.",
+        "TOM",
+        "SLATER",
+        "RICH"
+      ],
+      "dialogues": [
+        {
+          "character": "JINGLE JINGLE.",
+          "parenthetical": "",
+          "text": "Vic CHASES Heather through the grass. Heather SCREAMS in horror."
+        },
+        {
+          "character": "TOM",
+          "parenthetical": "",
+          "text": "Ask me to stop! Ask me to stop!"
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "It’s ok. Bring him over here."
+        },
+        {
+          "character": "RICH",
+          "parenthetical": "",
+          "text": "And she really won't remember any of this?"
+        }
+      ],
+      "actionPreview": "- NIGHT 86 86 BRIGHT WHITE LIGHTS flood the area. Frida is gagged and bound on top of the dining table, garment ripped open. STEAK BLOOD STAIN on her sleeve. She stares in horror at the hellscape: Cody has Sarah by a LEASH. He TUGS it violently as he rapes her. His CRUCIFIX JINGLES against his bare "
+    },
+    {
+      "number": 91,
+      "heading": "EXT. DINING AREA - BACK TO PRESENT - NIGHT",
+      "characters": [
+        "LUCAS",
+        "FRIDA",
+        "CAMILLA",
+        "TOM",
+        "EVERYBODY",
+        "SLATER",
+        "HEATHER",
+        "CODY",
+        "SARAH",
+        "SARAHSARAH"
+      ],
+      "dialogues": [
+        {
+          "character": "LUCAS",
+          "parenthetical": "",
+          "text": "Wooow. This is delicious. I just wanna, like, hold its hand, and ask its dad if I can take it to the movies, respectfully. I mean, it would be its decision, ultimately, but mmmm... this is so good. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)68."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "You smell nice."
+        },
+        {
+          "character": "LUCAS",
+          "parenthetical": "",
+          "text": "Thanks."
+        },
+        {
+          "character": "CAMILLA",
+          "parenthetical": "",
+          "text": "Cody, this is so good. I wanna bash your face in, man."
+        },
+        {
+          "character": "TOM",
+          "parenthetical": "",
+          "text": "Ok. I’m doin’ it. Gimme a bite."
+        },
+        {
+          "character": "EVERYBODY",
+          "parenthetical": "",
+          "text": "Noooo! Tom! You’re doing so well. FRIDA/SARAH “Noooo.”"
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "It’s delicious."
+        },
+        {
+          "character": "HEATHER",
+          "parenthetical": "",
+          "text": "I love you bitch!"
+        },
+        {
+          "character": "CAMILLA",
+          "parenthetical": "",
+          "text": "I love YOU, bitch! Y’all are my fuckin’ girls. Slater: Playin’ with the big dogs, now boy. This trip... this trip has done things to me, that like... I don’t even know."
+        },
+        {
+          "character": "CODY",
+          "parenthetical": "",
+          "text": "It is so beautiful to see the way you all have connected. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)69."
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "Sarah. How’s your time been here?"
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "Yeah, uhm. It’s great. It’s been great, you know, meeting all of you guys, and connecting with all of you guys. I’ve made some really nice... connections... with... all of you... guys. So, yeah, that’s been nice. I’ve always had a really hard time making girlfriends. HEATHER/CAMILLA"
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "That’s interesting. What do you think that’s about?"
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "Oh. Ok. Well, I guess, women are taught to compete with each other, when we should be helping -- I mean, supporting each other. So, I was thinking when I get home that it might be cool to start like a program thing, where I teach women, I mean people--survival skills."
+        },
+        {
+          "character": "SARAHSARAH",
+          "parenthetical": "",
+          "text": "I know that show was stupid, and totally degrading, but I did learn some really useful shit. And the truth is... you never know when you’re gonna be stuck in the middle of nowhere in like a totally terrifying situation with no one to save you and no one to even hear you scream and you need to fight for your fucking life!!!!!!!!!!!!!!"
+        },
+        {
+          "character": "TOM",
+          "parenthetical": "",
+          "text": "It is, man. My cousin’s wife got mugged last week outside a PetCo."
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "It’s really amazing what women can do when they band together."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Sorry, I just......"
+        },
+        {
+          "character": "CODY",
+          "parenthetical": "",
+          "text": "Yeah babe!!"
+        }
+      ],
+      "actionPreview": "87 87 The Waiters serve perfect cute little fuckin’ desserts in perfect fucking unison. The gang digs in. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)69. Frida leans towards Lucas, and SNIFFS. The perfume. Tom goes to take a bite. Stops. Looks at Slater. Tom puts the spoon down."
+    },
+    {
+      "number": 92,
+      "heading": "EXT. FRONT GATE - COMPOUND - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "88 88 We follow Stacy down the driveway. CLICK CLACK. She punches in the exit code. As the truck pulls ahead, she plugs her ears, anticipating the HONK. The MUSIC echoes in the distance. As she walks back, CLICK CLACK, she reaches up, takes her glasses off her head. Puts them on. We see: her nose is"
+    },
+    {
+      "number": 93,
+      "heading": "EXT. PROPERTY - LAWN - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "RESHOOT: Stacy remembers and drops the red bags. (REPLACING SKITTLES)"
+    },
+    {
+      "number": 94,
+      "heading": "EXT. POOL AREA - SAME - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "89 89 MUSIC is bumpin’, everyone’s feelin’ it. Slater DIPS Frida. She LAUGHS, beams at him. Somebody give this bitch an Oscar. He pulls her in close, nuzzles into her neck. She SPINS away... He CATCHES her hand, spins her back, and leads her off the dance floor. Sarah, still dancing with Cody, watch"
+    },
+    {
+      "number": 95,
+      "heading": "EXT. BEHIND THE CABANA - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "90 90 Slater pins Frida against the cabana wall flirtatiously."
+    },
+    {
+      "number": 96,
+      "heading": "EXT. POOL AREA - NIGHT",
+      "characters": [
+        "CAMILLA",
+        "VIC",
+        "OMIT"
+      ],
+      "dialogues": [
+        {
+          "character": "CAMILLA",
+          "parenthetical": "",
+          "text": "Water!"
+        },
+        {
+          "character": "VIC",
+          "parenthetical": "",
+          "text": "Shit. Hey Stan. Stan the man. You were in the marines, right?"
+        }
+      ],
+      "actionPreview": "91 91 Camilla dances wildly with Tom. She stops, fans herself. She heads towards the bar. Vic is there, looking in the ice bucket. Nothin’ but water, and that SHARP-ASS ICE PICK. Stan looks up from his book. (CONT’D) VIC You wanna... get ya boy some ice? Be a hero twice? Stan heads off. Camilla star"
+    },
+    {
+      "number": 97,
+      "heading": "EXT. CHICKEN COOP - SAME - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "92 92 Heather looks at the chickens. She kneels, puts her finger to her lips. Shhhh. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)72. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)73."
+    },
+    {
+      "number": 98,
+      "heading": "EXT. POOL AREA - LATER - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "93 93 Water OVERFLOWS onto Camilla’s bare feet. We boom up to see: a POSSESSED LOOK in her eye. And OMG, her nose is bleeding."
+    },
+    {
+      "number": 99,
+      "heading": "EXT. BEHIND THE CABANA - NIGHT",
+      "characters": [
+        "SLATER",
+        "FRIDA"
+      ],
+      "dialogues": [
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "Are you having a good time? DRIP. A bead of sweat on Frida’s brow. She twists her mouth into an eerie, forced smile."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "... I’m having a great time. GULP. They stare at each other for a long tense beat. IN THE b.g.: A lone CHICKEN ambles past their feet...."
+        }
+      ],
+      "actionPreview": "94 94 Suddenly: A BLOODCURDLING SCREAM from:"
+    },
+    {
+      "number": 100,
+      "heading": "EXT. POOL AREA - NIGHT",
+      "characters": [
+        "VIC"
+      ],
+      "dialogues": [
+        {
+          "character": "VIC",
+          "parenthetical": "",
+          "text": "Oh shit."
+        }
+      ],
+      "actionPreview": "95 95 Tom is on the ground, covered in BLOOD. Camilla stands above him, rabid, seething. She PLUNGES the ICE PICK into his throat, #BasicInstinctBitches. The others watch in horror. Oh, and the CHICKENS are everywhere. It’s chaos. Slater tackles Camilla, struggles to hold her down. We follow Heather"
+    },
+    {
+      "number": 101,
+      "heading": "EXT. FRONT LAWN - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "96 96 Vic RUNS FOR HIS LIFE. PANTING, terrified. He TRIPS, falls face down. Suddenly: CHESS PIECES fall on the ground by his face. He starts to turn-- What the fu-- BLAM!! The HEAVY MARBLE CHESS BOARD SMASHES Vic in the face and he goes down. BLAM! She hits him again. Ouch. Heather lifts the board.."
+    },
+    {
+      "number": 102,
+      "heading": "EXT. POOL AREA - SAME - NIGHT",
+      "characters": [
+        "CODY",
+        "SARAH",
+        "STAN",
+        "SLATER"
+      ],
+      "dialogues": [
+        {
+          "character": "CODY",
+          "parenthetical": "",
+          "text": "Babe. Babe. We can talk about this."
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "That’s gonna open up beautifully."
+        },
+        {
+          "character": "STAN",
+          "parenthetical": "",
+          "text": "You got her?"
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "I got her."
+        }
+      ],
+      "actionPreview": "97 97 Slater still struggles to contain Camilla. Cody steps slowly towards Sarah. She backs away, right by the POTTED PLANT. Sarah reaches into the plant, comes out with the CORKSCREW. She SWIPES at him expertly. (CONT’D) CODY Whoa! Babe! She JABS the corkscrew - GSSHHH - it sticks right THROUGH HIS"
+    },
+    {
+      "number": 103,
+      "heading": "EXT. NARROW PATH - NIGHT",
+      "characters": [
+        "STAN",
+        "SARAH",
+        "FRIDA"
+      ],
+      "dialogues": [
+        {
+          "character": "STAN",
+          "parenthetical": "",
+          "text": "Ma’am."
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "... This place sucks."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Oh yeah me too."
+        }
+      ],
+      "actionPreview": "98 98 Frida tears through dense trees; heart POUNDING. SUDDENLY: WHITE FLOOD LIGHTS. EVERYWHERE. Blinding. She looks back. Stan is catching up. We stay with Stan for a beat as he tears through the brush. He loses sight of Frida. He speeds up. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/"
+    },
+    {
+      "number": 104,
+      "heading": "INT. GREAT ROOM / BACK ROOM - BIG HOUSE - NIGHT",
+      "characters": [
+        "CODY",
+        "LUCAS",
+        "VIC",
+        "SLATER"
+      ],
+      "dialogues": [
+        {
+          "character": "CODY",
+          "parenthetical": "",
+          "text": "This is bad. This is bad. Oh, this is so bad."
+        },
+        {
+          "character": "LUCAS",
+          "parenthetical": "",
+          "text": "They just went crazy! What the fuck?! We were just hanging out!! PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)75."
+        },
+        {
+          "character": "VIC",
+          "parenthetical": "",
+          "text": "(slurring; broken jaw)"
+        },
+        {
+          "character": "CODY",
+          "parenthetical": "",
+          "text": "They know. They know everything."
+        },
+        {
+          "character": "LUCAS",
+          "parenthetical": "",
+          "text": "But we’re such nice guys!"
+        },
+        {
+          "character": "CODY",
+          "parenthetical": "",
+          "text": "Bro, I’m so sorry, bro. You didn’t know. It’s not your fault."
+        },
+        {
+          "character": "VIC",
+          "parenthetical": "",
+          "text": "Guysh!"
+        },
+        {
+          "character": "LUCAS",
+          "parenthetical": "",
+          "text": "What do you mean?"
+        },
+        {
+          "character": "CODY",
+          "parenthetical": "",
+          "text": "You still don’t know."
+        },
+        {
+          "character": "LUCAS",
+          "parenthetical": "",
+          "text": "What does he mean????"
+        },
+        {
+          "character": "CODY",
+          "parenthetical": "",
+          "text": "What is it?"
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "The Yamazaki."
+        },
+        {
+          "character": "CODY",
+          "parenthetical": "",
+          "text": "Twenty-five year?"
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "Nice, right?"
+        },
+        {
+          "character": "CODY",
+          "parenthetical": "",
+          "text": "Really nice. Oaky."
+        },
+        {
+          "character": "LUCAS",
+          "parenthetical": "",
+          "text": "Somebody please tell me what the fuck is going on!! PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)76."
+        },
+        {
+          "character": "VIC",
+          "parenthetical": "",
+          "text": "Shlater, I’m dying man!"
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "Fellas. You gotta learn to go with the flow."
+        }
+      ],
+      "actionPreview": "99 99 The DOOR bursts open. Slater and Cody carry Camilla, bound and SCREAMING. Lucas enters, propping up Vic. Vic looks fucking baaad; GROANING, his jaw barely attached to his face. Slater and Cody drop Camilla on the floor of the back room. Slater opens a bottle of whiskey. PUSSY ISLAND - Kravitz/"
+    },
+    {
+      "number": 105,
+      "heading": "EXT. JUNGLE - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "100 100 Frida and Sarah peer through the trees towards the Big House. The LIGHTS GO OUT. They stop, look at each other. Ok then."
+    },
+    {
+      "number": 106,
+      "heading": "INT. BACK ROOM - BIG HOUSE - NIGHT",
+      "characters": [
+        "CODY",
+        "SLATER",
+        "LUCAS"
+      ],
+      "dialogues": [
+        {
+          "character": "CODY",
+          "parenthetical": "",
+          "text": "Uh-uh. No way, Slate."
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "You’ll be fine. (to Lucas)"
+        },
+        {
+          "character": "LUCAS",
+          "parenthetical": "",
+          "text": "Huh?"
+        },
+        {
+          "character": "CODY",
+          "parenthetical": "",
+          "text": "So why don’t you go?!"
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "Because you’re gonna go."
+        }
+      ],
+      "actionPreview": "101 101 A sudden SPARK, and a FLAME in the darkness -- Jess’s LIGHTER, illuminating Lucas’s face. He’s lighting candles around the room. Those are the beeswax, yeah? Cody hesitates. Slater stares him down."
+    },
+    {
+      "number": 107,
+      "heading": "EXT. BIG HOUSE - A MOMENT LATER - NIGHT",
+      "characters": [
+        "CODY"
+      ],
+      "dialogues": [
+        {
+          "character": "CODY",
+          "parenthetical": "",
+          "text": "You’ll be fine. Go find Mama. Ask her to fix the power. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)77."
+        },
+        {
+          "character": "CODY",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "102 102 The door SHUTS behind Cody. He mutters to himself. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)78. Go with the flow. Go find Mama. Ask her to fix the power. Go with the flow. You’ll be fine. He bursts into tears. (And yes, he still has tampons in his nose.)"
+    },
+    {
+      "number": 108,
+      "heading": "EXT. JUNGLE PATH - MINUTES LATER - NIGHT",
+      "characters": [
+        "CODY",
+        "SARAH",
+        "FRIDA",
+        "OMIT"
+      ],
+      "dialogues": [
+        {
+          "character": "CODY",
+          "parenthetical": "",
+          "text": "... Mama?"
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "Typical."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Wait wait. What should I do?"
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "Find a weapon."
+        }
+      ],
+      "actionPreview": "103 103 Frida and Sarah creep along in the dark. FOOTSTEPS. They freeze. It’s Cody. Sarah pops the glock clip out. Checks the rounds. SNAPS it shut. She stalks down the path after Cody. Frida watches as Sarah disappears into the darkness."
+    },
+    {
+      "number": 109,
+      "heading": "INT. BEDROOM / BATHROOM - FRIDA’S BUNGALOW - NIGHT",
+      "characters": [
+        "FRIDA",
+        "STACY"
+      ],
+      "dialogues": [
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "... Red rabbit..."
+        },
+        {
+          "character": "STACY",
+          "parenthetical": "",
+          "text": "I don’t... understand...."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "It’s ok. You’re... remembering...."
+        },
+        {
+          "character": "STACY",
+          "parenthetical": "",
+          "text": "But I didn’t..."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Well then merry fucking Christmas!"
+        }
+      ],
+      "actionPreview": "104 104 Frida runs for the bathroom, TRIPS, falls. Mama’s basket of cleaning supplies. Goddamit. The POLAROIDS have spilled out of her garment. One catches her eye. She looks, stands, steps into the bathroom. Holds it up in the moonlight... and her face goes white. Behind her, in the mirror: a FIGUR"
+    },
+    {
+      "number": 110,
+      "heading": "INT. BEDROOM - FRIDA’S BUNGALOW - CONTINUOUS - NIGHT",
+      "characters": [
+        "STACY"
+      ],
+      "dialogues": [
+        {
+          "character": "STACY",
+          "parenthetical": "",
+          "text": "... Idiot."
+        }
+      ],
+      "actionPreview": "105 105 ZZZZIP, and ZZZZZZZZAPP! Frida’s body seizes up and she DROPS like a stone. THUDDD. REVEAL: Stacy, holding a TASER GUN. She deposits it back into her fanny pack. ZZZZZZZIP."
+    },
+    {
+      "number": 111,
+      "heading": "EXT. JUNGLE PATH - SAME - NIGHT",
+      "characters": [
+        "CODY",
+        "SARAH"
+      ],
+      "dialogues": [
+        {
+          "character": "CODY",
+          "parenthetical": "",
+          "text": "Who’s there?"
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "It’s just me babe."
+        }
+      ],
+      "actionPreview": "106 106 Cody walks along the path. A RUSTLE in the bushes. He turns. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)79. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)80. He turns back around to see: Sarah. His eyes go wide."
+    },
+    {
+      "number": 112,
+      "heading": "INT. BEDROOM - FRIDA’S BUNGALOW - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "107 107 BANG! A GUNSHOT in the distance. Stacy turns, goes to the door, leaving Frida paralyzed on the floor. Stacy peers into the darkness. Nothing. She turns back... and Frida is gone. A SOUND in the bathroom. She creeps forward. CLICK-CLACK."
+    },
+    {
+      "number": 113,
+      "heading": "INT. BATHROOM - JESS’S BUNGALOW - NIGHT",
+      "characters": [
+        "STACY",
+        "FRIDA"
+      ],
+      "dialogues": [
+        {
+          "character": "STACY",
+          "parenthetical": "",
+          "text": "Look. Hon. I’m sorry. I know this vacation isn’t going the way you wanted it to, but--"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "... Bitch, I tried."
+        }
+      ],
+      "actionPreview": "108 108 Stacy steps forward. ZZZIP. Takes out her taser. Frida comes SCREAMING out of the shower with the SPECIAL KNIFE. Jabs it GSSSSSHHHH! straight into Stacy’s jugular. Stacy crumples to the ground. Blood GUSHES from her neck. Skittles all over the floor. (CONT’D) STACY Help... me ~~ Frida pulls "
+    },
+    {
+      "number": 114,
+      "heading": "INT. BEDROOM - FRIDA'S BUNGALOW - NIGHT",
+      "characters": [
+        "FRIDA",
+        "SARAH"
+      ],
+      "dialogues": [
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Found a weapon."
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "... Not no."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Uhuh."
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "But this is impossible, unless... CLOSE ON: The PHOTO: Hannah Marshall smiling by the pool."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "... I’ve been here before."
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "Uhm. What should we do?"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Let’s go say hi to the guys. CUE: ”LES FLEURS” by Minnie Riperton."
+        }
+      ],
+      "actionPreview": "109 109 Frida steps out, SPECIAL KNIFE in hand... to find: Sarah, GUN in hand. They’re both covered in blood. Sarah looks at Stacy’s corpse on the bathroom floor. Frida picks up the POLAROID, hands it to Sarah. (CONT’D) SARAH ... Hannah Marshall. Next to her: Frida. Her hair is LONG, and her NAILS a"
+    },
+    {
+      "number": 115,
+      "heading": "EXT. FRONT LAWN - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "110 110 Frida and Sarah march across the lawn, determined, ready for battle, looking super fucking cool. All around them loom the DESIDERIA. “LES FLEUR”’s glorious chorus slaps. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)81. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION "
+    },
+    {
+      "number": 116,
+      "heading": "INT. BIG HOUSE - NIGHT",
+      "characters": [
+        "LUCAS",
+        "SLATER",
+        "FRIDA"
+      ],
+      "dialogues": [
+        {
+          "character": "LUCAS",
+          "parenthetical": "",
+          "text": "What did I do?"
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "Nothing."
+        },
+        {
+          "character": "LUCAS",
+          "parenthetical": "",
+          "text": "Why didn’t I stop you?"
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "You mad at me?"
+        },
+        {
+          "character": "LUCAS",
+          "parenthetical": "",
+          "text": "I’m scared."
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "Good. That’s good. Honest. THUMP THUMP THUMP! POUNDING on the door."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "(O.S.)",
+          "text": "Slater? It’s Frida! I don’t know what’s going on! Please let me in!!"
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "She’s mad. They’re always mad. THUMP THUMP THUMP!"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "(O.S.)",
+          "text": "Slater! Please!!!"
+        }
+      ],
+      "actionPreview": "111 111 Slater pours himself another whiskey, refills Lucas’s glass. Lucas stares at Camilla’s dead body. Slater sits, vapes. Slater shrugs you tell me. Distress on Lucas’s face. Lucas stands. A beat. And then..... Lucas HURLS his WHISKEY GLASS, BOLTS for the door. Slater ducks-- the glass SHATTERS "
+    },
+    {
+      "number": 117,
+      "heading": "INT. BIG HOUSE - CONTINUOUS - NIGHT",
+      "characters": [
+        "SLATER",
+        "FRIDA",
+        "OMIT"
+      ],
+      "dialogues": [
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "... Hi."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Hi."
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "Is it funny yet?"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Gettin’ there. WHAM! She hits him again. He reels backwards into the great room. For a moment, in his field of vision: THE BIG RED CHAIR. He cocks his head. His face covered in blood. WHAM WHAM. Finally, he grabs her arm. TWISTS her wrist. She drops the trophy."
+        }
+      ],
+      "actionPreview": "113 113 Frida backs away. Slater steps forward. She’s terrified, crying, pleading. She backs into the back room, against the desk. He steps up, real close. She reaches back, grabbing: THE BROKEN TIP OF THE PILLAR OF INTEGRITY TROPHY. She SWINGS. WHAM! Right in the head. He SLAMS her into the CABINET"
+    },
+    {
+      "number": 118,
+      "heading": "INT. FRIDA’S BUNGALOW - FLASHBACK - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "114 114 Frida - LONG HAIR - RUNS into her room. She SLAMS the door. BOLTS the lock. Her mouth is covered in blood. POUNDING OUTSIDE. VIC SCREAMING. Frida runs for the back door. IT’S STUCK -- this fucking door. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)83. PUSSY ISLAND - Kravi"
+    },
+    {
+      "number": 119,
+      "heading": "INT. BATHROOM - FRIDA’S BUNGALOW - FLASHBACK - DAY",
+      "characters": [
+        "OMIT"
+      ],
+      "dialogues": [],
+      "actionPreview": "115 115 She slams into the vanity, knocking over her TUBE OF LIP GLOSS. Grabs a YELLOW TOWEL. CLOSE ON: the lip gloss, rolling into the bedroom. In the b.g., Frida wraps the towel around her hand. She PUNCHES out the bathroom window. Hoists herself through..."
+    },
+    {
+      "number": 120,
+      "heading": "EXT. JUNGLE PATH - FLASHBACK - DAY",
+      "characters": [
+        "SLATER",
+        "FRIDA"
+      ],
+      "dialogues": [
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "Hi."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Hi."
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "Hey. What do you call a cow with no legs?"
+        }
+      ],
+      "actionPreview": "116 116 Frida’s BLOODY FEET run past the BROKEN STONE WALL. Aha: We’ve seen this moment this before. Way back on page She runs, top speed..... then slows... And stops. A confused look on her face. She looks around. Why was I running? She turns back. He’s just standing there, smiling...... She walks "
+    },
+    {
+      "number": 121,
+      "heading": "INT. BIG HOUSE - BACK TO PRESENT - NIGHT",
+      "characters": [
+        "SLATER",
+        "SLATER KING"
+      ],
+      "dialogues": [
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "Man... you always find a way to get into the party."
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "Hi. Welcome back. I’m really happy that you came."
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "117 117 Frida gasps BACK TO PRESENT, now bound by the garment. Slater is seated in the big red chair (now in a different spot). He looks down at her, shakes his head in genuine admiration. Frida glares up at him. Her face is bloody. On the side table: the VAPE and THE KNIFE. He picks up the vape, tr"
+    },
+    {
+      "number": 122,
+      "heading": "EXT. POOL AREA - FLASHBACK - LAST YEAR - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "118 118 Vic has his hand over Frida’s mouth. She BITES down, TEARING into his PINKY. He SCREAMS. Blood all over her mouth."
+    },
+    {
+      "number": 123,
+      "heading": "INT. BIG HOUSE - BACK TO PRESENT - NIGHT",
+      "characters": [
+        "SLATER KING"
+      ],
+      "dialogues": [
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "Man, I thought last year was insane but you’ve really outdone yourself!"
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "(CONT’D)",
+          "text": "PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)86."
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "119 119 RESHOOT MONOLOGUE: This is the first time Frida has come back and it’s really fucking with him. Congratulations, you figured it out. I’m sorry about jess. Those fuckin’ snakes man. Buzz kills. So now what? Everyone’s dead. (MORE) PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/20"
+    },
+    {
+      "number": 124,
+      "heading": "EXT. BIG HOUSE - SAME - NIGHT",
+      "characters": [
+        "SLATER KING",
+        "OUTSIDE",
+        "INSIDE"
+      ],
+      "dialogues": [
+        {
+          "character": "SLATER KING",
+          "parenthetical": "(CONT’D)",
+          "text": "PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)86."
+        },
+        {
+          "character": "OUTSIDE",
+          "parenthetical": "",
+          "text": "Sarah KICKS at the door. It doesn’t budge."
+        },
+        {
+          "character": "SLATER KING",
+          "parenthetical": "",
+          "text": "Hold that thought. I’ll be right back. I really want to hear what you have to say. I’ll be right back."
+        }
+      ],
+      "actionPreview": "120 120 Sarah steps forward, gun trained on the DOORKNOB. 164-165 164-165 OMIT PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)87. INTERCUT - INT. BIG HOUSE / EXT. BIG HOUSE BANG! Another bullet lodges itself in the door. BANG! Another bullet in the door."
+    },
+    {
+      "number": 125,
+      "heading": "EXT. BIG HOUSE - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "121 121 Slater explodes out of the door. Sarah has a head start, but dude’s fucking FAST. She disappears behind some trees."
+    },
+    {
+      "number": 126,
+      "heading": "EXT. JUNGLE PATH - A MOMENT LATER - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "122 122 Slater turns the corner, but Sarah is nowhere in sight. INT./EXT. SAUNA - NIGHT 123 123 Slater opens the door of the sauna. No Sarah."
+    },
+    {
+      "number": 127,
+      "heading": "EXT. COLD PLUNGE - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "124 124 He spots... something... sticking out behind a bush. Gotcha. He inches forward... whips around the corner... to find... CODY’S CORPSE, shot through the heart. (We know you’re wondering, so yes: he still has tampons in his nose.) BLOOP. Water. Nearby. Slater steps towards the COLD PLUNGE. The"
+    },
+    {
+      "number": 128,
+      "heading": "EXT. UNDER THE WATER - COLD PLUNGE - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "125 125 Sarah, submerged in the freezing water, holding her breath. SPLSSHHH! A HAND reaches down and GRABS her by the hair. She SCREAMS under the water. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)87. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)88."
+    },
+    {
+      "number": 129,
+      "heading": "INT. BIG HOUSE - A MOMENT LATER - NIGHT",
+      "characters": [
+        "SLATER",
+        "FRIDA",
+        "VIC"
+      ],
+      "dialogues": [
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "Don’t worry. I’m not gonna kill you. You’re like my best friend."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "You never know what’s in those things, man. PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)88."
+        },
+        {
+          "character": "VIC",
+          "parenthetical": "",
+          "text": "Gnarly."
+        }
+      ],
+      "actionPreview": "126 126 Slater bursts in, dragging a soaking/freezing/SHRIEKING Sarah, hogtied in the garment. He HURLS her to the ground. Frida--feet still bound but hands now free--has made her way over to the side table. She GRABS THE KNIFE, swings it towards him, defensive. The VAPE rolls off the table... on th"
+    },
+    {
+      "number": 130,
+      "heading": "EXT. LAWN - NIGHT",
+      "characters": [
+        "SARAH",
+        "FRIDA"
+      ],
+      "dialogues": [
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "(Putting a cig in her mouth.)"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "I"
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "",
+          "text": "(getting up)"
+        },
+        {
+          "character": "SARAH",
+          "parenthetical": "(CONT'D)",
+          "text": "You sure you know what you’re doing?"
+        }
+      ],
+      "actionPreview": "Frida FALLS INTO FRAME NEXT TO SARAH WHO SITS IN THE GRASS. They stare at the burning house. Exhausted. Holy shit. Got a light? Beat. knew I forgot something. They laugh. Not cuz anything is funny. But because they’re still alive. And being alive is cool. Welp, I’m pretty sure I can figure out anoth"
+    },
+    {
+      "number": 131,
+      "heading": "INT. THE DOWN TO EARTH GALA - NIGHT",
+      "characters": [
+        "SLATER.",
+        "LAWN",
+        "FRIDA",
+        "A VOICE",
+        "SLATER",
+        "RICH",
+        "EMCEE",
+        "COCKTAIL WAITRESS",
+        "AUDIENCE APPLAUDS.",
+        "FIN"
+      ],
+      "dialogues": [
+        {
+          "character": "SLATER.",
+          "parenthetical": "",
+          "text": "Slater’s POV: Frida. Above him. Smiling. Backlit."
+        },
+        {
+          "character": "LAWN",
+          "parenthetical": "",
+          "text": "Mama cackles as she watches the big house burn. It’s guttural and emotional. She walks away and we tilt down to reveal, SHE’S LEFT HER BUCKET BEHIND."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Eat your steak, honey."
+        },
+        {
+          "character": "A VOICE",
+          "parenthetical": "(O.S.)",
+          "text": "Slater!"
+        },
+        {
+          "character": "SLATER",
+          "parenthetical": "",
+          "text": "Oh hey. Glad you could make it!"
+        },
+        {
+          "character": "RICH",
+          "parenthetical": "",
+          "text": "You’re a hard man to reach. Been trying to circle back..."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "We’re in Beijing next week."
+        },
+        {
+          "character": "RICH",
+          "parenthetical": "",
+          "text": "Oh. Gotcha. Hi. I don’t think we’ve met --"
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Of course we have. Hiya Rich."
+        },
+        {
+          "character": "EMCEE",
+          "parenthetical": "",
+          "text": "Folks, we’d like to thank you all for being with us here tonight. We know you’re very busy, and we appreciate your time. Let’s hear a round of applause for our host...."
+        },
+        {
+          "character": "COCKTAIL WAITRESS",
+          "parenthetical": "(O.S.)",
+          "text": "Would you like some more, Mrs."
+        },
+        {
+          "character": "FRIDA",
+          "parenthetical": "",
+          "text": "Yes, please. SLOW PUSH IN ON: Frida, sippin' her champagne, as the"
+        },
+        {
+          "character": "FIN",
+          "parenthetical": "",
+          "text": "PUSSY ISLAND - Kravitz/Himelstein 2ND WHITE REVISION (04/12/2023)91."
+        }
+      ],
+      "actionPreview": "Same ole’ gala. One year later. Find: Slater’s table. Everybody’s laughing at something that he just said. ANGLE ON: Frida. We follow her through the crowd, flanked by bodyguards. Everyone moves out of her way, staring. LATER - NIGHT 127 127 The flames have spread to the rest of the house. Frida app"
+    }
+  ]
+}

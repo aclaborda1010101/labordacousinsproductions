@@ -1,0 +1,22 @@
+{
+  "slug": "assassins",
+  "title": "Assassins",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 25120,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<html> <head> <title>\"Assassins\", early draft, by Larry & Andy Wachowski</title> </head> <body bgcolor=\"#FFFFFF\"> <pre> <u>ASSASSINS</u> Written by Larry and Andy Wachowski August 12, 1994 <b>     FADE IN: </b> <b>     PERFECT SQUARE OF BLACK </b> We know that we are looking at something because its polished surface shimmers with light. PULLING BACK, other squares are revealed; the black and white tiles of a chess board. The board rises and spins, slipping beneath us we find ourselves MOVING ACR",
+      "dialogue_count": 0,
+      "word_count": 25120
+    }
+  ]
+}

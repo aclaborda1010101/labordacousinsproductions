@@ -1,0 +1,22 @@
+{
+  "slug": "all-of-us-strangers",
+  "title": "All of Us Strangers",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 19181,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                        ALL OF US STRANGERS </b> Written by Andrew Haigh Based on the novel \"Strangers\" by Tai chi Yamada <b>BLUEPRINT PICTURES </b><b>    INT. ADAM'S APARTMENT - DUSK </b><b>1                                                               1 </b> A view of London stretches south past half-built tower blocks rising above the Victorian housing stock. This is the view from inside an apartment, twenty-seven floors up. As twilight comes, our focus shifts to Adam [45] gazing out the",
+      "dialogue_count": 0,
+      "word_count": 19181
+    }
+  ]
+}

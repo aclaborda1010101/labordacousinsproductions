@@ -1,141 +1,3844 @@
 {
   "slug": "conclave-2024",
   "title": "conclave",
-  "genre": "drama",
+  "year": "2024",
   "format": "film",
-  "scenes_count": 16,
-  "characters_count": 0,
-  "characters": [],
-  "total_words": 22965,
-  "total_dialogue": 0,
+  "page_count": 129,
+  "genre": "drama",
+  "genre_secondary": "thriller",
+  "genre_scores": {
+    "thriller": 44,
+    "horror": 42,
+    "comedy": 31,
+    "drama": 72,
+    "action": 42,
+    "sci-fi": 9,
+    "romance": 34,
+    "crime": 22
+  },
+  "scenes_count": 154,
+  "scenes_int": 122,
+  "scenes_ext": 32,
+  "characters_total": 52,
+  "protagonists_count": 3,
+  "secondary_count": 5,
+  "supporting_count": 18,
+  "extras_count": 26,
+  "protagonists": [
+    "LAWRENCE",
+    "BELLINI",
+    "BENITEZ"
+  ],
+  "secondary_characters": [
+    "TEDESCO",
+    "TREMBLAY",
+    "ADEYEMI",
+    "CARDINAL LOMBARDI",
+    "MONSIGNOR O'MALLEY"
+  ],
+  "characters": [
+    {
+      "name": "LAWRENCE",
+      "scenes_appeared": 69,
+      "total_dialogue_lines": 1558,
+      "total_words": 7529,
+      "role": "protagonist"
+    },
+    {
+      "name": "BELLINI",
+      "scenes_appeared": 17,
+      "total_dialogue_lines": 372,
+      "total_words": 1841,
+      "role": "protagonist"
+    },
+    {
+      "name": "BENITEZ",
+      "scenes_appeared": 11,
+      "total_dialogue_lines": 381,
+      "total_words": 1707,
+      "role": "protagonist"
+    },
+    {
+      "name": "TEDESCO",
+      "scenes_appeared": 7,
+      "total_dialogue_lines": 342,
+      "total_words": 1339,
+      "role": "secondary"
+    },
+    {
+      "name": "TREMBLAY",
+      "scenes_appeared": 9,
+      "total_dialogue_lines": 225,
+      "total_words": 1092,
+      "role": "secondary"
+    },
+    {
+      "name": "ADEYEMI",
+      "scenes_appeared": 9,
+      "total_dialogue_lines": 167,
+      "total_words": 865,
+      "role": "secondary"
+    },
+    {
+      "name": "CARDINAL LOMBARDI",
+      "scenes_appeared": 5,
+      "total_dialogue_lines": 211,
+      "total_words": 770,
+      "role": "secondary"
+    },
+    {
+      "name": "MONSIGNOR O'MALLEY",
+      "scenes_appeared": 12,
+      "total_dialogue_lines": 155,
+      "total_words": 708,
+      "role": "secondary"
+    },
+    {
+      "name": "CARDINAL SABBADIN",
+      "scenes_appeared": 5,
+      "total_dialogue_lines": 111,
+      "total_words": 558,
+      "role": "supporting"
+    },
+    {
+      "name": "ARCHBISHOP WOZNIAK",
+      "scenes_appeared": 3,
+      "total_dialogue_lines": 78,
+      "total_words": 405,
+      "role": "supporting"
+    },
+    {
+      "name": "SISTER AGNES",
+      "scenes_appeared": 7,
+      "total_dialogue_lines": 68,
+      "total_words": 384,
+      "role": "supporting"
+    },
+    {
+      "name": "ARCHBISHOP MANDORFF",
+      "scenes_appeared": 6,
+      "total_dialogue_lines": 56,
+      "total_words": 302,
+      "role": "supporting"
+    },
+    {
+      "name": "TITLES BEGIN",
+      "scenes_appeared": 1,
+      "total_dialogue_lines": 29,
+      "total_words": 217,
+      "role": "supporting"
+    },
+    {
+      "name": "CARDINAL BROTZKUS",
+      "scenes_appeared": 2,
+      "total_dialogue_lines": 28,
+      "total_words": 135,
+      "role": "supporting"
+    },
+    {
+      "name": "ON LAWRENCE...",
+      "scenes_appeared": 1,
+      "total_dialogue_lines": 16,
+      "total_words": 135,
+      "role": "supporting"
+    },
+    {
+      "name": "IN T. PAPAL OFFICE - NIGHT",
+      "scenes_appeared": 1,
+      "total_dialogue_lines": 16,
+      "total_words": 133,
+      "role": "supporting"
+    },
+    {
+      "name": "CARDINAL NAKITANDA",
+      "scenes_appeared": 3,
+      "total_dialogue_lines": 24,
+      "total_words": 132,
+      "role": "supporting"
+    },
+    {
+      "name": "ALL CARDINALS",
+      "scenes_appeared": 1,
+      "total_dialogue_lines": 21,
+      "total_words": 126,
+      "role": "supporting"
+    },
+    {
+      "name": "CLOSE ON SISTER AGNES",
+      "scenes_appeared": 1,
+      "total_dialogue_lines": 18,
+      "total_words": 121,
+      "role": "supporting"
+    },
+    {
+      "name": "CLOSE ON LAWRENCE'S FACE",
+      "scenes_appeared": 1,
+      "total_dialogue_lines": 15,
+      "total_words": 107,
+      "role": "supporting"
+    },
+    {
+      "name": "A BLANK BALLOT.",
+      "scenes_appeared": 1,
+      "total_dialogue_lines": 11,
+      "total_words": 99,
+      "role": "supporting"
+    },
+    {
+      "name": "CARDINAL MENDOZA",
+      "scenes_appeared": 2,
+      "total_dialogue_lines": 20,
+      "total_words": 75,
+      "role": "supporting"
+    },
+    {
+      "name": "A DREAM IMAGE",
+      "scenes_appeared": 1,
+      "total_dialogue_lines": 7,
+      "total_words": 64,
+      "role": "supporting"
+    },
+    {
+      "name": "OMITTED",
+      "scenes_appeared": 9,
+      "total_dialogue_lines": 26,
+      "total_words": 58,
+      "role": "supporting"
+    },
+    {
+      "name": "CARDINAL VILLANUEVA",
+      "scenes_appeared": 2,
+      "total_dialogue_lines": 11,
+      "total_words": 54,
+      "role": "supporting"
+    },
+    {
+      "name": "KRASINSKI",
+      "scenes_appeared": 1,
+      "total_dialogue_lines": 12,
+      "total_words": 54,
+      "role": "supporting"
+    },
+    {
+      "name": "GUERRINI",
+      "scenes_appeared": 1,
+      "total_dialogue_lines": 12,
+      "total_words": 50,
+      "role": "extra"
+    },
+    {
+      "name": "HIGH ANGLE",
+      "scenes_appeared": 1,
+      "total_dialogue_lines": 5,
+      "total_words": 48,
+      "role": "extra"
+    },
+    {
+      "name": "CARDINAL LANDOLFI",
+      "scenes_appeared": 2,
+      "total_dialogue_lines": 7,
+      "total_words": 45,
+      "role": "extra"
+    },
+    {
+      "name": "GUTTOSO",
+      "scenes_appeared": 1,
+      "total_dialogue_lines": 14,
+      "total_words": 45,
+      "role": "extra"
+    }
+  ],
+  "locations_count": 95,
+  "locations": [
+    {
+      "name": "SISTINE CHAPEL",
+      "int_ext": "INT",
+      "scene_count": 8,
+      "times_of_day": [
+        "MORNING",
+        "DAY"
+      ]
+    },
+    {
+      "name": "CASA SANTA MARTA - LOBBY",
+      "int_ext": "INT",
+      "scene_count": 6,
+      "times_of_day": [
+        "DAY",
+        "NIGHT",
+        "EVENING"
+      ]
+    },
+    {
+      "name": "CASA SANTA MARTA - COURTYARD",
+      "int_ext": "EXT",
+      "scene_count": 6,
+      "times_of_day": [
+        "DAY",
+        "LATER",
+        "AFTERNOON",
+        "MORNING"
+      ]
+    },
+    {
+      "name": "PAPAL SUITE",
+      "int_ext": "INT",
+      "scene_count": 5,
+      "times_of_day": [
+        "NIGHT",
+        "CONTINUOUS"
+      ]
+    },
+    {
+      "name": "CASA SANTA MARTA - DINING ROOM",
+      "int_ext": "INT",
+      "scene_count": 5,
+      "times_of_day": [
+        "NIGHT",
+        "DAY"
+      ]
+    },
+    {
+      "name": "CASA SANTA MARTA - LAWRENCE'S ROOM",
+      "int_ext": "INT",
+      "scene_count": 5,
+      "times_of_day": [
+        "NIGHT"
+      ]
+    },
+    {
+      "name": "CASA SANTA MARTA - CORRIDOR",
+      "int_ext": "INT",
+      "scene_count": 4,
+      "times_of_day": [
+        "MORNING",
+        "NIGHT",
+        "DAY"
+      ]
+    },
+    {
+      "name": "CASA SANTA MARTA - BACK OFFICE",
+      "int_ext": "INT",
+      "scene_count": 4,
+      "times_of_day": [
+        "DAY",
+        "NIGHT",
+        "EVENING"
+      ]
+    },
+    {
+      "name": "SISTINE CHAPEL - DAY / LATER",
+      "int_ext": "INT",
+      "scene_count": 4,
+      "times_of_day": [
+        "UNSPECIFIED"
+      ]
+    },
+    {
+      "name": "CASA SANTA MARTA - PAPAL CORRIDOR",
+      "int_ext": "INT",
+      "scene_count": 3,
+      "times_of_day": [
+        "NIGHT"
+      ]
+    },
+    {
+      "name": "PAPAL BEDROOM",
+      "int_ext": "INT",
+      "scene_count": 3,
+      "times_of_day": [
+        "NIGHT",
+        "MOMENTS LATER"
+      ]
+    },
+    {
+      "name": "CASA SANTA MARTA - PARKING",
+      "int_ext": "EXT",
+      "scene_count": 3,
+      "times_of_day": [
+        "MORNING",
+        "DAY"
+      ]
+    },
+    {
+      "name": "VATICAN GARDENS",
+      "int_ext": "EXT",
+      "scene_count": 3,
+      "times_of_day": [
+        "MORNING",
+        "DAY"
+      ]
+    },
+    {
+      "name": "SHOP - STREET NEAR VATICAN",
+      "int_ext": "EXT",
+      "scene_count": 2,
+      "times_of_day": [
+        "NIGHT",
+        "EVENING"
+      ]
+    },
+    {
+      "name": "SISTINE CHAPEL - ANTECHAMBER",
+      "int_ext": "INT",
+      "scene_count": 2,
+      "times_of_day": [
+        "MORNING",
+        "DAY"
+      ]
+    },
+    {
+      "name": "SISTINE CHAPEL - ROOM OF TEARS",
+      "int_ext": "INT",
+      "scene_count": 2,
+      "times_of_day": [
+        "MORNING",
+        "CONTINUOUS"
+      ]
+    },
+    {
+      "name": "MINIBUS",
+      "int_ext": "EXT",
+      "scene_count": 2,
+      "times_of_day": [
+        "MORNING",
+        "DAY"
+      ]
+    },
+    {
+      "name": "CASA SANTA",
+      "int_ext": "INT",
+      "scene_count": 2,
+      "times_of_day": [
+        "UNSPECIFIED"
+      ]
+    },
+    {
+      "name": "CASA SANTA MARTA - AULA",
+      "int_ext": "INT",
+      "scene_count": 2,
+      "times_of_day": [
+        "NIGHT",
+        "DAY"
+      ]
+    },
+    {
+      "name": "CASA SANTA MARTA - SIDE ROOM",
+      "int_ext": "INT",
+      "scene_count": 2,
+      "times_of_day": [
+        "MORNING",
+        "DAY"
+      ]
+    }
+  ],
+  "props": [
+    {
+      "name": "door",
+      "mentions": 29
+    },
+    {
+      "name": "window",
+      "mentions": 9
+    },
+    {
+      "name": "car",
+      "mentions": 6
+    },
+    {
+      "name": "bag",
+      "mentions": 5
+    },
+    {
+      "name": "key",
+      "mentions": 5
+    },
+    {
+      "name": "phone",
+      "mentions": 4
+    },
+    {
+      "name": "bus",
+      "mentions": 4
+    },
+    {
+      "name": "document",
+      "mentions": 3
+    },
+    {
+      "name": "lock",
+      "mentions": 3
+    },
+    {
+      "name": "letter",
+      "mentions": 2
+    },
+    {
+      "name": "gun",
+      "mentions": 1
+    },
+    {
+      "name": "gate",
+      "mentions": 1
+    },
+    {
+      "name": "knife",
+      "mentions": 1
+    },
+    {
+      "name": "note",
+      "mentions": 1
+    },
+    {
+      "name": "keys",
+      "mentions": 1
+    },
+    {
+      "name": "folder",
+      "mentions": 1
+    },
+    {
+      "name": "computer",
+      "mentions": 1
+    },
+    {
+      "name": "briefcase",
+      "mentions": 1
+    },
+    {
+      "name": "money",
+      "mentions": 1
+    },
+    {
+      "name": "suitcase",
+      "mentions": 1
+    }
+  ],
+  "total_words": 26309,
+  "total_dialogue_lines": 4090,
   "scenes": [
     {
       "scene_number": 1,
-      "slugline": "INT. CASA SANTA MARTA - SECURITY GATE - EVENING 23   23 The surreal sight of cardinals handing in their mobile phones at reception, queueing to pass through a METAL DETECTOR. Sister Agnes watches over the process. SISTER AGNES (Italian)  < The iPad too, your Eminence. >  SISTER AGNES  Anche l'iPad, Eminenza.  INT. CASA SANTA MARTA - STORAGE ROOM - EVENING 24   24 A NUN is placing the confiscated MOBILE PHONES and devices into dockets, each in a labelled plastic bag. INT. CASA SANTA MARTA - HALLWAY - EVENING 25   25 Lawrence walks quickly with Monsignor O’Malley, both trailed by the young chaplain, FATHER HAAS. LAWRENCE (Impatient) Where is he? O’MALLEY The meeting room, Your Eminence. LAWRENCE   * (handing coat and scarf to Haas; Italian)  Will you take these upstairs for me?  LAWRENCE Me li porta di sopra, per favore? O’MALLEY Do you w ant me to sit in? LAWRENCE No, no, I’ll deal with it. INT. CASA SANTA MARTA - MEETING ROOM - EVENING 26   26 He opens the door to the room and finds Wozniak with his back to him at the far end of the room, staring at the wall. LAWRENCE (Closing the door after him) Janusz? CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 21.",
+      "slugline": "EXT. APARTMENT BLOCK - ROME - NIGHT",
+      "int_ext": "EXT",
+      "location": "APARTMENT BLOCK - ROME",
+      "time_of_day": "NIGHT",
       "characters": [],
-      "action_text": "Wozniak turns, looking ashen. He’s been drinking. He sinks to his knees, makes the sign of the cross. CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 21A. ARCHBISHOP WOZNIAK In the name of the Father, the Son and the Holy Ghost. My last confession was four weeks ago... Lawrence walks to him, a little irritated. LAWRENCE (Helping him up) Janusz, Janusz, I’m sorry I don’t have   time   to hear your confession. There is so much still to do. Wozniak sinks into a chair. Wipes sweat from his face with trembling hands. Lawrence examines him in surprise. LAWRENCE   (CONT’D) Have   you been drinking? Wozniak looks at him, wretched. Lawrence sighs inwardly. LAWRENCE   (CONT’D) What’s troubling you? Tell me. ARCHBISHOP WOZNIAK I should have come to you before. But I promised I wouldn’t say anything. LAWRENCE Promised who? ARCHBISHOP WOZNIAK Cardinal Tremblay. Lawrence feels an instinctive stab of alarm, his natural aversion to secrets. Almost without realising it, he is drifting back towards the   door. LAWRENCE Janusz, the doors close soon and you’ll have to leave. Now if you promised Father Tremblay then perhaps it isn’t right for you to... ARCHBISHOP WOZNIAK (Blurting) The day the Pope died, the last person to have an official appointment with him was Cardinal Tremblay. CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 22. LAWRENCE (Impatient) Yes, I know. It’s on the official timeline for... ARCHBISHOP WOZNIAK At that meeting, the Holy Father dismissed him from all his offices in the Church. That stops Lawrence in his tracks. LAWRENCE What? ARCHBISHOP WOZNIAK He sacked him. Lawrence stares at him. He starts to speak, stops, dimly aware that he feels anger -   anger at being burdened with this . LAWRENCE (Tight)  Why?  ARCHBISHOP WOZ NIAK For gross misconduct. Lawrence stares at him, staggered. LAWRENCE You...you tell me this   now?   We are about to be sequestered and... ARCHBISHOP WOZNIAK Forgive me! But it wasn’t until the last few days, when I starte",
-      "dialogue_count": 0,
-      "word_count": 4393
+      "character_dialogue": [],
+      "props": [],
+      "word_count": 20
     },
     {
       "scene_number": 2,
-      "slugline": "INT. CASA SANTA MARTA - LAWRENCE'S ROOM - NIGHT 41   41 Lawrence wakes suddenly. From the next room comes the sound of stentorian snoring. He tries to screen it out. But sleep seems impossible now. He sits up in bed. INT. CASA SANTA MARTA - GYM - NIGHT 42   42 Lawrence walks on the treadmill, the only figure in the large room. He stares at his reflection in the mirrored wall as he speed walks, listening to the h ypnotic   thrum, thrum   of the treadmill. TITLE CARD:   FIRST DAY OF CONCLAVE  EXT. CASA SANTA MARTA - COURTYARD - MORNING 43   43 HIGH ANGLE - from the top of the balcony. The courtyard below is a sea of red: cardinals robed for the coming service. Lawrence stands staring down at them, an air of trepidation behind the eyes. Below a single nun in blue is lost among the red. FATHER HAAS (O.S.) Your Eminence? Behind   him Father Haas has appeared in the hall. Lawrence blinks out of his thoughts. INT. CASA SANTA MARTA - SIDE ROOM - MORNING 44   44 Haas is robing Lawrence, fussing around like a tailor, adjusting the heavy red chasuble. He places the tall, white mitre on Lawrence’s head, stands back to survey its angle critically. He hands Lawrence the crozier - a golden Shepherd’s crook. FATHER HAAS How does it feel, Your   Eminence? LAWRENCE Good. Thank you. We hear the chanting of the   Gospel of St John...  CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 41.",
+      "slugline": "INT. APARTMENT - ROME - NIGHT",
+      "int_ext": "INT",
+      "location": "APARTMENT - ROME",
+      "time_of_day": "NIGHT",
       "characters": [],
-      "action_text": "",
-      "dialogue_count": 0,
-      "word_count": 251
+      "character_dialogue": [],
+      "props": [
+        "window",
+        "phone"
+      ],
+      "word_count": 82
     },
     {
       "scene_number": 3,
-      "slugline": "INT. “ROOM OF CARDINALS” - MORNING 45   45 A bare space. Lawrence looks out at the rows of the congregation that have been crammed into the room: the red of the cardinals, purple of the Bishops, white of the Priests... They sit and stand in front of him. Lawrence sits, clutching the sermon in his lap, hiding the turmoil going on inside him. His gaze flits across the ranks of cardinals, finding the main co ntenders: Adeyemi, Bellini, Tremblay and finally Tedesco. Haas appears in front of him and removes the mitre, catches something in the Dean’s expression as he does so. FATHER HAAS (Concerned, softly) Are you well, Eminence? LAWRENCE I’m fine. The choir comes to an end. ON THE MICROPHONE - as Lawrence steps in front of it. For a moment he stares out over the room of faces. He stares down at the pages of h omily. The moment hangs until there’s a faint stirring of unease. Finally... LAWRENCE   (CONT’D) (Reading, Italian)  < Dear Brothers in Christ, at this moment of great uncertainty in the history of the Holy Church we must think first of the late Holy Father whose brilliant pontificate was a gift from God. >  LAWRENCE   (CONT’D)  Cari fratelli in Cristo, in questo momento di grande incertezza nella storia della Santa Chiesa d obbiamo pensare innanzitutto al defunto Santo Padre, il cui brillante pontificato è stato un dono di Dio.  A murmur of approval from the congregation. LAWRENCE   (CONT’D)  < Now we must ask our Lord to send us a new Holy Father through the pastoral solicitude of the cardinal fathers and we must pray to God for that loving assistance and ask Him to guide us to the right choice.>  LAWRENCE   (CONT’D)  Ora dobbiamo chiedere a n ostro Signore di mandarci un nuovo Santo Padre attraverso la sollecitudine pastorale dei padri cardinali e dobbiamo pregare Dio per questa amorevole assistenza e chiedere la sua guida nel compiere la scelta giusta.  He looks out at his audience, his gaze once more falling on Tedesco watching him with a faint complacent smile. CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 42.",
+      "slugline": "EXT. TUNNEL NEAR VATICAN - ROME - NIGHT",
+      "int_ext": "EXT",
+      "location": "TUNNEL NEAR VATICAN - ROME",
+      "time_of_day": "NIGHT",
       "characters": [],
-      "action_text": "He turns the page, scans the text, and the next page... platitudes, platitudes... Suddenly he puts the sermon aside. For the first time in days he feels calm. LAWRENCE   (CONT’D) (In English) But you all know that. There is some surprised laughter. LAWRENCE   (CONT’D) Let me speak from the heart for the moment. Now there’s a definite stirring of alarm amongst the cardinals. LAWRENCE   (CONT’D) St Paul said “Be subject to one another out of reverence for Christ.” To work together, and grow together, we must be tolerant. The room is entirely still   now... INTERCUT WITH: INT. “ROOM OF CARDINALS” ANTECHAMBER - MORNING 46   46 ... whilst right outside the door SISTER AGNES and a few of her nuns are silently listening to Lawrence’s speech. LAWRENCE St Paul said that God’s gift to the Church is its variety. It is this variety, this   diversity   of people and views that gives our Church its strength. In the course of a long life in the service of our Mother th e Church, let me tell you that there is one sin I have come to fear above all others. Certainty. Certainty is the great enemy of unity. Certainty is the deadly enemy of tolerance. Even Christ was not certain at the end. Lawrence switches into Italian. CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 43. LAWRENCE   (CONT’D) “ Dio mio, Dio mio, perché mi hai abbandonato? \" LAWRENCE   (CONT’D) (back to English)  “My God, my God, why have you forsaken me?”   He cried out in His agony at the ninth hour on the cross. Our faith is a living thing precisely   because   it walks hand in hand with doubt. If there was only certainty, and if there was no doubt, there would be no mystery, and therefore no need for faith. Let us pray that God   will grant us a Pope who doubts. Let Him grant us a Pope who sins and asks for forgiveness. And carries on. He looks out over the cardinals and sees they are unified by a single emotion. Shock. EXT. CASA SANTA MARTA - COURTYARD - DAY 47   47 Lawrence is led by Haas and some ASSIST",
-      "dialogue_count": 0,
-      "word_count": 1587
+      "character_dialogue": [],
+      "props": [
+        "car"
+      ],
+      "word_count": 31
     },
     {
       "scene_number": 4,
-      "slugline": "INT. SCALA REGIA - DAY 54A   54A A security guard scrolls through his phone, standing on the marble staircase. We hear the cardinals taking their oath. JUNIOR CARDINAL-DEACON GUERRINI (O.S.) (In Latin)  < ...I Antonio Cardinal Guerrini do so promise, pledge and swear, so help me God and these Holy Gospels which I touch with my hand. >  JUNIOR CARDINAL-DEACON GUERRINI (O.S.)  ...Et ego Antonius Cardinalis Guerrini   spondeo, voveo ac iuro, Sic me Deus adiuvet et haec Sancta Dei Evangelia, quae manu mea tango.  INT. SISTINE CHAPEL - DAY 55   55 The last of the cardinals stand taking the oath. The others have now taken their seats at the rows of desks filling the room. CARDINAL BROTZKUS (In Latin)  < ...I Romuald Cardinal Brotzkus do so promise, pledge and swear... >  CARDINAL BROTZKUS  ...Et ego Romualdus Cardinalis Brotzkus   spondeo, voveo ac iuro...  Lawrence finds himself staring up at Michelangelo’s   The Last Judgement . One of the Damned clutches a hand to his face as demons drag him down... CARDINAL BROTZKUS   (CONT’D)  < So help me God and these Holy Gospels which I touch with my hand. >  CARDINAL BROTZKUS   (CONT’D)  Sic me Deus adiuvet et haec Sancta Dei Evangelia, quae manu mea tango.  CARDINAL NAKITANDA  Et ego Irumbus Cardinalis Nakitanda s pondeo, voveo ac iuro, sic me Deus adiuvet et haec Sancta Dei Evangelia, quae manu mea tango.  Lawrence blinks as Mandorff steps up to the microphone that has been placed before the west wall of the chamber .  ARCHBISHOP MANDORFF  Extra omnes . The television lights are switched off plunging the chamber into relative gloom. Mandorff makes his way to the vestibule as priests, officials, choristers, securit y men, cameramen, photographer and the commandant of the Swiss Guard leave the chapel. The three scrutineers, CARDINALS LUKSA, MERCURIO and LOMBARDI, take their place at a table in front of the altar. CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 48.",
+      "slugline": "EXT. STREET NEAR VATICAN - ROME",
+      "int_ext": "EXT",
+      "location": "STREET NEAR VATICAN - ROME",
+      "time_of_day": "UNSPECIFIED",
       "characters": [],
-      "action_text": "Lawrence catches Adeyemi’s eye. Cardinal Tedesco glances at Bellini who looks at Tremblay across from him. In the vestibule Mandorff passes through the huge doors... INT. OUTSIDE SISTINE CHAPEL - DAY 56   56 ...to close them after him. INT. SISTINE CHAPEL - DAY 57   57 We hear the sound of a key turning. The great bell of St Peter’s begins tolling five o’clock. The Conclave has begun . LAWRENCE walks to the microphone. LAWRENCE  < Cardinal brothers, we will now proceed to the first ballot. >  (Holding up a ballot paper)  < You will find in front of you your ballot paper. On the top half is written... > (Glancing ironically at Tedesco) < Eligo in Summum Pontificem. “I elect as Supreme Pontiff”. Beneath this you must write the name of your chosen candidate. Please make sure your hand-writ ing is legible.>  LAWRENCE  Fratelli Cardinali, procederà ora al primo scrutinio.  (Holding up a paper ballot)  Troverete davanti a voi la vostra scheda elettorale. Sulla metà superiore è scritto...  (Glancing Ironically at Tedesco)  Eligo in Summum Pontificem. ”Eleggo Sommo Pontefice”. Sotto di essa dovete scrivere il nome del candidato che avete scelto. Assicuratevi che la vostra calligrafia sia leggibile.  La wrence returns to his seat and picks up his own ballot paper. He shields the paper with his arm and writes BELLINI, folds it and walks back to the altar. He holds it above his head. LAWRENCE   (CONT’D) (In Latin)  < I call as my witness Christ the Lord who will be my judge, that my vote is given to the one who before God I think should be elected. >  LAWRENCE   (CONT’D)  Testor Christum Dominum, qui me iudicaturus est, me eu m eligere, quem secundum Deum iudico eligi debere.  Under the gaze of the three cardinals he places his ballot in the large urn on the altar. CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 49. He returns to his seat, his eyes straying to where Bellini sits, apparently sunk in meditation. One by one the cardinals begin to rise and vote, ballots",
-      "dialogue_count": 0,
-      "word_count": 900
+      "character_dialogue": [],
+      "props": [],
+      "word_count": 40
     },
     {
       "scene_number": 5,
-      "slugline": "INT. SISTINE CHAPEL - DAY / LATER 59   59 CLOSE on the URN - now almost empty of ballots. Luksa’s hand reaches in. Lawrence is hurriedly adding up the votes in pencil beside his list. CARDINAL LOMBARDI  < Cardinal Bellini. >  (Italian, Receiving the next ballot)  < Cardinal Tremblay. >  (Beat)  < Cardinal Adeyemi. >  CARDINAL LOMBARDI  Cardinale Bellini.  (Italian, Receiving the next ballot)  Cardinale Tremblay.  (Beat)  Car dinale Adeyemi.  Lawrence scribbles away... CARDINAL LOMBARDI   (CONT’D)  < And finally... Cardinal Benitez. >  CARDINAL LOMBARDI   (CONT’D)  E infine... Cardinale Benítez.  Again, Lawrence looks up in surprise. Benitez himself has raised his head in shock. Whispered conversations break out around the chamber. The three Scrutineers confer briefly then Lombardi leans into the microphone again. CARDINAL LOMBARDI   (CONT’D) (Italian)  < The res ults of the first ballot are... Cardinal Adeyemi, twenty-one votes. Cardinal Tedesco, eighteen votes. Cardinal Bellini, seventeen votes. Cardinal Tremblay, sixteen votes. Cardinal Lawrence, five votes... >  CARDINAL LOMBARDI   (CONT’D)  I risultati del primo scrutinio sono i seguenti: Cardinale Adeyemi, ventuno voti. Cardinale Tedesco, diciotto voti. Cardinale Bellini, diciassette voti. Cardinale Tremblay, sedi ci voti. Cardinale Lawrence, cinque voti...  Lawrence flinches, dismayed at this. CARDINAL LOMBARDI   (CONT’D)  < Other cardinals assigned a single vote, thirty-one votes. >  CARDINAL LOMBARDI   (CONT’D)  Altri cardinali che hanno ricevuto un solo voto, trentuno voti.  The hum of conversation grows louder as Lawrence stands and walks to the microphone. CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 51.",
-      "characters": [],
-      "action_text": "LAWRENCE (Raising his voice over the hubbub )  < My brother cardinals... my brother cardinals, that concludes the first ballot. No candidate having achieved the necessary majority of seventy-two votes, we shall adjourn for the evening and resume voting in the morning. I now invite the Junior Cardinal-Deacon to ask for us to be released. >  LAWRENCE (Raising his voice above the hubbub)  Fratelli cardinali. .. fratelli cardinali, con questo si conclude il primo scrutinio. Poiché nessun candidato ha ottenuto la maggioranza necessaria di settantadue voti, per la serata la seduta è aggiornata e riprenderemo le votazioni domattina. Ora invito l’ultimo cardinale diacono a dire che ci vengano ad aprire.  His gaze flits to Bellini, who sits, staring into nothing. Guerrini walks to the back of the chapel and k nocks on the doors. JUNIOR CARDINAL-DEACON GUERRINI  Aprite le porte! Aprite le porte!  INT. OUTSIDE SISTINE CHAPEL - DAY 59A   59A Archbishop Mandorff waits outside the Sistine Chapel. He now unlocks the doors and they begin to swing open... INT. SISTINE CHAPEL - VESTIBULE - LATE AFTERNOON 60   60 Monsignor O’Malley squats by the stove, their chimneys rising to a window high above. He bundles inside the threaded ballo t papers. He ignites them with a fire-lighter, closes the door as they begin to blaze. He turns to the second stove and presses a switch. INT. INSIDE THE STOVE - LATE AFTERNOON 60A   60A INSIDE THE STOVE - the canister of potassium perchlorate, anthracene and sulphur activates with a   whoosh. .. EXT. SISTINE CHAPEL - LATE AFTERNOON 61   61 The temporary metal chimney jutting out above the roof of the chapel begins t o gush jet-black smoke, illuminated by a search-light. The smoke streams up to the winter sky and the waiting world. A dull roar swells and fades. It takes us a moment to realise it’s the response of the vast crowd gathered outside. CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 52. INT. EMPTY ROOMS - LATE AFTERNOON 61A   61A As t",
-      "dialogue_count": 0,
-      "word_count": 4354
+      "slugline": "I/E. SHOP - STREET NEAR VATICAN - NIGHT",
+      "int_ext": "EXT",
+      "location": "SHOP - STREET NEAR VATICAN",
+      "time_of_day": "NIGHT",
+      "characters": [
+        "OMITTED"
+      ],
+      "character_dialogue": [
+        {
+          "name": "OMITTED",
+          "dialogue_lines": 7,
+          "words": 15
+        }
+      ],
+      "props": [
+        "window"
+      ],
+      "word_count": 44
     },
     {
       "scene_number": 6,
-      "slugline": "INT. CASA SANTA MARTA - DINING ROOM BUFFET - DAY 80   80 Lawrence stands getting coffee. He turns and finds three of the African Cardinals behind him, their expressions mournful. And his heart sinks. For a moment he has a mad impulse to flee. But... CARDINAL NAKITANDA May we have a word, Dean? LAWRENCE Of course. CARDINAL NAKITANDA Our brother Joshua is troubled. LAWRENCE What just happened? The cardinals exchan ge glances. CARDINAL NAKITANDA One of the nuns serving our table started talking to him. He tried to ignore her and then she dropped her tray and shouted something. He got up and left. LAWRENCE What did she say to him? CARDINAL NAKITANDA We don’t know. She was speaking Yoruba. LAWRENCE Where is Cardinal Adeyemi now? Nakitanda shrugs, takes his arm. CARDINAL NAKITANDA Clearly something is wrong, Dean, and he   must tell us what. We have waited a long time for an African Pope. But he must be pure in heart and conscience. Anything less would be a disaster for us all. OMITTED 81   81 CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 70.",
+      "slugline": "INT. CASA SANTA MARTA - LIFT PAPAL CORRIDOR - NIGHT",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - LIFT PAPAL CORRIDOR",
+      "time_of_day": "NIGHT",
       "characters": [],
-      "action_text": "",
-      "dialogue_count": 0,
-      "word_count": 185
+      "character_dialogue": [],
+      "props": [],
+      "word_count": 99
     },
     {
       "scene_number": 7,
-      "slugline": "INT. CASA SANTA MARTA - KITCHEN - DAY 81A   81A The kitchen is full of NUNS preparing food. Lawrence crosses towards the back, looking for the missing nun. Those closest to him bow their heads as he passes. In the back the office is empty. Lawrence returns. LAWRENCE (Italian)  < Could you tell me, where is the sister who just had the accident? >  LAWRENCE  Potreste dirmi dove si trova la sorella che ha fatto cadere   la bottiglia prima?  NUN (Italian)  < She is with Sister Agnes, Your Eminence. >  NUN  È con Suor Agnes, Vostra Eminenza.  LAWRENCE  < Would you be kind enough to take me to her? >  LAWRENCE  Sareste così gentile da portarmi da lei?  The Nun begins to lead him back to the dining room. LAWRENCE   (CONT’D)  < Is there a rear exit we can use? >  LAWRENCE   (CONT’D)  C'è un'uscita posteriore che possiamo usare?  INT. CASA SANTA MARTA - OUTSIDE BAC K OFFICE - DAY 82   82 The Nun knocks on the door of the office. There is no reply. Lawrence steps forward and knocks more loudly. After a moment, the door opens a little and SISTER AGNES peers out. LAWRENCE Good afternoon, Sister. I need to speak to the nun who dropped her tray just now. SISTER AGNES She is safe with me, Your Eminence. I am dealing with the situation. LAWRENCE I am sure you are Sister Agnes.   But I must see her myself. SISTER AGNES I hardly think a dropped tray should concern the Dean of the College of Cardinals. CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 71.",
-      "characters": [],
-      "action_text": "LAWRENCE Even so... He grips the door handle. Amazed, he finds that as he pushes, she resists. SISTER AGNES The welfare of the Sister is   my  responsibility, Dean. An impasse as both stare at each other. LAWRENCE (Icy) And this Conclave is mine. Beat. Finally she stands aside. INT. CASA SANTA MARTA - BACK OFFICE - DAY 83   83 The NUN - a plump middle-aged Nigerian woman   - sits in a corner of the office. She sta nds as Lawrence enters. LAWRENCE Please, sit, my child. My name is Cardinal Lawrence. How are you feeling? SISTER AGNES She’s feeling much better. LAWRENCE (To the Nun) Could you tell me your name? SISTER AGNES Her name is Shanumi. LAWRENCE (To the Nun) Please, do sit down. SISTER AGNES Eminence, I really do think it would be better if... LAWRENCE (Without looking at her) Would you be so good as to leave us now, S ister Agnes? CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 72. She opens her mouth to protest again but Lawrence turns and stares at her with a look of such freezing authority that she finally bows her head and walks out of the room, closing the door after her. Lawrence sits, facing SISTER SHANUMI. LAWRENCE   (CONT’D) Sister Shanumi, I want you to understand, first of all, that you are not in any sort of trouble. The fact of the matter is, I have a responsibility before   God to make sure that the decisions we make here are the right ones. Now it’s important that you tell me anything that is in your heart and that is troubling you in so far as it relates to Cardinal Adeyemi. Can you do that for me. Shanumi stares at the floor, shakes her head. LAWRENCE   (CONT’D) Even if I give you absolute assurance that it will go no further than this room? Again, she shakes her head. Lawrence   sits, at a loss. Then, inspiration strikes. He leans towards her again. LAWRENCE   (CONT’D) Would you like me to hear your confession? INT. CASA SANTA MARTA - CORRIDOR - DAY 84   84 TRACKING with Lawrence as he walks determinedly down the corridor. He reach",
-      "dialogue_count": 0,
-      "word_count": 682
+      "slugline": "INT. CASA SANTA MARTA - PAPAL CORRIDOR - NIGHT",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - PAPAL CORRIDOR",
+      "time_of_day": "NIGHT",
+      "characters": [
+        "ARCHBISHOP WOZNIAK",
+        "LAWRENCE"
+      ],
+      "character_dialogue": [
+        {
+          "name": "ARCHBISHOP WOZNIAK",
+          "dialogue_lines": 3,
+          "words": 9
+        },
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 4,
+          "words": 19
+        }
+      ],
+      "props": [],
+      "word_count": 78
     },
     {
       "scene_number": 8,
-      "slugline": "INT. CASA SANTA MARTA - ADEYEMI’S ROOM - CONTINUOUS 85   85 Adeyemi is in the bathroom. We hear the steady stream of urination, followed by the flush. He walks out, buttoning his cassock, seems surprised to find LAWRENCE there. ADEYEMI Shouldn’t we be leaving? LAWRENCE In a moment. ADEYEMI That sounds ominous.  ( Studying himself in the mirror )  If this is about the incident downstairs, I have no desire to talk   about it. Lawrence watches in silence, waiting him out. Adeyemi turns from the mirror and walks past Lawrence into the room. ADEYEMI   (CONT’D) I am the victim of a disgraceful plot to ruin my reputation. Someone brought that woman here and staged this melodrama. She’d never left Nigeria before and suddenly she is here in the Casa Santa Marta? LAWRENCE With respect, Joshua, how she came here is secondary to the   issue of your relationship with her. ADEYEMI (turning) I have no relationship to her! I hadn’t set eyes on her for thirty years until she turned up outside my room last night! He catches himself. ADEYEMI   (CONT’D) It was...it was... (Helplessly) A   lapse , Dean. A   lapse ! “Let God grant us a Pope who sins and asks forgiveness, and carries on.” Your words! CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 74.",
+      "slugline": "INT. PAPAL SUITE - NIGHT",
+      "int_ext": "INT",
+      "location": "PAPAL SUITE",
+      "time_of_day": "NIGHT",
       "characters": [],
-      "action_text": "LAWRENCE And have you asked forgiveness? ADEYEMI I confessed my sin at the time! My bishop moved me to another parish and I never lapsed again! Such relationships were not uncommon in those days. You know that! LAWRENCE (Quietly) And the child? Adeyemi flinches. ADEYEMI The child? The child was brought up in a Christian household, and to this day he has no idea who his father is - if indeed it is me.  That   is the child. For a moment the two men stare at each other in silence, Adeyemi’s jaw jutted in defiance. Then something in him crumbles. He sits on the bed. ADEYEMI   (CONT’D) (Beat. Broken) We were very young. LAWRENCE No, Your Eminence.   She   was very young. Nineteen years old.   You   were thirty. ADEYEMI Thomas,   please ... Listen to me. I sensed the presence of the Holy Spirit this morning. I swear it. I am   ready   to t ake this burden. Does a single mistake thirty years ago disqualify me? I was a different man! I beg you, please don’t use this to ruin me. LAWRENCE (sadly) Joshua...the thought is not worthy of you. The woman will not speak of this to protect her son, and I am bound by the vows of the confessional. CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 75. Adeyemi looks up at him. ADEYEMI So... I still have hope? Lawrence hesitates, hating this duty. He steps closer, taking Adeyemi’s hands in his. LAWRENCE (Gently) No, Joshua. There is no hope. After such a public scene, there will be rumours. And you know what the Curia is like. Nothing terrifies our colleagues more than the thought of yet more sexual scandals. Adeyemi’s eyes prick with tears. LAWRENCE   (CONT’D) ( Moved) I am more sorry than I can say. You will never be Pope. You   must   begin again. He bends closer, grips the Nigerian’s hands tighter. LAWRENCE   (CONT’D) (Fiercely) But you are a   good   man. And you  will   find a way to atone. A long beat. Adeyemi nods blindly, disengages his hands to wipe his eyes. He breathes deeply, gathers himself. ADEYEMI Will you...will ",
-      "dialogue_count": 0,
-      "word_count": 649
+      "character_dialogue": [],
+      "props": [],
+      "word_count": 43
     },
     {
       "scene_number": 9,
-      "slugline": "INT. SISTINE CHAPEL - DAY 87   87 The Fourth and Fifth Ballots in progress. We’re watching Adeyemi walk down the aisle, his ballot held high in his hand. He passes the seats of the African Cardinals who, to a man, avert their eyes. He reaches the microphone. ADEYEMI (Solemnly, in Latin)  < I call as my witness Christ the Lord, who will be my judge, that my vote is given to the one who before God I think sho uld be elected. >  ADEYEMI (Solemnly)  Testor Christum Dominum, qui me iudicaturus est, me eum eligere, quem secundum Deum iudico eligi debere.  Lawrence sits, marvelling at the man’s dignity in the face of his ruined life. He turns back to his own ballot paper. A beat. Reluctantly, he writes:   Bellini . - Cardinals shuffle down the aisle, ballots held up in shaking hands... - Ballots are dropped into the Ur n... - High above, the Last Judgement lies cloaked in darkness... HARD CUT TO: INT. SISTINE CHAPEL - DAY / LATER 88   88 Cardinal Lombardi is reading the results. CARDINAL LOMBARDI (Italian)  < The results of the Fifth Ballot are... Cardinal Tremblay, forty votes. >  CARDINAL LOMBARDI  I risultati del quinto scrutinio sono i seguenti. Cardinale Tremblay: quaranta voti.  The Canadian bows his head and places his hands   together, as his colleagues twist in their seats to examine the new front- runner. CARDINAL LOMBARDI   (CONT’D) (Italian)  < Cardinal Tedesco, thirty- four votes. Cardinal Bellini, thirteen votes. Cardinal Lawrence, eleven votes. Cardinal Adeyemi, six votes... >  CARDINAL LOMBARDI   (CONT’D)  Cardinale Tedesco: trentaquattro voti. Cardinale Bellini: tredici voti. Cardinale Lawrence: undici voti. Cardinale Adeyemi: sei voti...  CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 77.",
-      "characters": [],
-      "action_text": "You can feel the electric tension in the room now - a staggering haemorrhage of Adeyemi’s followers. In a sea of scratching pencils, the Nigerian sits staring at the wall ahead, as if oblivious. CARDINAL LOMBARDI   (CONT’D) (Italian)  < Cardinal Benitez, four votes. >  CARDINAL LOMBARDI   (CONT’D)  Cardinal Benítez: quattro voti.  Lawrence sits, horribly aware of being an object of curiosity for the cardinals around him, who a re registering his increased share of votes. He can’t stop himself looking to Bellini and finds the cardinal’s cold gaze upon him. LOMBARDI (Italian)  < My brothers, that concludes the fifth ballot. No candidate having achieved the necessary majority, we shall resume voting tomorrow morning. >  LOMBARDI  Fratelli, qui si conclude il quinto scrutinio. Poiché nessun candidato ha ottenuto la maggioranza nece ssaria, le votazioni riprenderanno domani mattina.  INT. SISTINE CHAPEL - VESTIBULE - EVENING 89   89 The chapel has emptied. O’Malley bundles the ballots into the stove and burns them. He crosses the vestibule and turns to where Lawrence sits in the chapel, lost in thought, picks up his clipboard of notes. LAWRENCE (Noticing) Yes, Ray? MONSIGNOR O’MALLEY The incident this morning, your Eminence. I have more   information, if...? Lawrence considers, finally shakes his head. LAWRENCE No, Ray. I too must be shielded from any knowledge which could act as an... interference   in the process of this Conclave. MONSIGNOR O’MALLEY (Bowing) Of course, Eminence. CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 78. LAWRENCE Anything else? O’Malley glances at his clipboard. MONSIGNOR O’MALLEY Uhh...Oh, Cardinal Benitez. His health problems? He was issued with a return ticket to Geneva, paid for from the Pope’s own account. I checked the visa application. The purpose for travel was given as “medical treatment.” Anyway, whatever it was, it can’t have been serious. The tickets were cancelled. He never went. Lawrence   nods, barely listening. LAWRE",
-      "dialogue_count": 0,
-      "word_count": 1557
+      "slugline": "INT. PAPAL BEDROOM - NIGHT",
+      "int_ext": "INT",
+      "location": "PAPAL BEDROOM",
+      "time_of_day": "NIGHT",
+      "characters": [
+        "ADEYEMI.",
+        "ADEYEMI",
+        "ALL CARDINALS",
+        "TREMBLAY"
+      ],
+      "character_dialogue": [
+        {
+          "name": "ADEYEMI.",
+          "dialogue_lines": 4,
+          "words": 39
+        },
+        {
+          "name": "ADEYEMI",
+          "dialogue_lines": 13,
+          "words": 66
+        },
+        {
+          "name": "ALL CARDINALS",
+          "dialogue_lines": 21,
+          "words": 126
+        },
+        {
+          "name": "TREMBLAY",
+          "dialogue_lines": 21,
+          "words": 125
+        }
+      ],
+      "props": [],
+      "word_count": 432
     },
     {
       "scene_number": 10,
-      "slugline": "INT. CASA SANTA MARTA - UPPER CORRIDOR - NIGHT 93   93 A door opens a little and Benitez peers cautiously out at us, his open cassock clutched together at his throat. BENITEZ Your Eminence? Lawrence is a little taken aback by Benitez’ wariness. LAWRENCE I’m sorry to disturb you. May I have a word? BENITEZ Of course. One moment. To Thomas' surprise, Benitez disappears back into the room, leaving him standing in   the corridor. After a moment he reappears, clothed now. BENITEZ   (CONT’D) (Ushering him in) Excuse me, at this time of day I always try to meditate for an hour... INT. CASA SANTA MARTA - BENITEZ ROOM - CONTINUOUS 94   94 Lawrence takes in the room - identical to his own, except for a few lit candles here and the bathroom beyond. BENITEZ (Apologetically) In my travels I became used to not always having electricity. Now   I find it helpful when I pray alone. LAWRENCE (Politely) I must see if it helps me. BENITEZ Yes. Your difficulty with prayer. He watches Lawrence, the same keen gaze. Lawrence nods. CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 84.",
-      "characters": [],
-      "action_text": "BENITEZ   (CONT’D) (Gently) If I may say... sometimes I find, instead of speaking, I have to become silent. And in the silence wait for God to be heard. For a moment Lawrence feels affronted - is he, the Dean, to be given lessons in prayer now? But he fights it down. LAWRENCE Yes. I’m sure you’re right. BENITEZ Excuse me... He sits and starts to tie his shoes. LAWRENCE The other night you were kind enough to say yo u had voted for me. I don’t know if you’ve continued to do so, but if you have I would like to repeat my plea to you to stop. BENITEZ Why? LAWRENCE First, because I lack the spiritual depth to be Pope. And secondly I can’t possibly win. A long drawn out Conclave would be seen by the media as proof that the Church is in crisis. BENITEZ You have come to ask me to vote for Cardinal Tremblay? LAWRENCE Yes. A nd to urge your supporters to do the same. BENITEZ Cardinal Tremblay has already spoken to me about this. LAWRENCE (Bitterly) I’m sure he has. CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 85. He regrets his tone instantly. Benitez studies him solemnly. BENITEZ You want me to vote for a man you see as ambitious? LAWRENCE I do not want to see Tedesco as Pope. He would take the Church back to an earlier era. BENITEZ I’m sorry. I cannot vote for a man unless he is the one I deem most worthy to be Pope. And for me, that is not Cardinal Tremblay. It is you. Lawrence strikes the side of his seat in   frustration. LAWRENCE I don’t   want   your vote! Benitez stares back at him calmly, and once more Lawrence senses a surprising strength of character in this frail man. BENITEZ (Calmly) Never the less, you have it. He walks towards the bathroom, blowing out a few candles. Lawrence watches for a moment and then sighs. He wets thumb and forefinger and snuffs out the candle beside the bed. As he does he stares, distracted, at the little razor, out of place in the bedroom, still in its cellophane wrapper. And wonders why he has noted this. OMITTED 95   95 ",
-      "dialogue_count": 0,
-      "word_count": 1843
+      "slugline": "INT. PAPAL SUITE - NIGHT",
+      "int_ext": "INT",
+      "location": "PAPAL SUITE",
+      "time_of_day": "NIGHT",
+      "characters": [
+        "LAWRENCE",
+        "BELLINI"
+      ],
+      "character_dialogue": [
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 15,
+          "words": 87
+        },
+        {
+          "name": "BELLINI",
+          "dialogue_lines": 27,
+          "words": 120
+        }
+      ],
+      "props": [],
+      "word_count": 256
     },
     {
       "scene_number": 11,
-      "slugline": "INT. PAPAL CORRIDOR - CONTINUOUS 103B   103B SISTER AGNES is walking down the corridor. She slows, seeing the broken seals of the papal suite and the light showing beneath the door. She stops at the door, listening. Then the LIGHT below the Papal Suite door switches off. INT. PAPAL SUITE - CONTINUOUS 103C   103C Lawrence stands by the light switch in the darkness, practically holding his breath - aware that someone is ju st on the other side of the door. INT. OUTSIDE THE PAPAL SUITE - CONTINUOUS 103D   103D SISTER AGNES hesitates, her hand on the door handle, considering who the intruder could be. And suddenly she is certain that it is Lawrence on the other side of the door. A strange moment of connection. Then TWO NUNS cross the corridor behind her, deep in conversation in Italian, breaking the silence. Agnes straightens up again and walks on down the corridor. INT. PAPAL SUITE - CONTINUOUS 103E   103E Lawrence waits in the dark, listening to her footsteps recede. Then he switches the light back on. INT. PAPAL BEDROOM - MOMENTS LATER 104   104 Lawrence enters, silhouetted in the door frame. The bed has been strippe d. He opens the wardrobe   - a simple closet that has been emptied of everything except two ghost-like cassocks that hang from the rail. The sight of them makes his heart ache. He turns to the bedside cabinet, kneels carefully and checks the small drawer, but it’s empty. On top of the cabinet lie the late Pope’s spectacles and alarm clock, just as they were on the night the pope died. CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 92.",
-      "characters": [],
-      "action_text": "The sight of them finally undoes Lawrence and leans his elbows on the bed, his face in his hands, and is wracked by a fit of dry sobbing. Finally, he opens his eyes again, bleakly accepting that he has given in to a fit of paranoid madness. He is about to stand again when he finds himself staring at the headboard with it’s pitifully frayed edge, the crack in the wood, as if some implement had been forced into the join... He reaches out a hand and pulls at the bottom corner of the padded head-piece. It resists. With both hands now he pulls harder, grunting with the effort... The headboard inches out from its frame. The material on the inside edge, normally hidden, has a frayed six inch slit down it. Tentatively Lawrence slips his fingers into the padded interior. When he withdraws them he his holding several FOLDED SHEETS OF PAPER. INT. CASA SANTA MARTA - UPPER CORRIDOR - NIGHT 105   105 Bellini opens his door and blinks at Lawrence. INT. CASA SANTA MARTA - BELLINI’S ROOM - NIGHT 106   106 Lawrence stands sipping a glass of water. Bellini sits on the bed, reading the sheets of paper. LAWRENCE It’s the report on   the activities of Tremblay. It’s an overwhelming prima facie case that he is guilty of simony - an offence that is stipulated in the Holy Scripture as... BELLINI (Reading) I am aware of what simony is, thank you. LAWRENCE He only obtained all those votes on the first ballot because he bought them. Cardenas, Diene, Figarella, Baptiste... (MORE) CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 93. And all of this done in the last twelve months when he must have guessed the Holy Father’s pontificate was coming to an end! BELLINI (Of the papers) How do you know they didn’t use this money for completely legitimate purposes? LAWRENCE Because I’ve seen their bank statements. BELLINI Dear God. Lawrence finds himself staring down at the small plastic CHESS SET which Bellini had taken from the Pope’s apart ment; the pieces still grouped in the unfinished fin",
-      "dialogue_count": 0,
-      "word_count": 1193
+      "slugline": "INT. PAPAL SUITE - SITTING ROOM - NIGHT",
+      "int_ext": "INT",
+      "location": "PAPAL SUITE - SITTING ROOM",
+      "time_of_day": "NIGHT",
+      "characters": [
+        "LAWRENCE",
+        "ARCHBISHOP WOZNIAK",
+        "TREMBLAY",
+        "ADEYEMI",
+        "BELLINI"
+      ],
+      "character_dialogue": [
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 21,
+          "words": 105
+        },
+        {
+          "name": "ARCHBISHOP WOZNIAK",
+          "dialogue_lines": 12,
+          "words": 54
+        },
+        {
+          "name": "TREMBLAY",
+          "dialogue_lines": 45,
+          "words": 229
+        },
+        {
+          "name": "ADEYEMI",
+          "dialogue_lines": 12,
+          "words": 81
+        },
+        {
+          "name": "BELLINI",
+          "dialogue_lines": 4,
+          "words": 22
+        }
+      ],
+      "props": [
+        "door",
+        "document"
+      ],
+      "word_count": 538
     },
     {
       "scene_number": 12,
-      "slugline": "INT. CASA SANTA MARTA - DINING ROOM - MORNING / LATER 110   110 The dining room is now full, the buzz of excited conversation. Cardinals turn in their seats to stare at Lawrence who sits, impassive, feeling strangely calm. Sabbadin appears in front of him, tosses the report on the table before him. CARDINAL SABBADIN (Hissing) You have wasted this report! We could have used it to control Tremblay after he was   elected Pope. All you have done is strengthen Tedesco. He walks away before Lawrence can reply. Benitez sits at the table beside him with bread and fruit. BENITEZ You should eat Dean. Lawrence stares blindly at the food. LAWRENCE Did I do the right thing, Vincent? BENITEZ No one who follows their conscience ever does wrong, Your Eminence. The room falls suddenly silent as Tremblay appears, hair immaculate , chin jutted. He strides towards Lawrence. TREMBLAY (Loudly) You are responsible for this I believe? LAWRENCE No, Your Eminence. You are. TREMBLAY (For the room) This report is entirely mendacious! It would never have seen the light of day if you had not broken into the Holy Father’s apartment to remove it! CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 97.",
-      "characters": [],
-      "action_text": "LAWRENCE (Calmly) If the report is mendacious then why did the Holy Father, in his last official act as Pope, ask you to resign? A stir of amazement from the listening CARDINALS. TREMBLAY He did no such thing! As Monsignor Morales, who was at the meeting will confirm. LAWRENCE And yet Archbishop Wozniak insists that the Holy Father told him personally of the conversation... TREMBLAY (Over) The Holy Father -   may his name be numbered among the high priests - was a sick man towards the end of his life as those of us who saw him regularly will confirm! TEDESCO (Standing, Italian)  < If someone else may be allowed to join this dialogue - the names of eight cardinals have been blacked out. I assume the dean can tell us who they are? Let them confirm, here and now, whether Cardinal Tremblay requested their vot es in return for the payment. >  TEDESCO (Standing)  Se è possibile aggiungere qualcun altro a questa conversazione... i nomi di otto cardinali sono stati oscurati. Immagino che il Decano possa dirci chi sono? Lasciamo che siano loro a confermare, qui ed ora, se il Cardinal Tremblay ha richiesto i loro voti in cambio di soldi.  LAWRENCE (Beat) No. I won’t do that. Uproar. LAWRENCE   (CONT’D) (Almost drowned by the comm otion) Let each man examine his conscience, as I have. (MORE) CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 98. I have no desire to create bitterness in this Conclave and will be happy to stand down as dean... More uproar. At his table, Bellini watches his old friend standing alone in the storm of voices, conflicted whether he should come to his aid, when... SISTER AGNES (O.S.) Your Eminences... Your Eminences... Gradually the words cut through and the cardinals turn to stare at the small, resolute figure of Si ster Agnes standing in their midst. A silence falls, perhaps out of shock at her presumption. SISTER AGNES   (CONT’D) Eminences, although we Sisters are supposed to be invisible, God has nevertheless given us eyes and ears. I know",
-      "dialogue_count": 0,
-      "word_count": 689
+      "slugline": "INT. PAPAL OFFICE - NIGHT",
+      "int_ext": "INT",
+      "location": "PAPAL OFFICE",
+      "time_of_day": "NIGHT",
+      "characters": [
+        "LAWRENCE",
+        "TEDESCO",
+        "BELLINI",
+        "TREMBLAY",
+        "ADEYEMI"
+      ],
+      "character_dialogue": [
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 30,
+          "words": 112
+        },
+        {
+          "name": "TEDESCO",
+          "dialogue_lines": 11,
+          "words": 42
+        },
+        {
+          "name": "BELLINI",
+          "dialogue_lines": 8,
+          "words": 48
+        },
+        {
+          "name": "TREMBLAY",
+          "dialogue_lines": 17,
+          "words": 63
+        },
+        {
+          "name": "ADEYEMI",
+          "dialogue_lines": 6,
+          "words": 38
+        }
+      ],
+      "props": [
+        "door",
+        "phone"
+      ],
+      "word_count": 340
     },
     {
       "scene_number": 13,
-      "slugline": "INT. CASA SANTA MARTA - PRAYER ROOM - MORNING 111   111 Lawrence kneels in prayer. He looks up as Bellini kneels beside him. A beat. BELLINI (Wryly) We seem to be running out of favourites. LAWRENCE You should take over the supervision of this election, Aldo. BELLINI Ha! No, thank you. You are steering this Conclave. Exactly   where   I do not know, but you are certainly steering it. And that firm hand of yours has i ts admirers. (Beat) I’ve come to ask your forgiveness. Surprised, Lawrence looks at him. BELLINI   (CONT’D) I had the temerity to tell you to examine your heart, when all the time my own was... He shakes his head. BELLINI   (CONT’D) Shameful to be this age and still not know yourself.  (A rueful smile)  Ambition, “the moth of holiness.” (Beat) Perhaps it’s time you decided upon a name? Lawrence stares at him. BELLINI   (CONT’D) As the next   most senior member of the Conclave, it will fall to me to ask you how you wish to be known as Pope. Rightly or wrongly, it would seem Tremblay is finished. This will be a contest between Tedesco and you. You’re the only one who can stop him now. CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 100.",
-      "characters": [],
-      "action_text": "The two old friends stare at each other. Then, as if admitting to himself for the first time that the thought, the  ambition , was always there... LAWRENCE John. I would choose John. Beat. Then Bellini nods. BELLINI It has a weight to it. OMITTED 112   112 INT. SISTINE CHAPEL - DAY 113   113 A BLANK BALLOT. Lawrence stares at his own sheet, for the first time at a loss as to which name to write. He closes his eyes, hoping f or inspiration, some sign. Nothing comes. He opens his eyes, looks up... And finds Tedesco watching him. The Patriarch raises his eyebrows in amused complicity:   Just you and me.  Lawrence picks up his pen, feeling he no longer has a choice. Slowly he writes a name on the ballot. “Lawrence.” He stands and holding the ballot above his head, walks down the aisle to the waiting chalice, knowing he is a bout to sin. LAWRENCE (in Latin)  < I call as my witness Christ the Lord, who will be my judge, that my vote is given before God to the one who I think should be elected. >  LAWRENCE  Testor Christum Dominum, qui me iudicaturus est, me eum eligere, quem secundum Deum iudico eligi debere.  He holds the ballot over the chalice. Hesitates. Then he drops the ballot into the chalice. The explosion   is felt first as a ripple in the floor, a bass vibration throughout his body. Then the boarded windows are blasted in, raining glass down onto the chapel. For a moment Lawrence stands, stunned, wondering, almost hoping, that he is dead. Time slows. CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 101. For the first time bright morning light floods the former gloom of the chapel and Lawrence finds himself dwarfed and pitiful before Michelangelo’s vast fresco The Last Judgement. The work burns brilliantly before him, Christ dividing the Damned from the Saved... He turns again and finds the doors at the end of the vestibule beginning to open, screeching across the glass- strewn floor. INT. SISTINE CHAPEL - VESTIBULE - DAY 113A   113A Two SECURITY GUARDS",
-      "dialogue_count": 0,
-      "word_count": 2127
+      "slugline": "INT. PAPAL SUITE - BEDROOM - NIGHT",
+      "int_ext": "INT",
+      "location": "PAPAL SUITE - BEDROOM",
+      "time_of_day": "NIGHT",
+      "characters": [
+        "LAWRENCE",
+        "TITLES BEGIN",
+        "CONCLAVE."
+      ],
+      "character_dialogue": [
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 3,
+          "words": 9
+        },
+        {
+          "name": "TITLES BEGIN",
+          "dialogue_lines": 29,
+          "words": 217
+        },
+        {
+          "name": "CONCLAVE.",
+          "dialogue_lines": 0,
+          "words": 0
+        }
+      ],
+      "props": [
+        "bag",
+        "door",
+        "phone"
+      ],
+      "word_count": 263
     },
     {
       "scene_number": 14,
-      "slugline": "EXT. CASA SANTA MARTA COURTYARD - DAY 117D   117D   * Nun’s walk hurriedly past Cardinals standing in small groups   * having animated conversations   * EXT CASA SANTA MARTA COURTYARD - DAY 117E   117E   * Many Cardinals stand in small groups having animated   * conversations   * EXT CASA SANTA MARTA COURTYARD - DAY 117F   117F   * Three Cardinals have a hushed conversation. Dozens of other   * cardinals in the background do the same.   * EXT CASA SANTA MARTA   COURTYARD – SECOND FLOOR - DAY 117G   117G   * Two Nun’s look at someone below. Small groups of Cardinals   * continue their discussions.   * EXT CASA SANTA MARTA COURTYARD – SECOND FLOOR - DAY 117H   117H   * POV of Nuns looking at scores of Cardinals gathered below   * talking. Cardinal Benetiz sits alone on a bench with a   * sandwich as other Cardinals glance at him.   * EXT. CASA SANTA MARTA - PARKING - DAY 118   118 Lawrence sits alone, digest ing the contentious gathering, as a light drizzle of rain hits the pavement. Archbishop Mandorff quietly approaches. ARCHBISHOP MANDORFF The drivers aren’t ready, Your Eminence. Lawrence tears himself away from his thoughts. LAWRENCE Then we shall walk, Willi. CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 107A.",
+      "slugline": "INT/EXT. CASA SANTA MARTA - FACADE - MORNING",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - FACADE",
+      "time_of_day": "MORNING",
       "characters": [],
-      "action_text": "",
-      "dialogue_count": 0,
-      "word_count": 206
+      "character_dialogue": [],
+      "props": [],
+      "word_count": 22
     },
     {
       "scene_number": 15,
-      "slugline": "EXT. VATICAN GARDENS - DAY 119   119 Lawrence leads the cardinals from the hostel. Overhead helicopters drone. Lawrence ignores them and opens up his umbrella. It has begun to rain. The mass of cardinals follow, walking in silence, a sea of white umbrellas crossing the gardens. A sense of silent solidarity. Bellini arrives beside Lawrence. He takes his arm in his. The two friends look at each other, united   again. They walk on. INT. SISTINE CHAPEL - DAY 120   120 The broken glass has been swept away. A faint breeze blows through the space where the windows were. Lawrence stands at the microphone. The beginning of what he senses will be the final ballot of the Conclave. LAWRENCE (Latin)  < O Father, so that we may guide and watch over Your Church, give to us, Your servants, the blessings of intelligence, truth and peace, so that we may strive to know Your will, and serve You with total dedication. For Christ our Lord... >  LAWRENCE  Ecclesiae tuae, Domine, rector et custos, infunde, quaesumus, famulis tuis spiritum intelligentiae, veritatis et pacis, ut, quae tibi placita sunt, toto corde cognoscant et agnita tota virtute sectentur. Per Christum Dominum nostrum.  From the assembled Conclave comes the low rumble o f “Amen.” ON LAWRENCE... ...sitting staring up at the painted ceiling high above. His gaze slips to the rows of cardinals, lingers a moment on Tedesco, Tremblay, Adeyemi, Benitez, Bellini... He feels a sudden wave of love for them all, in all their imperfection:  the crooked timber of humanity...  From outside comes a strange, soft sound - the rise and fall of an immense wave. The cardinals raise thei r heads, listening, puzzled, until they realise: it is the sound of tens of thousands gathering in St Peter’s Square. Droplets of water are trickling through the shattered windows, and down the stone walls. CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 108.",
+      "slugline": "INT. CASA SANTA MARTA - BEDROOM - MORNING",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - BEDROOM",
+      "time_of_day": "MORNING",
       "characters": [],
-      "action_text": "Lawrence watches the raindrops for a moment. Then he picks up his pen. His mind feels suddenly calm, clear. A moment of grace. He begins to write. INT. SISTINE CHAPEL - MONTAGE - DAY 121   121 ...ballots fall into the waiting urn.... ...the ballots are pierced by the needle, threaded on the scarlet strand. ...the hands of the Scrutineers take ballots from the urn and pass it along... ...the white cloth is smoo thed over the table, the final urn of counted votes is placed at its centre, ready for the announcement... Still in SLO-MO, the cardinals rise, one by one to their feet, applauding... A crowd of cardinals are gathered around someone, their backs to us. We PUSH slowly through the crowd, which parts for us, until we reach the cardinal at the centre, the only seated man in the chapel... Benitez. Lawren ce, having reached him, stares down at the slight figure. LAWRENCE (Latin)  < In the name of the whole College of Cardinals, I ask you, Cardinal Benitez, do you accept your canonical election as Supreme Pontiff?>  LAWRENCE  Acceptasne electionem de te canonice factam in Summum Pontificem?  Benitez, as if he hasn’t heard, continues to stare down at his feet, his face obscured by a tumbling lock of black hair . A long silence, a collective holding of fearful of breath. If he should refuse... LAWRENCE   (CONT’D) (Latin)  < Do you accept? >  LAWRENCE   (CONT’D)  Acceptasne electionem de te canonice factam in Summum Pontificem?  At last Benitez raises his head and stares at Lawrence. CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 109. BENITEZ (Latin)  < I accept. >  BENITEZ  Accepto.  A murmur of relief, of pleasure, erupts around them. Lawrence smiles, pats his heart to indicate his own relief. LAWRENCE (Latin)  < And by what name do you wish to be called? >  LAWRENCE  Quo nomine vis vocari?  Benitez stands. BENITEZ (Latin)  < Innocent. >  BENITEZ  Innocentius.  A moment of silence. No Pope has derived a title from one of the virtues for generations. The n ",
-      "dialogue_count": 0,
-      "word_count": 2127
+      "character_dialogue": [],
+      "props": [],
+      "word_count": 19
     },
     {
       "scene_number": 16,
-      "slugline": "EXT. STREETS IN ROME - EVENING 130   130 Deserted streets in this ancient city. A newspaper in the gutter. An abandoned car on the corner. Next to it an old statue in crumbling marble under the steady stream of a fountain. I/E. SHOP - STREET NEAR VATICAN - EVENING 130A   130A The store with the PLASTIC PIETÀS from the beginning. And suddenly there is Cardinal Lawrence, suitcase in hand, resting his gaze on the small   statues. Then he heads down the street and disappears around the corner. We HOLD on the display, the Pietàs, the compassion of the WOMAN cradling the Man of Sorrows. INT. SALE E TABACCHI - EVENING 131   131 A near-empty bar in a small café. On the counter a cold espresso that someone didn’t have time to finish. Behind it, in the background, the faint flicker of a TV. The screen shows the balcony of St. Pet er. The red shape of a Cardinal steps through the curtains. CARDINAL BROTZKUS  Annuntio vobis gaudium magnum. Habemus Papam!  A small figure in a white cassock steps out next to him, bowing his head in humble submission. And now we hear it, the roar rising to a deafening volume, the sounds of distant celebrations coming through on the TV.  THE END  CONCLAVE by Peter Straughan - Pink Revisions. (27.01.2023) 117.",
+      "slugline": "INT. CASA SANTA MARTA - CORRIDOR - MORNING",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - CORRIDOR",
+      "time_of_day": "MORNING",
       "characters": [],
-      "action_text": "",
-      "dialogue_count": 0,
-      "word_count": 222
+      "character_dialogue": [],
+      "props": [],
+      "word_count": 21
+    },
+    {
+      "scene_number": 17,
+      "slugline": "INT. SISTINE CHAPEL - MORNING",
+      "int_ext": "INT",
+      "location": "SISTINE CHAPEL",
+      "time_of_day": "MORNING",
+      "characters": [
+        "A SPIRA L PATTERN...",
+        "CLOSE ON LAWRENCE'S FACE",
+        "ARCHBISHOP MANDORFF",
+        "LAWRENCE",
+        "MONSIGNOR O'MALLEY",
+        "LAWR ENCE"
+      ],
+      "character_dialogue": [
+        {
+          "name": "A SPIRA L PATTERN...",
+          "dialogue_lines": 3,
+          "words": 30
+        },
+        {
+          "name": "CLOSE ON LAWRENCE'S FACE",
+          "dialogue_lines": 15,
+          "words": 107
+        },
+        {
+          "name": "ARCHBISHOP MANDORFF",
+          "dialogue_lines": 16,
+          "words": 64
+        },
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 57,
+          "words": 271
+        },
+        {
+          "name": "MONSIGNOR O'MALLEY",
+          "dialogue_lines": 13,
+          "words": 77
+        },
+        {
+          "name": "LAWR ENCE",
+          "dialogue_lines": 3,
+          "words": 25
+        }
+      ],
+      "props": [
+        "gun"
+      ],
+      "word_count": 613
+    },
+    {
+      "scene_number": 18,
+      "slugline": "INT. SISTINE CHAPEL - ANTECHAMBER - MORNING",
+      "int_ext": "INT",
+      "location": "SISTINE CHAPEL - ANTECHAMBER",
+      "time_of_day": "MORNING",
+      "characters": [],
+      "character_dialogue": [],
+      "props": [],
+      "word_count": 25
+    },
+    {
+      "scene_number": 19,
+      "slugline": "INT. SISTINE CHAPEL - ROOM OF TEARS - MORNING",
+      "int_ext": "INT",
+      "location": "SISTINE CHAPEL - ROOM OF TEARS",
+      "time_of_day": "MORNING",
+      "characters": [
+        "BELLINI",
+        "LAWRENCE"
+      ],
+      "character_dialogue": [
+        {
+          "name": "BELLINI",
+          "dialogue_lines": 19,
+          "words": 94
+        },
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 31,
+          "words": 161
+        }
+      ],
+      "props": [
+        "door"
+      ],
+      "word_count": 337
+    },
+    {
+      "scene_number": 20,
+      "slugline": "I/E. MINIBUS - MORNING",
+      "int_ext": "EXT",
+      "location": "MINIBUS",
+      "time_of_day": "MORNING",
+      "characters": [],
+      "character_dialogue": [],
+      "props": [
+        "window"
+      ],
+      "word_count": 34
+    },
+    {
+      "scene_number": 21,
+      "slugline": "EXT. CASA SANTA MARTA - PARKING - MORNING",
+      "int_ext": "EXT",
+      "location": "CASA SANTA MARTA - PARKING",
+      "time_of_day": "MORNING",
+      "characters": [],
+      "character_dialogue": [],
+      "props": [],
+      "word_count": 18
+    },
+    {
+      "scene_number": 22,
+      "slugline": "INT. CASA SANTA MARTA - LOBBY - DAY",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - LOBBY",
+      "time_of_day": "DAY",
+      "characters": [],
+      "character_dialogue": [],
+      "props": [],
+      "word_count": 10
+    },
+    {
+      "scene_number": 23,
+      "slugline": "INT. CASA SANTA MARTA - BACK OFFICE - DAY",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - BACK OFFICE",
+      "time_of_day": "DAY",
+      "characters": [],
+      "character_dialogue": [],
+      "props": [
+        "bag"
+      ],
+      "word_count": 40
+    },
+    {
+      "scene_number": 24,
+      "slugline": "EXT. CASA SANTA MARTA - COURTYARD - DAY",
+      "int_ext": "EXT",
+      "location": "CASA SANTA MARTA - COURTYARD",
+      "time_of_day": "DAY",
+      "characters": [
+        "ARCHBISHOP MANDORFF",
+        "LAWRENCE",
+        "CARDINAL MENDOZA"
+      ],
+      "character_dialogue": [
+        {
+          "name": "ARCHBISHOP MANDORFF",
+          "dialogue_lines": 6,
+          "words": 54
+        },
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 12,
+          "words": 38
+        },
+        {
+          "name": "CARDINAL MENDOZA",
+          "dialogue_lines": 11,
+          "words": 27
+        }
+      ],
+      "props": [
+        "gate"
+      ],
+      "word_count": 185
+    },
+    {
+      "scene_number": 25,
+      "slugline": "EXT. CASA SANTA MARTA - COURTYARD - LATER",
+      "int_ext": "EXT",
+      "location": "CASA SANTA MARTA - COURTYARD",
+      "time_of_day": "LATER",
+      "characters": [
+        "LAWRENCE",
+        "TREMBLAY"
+      ],
+      "character_dialogue": [
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 11,
+          "words": 68
+        },
+        {
+          "name": "TREMBLAY",
+          "dialogue_lines": 8,
+          "words": 36
+        }
+      ],
+      "props": [
+        "bag"
+      ],
+      "word_count": 152
+    },
+    {
+      "scene_number": 26,
+      "slugline": "EXT. CASA SANTA MARTA - COURTYARD - AFTERNOON",
+      "int_ext": "EXT",
+      "location": "CASA SANTA MARTA - COURTYARD",
+      "time_of_day": "AFTERNOON",
+      "characters": [
+        "ON LAWRENCE",
+        "LAWRENCE",
+        "ARCHBISHOP MANDORFF",
+        "MONSIGNOR O'MALLEY",
+        "BELLINI",
+        "TEDESCO"
+      ],
+      "character_dialogue": [
+        {
+          "name": "ON LAWRENCE",
+          "dialogue_lines": 4,
+          "words": 29
+        },
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 29,
+          "words": 149
+        },
+        {
+          "name": "ARCHBISHOP MANDORFF",
+          "dialogue_lines": 1,
+          "words": 5
+        },
+        {
+          "name": "MONSIGNOR O'MALLEY",
+          "dialogue_lines": 4,
+          "words": 14
+        },
+        {
+          "name": "BELLINI",
+          "dialogue_lines": 16,
+          "words": 105
+        },
+        {
+          "name": "TEDESCO",
+          "dialogue_lines": 37,
+          "words": 155
+        }
+      ],
+      "props": [
+        "bag"
+      ],
+      "word_count": 518
+    },
+    {
+      "scene_number": 27,
+      "slugline": "INT. CASA SANTA MARTA - BEDROOMS - EVENING",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - BEDROOMS",
+      "time_of_day": "EVENING",
+      "characters": [],
+      "character_dialogue": [],
+      "props": [],
+      "word_count": 15
+    },
+    {
+      "scene_number": 28,
+      "slugline": "INT. CASA SANTA MARTA - BATHROOM - EVENING",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - BATHROOM",
+      "time_of_day": "EVENING",
+      "characters": [
+        "OMITTED"
+      ],
+      "character_dialogue": [
+        {
+          "name": "OMITTED",
+          "dialogue_lines": 3,
+          "words": 11
+        }
+      ],
+      "props": [],
+      "word_count": 23
+    },
+    {
+      "scene_number": 29,
+      "slugline": "INT. CASA SANTA MARTA - SECURITY GATE - EVENING",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - SECURITY GATE",
+      "time_of_day": "EVENING",
+      "characters": [
+        "SISTER AGNES"
+      ],
+      "character_dialogue": [
+        {
+          "name": "SISTER AGNES",
+          "dialogue_lines": 4,
+          "words": 11
+        }
+      ],
+      "props": [],
+      "word_count": 42
+    },
+    {
+      "scene_number": 30,
+      "slugline": "INT. CASA SANTA MARTA - STORAGE ROOM - EVENING",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - STORAGE ROOM",
+      "time_of_day": "EVENING",
+      "characters": [],
+      "character_dialogue": [],
+      "props": [
+        "bag"
+      ],
+      "word_count": 20
+    },
+    {
+      "scene_number": 31,
+      "slugline": "INT. CASA SANTA MARTA - HALLWAY - EVENING",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - HALLWAY",
+      "time_of_day": "EVENING",
+      "characters": [
+        "LAWRENCE"
+      ],
+      "character_dialogue": [
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 14,
+          "words": 47
+        }
+      ],
+      "props": [],
+      "word_count": 67
+    },
+    {
+      "scene_number": 32,
+      "slugline": "INT. CASA SANTA MARTA - MEETING ROOM - EVENING",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - MEETING ROOM",
+      "time_of_day": "EVENING",
+      "characters": [
+        "LAWRENCE",
+        "ARCHBISHOP WOZNIAK",
+        "ARCHBISHOP WOZ NIAK",
+        "OMITTED"
+      ],
+      "character_dialogue": [
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 53,
+          "words": 211
+        },
+        {
+          "name": "ARCHBISHOP WOZNIAK",
+          "dialogue_lines": 63,
+          "words": 342
+        },
+        {
+          "name": "ARCHBISHOP WOZ NIAK",
+          "dialogue_lines": 2,
+          "words": 8
+        },
+        {
+          "name": "OMITTED",
+          "dialogue_lines": 2,
+          "words": 2
+        }
+      ],
+      "props": [
+        "door"
+      ],
+      "word_count": 637
+    },
+    {
+      "scene_number": 33,
+      "slugline": "INT. CASA SANTA MARTA - LOBBY - NIGHT",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - LOBBY",
+      "time_of_day": "NIGHT",
+      "characters": [],
+      "character_dialogue": [],
+      "props": [
+        "door"
+      ],
+      "word_count": 62
+    },
+    {
+      "scene_number": 34,
+      "slugline": "INT. CASA SANTA",
+      "int_ext": "INT",
+      "location": "CASA SANTA",
+      "time_of_day": "UNSPECIFIED",
+      "characters": [
+        "MARTA - KITCHENS - NIGHT"
+      ],
+      "character_dialogue": [
+        {
+          "name": "MARTA - KITCHENS - NIGHT",
+          "dialogue_lines": 5,
+          "words": 29
+        }
+      ],
+      "props": [],
+      "word_count": 34
+    },
+    {
+      "scene_number": 35,
+      "slugline": "INT. CASA SANTA MARTA - DINING ROOM - NIGHT",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - DINING ROOM",
+      "time_of_day": "NIGHT",
+      "characters": [],
+      "character_dialogue": [],
+      "props": [],
+      "word_count": 25
+    },
+    {
+      "scene_number": 36,
+      "slugline": "INT. CASA SANTA MAR TA - STAIRCASE - NIGHT",
+      "int_ext": "INT",
+      "location": "CASA SANTA MAR TA - STAIRCASE",
+      "time_of_day": "NIGHT",
+      "characters": [
+        "LAWRENCE",
+        "MONSIGNOR O'MALLEY",
+        "ARCHBISHOP MANDORFF"
+      ],
+      "character_dialogue": [
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 23,
+          "words": 105
+        },
+        {
+          "name": "MONSIGNOR O'MALLEY",
+          "dialogue_lines": 21,
+          "words": 92
+        },
+        {
+          "name": "ARCHBISHOP MANDORFF",
+          "dialogue_lines": 18,
+          "words": 72
+        }
+      ],
+      "props": [
+        "letter"
+      ],
+      "word_count": 329
+    },
+    {
+      "scene_number": 37,
+      "slugline": "INT. CASA SANTA MARTA - KITCHEN STORAGE - NIGHT",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - KITCHEN STORAGE",
+      "time_of_day": "NIGHT",
+      "characters": [
+        "BEL LINI",
+        "LAWRENCE",
+        "BELLINI"
+      ],
+      "character_dialogue": [
+        {
+          "name": "BEL LINI",
+          "dialogue_lines": 4,
+          "words": 20
+        },
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 21,
+          "words": 119
+        },
+        {
+          "name": "BELLINI",
+          "dialogue_lines": 20,
+          "words": 65
+        }
+      ],
+      "props": [
+        "letter"
+      ],
+      "word_count": 258
+    },
+    {
+      "scene_number": 38,
+      "slugline": "INT. CASA SANTA MARTA - KITCHEN OFFICE - NIGHT",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - KITCHEN OFFICE",
+      "time_of_day": "NIGHT",
+      "characters": [
+        "LAWRENCE",
+        "BENITEZ",
+        "BELLINI"
+      ],
+      "character_dialogue": [
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 26,
+          "words": 124
+        },
+        {
+          "name": "BENITEZ",
+          "dialogue_lines": 22,
+          "words": 117
+        },
+        {
+          "name": "BELLINI",
+          "dialogue_lines": 18,
+          "words": 75
+        }
+      ],
+      "props": [
+        "lock"
+      ],
+      "word_count": 343
+    },
+    {
+      "scene_number": 39,
+      "slugline": "INT. CASA SANTA MARTA - CORRIDOR - NIGHT",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - CORRIDOR",
+      "time_of_day": "NIGHT",
+      "characters": [
+        "LAWRENCE",
+        "ADEYEMI"
+      ],
+      "character_dialogue": [
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 4,
+          "words": 17
+        },
+        {
+          "name": "ADEYEMI",
+          "dialogue_lines": 12,
+          "words": 59
+        }
+      ],
+      "props": [
+        "key"
+      ],
+      "word_count": 114
+    },
+    {
+      "scene_number": 40,
+      "slugline": "INT. CASA SANTA MARTA - LAWRENCE'S ROOM - NIGHT",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - LAWRENCE'S ROOM",
+      "time_of_day": "NIGHT",
+      "characters": [],
+      "character_dialogue": [],
+      "props": [
+        "window"
+      ],
+      "word_count": 54
+    },
+    {
+      "scene_number": 41,
+      "slugline": "INT. CASA SANTA MARTA - LAWRENCE'S BATHROOM - NIGHT",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - LAWRENCE'S BATHROOM",
+      "time_of_day": "NIGHT",
+      "characters": [
+        "LAWRENCE"
+      ],
+      "character_dialogue": [
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 32,
+          "words": 151
+        }
+      ],
+      "props": [],
+      "word_count": 163
+    },
+    {
+      "scene_number": 42,
+      "slugline": "INT. CASA SANTA MARTA - DINING ROOM - NIGHT",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - DINING ROOM",
+      "time_of_day": "NIGHT",
+      "characters": [
+        "CLOSE ON SISTER AGNES",
+        "LAWRENCE",
+        "BENITEZ",
+        "TEDESCO"
+      ],
+      "character_dialogue": [
+        {
+          "name": "CLOSE ON SISTER AGNES",
+          "dialogue_lines": 18,
+          "words": 121
+        },
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 71,
+          "words": 354
+        },
+        {
+          "name": "BENITEZ",
+          "dialogue_lines": 36,
+          "words": 168
+        },
+        {
+          "name": "TEDESCO",
+          "dialogue_lines": 101,
+          "words": 381
+        }
+      ],
+      "props": [
+        "knife"
+      ],
+      "word_count": 1058
+    },
+    {
+      "scene_number": 43,
+      "slugline": "INT. CASA SANTA MARTA - AULA - NIGHT",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - AULA",
+      "time_of_day": "NIGHT",
+      "characters": [
+        "LAWRENCE",
+        "CARDINAL SABBADIN",
+        "BELLINI",
+        "CARDINAL LANDOLFI",
+        "CARDINAL VILLANUEVA"
+      ],
+      "character_dialogue": [
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 11,
+          "words": 64
+        },
+        {
+          "name": "CARDINAL SABBADIN",
+          "dialogue_lines": 26,
+          "words": 132
+        },
+        {
+          "name": "BELLINI",
+          "dialogue_lines": 41,
+          "words": 230
+        },
+        {
+          "name": "CARDINAL LANDOLFI",
+          "dialogue_lines": 2,
+          "words": 7
+        },
+        {
+          "name": "CARDINAL VILLANUEVA",
+          "dialogue_lines": 4,
+          "words": 20
+        }
+      ],
+      "props": [
+        "door"
+      ],
+      "word_count": 496
+    },
+    {
+      "scene_number": 44,
+      "slugline": "INT. CASA SANTA MARTA - TREMBLAY’S ROOM - NIGHT",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - TREMBLAY’S ROOM",
+      "time_of_day": "NIGHT",
+      "characters": [
+        "BELLINI",
+        "TREMBLAY",
+        "LAWRENCE",
+        "OMITTED"
+      ],
+      "character_dialogue": [
+        {
+          "name": "BELLINI",
+          "dialogue_lines": 3,
+          "words": 29
+        },
+        {
+          "name": "TREMBLAY",
+          "dialogue_lines": 64,
+          "words": 295
+        },
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 41,
+          "words": 189
+        },
+        {
+          "name": "OMITTED",
+          "dialogue_lines": 3,
+          "words": 11
+        }
+      ],
+      "props": [
+        "door"
+      ],
+      "word_count": 556
+    },
+    {
+      "scene_number": 45,
+      "slugline": "INT. CASA SANTA MARTA - LAWRENCE'S ROOM - NIGHT",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - LAWRENCE'S ROOM",
+      "time_of_day": "NIGHT",
+      "characters": [],
+      "character_dialogue": [],
+      "props": [],
+      "word_count": 31
+    },
+    {
+      "scene_number": 46,
+      "slugline": "INT. CASA SANTA MARTA - GYM - NIGHT",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - GYM",
+      "time_of_day": "NIGHT",
+      "characters": [
+        "FIRST DAY OF CONCLAVE"
+      ],
+      "character_dialogue": [
+        {
+          "name": "FIRST DAY OF CONCLAVE",
+          "dialogue_lines": 0,
+          "words": 0
+        }
+      ],
+      "props": [],
+      "word_count": 43
+    },
+    {
+      "scene_number": 47,
+      "slugline": "EXT. CASA SANTA MARTA - COURTYARD - MORNING",
+      "int_ext": "EXT",
+      "location": "CASA SANTA MARTA - COURTYARD",
+      "time_of_day": "MORNING",
+      "characters": [
+        "FATHER HAAS"
+      ],
+      "character_dialogue": [
+        {
+          "name": "FATHER HAAS",
+          "dialogue_lines": 4,
+          "words": 17
+        }
+      ],
+      "props": [],
+      "word_count": 69
+    },
+    {
+      "scene_number": 48,
+      "slugline": "INT. CASA SANTA MARTA - SIDE ROOM - MORNING",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - SIDE ROOM",
+      "time_of_day": "MORNING",
+      "characters": [
+        "FATHER HAAS",
+        "LAWRENCE"
+      ],
+      "character_dialogue": [
+        {
+          "name": "FATHER HAAS",
+          "dialogue_lines": 2,
+          "words": 6
+        },
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 4,
+          "words": 22
+        }
+      ],
+      "props": [],
+      "word_count": 73
+    },
+    {
+      "scene_number": 49,
+      "slugline": "INT. “ROOM OF CARDINALS” - MORNING",
+      "int_ext": "INT",
+      "location": "“ROOM OF CARDINALS”",
+      "time_of_day": "MORNING",
+      "characters": [
+        "FATHER HAAS",
+        "LAWRENCE"
+      ],
+      "character_dialogue": [
+        {
+          "name": "FATHER HAAS",
+          "dialogue_lines": 2,
+          "words": 6
+        },
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 69,
+          "words": 334
+        }
+      ],
+      "props": [],
+      "word_count": 446
+    },
+    {
+      "scene_number": 50,
+      "slugline": "INT. “ROOM OF CARDINALS” ANTECHAMBER - MORNING",
+      "int_ext": "INT",
+      "location": "“ROOM OF CARDINALS” ANTECHAMBER",
+      "time_of_day": "MORNING",
+      "characters": [
+        "LAWRENCE"
+      ],
+      "character_dialogue": [
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 43,
+          "words": 214
+        }
+      ],
+      "props": [
+        "door"
+      ],
+      "word_count": 239
+    },
+    {
+      "scene_number": 51,
+      "slugline": "EXT. CASA SANTA MARTA - COURTYARD - DAY",
+      "int_ext": "EXT",
+      "location": "CASA SANTA MARTA - COURTYARD",
+      "time_of_day": "DAY",
+      "characters": [],
+      "character_dialogue": [],
+      "props": [],
+      "word_count": 22
+    },
+    {
+      "scene_number": 52,
+      "slugline": "INT. CASA SANTA MARTA - SIDE ROOM - DAY",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - SIDE ROOM",
+      "time_of_day": "DAY",
+      "characters": [
+        "MONSIGNOR O'MALLEY",
+        "LAWRENCE"
+      ],
+      "character_dialogue": [
+        {
+          "name": "MONSIGNOR O'MALLEY",
+          "dialogue_lines": 11,
+          "words": 50
+        },
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 42,
+          "words": 189
+        }
+      ],
+      "props": [],
+      "word_count": 279
+    },
+    {
+      "scene_number": 53,
+      "slugline": "INT. CASA SANTA MARTA - LOBBY - DAY",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - LOBBY",
+      "time_of_day": "DAY",
+      "characters": [
+        "TEDESCO",
+        "LAWRENCE"
+      ],
+      "character_dialogue": [
+        {
+          "name": "TEDESCO",
+          "dialogue_lines": 29,
+          "words": 128
+        },
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 5,
+          "words": 23
+        }
+      ],
+      "props": [
+        "note"
+      ],
+      "word_count": 169
+    },
+    {
+      "scene_number": 54,
+      "slugline": "INT. CASA SANTA MARTA - LOBBY LIFT - DAY",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - LOBBY LIFT",
+      "time_of_day": "DAY",
+      "characters": [],
+      "character_dialogue": [],
+      "props": [],
+      "word_count": 29
+    },
+    {
+      "scene_number": 55,
+      "slugline": "INT. CASA SANTA MARTA - LOBBY - DAY",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - LOBBY",
+      "time_of_day": "DAY",
+      "characters": [
+        "LAWRENCE",
+        "SISTER AGNES",
+        "BELLINI"
+      ],
+      "character_dialogue": [
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 2,
+          "words": 15
+        },
+        {
+          "name": "SISTER AGNES",
+          "dialogue_lines": 13,
+          "words": 90
+        },
+        {
+          "name": "BELLINI",
+          "dialogue_lines": 10,
+          "words": 54
+        }
+      ],
+      "props": [
+        "key",
+        "keys"
+      ],
+      "word_count": 200
+    },
+    {
+      "scene_number": 56,
+      "slugline": "EXT. CASA SANTA MARTA - PARKING - DAY",
+      "int_ext": "EXT",
+      "location": "CASA SANTA MARTA - PARKING",
+      "time_of_day": "DAY",
+      "characters": [
+        "MONSIGNOR O'MALLEY"
+      ],
+      "character_dialogue": [
+        {
+          "name": "MONSIGNOR O'MALLEY",
+          "dialogue_lines": 7,
+          "words": 27
+        }
+      ],
+      "props": [],
+      "word_count": 45
+    },
+    {
+      "scene_number": 57,
+      "slugline": "I/E. MINIBUS - DAY",
+      "int_ext": "EXT",
+      "location": "MINIBUS",
+      "time_of_day": "DAY",
+      "characters": [],
+      "character_dialogue": [],
+      "props": [
+        "bus"
+      ],
+      "word_count": 49
+    },
+    {
+      "scene_number": 58,
+      "slugline": "EXT. CORTILE DEL MARESCIALLO - DAY",
+      "int_ext": "EXT",
+      "location": "CORTILE DEL MARESCIALLO",
+      "time_of_day": "DAY",
+      "characters": [],
+      "character_dialogue": [],
+      "props": [
+        "bus"
+      ],
+      "word_count": 35
+    },
+    {
+      "scene_number": 59,
+      "slugline": "INT. SCALA REGIA - DAY",
+      "int_ext": "INT",
+      "location": "SCALA REGIA",
+      "time_of_day": "DAY",
+      "characters": [
+        "JUNIOR CARDINAL-DEACON",
+        "GUERRINI"
+      ],
+      "character_dialogue": [
+        {
+          "name": "JUNIOR CARDINAL-DEACON",
+          "dialogue_lines": 0,
+          "words": 0
+        },
+        {
+          "name": "GUERRINI",
+          "dialogue_lines": 12,
+          "words": 50
+        }
+      ],
+      "props": [
+        "phone"
+      ],
+      "word_count": 79
+    },
+    {
+      "scene_number": 60,
+      "slugline": "INT. SISTINE CHAPEL - DAY",
+      "int_ext": "INT",
+      "location": "SISTINE CHAPEL",
+      "time_of_day": "DAY",
+      "characters": [
+        "CARDINAL BROTZKUS",
+        "CARDINAL NAKITANDA",
+        "ARCHBISHOP MANDORFF"
+      ],
+      "character_dialogue": [
+        {
+          "name": "CARDINAL BROTZKUS",
+          "dialogue_lines": 21,
+          "words": 80
+        },
+        {
+          "name": "CARDINAL NAKITANDA",
+          "dialogue_lines": 7,
+          "words": 44
+        },
+        {
+          "name": "ARCHBISHOP MANDORFF",
+          "dialogue_lines": 12,
+          "words": 94
+        }
+      ],
+      "props": [],
+      "word_count": 256
+    },
+    {
+      "scene_number": 61,
+      "slugline": "INT. OUTSIDE SISTINE CHAPEL - DAY",
+      "int_ext": "INT",
+      "location": "OUTSIDE SISTINE CHAPEL",
+      "time_of_day": "DAY",
+      "characters": [],
+      "character_dialogue": [],
+      "props": [],
+      "word_count": 7
+    },
+    {
+      "scene_number": 62,
+      "slugline": "INT. SISTINE CHAPEL - DAY",
+      "int_ext": "INT",
+      "location": "SISTINE CHAPEL",
+      "time_of_day": "DAY",
+      "characters": [
+        "LAWRENCE"
+      ],
+      "character_dialogue": [
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 56,
+          "words": 270
+        }
+      ],
+      "props": [
+        "key"
+      ],
+      "word_count": 304
+    },
+    {
+      "scene_number": 63,
+      "slugline": "INT. SISTINE CHAPEL - DAY / LATER",
+      "int_ext": "INT",
+      "location": "SISTINE CHAPEL - DAY / LATER",
+      "time_of_day": "UNSPECIFIED",
+      "characters": [
+        "CARDINAL LOMBARDI",
+        "C ARDINAL LOMBARDI"
+      ],
+      "character_dialogue": [
+        {
+          "name": "CARDINAL LOMBARDI",
+          "dialogue_lines": 42,
+          "words": 135
+        },
+        {
+          "name": "C ARDINAL LOMBARDI",
+          "dialogue_lines": 2,
+          "words": 5
+        }
+      ],
+      "props": [],
+      "word_count": 225
+    },
+    {
+      "scene_number": 64,
+      "slugline": "INT. SISTINE CHAPEL - DAY / LATER",
+      "int_ext": "INT",
+      "location": "SISTINE CHAPEL - DAY / LATER",
+      "time_of_day": "UNSPECIFIED",
+      "characters": [
+        "CARDINAL LOMBARDI",
+        "LAWRENCE"
+      ],
+      "character_dialogue": [
+        {
+          "name": "CARDINAL LOMBARDI",
+          "dialogue_lines": 56,
+          "words": 191
+        },
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 33,
+          "words": 141
+        }
+      ],
+      "props": [
+        "car"
+      ],
+      "word_count": 378
+    },
+    {
+      "scene_number": 65,
+      "slugline": "INT. OUTSIDE SISTINE CHAPEL - DAY",
+      "int_ext": "INT",
+      "location": "OUTSIDE SISTINE CHAPEL",
+      "time_of_day": "DAY",
+      "characters": [],
+      "character_dialogue": [],
+      "props": [],
+      "word_count": 20
+    },
+    {
+      "scene_number": 66,
+      "slugline": "INT. SISTINE CHAPEL - VESTIBULE - LATE AFTERNOON",
+      "int_ext": "INT",
+      "location": "SISTINE CHAPEL - VESTIBULE - LATE AFTERNOON",
+      "time_of_day": "UNSPECIFIED",
+      "characters": [],
+      "character_dialogue": [],
+      "props": [
+        "window",
+        "door"
+      ],
+      "word_count": 48
+    },
+    {
+      "scene_number": 67,
+      "slugline": "INT. INSIDE THE STOVE - LATE AFTERNOON",
+      "int_ext": "INT",
+      "location": "INSIDE THE STOVE - LATE AFTERNOON",
+      "time_of_day": "UNSPECIFIED",
+      "characters": [],
+      "character_dialogue": [],
+      "props": [],
+      "word_count": 19
+    },
+    {
+      "scene_number": 68,
+      "slugline": "EXT. SISTINE CHAPEL - LATE AFTERNOON",
+      "int_ext": "EXT",
+      "location": "SISTINE CHAPEL - LATE AFTERNOON",
+      "time_of_day": "UNSPECIFIED",
+      "characters": [],
+      "character_dialogue": [],
+      "props": [],
+      "word_count": 67
+    },
+    {
+      "scene_number": 69,
+      "slugline": "INT. EMPTY ROOMS - LATE AFTERNOON",
+      "int_ext": "INT",
+      "location": "EMPTY ROOMS - LATE AFTERNOON",
+      "time_of_day": "UNSPECIFIED",
+      "characters": [],
+      "character_dialogue": [],
+      "props": [],
+      "word_count": 30
+    },
+    {
+      "scene_number": 70,
+      "slugline": "INT. SALA REGIA - LATE AFTERNOON",
+      "int_ext": "INT",
+      "location": "SALA REGIA - LATE AFTERNOON",
+      "time_of_day": "UNSPECIFIED",
+      "characters": [
+        "MONSIGNOR O'MALLEY",
+        "LAWRENCE"
+      ],
+      "character_dialogue": [
+        {
+          "name": "MONSIGNOR O'MALLEY",
+          "dialogue_lines": 24,
+          "words": 117
+        },
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 10,
+          "words": 50
+        }
+      ],
+      "props": [],
+      "word_count": 180
+    },
+    {
+      "scene_number": 71,
+      "slugline": "INT. SCALA REGIA - LATE AFTERNOON",
+      "int_ext": "INT",
+      "location": "SCALA REGIA - LATE AFTERNOON",
+      "time_of_day": "UNSPECIFIED",
+      "characters": [
+        "MONSIGNOR O'MALLEY",
+        "LAWRENCE"
+      ],
+      "character_dialogue": [
+        {
+          "name": "MONSIGNOR O'MALLEY",
+          "dialogue_lines": 30,
+          "words": 124
+        },
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 6,
+          "words": 31
+        }
+      ],
+      "props": [
+        "document"
+      ],
+      "word_count": 187
+    },
+    {
+      "scene_number": 72,
+      "slugline": "I/E. MINIBUS - LATE AFTERNOON",
+      "int_ext": "EXT",
+      "location": "MINIBUS - LATE AFTERNOON",
+      "time_of_day": "UNSPECIFIED",
+      "characters": [
+        "CARDINAL SABBADIN",
+        "LAWRENCE"
+      ],
+      "character_dialogue": [
+        {
+          "name": "CARDINAL SABBADIN",
+          "dialogue_lines": 19,
+          "words": 105
+        },
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 7,
+          "words": 40
+        }
+      ],
+      "props": [
+        "bus",
+        "window"
+      ],
+      "word_count": 203
+    },
+    {
+      "scene_number": 73,
+      "slugline": "INT. CASA SANTA MARTA - DINING ROOM - NIGHT",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - DINING ROOM",
+      "time_of_day": "NIGHT",
+      "characters": [
+        "CARDINAL MENDOZA",
+        "LAWRENCE",
+        "TEDESCO",
+        "L AWRENCE",
+        "TREMBLAY"
+      ],
+      "character_dialogue": [
+        {
+          "name": "CARDINAL MENDOZA",
+          "dialogue_lines": 9,
+          "words": 48
+        },
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 15,
+          "words": 81
+        },
+        {
+          "name": "TEDESCO",
+          "dialogue_lines": 23,
+          "words": 84
+        },
+        {
+          "name": "L AWRENCE",
+          "dialogue_lines": 2,
+          "words": 10
+        },
+        {
+          "name": "TREMBLAY",
+          "dialogue_lines": 8,
+          "words": 45
+        }
+      ],
+      "props": [],
+      "word_count": 334
+    },
+    {
+      "scene_number": 74,
+      "slugline": "EXT. APOSTOLIC PALACE - PORTONE DI BRONZO - NIGHT",
+      "int_ext": "EXT",
+      "location": "APOSTOLIC PALACE - PORTONE DI BRONZO",
+      "time_of_day": "NIGHT",
+      "characters": [],
+      "character_dialogue": [],
+      "props": [],
+      "word_count": 19
+    },
+    {
+      "scene_number": 75,
+      "slugline": "INT. APOSTOLIC PALACE - STAIRCASE - NIGHT",
+      "int_ext": "INT",
+      "location": "APOSTOLIC PALACE - STAIRCASE",
+      "time_of_day": "NIGHT",
+      "characters": [],
+      "character_dialogue": [],
+      "props": [],
+      "word_count": 19
+    },
+    {
+      "scene_number": 76,
+      "slugline": "INT. APOSTOLIC PALACE - SALA - NIGHT",
+      "int_ext": "INT",
+      "location": "APOSTOLIC PALACE - SALA",
+      "time_of_day": "NIGHT",
+      "characters": [],
+      "character_dialogue": [],
+      "props": [],
+      "word_count": 10
+    },
+    {
+      "scene_number": 77,
+      "slugline": "INT. PAPAL SECRETARY’S OFFICE - NIGHT",
+      "int_ext": "INT",
+      "location": "PAPAL SECRETARY’S OFFICE",
+      "time_of_day": "NIGHT",
+      "characters": [
+        "LAWRENCE"
+      ],
+      "character_dialogue": [
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 12,
+          "words": 55
+        }
+      ],
+      "props": [
+        "folder"
+      ],
+      "word_count": 111
+    },
+    {
+      "scene_number": 78,
+      "slugline": "EXT. VATICAN GROUNDS - FOUNTAIN - NIGHT",
+      "int_ext": "EXT",
+      "location": "VATICAN GROUNDS - FOUNTAIN",
+      "time_of_day": "NIGHT",
+      "characters": [
+        "LAWRENCE",
+        "BENITEZ"
+      ],
+      "character_dialogue": [
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 12,
+          "words": 61
+        },
+        {
+          "name": "BENITEZ",
+          "dialogue_lines": 5,
+          "words": 24
+        }
+      ],
+      "props": [],
+      "word_count": 112
+    },
+    {
+      "scene_number": 79,
+      "slugline": "EXT. VATICAN GROUNDS - NIGHT",
+      "int_ext": "EXT",
+      "location": "VATICAN GROUNDS",
+      "time_of_day": "NIGHT",
+      "characters": [
+        "LAWRENCE",
+        "BENITEZ"
+      ],
+      "character_dialogue": [
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 37,
+          "words": 203
+        },
+        {
+          "name": "BENITEZ",
+          "dialogue_lines": 29,
+          "words": 122
+        }
+      ],
+      "props": [],
+      "word_count": 357
+    },
+    {
+      "scene_number": 80,
+      "slugline": "INT. CASA SANTA MARTA - PAPAL CORRIDOR - NIGHT",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - PAPAL CORRIDOR",
+      "time_of_day": "NIGHT",
+      "characters": [
+        "LAWRENCE",
+        "BELLINI"
+      ],
+      "character_dialogue": [
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 22,
+          "words": 91
+        },
+        {
+          "name": "BELLINI",
+          "dialogue_lines": 49,
+          "words": 237
+        }
+      ],
+      "props": [
+        "door"
+      ],
+      "word_count": 394
+    },
+    {
+      "scene_number": 81,
+      "slugline": "INT. CASA SANTA MARTA - LAWRE NCE'S ROOM - NIGHT",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - LAWRE NCE'S ROOM",
+      "time_of_day": "NIGHT",
+      "characters": [],
+      "character_dialogue": [],
+      "props": [],
+      "word_count": 54
+    },
+    {
+      "scene_number": 82,
+      "slugline": "INT. PAPAL BEDROOM - NIGHT",
+      "int_ext": "INT",
+      "location": "PAPAL BEDROOM",
+      "time_of_day": "NIGHT",
+      "characters": [
+        "A DREAM IMAGE"
+      ],
+      "character_dialogue": [
+        {
+          "name": "A DREAM IMAGE",
+          "dialogue_lines": 7,
+          "words": 64
+        }
+      ],
+      "props": [],
+      "word_count": 69
+    },
+    {
+      "scene_number": 83,
+      "slugline": "INT. CASA SANTA MARTA - LAWRENCE'S ROOM - NIGHT",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - LAWRENCE'S ROOM",
+      "time_of_day": "NIGHT",
+      "characters": [],
+      "character_dialogue": [],
+      "props": [
+        "door"
+      ],
+      "word_count": 138
+    },
+    {
+      "scene_number": 84,
+      "slugline": "INT. CASA SANTA MARTA - CORRIDOR - NIGHT",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - CORRIDOR",
+      "time_of_day": "NIGHT",
+      "characters": [],
+      "character_dialogue": [],
+      "props": [
+        "door"
+      ],
+      "word_count": 38
+    },
+    {
+      "scene_number": 85,
+      "slugline": "INT. CASA SANTA MARTA - LAWRENCE’S ROOM - NIGHT",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - LAWRENCE’S ROOM",
+      "time_of_day": "NIGHT",
+      "characters": [],
+      "character_dialogue": [],
+      "props": [],
+      "word_count": 15
+    },
+    {
+      "scene_number": 86,
+      "slugline": "EXT. CASA SANTA MARTA - COURTYARD - MORNING",
+      "int_ext": "EXT",
+      "location": "CASA SANTA MARTA - COURTYARD",
+      "time_of_day": "MORNING",
+      "characters": [
+        "MONSIGNOR O'MALLEY",
+        "LAWRENCE"
+      ],
+      "character_dialogue": [
+        {
+          "name": "MONSIGNOR O'MALLEY",
+          "dialogue_lines": 4,
+          "words": 20
+        },
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 2,
+          "words": 7
+        }
+      ],
+      "props": [],
+      "word_count": 69
+    },
+    {
+      "scene_number": 87,
+      "slugline": "EXT. VATICAN GARDENS - MORNING",
+      "int_ext": "EXT",
+      "location": "VATICAN GARDENS",
+      "time_of_day": "MORNING",
+      "characters": [
+        "LAWRENCE",
+        "ADEYEMI",
+        "CARDINAL NAKITANDA"
+      ],
+      "character_dialogue": [
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 9,
+          "words": 38
+        },
+        {
+          "name": "ADEYEMI",
+          "dialogue_lines": 23,
+          "words": 124
+        },
+        {
+          "name": "CARDINAL NAKITANDA",
+          "dialogue_lines": 1,
+          "words": 1
+        }
+      ],
+      "props": [],
+      "word_count": 211
+    },
+    {
+      "scene_number": 88,
+      "slugline": "INT. SISTINE CHAPEL - MORNING",
+      "int_ext": "INT",
+      "location": "SISTINE CHAPEL",
+      "time_of_day": "MORNING",
+      "characters": [
+        "CARDINAL LOMBARDI",
+        "LAWRENCE"
+      ],
+      "character_dialogue": [
+        {
+          "name": "CARDINAL LOMBARDI",
+          "dialogue_lines": 34,
+          "words": 126
+        },
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 14,
+          "words": 55
+        }
+      ],
+      "props": [
+        "car"
+      ],
+      "word_count": 236
+    },
+    {
+      "scene_number": 89,
+      "slugline": "INT. SISTINE CHAPEL - MORNING / LATER",
+      "int_ext": "INT",
+      "location": "SISTINE CHAPEL - MORNING / LATER",
+      "time_of_day": "UNSPECIFIED",
+      "characters": [
+        "CARDINAL LOMBARDI"
+      ],
+      "character_dialogue": [
+        {
+          "name": "CARDINAL LOMBARDI",
+          "dialogue_lines": 36,
+          "words": 136
+        }
+      ],
+      "props": [],
+      "word_count": 207
+    },
+    {
+      "scene_number": 90,
+      "slugline": "INT. CASA SANTA MARTA - KITCHEN CORRIDOR - DAY",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - KITCHEN CORRIDOR",
+      "time_of_day": "DAY",
+      "characters": [],
+      "character_dialogue": [],
+      "props": [
+        "window"
+      ],
+      "word_count": 74
+    },
+    {
+      "scene_number": 91,
+      "slugline": "INT. SALA REGIA - DAY",
+      "int_ext": "INT",
+      "location": "SALA REGIA",
+      "time_of_day": "DAY",
+      "characters": [
+        "LAWRENCE"
+      ],
+      "character_dialogue": [
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 21,
+          "words": 98
+        }
+      ],
+      "props": [],
+      "word_count": 114
+    },
+    {
+      "scene_number": 92,
+      "slugline": "INT. CASA SANTA MARTA - DINING ROOM - DAY",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - DINING ROOM",
+      "time_of_day": "DAY",
+      "characters": [
+        "CARDINAL VILLANUEVA",
+        "CARDINAL SABBADIN",
+        "GUTTOSO",
+        "LAWRENCE",
+        "BELLINI",
+        "CARDINAL LANDOLFI"
+      ],
+      "character_dialogue": [
+        {
+          "name": "CARDINAL VILLANUEVA",
+          "dialogue_lines": 7,
+          "words": 34
+        },
+        {
+          "name": "CARDINAL SABBADIN",
+          "dialogue_lines": 9,
+          "words": 51
+        },
+        {
+          "name": "GUTTOSO",
+          "dialogue_lines": 14,
+          "words": 45
+        },
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 21,
+          "words": 90
+        },
+        {
+          "name": "BELLINI",
+          "dialogue_lines": 14,
+          "words": 92
+        },
+        {
+          "name": "CARDINAL LANDOLFI",
+          "dialogue_lines": 5,
+          "words": 38
+        }
+      ],
+      "props": [],
+      "word_count": 435
+    },
+    {
+      "scene_number": 93,
+      "slugline": "INT. CASA SANTA MARTA - DINING ROOM BUFFET - DAY",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - DINING ROOM BUFFET",
+      "time_of_day": "DAY",
+      "characters": [
+        "CARDINAL NAKITANDA",
+        "LAWRENCE",
+        "OMITTED"
+      ],
+      "character_dialogue": [
+        {
+          "name": "CARDINAL NAKITANDA",
+          "dialogue_lines": 16,
+          "words": 87
+        },
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 6,
+          "words": 26
+        },
+        {
+          "name": "OMITTED",
+          "dialogue_lines": 3,
+          "words": 11
+        }
+      ],
+      "props": [],
+      "word_count": 174
+    },
+    {
+      "scene_number": 94,
+      "slugline": "INT. CASA SANTA MARTA - KITCHEN - DAY",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - KITCHEN",
+      "time_of_day": "DAY",
+      "characters": [
+        "LAWRENCE",
+        "NUN"
+      ],
+      "character_dialogue": [
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 19,
+          "words": 78
+        },
+        {
+          "name": "NUN",
+          "dialogue_lines": 5,
+          "words": 16
+        }
+      ],
+      "props": [],
+      "word_count": 141
+    },
+    {
+      "scene_number": 95,
+      "slugline": "INT. CASA SANTA MARTA - OUTSIDE BAC K OFFICE - DAY",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - OUTSIDE BAC K OFFICE",
+      "time_of_day": "DAY",
+      "characters": [
+        "LAWRENCE",
+        "SISTER AGNES"
+      ],
+      "character_dialogue": [
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 12,
+          "words": 56
+        },
+        {
+          "name": "SISTER AGNES",
+          "dialogue_lines": 10,
+          "words": 54
+        }
+      ],
+      "props": [
+        "door"
+      ],
+      "word_count": 155
+    },
+    {
+      "scene_number": 96,
+      "slugline": "INT. CASA SANTA MARTA - BACK OFFICE - DAY",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - BACK OFFICE",
+      "time_of_day": "DAY",
+      "characters": [
+        "LAWRENCE",
+        "SISTER AGNES"
+      ],
+      "character_dialogue": [
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 40,
+          "words": 228
+        },
+        {
+          "name": "SISTER AGNES",
+          "dialogue_lines": 4,
+          "words": 18
+        }
+      ],
+      "props": [
+        "door"
+      ],
+      "word_count": 283
+    },
+    {
+      "scene_number": 97,
+      "slugline": "INT. CASA SANTA MARTA - CORRIDOR - DAY",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - CORRIDOR",
+      "time_of_day": "DAY",
+      "characters": [
+        "ADEYEMI"
+      ],
+      "character_dialogue": [
+        {
+          "name": "ADEYEMI",
+          "dialogue_lines": 4,
+          "words": 27
+        }
+      ],
+      "props": [
+        "door"
+      ],
+      "word_count": 66
+    },
+    {
+      "scene_number": 98,
+      "slugline": "INT. CASA SANTA MARTA - ADEYEMI’S ROOM - CONTINUOUS",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - ADEYEMI’S ROOM",
+      "time_of_day": "CONTINUOUS",
+      "characters": [
+        "ADEYEMI",
+        "LAWRENCE"
+      ],
+      "character_dialogue": [
+        {
+          "name": "ADEYEMI",
+          "dialogue_lines": 72,
+          "words": 341
+        },
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 50,
+          "words": 191
+        }
+      ],
+      "props": [],
+      "word_count": 582
+    },
+    {
+      "scene_number": 99,
+      "slugline": "EXT. VATICAN GARDENS - DAY",
+      "int_ext": "EXT",
+      "location": "VATICAN GARDENS",
+      "time_of_day": "DAY",
+      "characters": [
+        "HIGH ANGLE"
+      ],
+      "character_dialogue": [
+        {
+          "name": "HIGH ANGLE",
+          "dialogue_lines": 5,
+          "words": 48
+        }
+      ],
+      "props": [],
+      "word_count": 52
+    },
+    {
+      "scene_number": 100,
+      "slugline": "INT. SISTINE CHAPEL - DAY",
+      "int_ext": "INT",
+      "location": "SISTINE CHAPEL",
+      "time_of_day": "DAY",
+      "characters": [
+        "ADEYEMI"
+      ],
+      "character_dialogue": [
+        {
+          "name": "ADEYEMI",
+          "dialogue_lines": 22,
+          "words": 114
+        }
+      ],
+      "props": [],
+      "word_count": 158
+    },
+    {
+      "scene_number": 101,
+      "slugline": "INT. SISTINE CHAPEL - DAY / LATER",
+      "int_ext": "INT",
+      "location": "SISTINE CHAPEL - DAY / LATER",
+      "time_of_day": "UNSPECIFIED",
+      "characters": [
+        "CARDINAL LOMBARDI",
+        "LOMBARDI"
+      ],
+      "character_dialogue": [
+        {
+          "name": "CARDINAL LOMBARDI",
+          "dialogue_lines": 43,
+          "words": 182
+        },
+        {
+          "name": "LOMBARDI",
+          "dialogue_lines": 13,
+          "words": 44
+        }
+      ],
+      "props": [],
+      "word_count": 248
+    },
+    {
+      "scene_number": 102,
+      "slugline": "INT. SISTINE CHAPEL - VESTIBULE - EVENING",
+      "int_ext": "INT",
+      "location": "SISTINE CHAPEL - VESTIBULE",
+      "time_of_day": "EVENING",
+      "characters": [
+        "LAWRENCE",
+        "MONSIGNOR O'MALLEY"
+      ],
+      "character_dialogue": [
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 46,
+          "words": 183
+        },
+        {
+          "name": "MONSIGNOR O'MALLEY",
+          "dialogue_lines": 12,
+          "words": 63
+        }
+      ],
+      "props": [],
+      "word_count": 294
+    },
+    {
+      "scene_number": 103,
+      "slugline": "INT. CASA SANTA MARTA - LAWRENCE'S ROOM - NIGHT",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - LAWRENCE'S ROOM",
+      "time_of_day": "NIGHT",
+      "characters": [
+        "BELLINI"
+      ],
+      "character_dialogue": [
+        {
+          "name": "BELLINI",
+          "dialogue_lines": 1,
+          "words": 1
+        }
+      ],
+      "props": [
+        "door"
+      ],
+      "word_count": 51
+    },
+    {
+      "scene_number": 104,
+      "slugline": "INT. CASA SANTA MARTA - BACK STAIRS - NIGHT",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - BACK STAIRS",
+      "time_of_day": "NIGHT",
+      "characters": [
+        "CARDINAL SABBADIN",
+        "LAWRENCE",
+        "BELLINI"
+      ],
+      "character_dialogue": [
+        {
+          "name": "CARDINAL SABBADIN",
+          "dialogue_lines": 48,
+          "words": 226
+        },
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 20,
+          "words": 93
+        },
+        {
+          "name": "BELLINI",
+          "dialogue_lines": 46,
+          "words": 212
+        }
+      ],
+      "props": [
+        "door"
+      ],
+      "word_count": 568
+    },
+    {
+      "scene_number": 105,
+      "slugline": "INT. CASA SANTA MARTA - LIFT - NIGHT",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - LIFT",
+      "time_of_day": "NIGHT",
+      "characters": [
+        "OMITTED"
+      ],
+      "character_dialogue": [
+        {
+          "name": "OMITTED",
+          "dialogue_lines": 2,
+          "words": 2
+        }
+      ],
+      "props": [
+        "door",
+        "lock"
+      ],
+      "word_count": 107
+    },
+    {
+      "scene_number": 106,
+      "slugline": "INT. CASA SANTA MARTA - LIFT - NIGHT",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - LIFT",
+      "time_of_day": "NIGHT",
+      "characters": [
+        "CARDIN AL LOWENSTEIN",
+        "LAWRENCE"
+      ],
+      "character_dialogue": [
+        {
+          "name": "CARDIN AL LOWENSTEIN",
+          "dialogue_lines": 5,
+          "words": 33
+        },
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 3,
+          "words": 16
+        }
+      ],
+      "props": [],
+      "word_count": 77
+    },
+    {
+      "scene_number": 107,
+      "slugline": "INT. CASA SANTA MARTA - UPPER CORRIDOR - NIGHT",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - UPPER CORRIDOR",
+      "time_of_day": "NIGHT",
+      "characters": [
+        "BENITEZ",
+        "LAWRENCE"
+      ],
+      "character_dialogue": [
+        {
+          "name": "BENITEZ",
+          "dialogue_lines": 12,
+          "words": 56
+        },
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 2,
+          "words": 10
+        }
+      ],
+      "props": [
+        "door"
+      ],
+      "word_count": 92
+    },
+    {
+      "scene_number": 108,
+      "slugline": "INT. CASA SANTA MARTA - BENITEZ ROOM - CONTINUOUS",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - BENITEZ ROOM",
+      "time_of_day": "CONTINUOUS",
+      "characters": [
+        "BENITEZ",
+        "LAWRENCE",
+        "OMITTED"
+      ],
+      "character_dialogue": [
+        {
+          "name": "BENITEZ",
+          "dialogue_lines": 40,
+          "words": 243
+        },
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 28,
+          "words": 165
+        },
+        {
+          "name": "OMITTED",
+          "dialogue_lines": 2,
+          "words": 2
+        }
+      ],
+      "props": [],
+      "word_count": 452
+    },
+    {
+      "scene_number": 109,
+      "slugline": "INT. CASA SANTA MARTA - DINING ROOM - NIGHT",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - DINING ROOM",
+      "time_of_day": "NIGHT",
+      "characters": [],
+      "character_dialogue": [],
+      "props": [],
+      "word_count": 82
+    },
+    {
+      "scene_number": 110,
+      "slugline": "INT. CASA SANTA MARTA - BACK OFFICE - NIGHT",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - BACK OFFICE",
+      "time_of_day": "NIGHT",
+      "characters": [
+        "SISTER AGNES",
+        "LAWRENCE",
+        "SISTER AGN ES"
+      ],
+      "character_dialogue": [
+        {
+          "name": "SISTER AGNES",
+          "dialogue_lines": 7,
+          "words": 38
+        },
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 35,
+          "words": 229
+        },
+        {
+          "name": "SISTER AGN ES",
+          "dialogue_lines": 6,
+          "words": 31
+        }
+      ],
+      "props": [
+        "computer"
+      ],
+      "word_count": 325
+    },
+    {
+      "scene_number": 111,
+      "slugline": "INT. CASA SANTA MARTA - STAIRCASE - NIGHT",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - STAIRCASE",
+      "time_of_day": "NIGHT",
+      "characters": [
+        "LAWRENCE",
+        "TREMBLAY"
+      ],
+      "character_dialogue": [
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 5,
+          "words": 35
+        },
+        {
+          "name": "TREMBLAY",
+          "dialogue_lines": 2,
+          "words": 9
+        }
+      ],
+      "props": [],
+      "word_count": 66
+    },
+    {
+      "scene_number": 112,
+      "slugline": "EXT. CASA SANTA MARTA - COURTYARD CORRIDOR - NIGHT",
+      "int_ext": "EXT",
+      "location": "CASA SANTA MARTA - COURTYARD CORRIDOR",
+      "time_of_day": "NIGHT",
+      "characters": [
+        "TREMBLAY",
+        "LAWRENCE",
+        "TREMB LAY"
+      ],
+      "character_dialogue": [
+        {
+          "name": "TREMBLAY",
+          "dialogue_lines": 33,
+          "words": 156
+        },
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 41,
+          "words": 191
+        },
+        {
+          "name": "TREMB LAY",
+          "dialogue_lines": 2,
+          "words": 11
+        }
+      ],
+      "props": [],
+      "word_count": 402
+    },
+    {
+      "scene_number": 113,
+      "slugline": "INT. CASA SANTA MARTA - LAWRENCE'S ROOM - NIGHT",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - LAWRENCE'S ROOM",
+      "time_of_day": "NIGHT",
+      "characters": [
+        "OMITTED"
+      ],
+      "character_dialogue": [
+        {
+          "name": "OMITTED",
+          "dialogue_lines": 2,
+          "words": 2
+        }
+      ],
+      "props": [
+        "door",
+        "key"
+      ],
+      "word_count": 84
+    },
+    {
+      "scene_number": 114,
+      "slugline": "INT. CASA SANTA MARTA - PAPAL CORRIDOR - NIGHT",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - PAPAL CORRIDOR",
+      "time_of_day": "NIGHT",
+      "characters": [],
+      "character_dialogue": [],
+      "props": [
+        "door",
+        "key"
+      ],
+      "word_count": 92
+    },
+    {
+      "scene_number": 115,
+      "slugline": "INT. PAPAL SUITE - NIGHT",
+      "int_ext": "INT",
+      "location": "PAPAL SUITE",
+      "time_of_day": "NIGHT",
+      "characters": [
+        "IN T. PAPAL OFFICE - NIGHT"
+      ],
+      "character_dialogue": [
+        {
+          "name": "IN T. PAPAL OFFICE - NIGHT",
+          "dialogue_lines": 16,
+          "words": 133
+        }
+      ],
+      "props": [
+        "briefcase",
+        "bus"
+      ],
+      "word_count": 171
+    },
+    {
+      "scene_number": 116,
+      "slugline": "INT. PAPAL CORRIDOR - CONTINUOUS",
+      "int_ext": "INT",
+      "location": "PAPAL CORRIDOR",
+      "time_of_day": "CONTINUOUS",
+      "characters": [],
+      "character_dialogue": [],
+      "props": [
+        "door"
+      ],
+      "word_count": 42
+    },
+    {
+      "scene_number": 117,
+      "slugline": "INT. PAPAL SUITE - CONTINUOUS",
+      "int_ext": "INT",
+      "location": "PAPAL SUITE",
+      "time_of_day": "CONTINUOUS",
+      "characters": [],
+      "character_dialogue": [],
+      "props": [
+        "door"
+      ],
+      "word_count": 29
+    },
+    {
+      "scene_number": 118,
+      "slugline": "INT. OUTSIDE THE PAPAL SUITE - CONTINUOUS",
+      "int_ext": "INT",
+      "location": "OUTSIDE THE PAPAL SUITE",
+      "time_of_day": "CONTINUOUS",
+      "characters": [],
+      "character_dialogue": [],
+      "props": [
+        "door"
+      ],
+      "word_count": 64
+    },
+    {
+      "scene_number": 119,
+      "slugline": "INT. PAPAL SUITE - CONTINUOUS",
+      "int_ext": "INT",
+      "location": "PAPAL SUITE",
+      "time_of_day": "CONTINUOUS",
+      "characters": [],
+      "character_dialogue": [],
+      "props": [],
+      "word_count": 19
+    },
+    {
+      "scene_number": 120,
+      "slugline": "INT. PAPAL BEDROOM - MOMENTS LATER",
+      "int_ext": "INT",
+      "location": "PAPAL BEDROOM",
+      "time_of_day": "MOMENTS LATER",
+      "characters": [
+        "OF PAPER."
+      ],
+      "character_dialogue": [
+        {
+          "name": "OF PAPER.",
+          "dialogue_lines": 0,
+          "words": 0
+        }
+      ],
+      "props": [
+        "door"
+      ],
+      "word_count": 247
+    },
+    {
+      "scene_number": 121,
+      "slugline": "INT. CASA SANTA MARTA - UPPER CORRIDOR - NIGHT",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - UPPER CORRIDOR",
+      "time_of_day": "NIGHT",
+      "characters": [],
+      "character_dialogue": [],
+      "props": [
+        "door"
+      ],
+      "word_count": 10
+    },
+    {
+      "scene_number": 122,
+      "slugline": "INT. CASA SANTA MARTA - BELLINI’S ROOM - NIGHT",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - BELLINI’S ROOM",
+      "time_of_day": "NIGHT",
+      "characters": [
+        "LAWRENCE",
+        "BELLINI",
+        "BE LLINI"
+      ],
+      "character_dialogue": [
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 56,
+          "words": 287
+        },
+        {
+          "name": "BELLINI",
+          "dialogue_lines": 39,
+          "words": 187
+        },
+        {
+          "name": "BE LLINI",
+          "dialogue_lines": 3,
+          "words": 5
+        }
+      ],
+      "props": [
+        "money",
+        "document"
+      ],
+      "word_count": 523
+    },
+    {
+      "scene_number": 123,
+      "slugline": "INT. CASA SANTA MARTA - SECURITY GATE - EARLY MORNING",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - SECURITY GATE - EARLY MORNING",
+      "time_of_day": "UNSPECIFIED",
+      "characters": [],
+      "character_dialogue": [],
+      "props": [],
+      "word_count": 23
+    },
+    {
+      "scene_number": 124,
+      "slugline": "INT. CASA SANTA MARTA - STORAGE ROOM - EARLY MORNING",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - STORAGE ROOM - EARLY MORNING",
+      "time_of_day": "UNSPECIFIED",
+      "characters": [
+        "SISTER AGNES",
+        "LAWRENCE"
+      ],
+      "character_dialogue": [
+        {
+          "name": "SISTER AGNES",
+          "dialogue_lines": 7,
+          "words": 39
+        },
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 10,
+          "words": 62
+        }
+      ],
+      "props": [],
+      "word_count": 169
+    },
+    {
+      "scene_number": 125,
+      "slugline": "INT. CASA SANTA MARTA - DINING ROOM - MORNING / LATER",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - DINING ROOM - MORNING / LATER",
+      "time_of_day": "UNSPECIFIED",
+      "characters": [
+        "CARDINAL SABBADIN",
+        "BENITEZ",
+        "LAWRENCE",
+        "TREMBLAY",
+        "TEDESCO",
+        "SISTER AGNES",
+        "ADEYEMI"
+      ],
+      "character_dialogue": [
+        {
+          "name": "CARDINAL SABBADIN",
+          "dialogue_lines": 9,
+          "words": 44
+        },
+        {
+          "name": "BENITEZ",
+          "dialogue_lines": 6,
+          "words": 38
+        },
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 29,
+          "words": 145
+        },
+        {
+          "name": "TREMBLAY",
+          "dialogue_lines": 27,
+          "words": 134
+        },
+        {
+          "name": "TEDESCO",
+          "dialogue_lines": 23,
+          "words": 100
+        },
+        {
+          "name": "SISTER AGNES",
+          "dialogue_lines": 23,
+          "words": 134
+        },
+        {
+          "name": "ADEYEMI",
+          "dialogue_lines": 3,
+          "words": 15
+        }
+      ],
+      "props": [],
+      "word_count": 677
+    },
+    {
+      "scene_number": 126,
+      "slugline": "INT. CASA SANTA MARTA - PRAYER ROOM - MORNING",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - PRAYER ROOM",
+      "time_of_day": "MORNING",
+      "characters": [
+        "BELLINI",
+        "LAWRENCE",
+        "OMITTED"
+      ],
+      "character_dialogue": [
+        {
+          "name": "BELLINI",
+          "dialogue_lines": 42,
+          "words": 202
+        },
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 4,
+          "words": 19
+        },
+        {
+          "name": "OMITTED",
+          "dialogue_lines": 2,
+          "words": 2
+        }
+      ],
+      "props": [],
+      "word_count": 248
+    },
+    {
+      "scene_number": 127,
+      "slugline": "INT. SISTINE CHAPEL - DAY",
+      "int_ext": "INT",
+      "location": "SISTINE CHAPEL",
+      "time_of_day": "DAY",
+      "characters": [
+        "A BLANK BALLOT.",
+        "LAWRENCE"
+      ],
+      "character_dialogue": [
+        {
+          "name": "A BLANK BALLOT.",
+          "dialogue_lines": 11,
+          "words": 99
+        },
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 27,
+          "words": 182
+        }
+      ],
+      "props": [],
+      "word_count": 288
+    },
+    {
+      "scene_number": 128,
+      "slugline": "INT. SISTINE CHAPEL - VESTIBULE - DAY",
+      "int_ext": "INT",
+      "location": "SISTINE CHAPEL - VESTIBULE",
+      "time_of_day": "DAY",
+      "characters": [],
+      "character_dialogue": [],
+      "props": [],
+      "word_count": 19
+    },
+    {
+      "scene_number": 129,
+      "slugline": "INT. PAULINE CHAPEL - DAY",
+      "int_ext": "INT",
+      "location": "PAULINE CHAPEL",
+      "time_of_day": "DAY",
+      "characters": [
+        "MONSIGNOR O'MALLEY",
+        "LAWRENCE"
+      ],
+      "character_dialogue": [
+        {
+          "name": "MONSIGNOR O'MALLEY",
+          "dialogue_lines": 10,
+          "words": 54
+        },
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 19,
+          "words": 91
+        }
+      ],
+      "props": [],
+      "word_count": 198
+    },
+    {
+      "scene_number": 130,
+      "slugline": "I/E. POLICE CAR - DAY",
+      "int_ext": "EXT",
+      "location": "POLICE CAR",
+      "time_of_day": "DAY",
+      "characters": [],
+      "character_dialogue": [],
+      "props": [
+        "car"
+      ],
+      "word_count": 55
+    },
+    {
+      "scene_number": 131,
+      "slugline": "EXT. CASA SANTA MARTA - LOBBY - DAY",
+      "int_ext": "EXT",
+      "location": "CASA SANTA MARTA - LOBBY",
+      "time_of_day": "DAY",
+      "characters": [
+        "LAWRENCE"
+      ],
+      "character_dialogue": [
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 3,
+          "words": 16
+        }
+      ],
+      "props": [],
+      "word_count": 43
+    },
+    {
+      "scene_number": 132,
+      "slugline": "INT. CASA SANTA MARTA - AULA - DAY",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - AULA",
+      "time_of_day": "DAY",
+      "characters": [
+        "LAWRENCE",
+        "KRASINSKI",
+        "BELLINI",
+        "TEDESCO",
+        "BENITEZ"
+      ],
+      "character_dialogue": [
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 35,
+          "words": 177
+        },
+        {
+          "name": "KRASINSKI",
+          "dialogue_lines": 12,
+          "words": 54
+        },
+        {
+          "name": "BELLINI",
+          "dialogue_lines": 15,
+          "words": 68
+        },
+        {
+          "name": "TEDESCO",
+          "dialogue_lines": 118,
+          "words": 449
+        },
+        {
+          "name": "BENITEZ",
+          "dialogue_lines": 123,
+          "words": 375
+        }
+      ],
+      "props": [
+        "car"
+      ],
+      "word_count": 1161
+    },
+    {
+      "scene_number": 133,
+      "slugline": "EXT. CASA SANTA MARTA - SECOND FLOOR - DAY",
+      "int_ext": "EXT",
+      "location": "CASA SANTA MARTA - SECOND FLOOR",
+      "time_of_day": "DAY",
+      "characters": [],
+      "character_dialogue": [],
+      "props": [],
+      "word_count": 11
+    },
+    {
+      "scene_number": 134,
+      "slugline": "INT. CASA SANTA",
+      "int_ext": "INT",
+      "location": "CASA SANTA",
+      "time_of_day": "UNSPECIFIED",
+      "characters": [],
+      "character_dialogue": [],
+      "props": [],
+      "word_count": 14
+    },
+    {
+      "scene_number": 135,
+      "slugline": "INT. CASA SANTA MARTA/ EXT AULA - DAY",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA/ EXT AULA",
+      "time_of_day": "DAY",
+      "characters": [],
+      "character_dialogue": [],
+      "props": [],
+      "word_count": 22
+    },
+    {
+      "scene_number": 136,
+      "slugline": "EXT. CASA SANTA MARTA COURTYARD - DAY",
+      "int_ext": "EXT",
+      "location": "CASA SANTA MARTA COURTYARD",
+      "time_of_day": "DAY",
+      "characters": [],
+      "character_dialogue": [],
+      "props": [],
+      "word_count": 137
+    },
+    {
+      "scene_number": 137,
+      "slugline": "EXT. CASA SANTA MARTA - PARKING - DAY",
+      "int_ext": "EXT",
+      "location": "CASA SANTA MARTA - PARKING",
+      "time_of_day": "DAY",
+      "characters": [
+        "ARCHBISHOP MANDORFF",
+        "LAWRENCE"
+      ],
+      "character_dialogue": [
+        {
+          "name": "ARCHBISHOP MANDORFF",
+          "dialogue_lines": 3,
+          "words": 13
+        },
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 2,
+          "words": 14
+        }
+      ],
+      "props": [],
+      "word_count": 53
+    },
+    {
+      "scene_number": 138,
+      "slugline": "EXT. VATICAN GARDENS - DAY",
+      "int_ext": "EXT",
+      "location": "VATICAN GARDENS",
+      "time_of_day": "DAY",
+      "characters": [],
+      "character_dialogue": [],
+      "props": [],
+      "word_count": 68
+    },
+    {
+      "scene_number": 139,
+      "slugline": "INT. SISTINE CHAPEL - DAY",
+      "int_ext": "INT",
+      "location": "SISTINE CHAPEL",
+      "time_of_day": "DAY",
+      "characters": [
+        "LAWRENCE",
+        "ON LAWRENCE..."
+      ],
+      "character_dialogue": [
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 20,
+          "words": 89
+        },
+        {
+          "name": "ON LAWRENCE...",
+          "dialogue_lines": 16,
+          "words": 135
+        }
+      ],
+      "props": [],
+      "word_count": 267
+    },
+    {
+      "scene_number": 140,
+      "slugline": "INT. SISTINE CHAPEL - MONTAGE - DAY",
+      "int_ext": "INT",
+      "location": "SISTINE CHAPEL - MONTAGE",
+      "time_of_day": "DAY",
+      "characters": [
+        "LAWRENCE",
+        "BENITEZ"
+      ],
+      "character_dialogue": [
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 27,
+          "words": 127
+        },
+        {
+          "name": "BENITEZ",
+          "dialogue_lines": 13,
+          "words": 76
+        }
+      ],
+      "props": [
+        "lock"
+      ],
+      "word_count": 333
+    },
+    {
+      "scene_number": 141,
+      "slugline": "INT. SISTINE CHAPEL - DAY / LATER",
+      "int_ext": "INT",
+      "location": "SISTINE CHAPEL - DAY / LATER",
+      "time_of_day": "UNSPECIFIED",
+      "characters": [
+        "LAWRENCE",
+        "MONSIGNOR O'MALLEY"
+      ],
+      "character_dialogue": [
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 32,
+          "words": 141
+        },
+        {
+          "name": "MONSIGNOR O'MALLEY",
+          "dialogue_lines": 2,
+          "words": 8
+        }
+      ],
+      "props": [],
+      "word_count": 199
+    },
+    {
+      "scene_number": 142,
+      "slugline": "INT. SALA REGIA - DAY",
+      "int_ext": "INT",
+      "location": "SALA REGIA",
+      "time_of_day": "DAY",
+      "characters": [
+        "MONSIGNOR O'MALLEY",
+        "LAWRENCE"
+      ],
+      "character_dialogue": [
+        {
+          "name": "MONSIGNOR O'MALLEY",
+          "dialogue_lines": 17,
+          "words": 62
+        },
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 7,
+          "words": 32
+        }
+      ],
+      "props": [],
+      "word_count": 110
+    },
+    {
+      "scene_number": 143,
+      "slugline": "INT. SISTINE CHAPEL - DAY",
+      "int_ext": "INT",
+      "location": "SISTINE CHAPEL",
+      "time_of_day": "DAY",
+      "characters": [],
+      "character_dialogue": [],
+      "props": [],
+      "word_count": 12
+    },
+    {
+      "scene_number": 144,
+      "slugline": "INT. SISTINE CHAPEL - ANTECHAMBER - DAY",
+      "int_ext": "INT",
+      "location": "SISTINE CHAPEL - ANTECHAMBER",
+      "time_of_day": "DAY",
+      "characters": [
+        "HAAS",
+        "LAWRENCE"
+      ],
+      "character_dialogue": [
+        {
+          "name": "HAAS",
+          "dialogue_lines": 2,
+          "words": 8
+        },
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 2,
+          "words": 14
+        }
+      ],
+      "props": [
+        "door"
+      ],
+      "word_count": 50
+    },
+    {
+      "scene_number": 145,
+      "slugline": "INT. SISTINE CHAPEL - ROOM OF TEARS - CONTINUOUS",
+      "int_ext": "INT",
+      "location": "SISTINE CHAPEL - ROOM OF TEARS",
+      "time_of_day": "CONTINUOUS",
+      "characters": [
+        "LAWRENCE",
+        "BENITEZ",
+        "BE NITEZ"
+      ],
+      "character_dialogue": [
+        {
+          "name": "LAWRENCE",
+          "dialogue_lines": 27,
+          "words": 124
+        },
+        {
+          "name": "BENITEZ",
+          "dialogue_lines": 92,
+          "words": 463
+        },
+        {
+          "name": "BE NITEZ",
+          "dialogue_lines": 1,
+          "words": 3
+        }
+      ],
+      "props": [
+        "door"
+      ],
+      "word_count": 651
+    },
+    {
+      "scene_number": 146,
+      "slugline": "INT. PAULINE CHAPEL - LATE AFTERNOON",
+      "int_ext": "INT",
+      "location": "PAULINE CHAPEL - LATE AFTERNOON",
+      "time_of_day": "UNSPECIFIED",
+      "characters": [
+        "BENITEZ"
+      ],
+      "character_dialogue": [
+        {
+          "name": "BENITEZ",
+          "dialogue_lines": 3,
+          "words": 25
+        }
+      ],
+      "props": [],
+      "word_count": 108
+    },
+    {
+      "scene_number": 147,
+      "slugline": "INT. SISTINE CHAPEL - VESTIBULE - LATE AFTERNOON",
+      "int_ext": "INT",
+      "location": "SISTINE CHAPEL - VESTIBULE - LATE AFTERNOON",
+      "time_of_day": "UNSPECIFIED",
+      "characters": [],
+      "character_dialogue": [],
+      "props": [
+        "window"
+      ],
+      "word_count": 52
+    },
+    {
+      "scene_number": 148,
+      "slugline": "EXT. VATICAN GROUNDS - LATE AFTERNOON",
+      "int_ext": "EXT",
+      "location": "VATICAN GROUNDS - LATE AFTERNOON",
+      "time_of_day": "UNSPECIFIED",
+      "characters": [],
+      "character_dialogue": [],
+      "props": [],
+      "word_count": 61
+    },
+    {
+      "scene_number": 149,
+      "slugline": "INT. CASA SANTA MARTA - LAWRENCE’S BEDROOM - EVENING",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - LAWRENCE’S BEDROOM",
+      "time_of_day": "EVENING",
+      "characters": [],
+      "character_dialogue": [],
+      "props": [
+        "window"
+      ],
+      "word_count": 75
+    },
+    {
+      "scene_number": 150,
+      "slugline": "INT. CASA SANTA MARTA - LOBBY - EVENING",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - LOBBY",
+      "time_of_day": "EVENING",
+      "characters": [],
+      "character_dialogue": [],
+      "props": [],
+      "word_count": 13
+    },
+    {
+      "scene_number": 151,
+      "slugline": "INT. CASA SANTA MARTA - BACK OFFICE - EVENING",
+      "int_ext": "INT",
+      "location": "CASA SANTA MARTA - BACK OFFICE",
+      "time_of_day": "EVENING",
+      "characters": [],
+      "character_dialogue": [],
+      "props": [],
+      "word_count": 31
+    },
+    {
+      "scene_number": 152,
+      "slugline": "EXT. STREETS IN ROME - EVENING",
+      "int_ext": "EXT",
+      "location": "STREETS IN ROME",
+      "time_of_day": "EVENING",
+      "characters": [],
+      "character_dialogue": [],
+      "props": [
+        "car"
+      ],
+      "word_count": 35
+    },
+    {
+      "scene_number": 153,
+      "slugline": "I/E. SHOP - STREET NEAR VATICAN - EVENING",
+      "int_ext": "EXT",
+      "location": "SHOP - STREET NEAR VATICAN",
+      "time_of_day": "EVENING",
+      "characters": [],
+      "character_dialogue": [],
+      "props": [
+        "suitcase"
+      ],
+      "word_count": 55
+    },
+    {
+      "scene_number": 154,
+      "slugline": "INT. SALE E TABACCHI - EVENING",
+      "int_ext": "INT",
+      "location": "SALE E TABACCHI",
+      "time_of_day": "EVENING",
+      "characters": [
+        "CARDINAL BROTZKUS"
+      ],
+      "character_dialogue": [
+        {
+          "name": "CARDINAL BROTZKUS",
+          "dialogue_lines": 7,
+          "words": 55
+        }
+      ],
+      "props": [],
+      "word_count": 111
     }
   ]
 }

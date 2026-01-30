@@ -1,0 +1,22 @@
+{
+  "slug": "arcade",
+  "title": "Arcade",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 23449,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "Arcade by David S. Goyer Last revised November 6, 1990 <b>INT. ARCADE WORLD -- ELECTRONIC DARKNESS </b> We don't know if it's night or day.  It's just black. And maybe...maybe intermittent SPARKS racing by.  So quick we barely perceive them.  Like the sparks you imagine when your eyes are closed. <b>BREATHING, </b> slow and hollow, filling up the entire world.  It's eerie as hell.  A feeling of utter loneliness. And now the breathing recedes, fading into the darkness.  Whatever it was...it's gon",
+      "dialogue_count": 0,
+      "word_count": 23449
+    }
+  ]
+}

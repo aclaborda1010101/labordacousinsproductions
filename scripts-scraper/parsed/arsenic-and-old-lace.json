@@ -1,0 +1,22 @@
+{
+  "slug": "arsenic-and-old-lace",
+  "title": "Arsenic and Old Lace",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 36242,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                         ARSENIC AND OLD LACE </b> Written by Julius J. & Philip G. Epstein Adapted from the play by Joseph Kesselring <b>   CREDITS </b> Credits roll, in white letters, on several funny cartoons, all of them about witches and witchcraft (a caldron over a fire, with two witches on either side of it - A close-up of one of the witches - A witches falling down from the sky on her broomstick, and loosing her hat in the fall - A furious black cat spitting at an owl seated on a bran",
+      "dialogue_count": 0,
+      "word_count": 36242
+    }
+  ]
+}

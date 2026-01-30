@@ -1,0 +1,22 @@
+{
+  "slug": "cellular",
+  "title": "Cellular",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 28599,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>       CELLULAR </b>              by Larry Cohen Revised by Chris Morgan Current Revisions by J. Mackye Gruber & Eric Bress July 16, 2003 <b> </b> <b>TITLES OVER YELLOW BACKGROUND. </b>We PULL BACK to reveal we're looking at THE SUN. In the distance lie the gorgeous San Gabriel Mountains and the Downtown Los Angeles skyline. In ONE LONG TRACKING SHOT, we CRANE PAST some trees to reveal the vast expansive homes scattered in the hills of Brentwood. HOMEOWNERS walk dogs, a PAPERBOY chucks papers",
+      "dialogue_count": 0,
+      "word_count": 28599
+    }
+  ]
+}

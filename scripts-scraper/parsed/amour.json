@@ -1,0 +1,22 @@
+{
+  "slug": "amour",
+  "title": "Amour",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 15343,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                   AMOUR </b> Written by Michael Haneke <b>          SCENE 1 - INT. APARTMENT - DAY </b> The hallway is a mess. A window opening onto a light well is open. The door to the apartment is suddenly broken open. A plain- clothes detective, two uniformed police officers and several firemen - also in uniform - enter and look around. They all wear gloves and masks that cover their mouths and noses. Behind them, the superintendent and his wife also push their way in. Th",
+      "dialogue_count": 0,
+      "word_count": 15343
+    }
+  ]
+}

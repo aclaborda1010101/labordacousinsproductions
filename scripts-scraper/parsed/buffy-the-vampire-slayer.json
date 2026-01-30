@@ -1,0 +1,22 @@
+{
+  "slug": "buffy-the-vampire-slayer",
+  "title": "Buffy the Vampire Slayer",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 25589,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b><HTML> </b><b><HEAD> </b><TITLE> Buffy, the Vampire Slayer <b></TITLE> </b><b></HEAD> </b> <b><BODY> </b><b><PRE> </b>                               Buffy, the Vampire Slayer by Joss Whedon <b>             FADE IN: </b> <b>             EXT. MEDIEVAL VILLAGE - JUST BEFORE SUNSET </b> We see an Italian village at the height of the plague.  Funeral processions, decrepit houses with their windows boarded up... the stench of death all around. <b>             TITLE:  EUROPE. THE DARK AGES </b> Thro",
+      "dialogue_count": 0,
+      "word_count": 25589
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "slug": "beauty-and-the-beast",
+  "title": "Beauty and the Beast",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 25562,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                              BEAUTY AND THE BEAST </b> Written by Stephen Chbosky & Evan Spiliotopoulos Based on the 1991 Animated Film \"Beauty and the Beast\" Screenplay by Linda Woolverton August 10, 2016 <b>1   EXT. CASTLE GROUNDS - NIGHT                                1 </b> A MAGNIFICENT CASTLE. Resplendent, bespeaking great wealth and power. The grounds and stonework immaculate. <b>                        NARRATOR (V.O.) </b>              Once upon a time in the hidden heart of France,",
+      "dialogue_count": 0,
+      "word_count": 25562
+    }
+  ]
+}

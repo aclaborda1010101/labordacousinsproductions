@@ -1,0 +1,5810 @@
+{
+  "slug": "september-5-2024",
+  "title": "September 5",
+  "parsedWith": "v2",
+  "parsedAt": "2026-01-29T22:09:18.641Z",
+  "stats": {
+    "scenes": 111,
+    "dialogues": 854,
+    "characters": 58
+  },
+  "characters": [
+    {
+      "name": "GEOFF",
+      "dialogueLines": 240,
+      "totalWords": 1362
+    },
+    {
+      "name": "BADER",
+      "dialogueLines": 115,
+      "totalWords": 801
+    },
+    {
+      "name": "ROONE",
+      "dialogueLines": 113,
+      "totalWords": 756
+    },
+    {
+      "name": "MARIANNE",
+      "dialogueLines": 87,
+      "totalWords": 630
+    },
+    {
+      "name": "JENNINGS",
+      "dialogueLines": 60,
+      "totalWords": 629
+    },
+    {
+      "name": "JACQUES",
+      "dialogueLines": 32,
+      "totalWords": 142
+    },
+    {
+      "name": "MCKAY",
+      "dialogueLines": 30,
+      "totalWords": 374
+    },
+    {
+      "name": "DIRECTOR",
+      "dialogueLines": 18,
+      "totalWords": 67
+    },
+    {
+      "name": "CARTER",
+      "dialogueLines": 18,
+      "totalWords": 118
+    },
+    {
+      "name": "HANK",
+      "dialogueLines": 14,
+      "totalWords": 103
+    },
+    {
+      "name": "HOWARD",
+      "dialogueLines": 11,
+      "totalWords": 105
+    },
+    {
+      "name": "GLADYS",
+      "dialogueLines": 10,
+      "totalWords": 66
+    },
+    {
+      "name": "COMMUNICATOR",
+      "dialogueLines": 8,
+      "totalWords": 33
+    },
+    {
+      "name": "GARY",
+      "dialogueLines": 8,
+      "totalWords": 31
+    },
+    {
+      "name": "ASSISTANT DIRECTOR",
+      "dialogueLines": 7,
+      "totalWords": 36
+    },
+    {
+      "name": "ABC ANNOUNCER",
+      "dialogueLines": 5,
+      "totalWords": 51
+    },
+    {
+      "name": "AHLERS",
+      "dialogueLines": 5,
+      "totalWords": 51
+    },
+    {
+      "name": "SPORTS COMMENTATOR",
+      "dialogueLines": 4,
+      "totalWords": 32
+    },
+    {
+      "name": "HERMANN",
+      "dialogueLines": 4,
+      "totalWords": 44
+    },
+    {
+      "name": "ASSISTANT",
+      "dialogueLines": 4,
+      "totalWords": 27
+    },
+    {
+      "name": "POLICEWOMAN",
+      "dialogueLines": 4,
+      "totalWords": 32
+    },
+    {
+      "name": "POLICE CHANNEL",
+      "dialogueLines": 4,
+      "totalWords": 8
+    },
+    {
+      "name": "POLICE OFFICER",
+      "dialogueLines": 4,
+      "totalWords": 13
+    },
+    {
+      "name": "VOICE",
+      "dialogueLines": 3,
+      "totalWords": 24
+    },
+    {
+      "name": "RECEPTIONIST",
+      "dialogueLines": 3,
+      "totalWords": 17
+    },
+    {
+      "name": "NEWS REPORTER",
+      "dialogueLines": 3,
+      "totalWords": 11
+    },
+    {
+      "name": "ZDF REPORTER",
+      "dialogueLines": 3,
+      "totalWords": 20
+    },
+    {
+      "name": "FULL SCREEN LINE MONITOR",
+      "dialogueLines": 3,
+      "totalWords": 28
+    },
+    {
+      "name": "GORDON",
+      "dialogueLines": 2,
+      "totalWords": 32
+    },
+    {
+      "name": "DAVID BERGER",
+      "dialogueLines": 2,
+      "totalWords": 58
+    },
+    {
+      "name": "LARRY",
+      "dialogueLines": 2,
+      "totalWords": 4
+    },
+    {
+      "name": "TOWER CAM",
+      "dialogueLines": 2,
+      "totalWords": 9
+    },
+    {
+      "name": "MAN",
+      "dialogueLines": 1,
+      "totalWords": 5
+    },
+    {
+      "name": "HANS KLEIN",
+      "dialogueLines": 1,
+      "totalWords": 9
+    },
+    {
+      "name": "CAMERA ASSISTANT",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "BEN",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "TOWER CAMERAMAN",
+      "dialogueLines": 1,
+      "totalWords": 2
+    },
+    {
+      "name": "SCHREIBER",
+      "dialogueLines": 1,
+      "totalWords": 5
+    },
+    {
+      "name": "JOURNALIST",
+      "dialogueLines": 1,
+      "totalWords": 3
+    },
+    {
+      "name": "ABC HEADQUARTERS",
+      "dialogueLines": 1,
+      "totalWords": 11
+    },
+    {
+      "name": "ASSISTANT EDITOR",
+      "dialogueLines": 1,
+      "totalWords": 2
+    },
+    {
+      "name": "CAMERA OPERATOR",
+      "dialogueLines": 1,
+      "totalWords": 5
+    },
+    {
+      "name": "VTR TECH",
+      "dialogueLines": 1,
+      "totalWords": 3
+    },
+    {
+      "name": "TECHNICIAN",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "VTR TECHNICIAN",
+      "dialogueLines": 1,
+      "totalWords": 2
+    },
+    {
+      "name": "ZDF COMMENTATOR",
+      "dialogueLines": 1,
+      "totalWords": 11
+    },
+    {
+      "name": "PROTESTER",
+      "dialogueLines": 1,
+      "totalWords": 2
+    },
+    {
+      "name": "MOHAMED TARABULSI",
+      "dialogueLines": 1,
+      "totalWords": 30
+    },
+    {
+      "name": "TRANSLATOR",
+      "dialogueLines": 1,
+      "totalWords": 58
+    },
+    {
+      "name": "POLICE MARSHALL",
+      "dialogueLines": 1,
+      "totalWords": 5
+    }
+  ],
+  "scenes": [
+    {
+      "number": 1,
+      "heading": "INT. ABC SPORTS’ 1972 OLYMPICS STUDIO, CONTROL ROOM - DAY",
+      "characters": [
+        "VOICE",
+        "SPORTS COMMENTATOR",
+        "DIRECTOR",
+        "ROONE",
+        "JACQUES"
+      ],
+      "dialogues": [
+        {
+          "character": "VOICE",
+          "parenthetical": "(O.C.)",
+          "text": "Cut to 1. WIDE SHOT: An Olympic swimming pool. The swimmers dive off their blocks. Freestyle. High speed."
+        },
+        {
+          "character": "SPORTS COMMENTATOR",
+          "parenthetical": "(V.O.)",
+          "text": "That’s a good start for Mark Spitz."
+        },
+        {
+          "character": "VOICE",
+          "parenthetical": "",
+          "text": "(O.C.)"
+        },
+        {
+          "character": "SPORTS COMMENTATOR",
+          "parenthetical": "(V.O.)",
+          "text": "Now Spitz takes the lead. Look at that style. Those powerful moves."
+        },
+        {
+          "character": "DIRECTOR",
+          "parenthetical": "",
+          "text": "Cam 1 tighten in!"
+        },
+        {
+          "character": "SPORTS COMMENTATOR",
+          "parenthetical": "(V.O.)",
+          "text": "Spitz leaves the German swimmer far behind. He is about to write"
+        },
+        {
+          "character": "DIRECTOR",
+          "parenthetical": "",
+          "text": "Cam 2, ready for Spitz’s close up."
+        },
+        {
+          "character": "VOICE",
+          "parenthetical": "",
+          "text": "No, the German first. 1."
+        },
+        {
+          "character": "DIRECTOR",
+          "parenthetical": "",
+          "text": "Sure? The German?"
+        },
+        {
+          "character": "DIRECTOR",
+          "parenthetical": "(CONT’D)",
+          "text": "(into headset)"
+        },
+        {
+          "character": "SPORTS COMMENTATOR",
+          "parenthetical": "",
+          "text": "(V.O.)"
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "Tighter."
+        },
+        {
+          "character": "DIRECTOR",
+          "parenthetical": "",
+          "text": "(into headset)"
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "I want to be in that hug."
+        },
+        {
+          "character": "JACQUES",
+          "parenthetical": "(O.S.)",
+          "text": "We could try the mobile unit."
+        },
+        {
+          "character": "DIRECTOR",
+          "parenthetical": "",
+          "text": "They’re not prepared. It’s gonna be too shaky."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "I don’t care."
+        },
+        {
+          "character": "DIRECTOR",
+          "parenthetical": "",
+          "text": "(into headset)"
+        },
+        {
+          "character": "JACQUES",
+          "parenthetical": "",
+          "text": "(into headset)"
+        },
+        {
+          "character": "DIRECTOR",
+          "parenthetical": "",
+          "text": "Put 6 in preview."
+        },
+        {
+          "character": "DIRECTOR",
+          "parenthetical": "(CONT’D)",
+          "text": "(into headset)"
+        }
+      ],
+      "actionPreview": "CLOSE UP: A gun is raised. BANG. Cam 2, close up Spitz. Cut to 2. CLOSE UP: U.S. swimmer superstar Mark Spitz glides through the water with powerful strokes. Camera pulls back to reveal we’re looking at one of many screens on a monitor wall. Focused STUDIO TECHNICIANS sit at a large console. Headpho"
+    },
+    {
+      "number": 2,
+      "heading": "INT. HOTEL SHERATON, MUNICH - NIGHT",
+      "characters": [
+        "MAN"
+      ],
+      "dialogues": [
+        {
+          "character": "MAN",
+          "parenthetical": "",
+          "text": "Thanks, I'm already awake. 3."
+        }
+      ],
+      "actionPreview": "It’s the middle of the night. We’re in a small hotel room. The TV is on. Muted. Sports images flicker on the screen. A MAN sits at the edge of the bed. Fully dressed. We can only make out his silhouette. In his hand a page scribbled with cryptic times, names and nations. A phone rings. The Man picks"
+    },
+    {
+      "number": 3,
+      "heading": "EXT. HIGHWAY / INT. RENTAL CAR - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "CLACK. A car radio is switched on. The Man speeds down Munich’s empty expressway. And for the first time we see his face. Intelligent eyes behind thick glasses. Tousled hair. Cigarette hanging in his mouth. This is GEOFF MASON (27). A junior producer at ABC Sports, determined to keep climbing the la"
+    },
+    {
+      "number": 4,
+      "heading": "EXT. PARKING LOT / INT. RENTAL CAR - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Geoff parks in the Olympic Village’s “press corps” area. He throws on a pre-tied tie, looks in the mirror, smoothes his hair. Realizes this is as good as it gets. He takes out the scribbled note. Now we see it’s a schedule of Olympic events. One last look, then he puts it down and gets out."
+    },
+    {
+      "number": 5,
+      "heading": "EXT. PARKING LOT - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "We follow Geoff to the ABC studio building. In the background is the mighty “Olympiastadion”. Masts with the flags of all nations rise behind it."
+    },
+    {
+      "number": 6,
+      "heading": "INT. ABC TV STUDIO, CORRIDOR, HALLWAY - NIGHT",
+      "characters": [
+        "BADER",
+        "GEOFF"
+      ],
+      "dialogues": [
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "You were supposed to be here before the show ends. 4."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Right, I’m a minute and thirty seconds early. (taps second watch)"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "(not in the mood)"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Day starts with Volleyball at 0930,"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "(convinced)"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "(CONT’D)",
+          "text": "Going on a date?"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Just got off one. Your wife says hello."
+        }
+      ],
+      "actionPreview": "Geoff walks down a dark corridor into the hallway. ABC Sports Operations’ VP MARVIN BADER (45) already waits for him. Despite two decades in the TV business, Bader hasn’t lost his moral compass. He exudes great kindness, with an occasionally sardonic sense of humor. They instantly launch into a walk"
+    },
+    {
+      "number": 7,
+      "heading": "INT. CONTROL ROOM - NIGHT",
+      "characters": [
+        "BADER",
+        "GORDON",
+        "MCKAY",
+        "DIRECTOR",
+        "JACQUES",
+        "ROONE",
+        "ABC ANNOUNCER"
+      ],
+      "dialogues": [
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "(whispers) AC’s broken."
+        },
+        {
+          "character": "GORDON",
+          "parenthetical": "(O.S.)",
+          "text": "... It’s been a week since we witnessed this already historical performance. But it still takes my breath away..."
+        },
+        {
+          "character": "MCKAY",
+          "parenthetical": "(O.S.)",
+          "text": "Gordon, I think I speak for all of us here at ABC Sports when I say:"
+        },
+        {
+          "character": "GORDON",
+          "parenthetical": "(O.S.)",
+          "text": "I’ve said it before and I’ll say it again: She deserved an Eleven!"
+        },
+        {
+          "character": "MCKAY",
+          "parenthetical": "(O.S.)",
+          "text": "She certainly did... Ladies and"
+        },
+        {
+          "character": "DIRECTOR",
+          "parenthetical": "",
+          "text": "Take 5."
+        },
+        {
+          "character": "DIRECTOR",
+          "parenthetical": "",
+          "text": "Fade in bird caption."
+        },
+        {
+          "character": "DIRECTOR",
+          "parenthetical": "(CONT’D)",
+          "text": "(into headset)"
+        },
+        {
+          "character": "DIRECTOR",
+          "parenthetical": "(CONT’D)",
+          "text": "(into mic)"
+        },
+        {
+          "character": "DIRECTOR",
+          "parenthetical": "",
+          "text": "(into headset)"
+        },
+        {
+          "character": "MCKAY",
+          "parenthetical": "",
+          "text": "...the last one just"
+        },
+        {
+          "character": "DIRECTOR",
+          "parenthetical": "",
+          "text": "Not again... Jacques, what’s going on? Is this on our feed?"
+        },
+        {
+          "character": "JACQUES",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "DIRECTOR",
+          "parenthetical": "",
+          "text": "Then why is my screen black?"
+        },
+        {
+          "character": "JACQUES",
+          "parenthetical": "",
+          "text": "(shrugs)"
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "Close with the trailer."
+        },
+        {
+          "character": "ABC ANNOUNCER",
+          "parenthetical": "(V.O.)",
+          "text": "This summer we’re sending two teams to the Olympics. America’s finest young athletes. Plus the finest television sports team in the world."
+        },
+        {
+          "character": "ABC ANNOUNCER",
+          "parenthetical": "(V.O.)",
+          "text": "ABC’s unprecedented coverage of the"
+        },
+        {
+          "character": "ABC ANNOUNCER",
+          "parenthetical": "(V.O.)",
+          "text": "Using a brand new satellite technology..."
+        }
+      ],
+      "actionPreview": "An unexpected heat smacks Geoff in the face as he enters. Geoff loosens his tie knot and looks around the room. The show is still on. It may be four in the morning here in Munich, but it’s still prime time in New York. 5. 6. The excitement of live reporting is gone and the crew works with half staff"
+    },
+    {
+      "number": 8,
+      "heading": "INT. TRANSMISSION ROOM - NIGHT",
+      "characters": [
+        "ABC ANNOUNCER"
+      ],
+      "dialogues": [
+        {
+          "character": "ABC ANNOUNCER",
+          "parenthetical": "(V.O.)",
+          "text": "... we will bring the Games from another continent directly into your homes. Live and in color."
+        },
+        {
+          "character": "ABC ANNOUNCER",
+          "parenthetical": "",
+          "text": "(V.O.)"
+        }
+      ],
+      "actionPreview": "Technicians plug cables into a huge console. Connect Munich with the world. The Summer Olympics: History being made!"
+    },
+    {
+      "number": 9,
+      "heading": "INT. CONTROL ROOM - NIGHT",
+      "characters": [
+        "ASSISTANT DIRECTOR",
+        "COMMUNICATOR",
+        "DIRECTOR",
+        "GEOFF",
+        "BADER",
+        "ROONE"
+      ],
+      "dialogues": [
+        {
+          "character": "ASSISTANT DIRECTOR",
+          "parenthetical": "",
+          "text": "And we’re clear."
+        },
+        {
+          "character": "COMMUNICATOR",
+          "parenthetical": "",
+          "text": "(into telephone)"
+        },
+        {
+          "character": "DIRECTOR",
+          "parenthetical": "",
+          "text": "(puts down headset)"
+        },
+        {
+          "character": "DIRECTOR",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Thanks Don, enjoy the alps."
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "Roone, I'd like to do a handover with Geoff, who--"
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "(not interested)"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "Not yet."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "Watch it. See if it’s any good."
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "Roone... Frankly, I do have some concerns about cutting from sports to the Holocaust."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "Spitz is Jewish, right?"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "Since when am I ABC’s expert on"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "He is. Spitz."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "What time is the presser?"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Four PM."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "(to Bader)"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "So you want to ask a Jew about the"
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "Yeah. Ask him how it feels to win"
+        }
+      ],
+      "actionPreview": "The ASSISTANT DIRECTOR says the crew’s favorite phrase: Back to you, New York. Have a good evening, Skip. Great job. It's B-Unit's turn tomorrow. Enjoy your day off. Tension drops. People start moving everywhere again. Monitors now display color bars. At the rear of the room a CR TECHNICIAN pulls a "
+    },
+    {
+      "number": 10,
+      "heading": "INT. HALLWAY - NIGHT",
+      "characters": [
+        "ROONE",
+        "GEOFF",
+        "BADER",
+        "JACQUES"
+      ],
+      "dialogues": [
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "So? Talk me through the day."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "We start with volleyball, could be quite excit--"
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "No US Team."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Um, soccer, intermediate round."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "Who?"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "GDR vs Mexico. Denmark vs Morocco."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "(CONT’D)",
+          "text": "But then there is boxing. The Great"
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "The Cuban? 10."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Yeah. This guy’s the real deal."
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "So we’ll lose and the thing is over in thirty seconds?"
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "Doesn’t matter. It’s Cuba... versus the United States of America..."
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "Sure you want to bring in politics?"
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "Not politics, Bader. Drama."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "“The Cold War Heats up Again. Cuba"
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "Little long. But good direction."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "(CONT’D)",
+          "text": "What’s his live coverage experience?"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "I-"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "He’s done golf tournaments. And minor league baseball."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "I’ll come in for the boxing match."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "(CONT’D)",
+          "text": "No calls before 10. Promised my daughters. 11."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Problem solved?"
+        },
+        {
+          "character": "JACQUES",
+          "parenthetical": "",
+          "text": "On it."
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "(to Geoff)"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "(CONT’D)",
+          "text": "Guess I’m spending another night here. (mimics Roone as he heads off)"
+        }
+      ],
+      "actionPreview": "Roone walks fast, Bader next to him, Geoff follows, trying to find space for himself in the hallway. Roone turns around to Geoff. Geoff is startled for a moment, then: Birma against Malaysia. Roone sighs: really? He walks into his office. Grabs his briefcase. Geoff keeps on talking: White Hope is in"
+    },
+    {
+      "number": 11,
+      "heading": "INT. VTR LIBRARY - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "A room full of videotapes and film rolls. Geoff’s fingers are gliding over the shelves. Looking for something specific."
+    },
+    {
+      "number": 12,
+      "heading": "INT. EDITING ROOM - NIGHT",
+      "characters": [
+        "JENNINGS",
+        "DAVID BERGER",
+        "HANS KLEIN",
+        "BADER",
+        "MARIANNE"
+      ],
+      "dialogues": [
+        {
+          "character": "JENNINGS",
+          "parenthetical": "(V.O.)",
+          "text": "Only about nine miles lie between the “Serene Games”’s center and"
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "(holds microphone, looks at camera)"
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DAVID BERGER",
+          "parenthetical": "",
+          "text": "That’s exactly what the Olympics are all about, you know. Like our fencing coach Andrei says, we’re here and can talk to Germans, chat with athletes from Lebanon or"
+        },
+        {
+          "character": "HANS KLEIN",
+          "parenthetical": "",
+          "text": "Die Bundesrepublik Deutschland begrüßt die Welt zu diesen heiteren"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "You’re German, right?"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "(takes off her headphones)"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "You’re the new translator, right?"
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "(CONT’D)",
+          "text": "Can you do me a favor? What’s Hans saying here?"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "He is saying that the games are an opportunity to welcome the world to a new Germany, to move on from the past."
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "Yeah, sure."
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "I mean, it’s what we all hope for... What else can we do but move on? Try to be better?"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "Your parents still around?"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "Let me guess, they didn’t know either?"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "Well, I’m not them."
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "No, you’re not."
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "(CONT’D)",
+          "text": "I’m Marvin Bader."
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "I know. Head of operations. I’m"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "(nods)"
+        }
+      ],
+      "actionPreview": "Bader opens a film can labeled “Dachau Report”. Threads audio and film strips into an editing table’s rollers. Hits play. The screen flickers and shows the Dachau concentration camp’s entrance. On it the words “Arbeit macht frei.” Germany’s darkest chapter in history. Unimaginable atrocities were co"
+    },
+    {
+      "number": 13,
+      "heading": "INT. VTR ROOM - NIGHT",
+      "characters": [
+        "JACQUES",
+        "GEOFF"
+      ],
+      "dialogues": [
+        {
+          "character": "JACQUES",
+          "parenthetical": "(O.S.)",
+          "text": "I need to swap out all of the wiring."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "(without taking eyes from monitor)"
+        },
+        {
+          "character": "JACQUES",
+          "parenthetical": "",
+          "text": "Grumpy has no spares."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "(turns around)"
+        },
+        {
+          "character": "JACQUES",
+          "parenthetical": "",
+          "text": "At least not for me."
+        }
+      ],
+      "actionPreview": "Geoff skillfully threads a magnetic tape into the VTR machine. Hits fast forward. Images of Fidel Castro, Cuba, communist parades fizzle across the machine’s monitor. Jacques is at the door behind him, frustrated. Then do it. He doesn’t?"
+    },
+    {
+      "number": 14,
+      "heading": "INT. STUDIO STAGE - NIGHT",
+      "characters": [
+        "GEOFF",
+        "HERMANN"
+      ],
+      "dialogues": [
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Hermann, you really don’t have any cables?"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "(CONT’D)",
+          "text": "Hey, I’m talking to you. We need cables."
+        },
+        {
+          "character": "HERMANN",
+          "parenthetical": "",
+          "text": "Nein. No Kabel."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "That’s crazy. What about--"
+        },
+        {
+          "character": "HERMANN",
+          "parenthetical": "",
+          "text": "Your boss fills out paper. Gives paper to my boss. You get Kabel."
+        }
+      ],
+      "actionPreview": "Geoff walks up to HERMANN JÄGER, examining the broken air conditioner system. No reaction. Hermann glares at him. Hermann turns back to the air conditioner. Jacques gives Geoff an I-told-you-so look. 15. 16."
+    },
+    {
+      "number": 15,
+      "heading": "INT. EDITING ROOM - NIGHT",
+      "characters": [
+        "GEOFF",
+        "MARIANNE"
+      ],
+      "dialogues": [
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Hey you, where’s the old man?"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "I’m afraid he already left."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Damn."
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "Any way I can help? CUT TO:"
+        }
+      ],
+      "actionPreview": "Marianne is typing on her typewriter when Geoff appears at the door."
+    },
+    {
+      "number": 16,
+      "heading": "INT. STUDIO STAGE - NIGHT",
+      "characters": [
+        "HERMANN",
+        "MARIANNE",
+        "GEOFF"
+      ],
+      "dialogues": [
+        {
+          "character": "HERMANN",
+          "parenthetical": "",
+          "text": "Wo dad ma denn da hin kommen, wenn ein jeder nur noch mehr Zeug will?"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "Ja, das verstehe ich natürlich. Sie müssen sicher permanent auf viele"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "(CONT’D)",
+          "text": "Aber wissen Sie was: Die GANZE WELT schaut hierher. Auf unser München."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "You got this, right? 16."
+        }
+      ],
+      "actionPreview": "Close up on Hermann ranting. Wissens was uns Deutsche die Spiele kosten? Zwei Milliarden Mark. Und dann würden die Amis daherkommen und sich permanent nur beschweren. We cut to see who’s receiving this tirade. Befindlichkeiten eingehen. Jacques and Geoff watch, excited by the stand-off. Neither unde"
+    },
+    {
+      "number": 17,
+      "heading": "INT. HALLWAY, CORRIDOR - NIGHT",
+      "characters": [
+        "JACQUES",
+        "HERMANN"
+      ],
+      "dialogues": [
+        {
+          "character": "JACQUES",
+          "parenthetical": "",
+          "text": "(plasters on a smile)"
+        },
+        {
+          "character": "JACQUES",
+          "parenthetical": "(CONT’D)",
+          "text": "Were those... shots?"
+        },
+        {
+          "character": "HERMANN",
+          "parenthetical": "",
+          "text": "Sag dem Franzosen, dass ich noch ganz genau weiß wie sich Schüsse anhören."
+        }
+      ],
+      "actionPreview": "Hermann leads Marianne and Jacques through the corridors. The place is now completely empty, except for a cleaning man wiping the floors. Hermann unlocks a door, signals Marianne and Jacques to wait and disappears in the storage room. Dimly lit. Marianne lights a cigarette and opens the studio back "
+    },
+    {
+      "number": 18,
+      "heading": "INT. VTR ROOM - NIGHT",
+      "characters": [
+        "GEOFF"
+      ],
+      "dialogues": [
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "ABC. Mason."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "(CONT’D)",
+          "text": "No, we haven’t heard anything. (beat)"
+        }
+      ],
+      "actionPreview": "A RED LIGHT flashes on a phone. Geoff doesn’t notice it. He’s hard at work editing. Rewinding an atomic bomb explosion. The mushroom shrinks in on itself. All we hear is the music in his headphones. At last, Geoff sees the light, takes off his headphones. Now we hear the phone RINGING. He picks it u"
+    },
+    {
+      "number": 19,
+      "heading": "INT. HALLWAY - NIGHT",
+      "characters": [
+        "GEOFF",
+        "JACQUES",
+        "MARIANNE"
+      ],
+      "dialogues": [
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Weird. Kenny Moore just called."
+        },
+        {
+          "character": "JACQUES",
+          "parenthetical": "",
+          "text": "The marathon runner?"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Yeah. He wanted to know if we heard gunfire."
+        },
+        {
+          "character": "JACQUES",
+          "parenthetical": "",
+          "text": "We heard that, too."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "What? Wait, what did you hear?"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "Gunshots. In the distance."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Maybe we should call the police?"
+        }
+      ],
+      "actionPreview": "Sees Marianne and Jacques coming towards him. Jacques’ eyes widen. No one says anything. Then finally: 18. 19."
+    },
+    {
+      "number": 20,
+      "heading": "INT. CONTROL ROOM - NIGHT",
+      "characters": [
+        "MARIANNE",
+        "GEOFF"
+      ],
+      "dialogues": [
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "Ja hallo, mein Name ist Marianne"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "(CONT’D)",
+          "text": "Police already received several calls and are investigating the matter."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "And?"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "That’s all they said. (thinks)"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Do you know how these work?"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "(flicks on the walkie) I’m on channel two."
+        }
+      ],
+      "actionPreview": "Geoff hands Marianne a phone. She dials. Gebhardt, ich rufe aus dem Studio der ABC an. Wir haben hier Schüsse gehört... (listens) Wissen Sie bereits Näheres? (listens) Verstehe. Danke. She hangs up. Geoff eyes her eagerly. The only ones working this late are the radio people. I could walk over to Ba"
+    },
+    {
+      "number": 21,
+      "heading": "INT. HALLWAY - NIGHT",
+      "characters": [
+        "GARY",
+        "MARIANNE"
+      ],
+      "dialogues": [
+        {
+          "character": "GARY",
+          "parenthetical": "",
+          "text": "Sorry!"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "Hey, can I borrow that?"
+        }
+      ],
+      "actionPreview": "Marianne hurries along, almost collides into ABC Intern/ Runner, GARY SLAUGHTER (20), headphones over ears. Marianne sees the portable radio in his hands. 19. 20."
+    },
+    {
+      "number": 22,
+      "heading": "INT. CONTROL ROOM - NIGHT",
+      "characters": [
+        "JACQUES",
+        "GEOFF",
+        "GARY",
+        "MARIANNE"
+      ],
+      "dialogues": [
+        {
+          "character": "JACQUES",
+          "parenthetical": "",
+          "text": "Still getting dropouts?"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "JACQUES",
+          "parenthetical": "",
+          "text": "How often?"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "(looks at black monitor)"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "(CONT’D)",
+          "text": "Did you hear shots being fired?"
+        },
+        {
+          "character": "GARY",
+          "parenthetical": "",
+          "text": "What? No."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "(to Jacques)"
+        },
+        {
+          "character": "JACQUES",
+          "parenthetical": "",
+          "text": "It sounded like gunfire, Geoff."
+        },
+        {
+          "character": "GARY",
+          "parenthetical": "",
+          "text": "...what’s going on?"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "(into walkie)"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "(over walkie, sirens in the background)"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "What!? Driving into the village? 20."
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "Yes. Whatever happened, it happened here."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "I have to wake Bader."
+        }
+      ],
+      "actionPreview": "Geoff sits behind the console. Jacques calls out from behind the monitor wall. Constantly. Can’t we- Gary enters. Geoff turns to him. Maybe it was fireworks? Or, what did it sound like? The walkie crackles. Geoff snatches it. Jacques steps forward to listen. You there yet? No, I’m walking over the b"
+    },
+    {
+      "number": 23,
+      "heading": "INT. STORAGE ROOM - DAWN",
+      "characters": [
+        "GEOFF",
+        "BADER",
+        "MARIANNE"
+      ],
+      "dialogues": [
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Marv! Get up! There’s been-"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "What the hell, Geoff? I’m-"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Shots were fired in the Olympic"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "What? You serious?"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Yeah. There’s a ton of police and--"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "Can you hear me?"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "(into walkie)"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "The phones won’t stop at the"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "This is Bader. What are we talking about here? Is anyone hurt? 21."
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "Rumor is hostage taking."
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "What? Who?"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "I don’t know. But the BR will say something on their 6 o'clock news."
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "(to Geoff)"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Roone? I thought..."
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "Call him! I’ll get Jennings!"
+        }
+      ],
+      "actionPreview": "Bader lies on a cot, asleep. The door flings opens. Light slashes into the dark room, startling Bader awake. Village! Fucking shots! Bader shoots up. Wide awake now. The walkie in Geoff’s hand crackles: Listening. Rundfunk. A friend here heard the shots were fired in the Israelis’ apartments. Bader "
+    },
+    {
+      "number": 24,
+      "heading": "INT. CONTROL ROOM - DAY",
+      "characters": [
+        "GEOFF",
+        "RECEPTIONIST",
+        "ROONE",
+        "NEWS REPORTER",
+        "MARIANNE",
+        "BADER"
+      ],
+      "dialogues": [
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Tune in on BR."
+        },
+        {
+          "character": "RECEPTIONIST",
+          "parenthetical": "",
+          "text": "Sheraton München. Was kann ich für"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "I need to speak to Roone Arledge, right away."
+        },
+        {
+          "character": "RECEPTIONIST",
+          "parenthetical": "",
+          "text": "Mr. Arledge asked we block his calls until-"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Trust me, Mr Arledge wants to be woken up for this."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "(CONT’D)",
+          "text": "I need you to connect me. Now. 22."
+        },
+        {
+          "character": "RECEPTIONIST",
+          "parenthetical": "",
+          "text": "One moment, please."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "(throat cleared, into phone) I said not to disturb me."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "There’s a hostage situation in the"
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "What’re you talking about?"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "A hostage situation. And it gets worse. Word is it’s in the"
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "(long beat, then)"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "No, but--"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "(CONT’D)",
+          "text": "They’re about to say something on the radio now."
+        },
+        {
+          "character": "NEWS REPORTER",
+          "parenthetical": "",
+          "text": "Guten Morgen meine Damen und"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Mary-Ann, can you translate this?"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "Sure, let me check my radio."
+        },
+        {
+          "character": "NEWS REPORTER",
+          "parenthetical": "",
+          "text": ".... erreichen uns immer mehr"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "NEWS REPORTER",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "I’ll be there in 20."
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "Get the crew in."
+        }
+      ],
+      "actionPreview": "Geoff returns, hands Jacques the radio. He picks up the phone. Dials. Puts it on a phone amplifier. Sie tun? The Receptionist hesitates. 23. More rings. Taking forever. We hear Roone’s deep voice. Olympic Village right now. Israelis’ quarters. Is this confirmed? Jacques turns up the volume on the ra"
+    },
+    {
+      "number": 25,
+      "heading": "INT. HALLWAY - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Through a cloud of nicotine we follow a tall, good-looking man down the hall. A certain confidence in his attitude. PETER JENNINGS (34) is the only reporter from the ABC News division on the Sports crew here, one who believes being a newscaster is a noble and truly important role in society."
+    },
+    {
+      "number": 26,
+      "heading": "INT. CONTROL ROOM - DAY",
+      "characters": [
+        "GEOFF",
+        "JENNINGS",
+        "GARY",
+        "BADER",
+        "MARIANNE"
+      ],
+      "dialogues": [
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Grab as many as possible. Priority are camera ops. Bus leaves in 10."
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "Is it confirmed yet?"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Yes. Definitely shots, definitely the Israelis."
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "And this is from...?"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "The German radio."
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "We can’t quote another station?"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Um..."
+        },
+        {
+          "character": "GARY",
+          "parenthetical": "",
+          "text": "“One, Possibly Two, Israeli"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "Peter, what’re we dealing with here?"
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "Could be PLO. PFLP. (beat)"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "(to Jennings)"
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "Where are the Israelis housed? 25."
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "Connollystrasse 31."
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "This should give us a good angle."
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "Anyone there? Seems like the police will seal the Village. Reporters here are rushing off to get in now."
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "Fuck."
+        }
+      ],
+      "actionPreview": "The mood here has changed. The air’s electric. Geoff speaks eagerly into the phone. And make sure you get Carter. He hangs up as Jennings enters. 24. 25. Second source? Suddenly, there’s a rattle from the AP Wire. Gary moves to the teleprinter. Rips off the paper. Reads: Athletes Killed at Olympic V"
+    },
+    {
+      "number": 27,
+      "heading": "INT. HALLWAY - DAY",
+      "characters": [
+        "ROONE",
+        "JENNINGS"
+      ],
+      "dialogues": [
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "Hey, Peter, what’s the-"
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "(as he crosses)"
+        }
+      ],
+      "actionPreview": "His gait is fast. At the other end, Roone enters. Instead of his suit, he’s now in an ABC crew windbreaker, sleeves rolled up. Can’t talk. Searching for a cameraman. Roone hurries to the control room."
+    },
+    {
+      "number": 28,
+      "heading": "INT. CONTROL ROOM - DAY",
+      "characters": [
+        "ROONE",
+        "GEOFF",
+        "BADER",
+        "JENNINGS",
+        "CAMERA ASSISTANT",
+        "BEN",
+        "GARY"
+      ],
+      "dialogues": [
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "Where’s the crew?"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "First shuttle gets here any minute."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "When’s Jim coming in?"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "It’s his day off so I didn’t- 26."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "(to Bader)"
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "(CONT’D)",
+          "text": "When do we have the bird today?"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "3pm. 10am Eastern."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "We need the breakfast slot."
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "Then you need to sweet-talk CBS."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Jim is in the pool, doing his morning laps."
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "Who’re you talking to?"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "His wife."
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "Margaret, it’s Marv. Will you please be so kind and get him out of the pool for me? (beat)"
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "We’re ready to go, but still no cameramen here yet."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "What’s your name? 27."
+        },
+        {
+          "character": "CAMERA ASSISTANT",
+          "parenthetical": "",
+          "text": "Ben."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "Can you hold a camera, Ben?"
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "(CONT’D)",
+          "text": "Know how to change film?"
+        },
+        {
+          "character": "BEN",
+          "parenthetical": "",
+          "text": "Definitely."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "(to Jennings)"
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "(about to go, to Roone) I guess News will want to take over soon."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "I’ll talk to them. But right now"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "Yes, Margaret, I’m still here. Did- (beat)"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "(CONT’D)",
+          "text": "Jim’s gonna anchor."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "(next topic)"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "I doubt Hans is releasing anything at this point. 28."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "Then maybe"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "Alright. Let’s have Geoff coordinate the setup while I’m gone."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "Not on his first day. Where’s"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "Hiking trip in the Alps."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "Maddocks?"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "We keep trying him. No answer. I mean it’s 5 in the morning."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "(starts walking out) I'll handle CBS and the satellite."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "So what do we air?"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "Whatever info I get from Hans"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "I’m talking visual. We can’t just have Jim talking. The footage Ben shoots on his 16 mil takes twenty minutes to develop... and we need"
+        },
+        {
+          "character": "GARY",
+          "parenthetical": "",
+          "text": "Can we use that mobile unit? The guys with the backpack? 29."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "They can only do wide-angle. We need a long lens... I mean it’s happening right there!"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "(CONT’D)",
+          "text": "That’s us, right?...Let’s roll out one of the studio cams. (marks another spot)"
+        }
+      ],
+      "actionPreview": "Roone steps in, sees how empty it is. Goes to Bader. 27. We need Jim for this. Bader nods to Geoff: do it. Geoff dials a number. Quietly talks into it while Roone continues with Bader. Roone rolls his eyes. Geoff covers his phone receiver, calls out to Bader: Bader takes the phone, indicates he’s go"
+    },
+    {
+      "number": 29,
+      "heading": "INT. HALLWAY - DAY",
+      "characters": [
+        "BADER",
+        "MARIANNE"
+      ],
+      "dialogues": [
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "Anything about the hostages yet?"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "Only mixed information."
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "Then call around to get things double checked."
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "I already have one."
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "Let’s open our own channel. Run things by me before you pass"
+        }
+      ],
+      "actionPreview": "Bader walks down the hall, sees Marianne enter from outside. He hands her a walkie as he reaches her. anything on. (heads off) Channel four."
+    },
+    {
+      "number": 30,
+      "heading": "INT. ROONE’S OFFICE - DAY",
+      "characters": [
+        "ROONE"
+      ],
+      "dialogues": [
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "Coffee, aspirin and a timetable of today’s slots on the sat."
+        }
+      ],
+      "actionPreview": "Roone goes straight to the phone and dials an extension. He quickly hangs up, instantly dials the next number. 30. 31. While waiting for someone to answer the phone, he switches on the television in the corner. A color TV, rare in Germany for the early 70s. ABC plays on the screen."
+    },
+    {
+      "number": 31,
+      "heading": "INT. BACKSTAGE AREA - DAY",
+      "characters": [
+        "GEOFF",
+        "CARTER"
+      ],
+      "dialogues": [
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "You heard what happened. Get to work. I need four men in the studio."
+        },
+        {
+          "character": "CARTER",
+          "parenthetical": "(O.S.)",
+          "text": "You’re the big boss now?"
+        }
+      ],
+      "actionPreview": "The first swarm of crew arrives at the studio, emerging from a shuttle bus that has stopped outside. Geoff hurries up to welcome them. But nobody seems to listen to him. Geoff turns, relieved to see CARTER JEFFREY (mid-20s), an innovative tech from the camera department."
+    },
+    {
+      "number": 32,
+      "heading": "INT. STUDIO STAGE - DAY",
+      "characters": [
+        "CARTER",
+        "GEOFF"
+      ],
+      "dialogues": [
+        {
+          "character": "CARTER",
+          "parenthetical": "",
+          "text": "You know how heavy those are?"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Let’s find out."
+        },
+        {
+          "character": "CARTER",
+          "parenthetical": "",
+          "text": "Wiring could be tricky."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "You’ll figure it out."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "(CONT’D)",
+          "text": "C’mon. You, too."
+        }
+      ],
+      "actionPreview": "Geoff and Carter stare at one of the three gigantic studio cameras. He grabs the camera by its wheeled pedestal, starts pushing. Carter helps him. He sees Jacques watching them, skeptical. Jacques rolls his eyes."
+    },
+    {
+      "number": 33,
+      "heading": "INT. VTR LIBRARY - DAY",
+      "characters": [
+        "MARIANNE"
+      ],
+      "dialogues": [
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "Ja, hallo, hier ist Marianne vom DOZ. Könnten Sie mich zu Michael"
+        }
+      ],
+      "actionPreview": "Marianne picks up a phone from the desk and dials a number. 31. 32. Korth durchstellen? (beat) Ja, danke, ich warte. She clamps the receiver to her ear. Grabs a press kit showing headshots and short bios of the Olympic participants."
+    },
+    {
+      "number": 34,
+      "heading": "INT. HALLWAY - DAY",
+      "characters": [
+        "BADER",
+        "GEOFF",
+        "CARTER"
+      ],
+      "dialogues": [
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "Geoff, you there?"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "(into walkie)"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "I’m at the press center. Hans Klein got word from the Olympic"
+        },
+        {
+          "character": "CARTER",
+          "parenthetical": "",
+          "text": "Do they really think anyone will care about sports today?"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "Good news is that two Israelis escaped during the attack. Also I- (noise in his background)"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "(CONT’D)",
+          "text": "The terrorists demanded Israel release 200 Palestinian prisoners by noon. If not they kill one hostage every hour."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Jesus Christ. Are there negotiations happening? 32."
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "Don’t know."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "So should I pass all that on to"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "Geoff, you have to be the center of everything now! Not just the control room. All communication, everything."
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Got it. All communication, everything."
+        }
+      ],
+      "actionPreview": "Geoff, Jacques and Carter wiggle the heavy camera out of the studio into the corridor. Geoff’s walkie crackles: Talk to me, Marv. Committee: “The Games must go on.” Hold on a sec. Over the walkie we hear a distant voice. They just confirmed the injured coach died. Mosche Weinberg. Shot twice in the "
+    },
+    {
+      "number": 35,
+      "heading": "INT. ROONE’S OFFICE - DAY",
+      "characters": [
+        "ROONE",
+        "ASSISTANT"
+      ],
+      "dialogues": [
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "(into phone)"
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "(CONT’D)",
+          "text": "(into phone)"
+        },
+        {
+          "character": "ASSISTANT",
+          "parenthetical": "",
+          "text": "We ran out of them."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "Never mind. (back to phone, checks timetable)"
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "(into phone)"
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "(CONT’D)",
+          "text": "(into phone)"
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "(into phone)"
+        },
+        {
+          "character": "ASSISTANT",
+          "parenthetical": "",
+          "text": "Starger’s office called. They want"
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "(waves it off)"
+        }
+      ],
+      "actionPreview": "Roone, electric shaver in his hand, listens to the phone on loudspeaker. This is the part of the job he hates. CBS .... I’m sorry, there is nothing I can do about it. We've had that one booked for months. But this is a story of public interest. People need to see this. And they need to see this live"
+    },
+    {
+      "number": 36,
+      "heading": "INT. HALLWAY - DAY",
+      "characters": [
+        "ROONE",
+        "GEOFF",
+        "ASSISTANT",
+        "MARIANNE"
+      ],
+      "dialogues": [
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "What the hell are you guys doing? 34."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "We’re going to get a live shot of the apartment. It’ll be cutting edge--"
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "Who are the hostages?"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Bader just confirmed that one of them died. A coach. Um-"
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "Mosche Weinberg. I read the Wire."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "I don’t think we know yet."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "Then we find out. Who are they?"
+        },
+        {
+          "character": "ASSISTANT",
+          "parenthetical": "",
+          "text": "News is on the line again. Can’t hold them back anymore."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "Don’t fuck it up, Mason. I got the bird. Live at noon."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "(Fuck)"
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "(heads back to office) I have to deal with this bullshit."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Marv, do we have any info on the hostages yet? 35."
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "I’m on it."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Where are you?"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "VTR Library."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "(into walkie)"
+        }
+      ],
+      "actionPreview": "The enormous camera is shoved down the hall by Geoff, Jacques and Carter. 35. But who’s inside that apartment? What’s their background. Do they have family? (re: camera) There's no point aiming that thing at a building if the viewer doesn’t know the people inside. Geoff knows Roone is right. How cou"
+    },
+    {
+      "number": 37,
+      "heading": "INT. VTR LIBRARY - DAY",
+      "characters": [
+        "MARIANNE",
+        "GEOFF",
+        "BADER",
+        "JACQUES"
+      ],
+      "dialogues": [
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "Du hast von zehn Geiseln gesprochen, in Apartment eins?"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "What you got?"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "(motions: one second)"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "(CONT’D)",
+          "text": "(beat)"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "(CONT’D)",
+          "text": "I need to confirm this first."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Do that later. I need it now. 36."
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "I’m sorry. It shouldn’t take long. (into walkie)"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "Marianne, what’ve you got?"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "(into walkie)"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "OK. Lines up with my info."
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "(into walkie)"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "(CONT’D)",
+          "text": "(into walkie)"
+        },
+        {
+          "character": "JACQUES",
+          "parenthetical": "",
+          "text": "Jennings made it inside!"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "(into walkie)"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "(back into walkie)"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "Berger? David Berger?"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "Yes. Why?"
+        }
+      ],
+      "actionPreview": "Marianne has the Israeli delegation in front of her. She circles profiles and takes notes, while on the phone: Geoff charges in. Dann bleiben exakt fünf Kraftsportler übrig. She circles another headshot. Geoff realizes what she’s doing, eagerly turns the page so he can see it. Danke, Michael. Ich sc"
+    },
+    {
+      "number": 38,
+      "heading": "INT. CONTROL ROOM - DAY",
+      "characters": [
+        "GEOFF",
+        "JENNINGS",
+        "MARIANNE"
+      ],
+      "dialogues": [
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Jennings, it’s Geoff Mason."
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "You’re running things?"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Yeah. So tell me, where are you?"
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "A balcony in the Italian compound."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "So nothing’s going on?"
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "No. Police are just milling around."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Too small."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "(CONT’D)",
+          "text": "Get these to Judy. Three times bigger."
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "There’s a report Mister Bader watched earlier that has an interview with one of the hostages."
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "There’s movement at 31..."
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Jennings, what’s happening?"
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "Someone’s on the balcony. Wearing some kind of mask, slowly looking around... going back in now... (beat)"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "I’ll send a runner."
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "No chance. Police sealed off the entire area. Only athletes can get past."
+        }
+      ],
+      "actionPreview": "The crew people have started up their work again. A Stage Runner (”JJ”) passes coffee mugs around. As Geoff rushes in, Jacques hands him the phone. Geoff puts it on the amplifier. It’s a good spot. I’ve a direct view of 31. And I’m not alone up here. The other balconies are full of reporters and pho"
+    },
+    {
+      "number": 39,
+      "heading": "INT. BACKSTAGE AREA - DAY",
+      "characters": [
+        "CARTER",
+        "GARY",
+        "GLADYS"
+      ],
+      "dialogues": [
+        {
+          "character": "CARTER",
+          "parenthetical": "",
+          "text": "Loaded mags, walkies, eight rolls, long lens, changing bag, sandwiches ... and cigarettes."
+        },
+        {
+          "character": "GARY",
+          "parenthetical": "",
+          "text": "So what if they search me?"
+        },
+        {
+          "character": "GLADYS",
+          "parenthetical": "",
+          "text": "Don’t worry. You’re now officially an athlete."
+        }
+      ],
+      "actionPreview": "Gary stands uncomfortably. A US weightlifter’s tracksuit hangs on him. It’s way too big. GLADYS DEIST (29), ABC Graphics, cuts out a narrow green stripe from an official Olympic catalog. Places it over the blue stripe on Gary’s press ID badge. Fits perfectly. She reaches for tweezers and glue. Her e"
+    },
+    {
+      "number": 40,
+      "heading": "INT. CONTROL ROOM - DAY",
+      "characters": [
+        "JENNINGS",
+        "GEOFF",
+        "GLADYS",
+        "JACQUES",
+        "TOWER CAMERAMAN",
+        "BADER",
+        "SCHREIBER",
+        "MARIANNE",
+        "JOURNALIST"
+      ],
+      "dialogues": [
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "A man is stepping out of the apartment now. White suit, white hat, face painted black. Could be the group’s leader... Cameras clicking like machine guns now..."
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "(concerned)"
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "Maybe 100, 130 feet."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "You should get away from there."
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "Kill radius is only 16 feet. I’ve been in the Middle East."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Ok. But be careful."
+        },
+        {
+          "character": "GLADYS",
+          "parenthetical": "",
+          "text": "Gary’s on his way."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Are there operators on the tower yet?"
+        },
+        {
+          "character": "JACQUES",
+          "parenthetical": "",
+          "text": "(nods)"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "(switches channels on his walkie)"
+        },
+        {
+          "character": "TOWER CAMERAMAN",
+          "parenthetical": "",
+          "text": "Copy that."
+        },
+        {
+          "character": "GLADYS",
+          "parenthetical": "",
+          "text": "Yeah. Go, Gary!"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "BR’s airing the police chief’s first official statement. Now."
+        },
+        {
+          "character": "SCHREIBER",
+          "parenthetical": "",
+          "text": "Die Täter fordern, dass 200"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "The terrorists demanded 200 prisoners be freed from"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Yeah, yeah. Can’t he tell us something we don’t know?"
+        },
+        {
+          "character": "JOURNALIST",
+          "parenthetical": "",
+          "text": "Warum waren die"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "Someone’s asking if the chief of police thinks it was a mistake that the Olympic village had no armed police."
+        },
+        {
+          "character": "JACQUES",
+          "parenthetical": "",
+          "text": "Of course, it was!"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "... I guess they didn’t want the world to be reminded of the last time armed Germans patrolled fences."
+        },
+        {
+          "character": "JACQUES",
+          "parenthetical": "",
+          "text": "So Germany’s shiny new image was more important than people’s safety?"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "People, this isn’t our business."
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "(CONT’D)",
+          "text": "In less than an hour we go live."
+        }
+      ],
+      "actionPreview": "The room is increasingly filling up with staff. Hermann sets up fans to counter the rising heat. Everyone listens intently to Jennings’ descriptions: He looks around at all the press, waves his hand. Seems like he enjoys the attention. JJ returns with the headshots of the hostages. Geoff signals him"
+    },
+    {
+      "number": 41,
+      "heading": "INT. ROONE’S OFFICE - DAY",
+      "characters": [
+        "ABC HEADQUARTERS",
+        "ROONE"
+      ],
+      "dialogues": [
+        {
+          "character": "ABC HEADQUARTERS",
+          "parenthetical": "",
+          "text": "Roone, this is not your field. Just send News the highlights."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "You kidding? I’m here in Munich."
+        }
+      ],
+      "actionPreview": "Roone, upset, phone on speaker. Hundred yards away from where it’s happening. We’re not giving it to News. We’re not giving it to anybody. Sports is keeping this. That’s it. He hangs up and rushes out of the room in anger."
+    },
+    {
+      "number": 42,
+      "heading": "INT. CONTROL ROOM - DAY",
+      "characters": [
+        "JENNINGS",
+        "ROONE",
+        "HANK",
+        "BADER",
+        "JACQUES",
+        "GEOFF",
+        "MARIANNE"
+      ],
+      "dialogues": [
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "Now it looks like there are negotiations happening. German politicians and the leader in the white suit are talking. But whatever they’re discussing, I can't imagine Prime Minister Golda"
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "Peter, I want your voice live when we go on air."
+        },
+        {
+          "character": "HANK",
+          "parenthetical": "",
+          "text": "I’ll give it a shot."
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "Jennings, any idea how many"
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "We’ve seen a lot of heads popping out of the windows. These men are clearly professionals. I suspect they’re deliberately trying to create confusion."
+        },
+        {
+          "character": "HANK",
+          "parenthetical": "",
+          "text": "(without looking up)"
+        },
+        {
+          "character": "JACQUES",
+          "parenthetical": "",
+          "text": "Hey watch it. My mom is from"
+        },
+        {
+          "character": "HANK",
+          "parenthetical": "",
+          "text": "Come on, you know I'm not talking about your mom."
+        },
+        {
+          "character": "JACQUES",
+          "parenthetical": "",
+          "text": "Ah, just the bad Arabs?"
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "What he’s saying is that whatever conception you have of Arabia or"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "Thank you for clarifying Peter. And it actually does bring up a question: What should we call them on air?"
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "In News we would refer to them as commando guerrillas."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "(shakes head)"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "What did the Germans call them? On the radio?"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "They used “terrorists”."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "Perfect. Let’s go with that."
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "That's a charged term, Roone."
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "(hesitant)"
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "Look, nobody knows yet what is happening here. So we have to be very careful about everything we say on air. We have a journalistic responsibility here. (finally says it)"
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "Standby, Peter."
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "He might be right."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "Look, I know this isn’t a responsibility that everybody wants. But does it make more sense to have a talking head from"
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "(CONT’D)",
+          "text": "Our job is to tell the stories of these individuals. Whose lives are at stake. A hundred yards away. And our job is really straightforward. We put the camera in the right place. And we we follow the story as it unfolds in real time. News can tell us what it all meant after it’s over. And I’m sure they’re gonna try."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "(CONT’D)",
+          "text": "This is our story. And we’re keeping it."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Alright everyone, you heard the boss. We have 45 minutes left. Do we have an opener yet?"
+        }
+      ],
+      "actionPreview": "Jennings continues to report over the phone: Meir and her parliament, the Knesset, will respond in any way to blackmail. Roone enters, nods hello to Bader, as Jennings continues: It’s ironic. I have been a Middle East expert in Beirut for 5 years, yet I have never gotten this close to the Arab–Israe"
+    },
+    {
+      "number": 43,
+      "heading": "INT. HALLWAY - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "WHAM - The large studio door flies open. Gary swoops in, gym bag in hand. The Assistant Editor already waits for him. Gary hands her the film magazines from the gym bag. She disappears with it into a darkroom."
+    },
+    {
+      "number": 44,
+      "heading": "INT. DARKROOM - DAY",
+      "characters": [
+        "ASSISTANT EDITOR"
+      ],
+      "dialogues": [
+        {
+          "character": "ASSISTANT EDITOR",
+          "parenthetical": "",
+          "text": "(into walkie)"
+        }
+      ],
+      "actionPreview": "Pitch black except for a weak green light. Film strips run through a developer bath. In the emulsion the images slowly form. Still shadowy. 46. 47. Footage ready for review in five."
+    },
+    {
+      "number": 45,
+      "heading": "INT. EDITING ROOM - DAY",
+      "characters": [
+        "GEOFF"
+      ],
+      "dialogues": [
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "That’s our opener. CUT TO: 11:50 AM"
+        }
+      ],
+      "actionPreview": "The Assistant Editor skillfully threads the newly developed film into the Steenbeck. Behind her stand Geoff and Jacques. Nobody says a word. Eagerly awaiting the first images. The Assistant Editor steps on the foot pedal. The film platter whirrs. The playback monitor projects the perforated blank fi"
+    },
+    {
+      "number": 46,
+      "heading": "INT. CONTROL ROOM - DAY",
+      "characters": [
+        "GEOFF",
+        "CAMERA OPERATOR",
+        "BADER",
+        "ROONE"
+      ],
+      "dialogues": [
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Cam 2 - good, but the balcony needs to be at the very center, Charlie."
+        },
+        {
+          "character": "CAMERA OPERATOR",
+          "parenthetical": "",
+          "text": "You got it, Kubric k."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "(into second walkie)"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "(takes off his jacket)"
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "Talk me through."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "We got Cam 1 covering Jim. Cam 2’s outside with live images from the apartment. Tower cam has the"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "(CONT’D)",
+          "text": "We now can hear Jennings live on the air. And..."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "(CONT’D)",
+          "text": "We have an overview of the hostages."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "(CONT’D)",
+          "text": "49."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "Good work."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Five minutes, everybody."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "(CONT’D)",
+          "text": "Tower cam, I want you to start with an establishing pan over the spectators. And then push in. I want a gut-punch close-up of that terrorist."
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "Uh, Geoff, can you turn it down a notch? It's not track and field."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Is the noon deadline confirmed?"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "(CONT’D)",
+          "text": "What do I tell the cameras?"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "What do you mean?"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "(matter of fact)"
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "We can’t control what happens..."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "(CONT’D)",
+          "text": "49."
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "No, wait, wait, wait. We’re the only station going live with this."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "Okay, okay. Hallway."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "(to the crew)"
+        }
+      ],
+      "actionPreview": "INSERT: An unscrewed phone earpiece. Next to a stripped audio cable. Hank aims the soldering iron at the earpiece. A thin thread of smoke rises. 47. (MORE) 48. The control room is now packed. The entire crew is back. Only minutes until they go live. CAM 2’s monitor now shows a live view of the apart"
+    },
+    {
+      "number": 47,
+      "heading": "INT. HALLWAY - DAY",
+      "characters": [
+        "BADER",
+        "ROONE",
+        "GEOFF"
+      ],
+      "dialogues": [
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "You don’t want anybody to see their kid being executed on live television."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "Of course not, Marv."
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "I don’t know about the Israelis, but David Berger’s folks are in"
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "Then somebody should tell them not to watch it. We have a bigger responsibility here."
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "What about the sponsors?"
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "The sponsors are not gonna be concerned. All they care about are viewers."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Guys. We have two minutes."
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "So, is that what we’re trying to achieve here? Ratings?"
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "No. We just...We’re following the story wherever it takes us."
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "Alright, then let me ask you this:"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "(CONT’D)",
+          "text": "If they shoot someone on live television, whose story is that? Is it ours, or is it theirs?"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "How about this: If things get tense we only leave the 16mm running."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "Alright."
+        }
+      ],
+      "actionPreview": "Bader and Roone step out into the hallway. Ohio. So I’m pretty sure they’ll watch. Geoff opens the door behind them: Roone senses he needs backup. Signals Geoff to come out. 50. 51. Gives Bader a thought. Black September; they know that the whole world is watching, right? That’s why they chose the O"
+    },
+    {
+      "number": 48,
+      "heading": "INT. CONTROL ROOM - DAY",
+      "characters": [
+        "GEOFF",
+        "LARRY"
+      ],
+      "dialogues": [
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "30 seconds to the open. Is Jim ready?"
+        },
+        {
+          "character": "LARRY",
+          "parenthetical": "",
+          "text": "Last looks."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "(into headset)"
+        }
+      ],
+      "actionPreview": "The three men burst in. Geoff resumes control. A Stage Assistant (LARRY) standing at the stage door shouts in: Geoff glances at the preview monitor: Jim McKay sits in his announcer’s seat, covered by a MAKE-UP PERSON adjusting his hair. 51. 52. Cam 1, tight on Jim. 2 on preview. Tower, stay wide on "
+    },
+    {
+      "number": 49,
+      "heading": "INT. EDITING ROOM - DAY",
+      "characters": [
+        "GLADYS"
+      ],
+      "dialogues": [
+        {
+          "character": "GLADYS",
+          "parenthetical": "",
+          "text": "Title 1 ready for insert."
+        }
+      ],
+      "actionPreview": "Gladys sits at the Title Generator. Headset on, eyes focused on the preview monitor."
+    },
+    {
+      "number": 50,
+      "heading": "INT. CONTROL ROOM - DAY",
+      "characters": [
+        "ASSISTANT DIRECTOR",
+        "ROONE",
+        "GEOFF",
+        "JENNINGS",
+        "MCKAY"
+      ],
+      "dialogues": [
+        {
+          "character": "ASSISTANT DIRECTOR",
+          "parenthetical": "",
+          "text": "Aaand in ten, nine, eight..."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "If someone’s shot, have the live cams pan to the onlookers for reaction shots."
+        },
+        {
+          "character": "ASSISTANT DIRECTOR",
+          "parenthetical": "",
+          "text": "... three, two, one. (to Geoff)"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "(into headset)"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "(CONT’D)",
+          "text": "(into headset)"
+        },
+        {
+          "character": "ASSISTANT DIRECTOR",
+          "parenthetical": "",
+          "text": "In 3... 2... 1 52."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Cam 2 on preview. Balcony pan. (checks preview)"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Dissolve to 3."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "2, close up door. Good. Hold it, hold it.... And take 2."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Studio on deck. Take 1."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Ready 2, Take 2. 53."
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "Jim, I’m directly across from the"
+        },
+        {
+          "character": "MCKAY",
+          "parenthetical": "",
+          "text": "Peter, do we already know who is responsible for the attack?"
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "There is a great deal of speculation one could indulge in, which would be risky, but if I were to guess I would most likely narrow in on a group called “Black"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Back to 1."
+        },
+        {
+          "character": "MCKAY",
+          "parenthetical": "",
+          "text": "Thank you, Peter. Something that is not speculation is that one of the hostages is David Berger, 26 years old, a former United States citizen, we are told by the"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Roll tape 5."
+        }
+      ],
+      "actionPreview": "A caption appears on one of the screens on the monitor wall. Geoff shifts his gaze to the “network return monitors”. On them we catch the ending of a commercial: camera flies towards New York’s Twin Towers as the Texaco logo appears. As the countdown continues, Roone leans forward to Geoff, whispers"
+    },
+    {
+      "number": 51,
+      "heading": "INT. VTR ROOM - DAY",
+      "characters": [
+        "MCKAY",
+        "VTR TECH",
+        "GEOFF"
+      ],
+      "dialogues": [
+        {
+          "character": "MCKAY",
+          "parenthetical": "",
+          "text": "(over speakers)"
+        },
+        {
+          "character": "VTR TECH",
+          "parenthetical": "",
+          "text": "(quietly into headset)"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "(over headset)"
+        }
+      ],
+      "actionPreview": "A VTR TECHNICIAN stands at one of one of the gigantic VTR Machines. Tape starts rolling. 54. (MORE) 55. After receiving a law degree from Columbia University, Berger failed to qualify for the US team. To fulfill his dream of the Olympics, he emigrated to Israel. Two days ago, he was interviewed by P"
+    },
+    {
+      "number": 52,
+      "heading": "INT. CONTROL ROOM - DAY",
+      "characters": [
+        "DAVID BERGER",
+        "GEOFF",
+        "BADER",
+        "MCKAY"
+      ],
+      "dialogues": [
+        {
+          "character": "DAVID BERGER",
+          "parenthetical": "",
+          "text": "That’s exactly what the Olympics are all about, you know. Like our fencing coach Andrei says, we’re here and can talk to Germans, chat with athletes from Lebanon or"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Back to 1 clean."
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "I’ll get back to Hans Klein, wait for the latest."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Bird caption on my cue... And now."
+        },
+        {
+          "character": "MCKAY",
+          "parenthetical": "",
+          "text": "Ladies and Gentlemen, these dreams have been shattered by this terrible, terrible attack."
+        },
+        {
+          "character": "MCKAY",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "David Berger now appears on the main monitor. The segment from the Dachau report: Egypt. This is what we were dreaming about. It is not just about sports, you know? (smiles into camera) Or as my mother always says: You may not be the world’s best weightlifter, but you’re certainly the smartest! Bade"
+    },
+    {
+      "number": 53,
+      "heading": "INT. EDITING ROOM - DAY",
+      "characters": [
+        "HANK",
+        "MARIANNE",
+        "MCKAY"
+      ],
+      "dialogues": [
+        {
+          "character": "HANK",
+          "parenthetical": "",
+          "text": "Can you believe this lady’s the negotiator? She doesn’t strike me as the hard boiled type."
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "(sees something else)"
+        },
+        {
+          "character": "HANK",
+          "parenthetical": "",
+          "text": "Just look. She’s asking him for cigarettes! Can you believe that?"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "No, no, she’s earning his trust."
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "(CONT’D)",
+          "text": "I just wish I could hear what she’s saying."
+        },
+        {
+          "character": "MCKAY",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "Marianne listens to the radio in the quiet room. Taking notes. Behind her Hank scans the shelves, looking through audio tracks. Carter enters with newly developed film rolls. He threads the film into the Steenbeck. Hits play. Marianne quiets the news as both she and Hank turn to watch the Steenbeck’"
+    },
+    {
+      "number": 54,
+      "heading": "INT. CONTROL ROOM - DAY",
+      "characters": [
+        "MCKAY",
+        "GEOFF",
+        "ROONE",
+        "COMMUNICATOR",
+        "TECHNICIAN"
+      ],
+      "dialogues": [
+        {
+          "character": "MCKAY",
+          "parenthetical": "",
+          "text": "The Olympics at this moment are still continuing."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "(nods, into headset)"
+        },
+        {
+          "character": "MCKAY",
+          "parenthetical": "",
+          "text": "There is a very strange atmosphere, we’re only 500 yards away from this building here. And within 200 yards from that building there is a man- made pond, very lovely, with little ducklings, where the athletes lay out and take sun."
+        },
+        {
+          "character": "MCKAY",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "(gets up, to Geoff) I’ll make sure we can stay on the bird."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "What is he talking about? Don't we still have 3pm?"
+        },
+        {
+          "character": "COMMUNICATOR",
+          "parenthetical": "",
+          "text": "(shakes head)"
+        },
+        {
+          "character": "TECHNICIAN",
+          "parenthetical": "(O.S.)",
+          "text": "Ufffffff!"
+        }
+      ],
+      "actionPreview": "Geoff stares at the Main Monitor: Take 3. Roll Tape 4. The screen now shows aerial shots of the Olympic village. Images of athletes sunbathing. And that’s what they’re doing right now. They’re swimming, talking technique with other athletes and yet this grim terrible thing is taking place right ther"
+    },
+    {
+      "number": 55,
+      "heading": "INT. TRANSMISSION ROOM - DAY",
+      "characters": [
+        "HANK",
+        "MARIANNE",
+        "POLICEWOMAN",
+        "CARTER"
+      ],
+      "dialogues": [
+        {
+          "character": "HANK",
+          "parenthetical": "",
+          "text": "Damn it! (deep breath)"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "Um, okay."
+        },
+        {
+          "character": "POLICEWOMAN",
+          "parenthetical": "(CB)",
+          "text": "Der Anführer verlangt Verpflegung."
+        },
+        {
+          "character": "POLICEWOMAN",
+          "parenthetical": "(CB)",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CARTER",
+          "parenthetical": "",
+          "text": "Great. And you sent away the one person who could understand this."
+        }
+      ],
+      "actionPreview": "INSERT: The housing of a transistor radio is removed. Hank twiddles with the condenser, while Carter connects the antenna to an improvised extension wire. Marianne stands nearby, surveys the huge transmitting console flowing with cables, sending out images across the globe. Hank can’t get more than "
+    },
+    {
+      "number": 56,
+      "heading": "INT. CONTROL ROOM - DAY",
+      "characters": [
+        "JENNINGS",
+        "GEOFF"
+      ],
+      "dialogues": [
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "Something’s happening here in"
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "(into headset)"
+        }
+      ],
+      "actionPreview": "Jennings excitedly reports over the phone: 58. 59. Connollystrasse. Geoff and the crew take their eyes off the boxing match back to the monitor wall: the live cameras show German officials walking up to the terrorist Leader. Followed by two Men in chef’s hats carrying baskets of food. It seems like "
+    },
+    {
+      "number": 57,
+      "heading": "INT. ROONE'S OFFICE",
+      "characters": [
+        "ROONE",
+        "JENNINGS"
+      ],
+      "dialogues": [
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "Change it! That’s my fucking suggestion. They can’t have the slot. You guys think of something, I have to keep going."
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "Looks like they’re proving the food isn’t poisoned."
+        }
+      ],
+      "actionPreview": "Roone has the phone to his ear. Tense. He hangs up and looks at the TV: The German officials taste the food as the Leader watches. Now the cooks seem eager to carry in the food... but the leader takes it from them, goes in alone...Whatever the Germans tried to achieve here, it failed. Roone shakes h"
+    },
+    {
+      "number": 58,
+      "heading": "INT. CONTROL ROOM",
+      "characters": [
+        "ROONE",
+        "GEOFF"
+      ],
+      "dialogues": [
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "(over amplifier)"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Looks like Tuvia Sokolsky. One of the Israelis who escaped."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "Why don’t we have him?"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "(turns to crew)"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "(CONT’D)",
+          "text": "(shouts after him)"
+        }
+      ],
+      "actionPreview": "Phone in front of Geoff rings. Check Channel 11. Who is he? 59. 60. Geoff turns to the table monitor behind him. The BACKROW TECHNICIAN switches channels: Israeli station Channel 11’s Anchorman interviews a tired-looking heavyset man. Geoff checks the profiles up on the wall. Damn. Someone run over "
+    },
+    {
+      "number": 59,
+      "heading": "INT. HALLWAY - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "JJ is at the catering table, peanut buttering slices of toast at impressive speed."
+    },
+    {
+      "number": 60,
+      "heading": "INT. TRANSMISSION ROOM - DAY",
+      "characters": [
+        "POLICEWOMAN",
+        "HANK",
+        "MARIANNE"
+      ],
+      "dialogues": [
+        {
+          "character": "POLICEWOMAN",
+          "parenthetical": "",
+          "text": "Der Anführer hat das Ultimatum auf 17 Uhr verlängert."
+        },
+        {
+          "character": "HANK",
+          "parenthetical": "",
+          "text": "What’s all that mean?"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "New ultimatum is 5pm."
+        }
+      ],
+      "actionPreview": "The CB by Marianne crackles: Steaming coffee cups are placed in front of her and Carter. By Hank, who looks at Marianne apologetically."
+    },
+    {
+      "number": 61,
+      "heading": "INT. CONTROL ROOM - DAY",
+      "characters": [
+        "MCKAY",
+        "GEOFF"
+      ],
+      "dialogues": [
+        {
+          "character": "MCKAY",
+          "parenthetical": "",
+          "text": "We’re moving in now on the windows, behind which nine terrified living human beings are being held prisoner. And the demands are--"
+        },
+        {
+          "character": "MCKAY",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MCKAY",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "(into headset; chewing)"
+        }
+      ],
+      "actionPreview": "The crew watches the main monitor: Zoom in on the balcony. 60. 61. The window opens and someone peeks out. Peter, there is someone right now. (beat) Certainly has to be one of the terrorists. One of them is believed to be a woman. JJ enters the room. Handing out sandwiches to the crew. And this has "
+    },
+    {
+      "number": 62,
+      "heading": "INT. VTR ROOM - DAY",
+      "characters": [
+        "VTR TECHNICIAN"
+      ],
+      "dialogues": [
+        {
+          "character": "VTR TECHNICIAN",
+          "parenthetical": "",
+          "text": "(into headset)"
+        }
+      ],
+      "actionPreview": "The VTR Technician stops the tape. Grabs two checkers. Sticks one in each roll. Uses them as handles to pull the tape through the rollers in a steady, slow movement. Take it."
+    },
+    {
+      "number": 63,
+      "heading": "INT. CONTROL ROOM - DAY",
+      "characters": [
+        "MCKAY",
+        "JENNINGS",
+        "COMMUNICATOR",
+        "GEOFF",
+        "ASSISTANT DIRECTOR",
+        "ZDF COMMENTATOR",
+        "PROTESTER",
+        "MOHAMED TARABULSI",
+        "ZDF REPORTER",
+        "GARY",
+        "LARRY"
+      ],
+      "dialogues": [
+        {
+          "character": "MCKAY",
+          "parenthetical": "",
+          "text": "We see the moment again here in our slow motion."
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "It’s been such a terribly tantalizing symbol of this situation. What’s going on inside of that head and that mind.. ."
+        },
+        {
+          "character": "COMMUNICATOR",
+          "parenthetical": "",
+          "text": "(phone receiver in hand)"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "(into mic)"
+        },
+        {
+          "character": "MCKAY",
+          "parenthetical": "",
+          "text": "We’re going to take a very short station break at this point."
+        },
+        {
+          "character": "ASSISTANT DIRECTOR",
+          "parenthetical": "",
+          "text": "And we’re off. Back in three minutes."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Let’s check the competition."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "(CONT’D)",
+          "text": "Seems like we’re still the only ones providing live images."
+        },
+        {
+          "character": "ZDF COMMENTATOR",
+          "parenthetical": "(O.S.)",
+          "text": "Unterdessen wächst der Druck auf das Olympische Komittee, die Spiele abzubrechen."
+        },
+        {
+          "character": "PROTESTER",
+          "parenthetical": "",
+          "text": "(broken English)"
+        },
+        {
+          "character": "MOHAMED TARABULSI",
+          "parenthetical": "",
+          "text": "My heart is very heavy today... As an athlete and as an Arab, I would like to express my solidarity with my Israeli colleagues. I pray that everything ends well."
+        },
+        {
+          "character": "ZDF REPORTER",
+          "parenthetical": "",
+          "text": "May I ask you if you heard anything this morning in the village?"
+        },
+        {
+          "character": "GARY",
+          "parenthetical": "",
+          "text": "Um, no."
+        },
+        {
+          "character": "ZDF REPORTER",
+          "parenthetical": "",
+          "text": "You're here with the US delegation?"
+        },
+        {
+          "character": "ZDF REPORTER",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "GARY",
+          "parenthetical": "",
+          "text": "Weightlifting."
+        },
+        {
+          "character": "LARRY",
+          "parenthetical": "",
+          "text": "(serious voice)"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Somebody bring him some water."
+        }
+      ],
+      "actionPreview": "Main monitor: The shot plays forward in slow motion. Marked with a big flashing REPLAY. Master Control wants a block of five. Now. 61. 62. Jim, commercial break in 10. And hopefully when we get back we have at least some answers for you. The commercial starts: A young Michael Douglas rushes through "
+    },
+    {
+      "number": 64,
+      "heading": "INT. CONTROL ROOM - DAY",
+      "characters": [
+        "GEOFF",
+        "ROONE",
+        "ASSISTANT DIRECTOR",
+        "FULL SCREEN LINE MONITOR",
+        "MCKAY",
+        "COMMUNICATOR",
+        "HANK",
+        "GLADYS"
+      ],
+      "dialogues": [
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "(back to business) 30 seconds."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "(into mic)"
+        },
+        {
+          "character": "ASSISTANT DIRECTOR",
+          "parenthetical": "",
+          "text": "Back to us."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "On my cue."
+        },
+        {
+          "character": "FULL SCREEN LINE MONITOR",
+          "parenthetical": "",
+          "text": "McKAY"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "(into headset) 1, open up on all three."
+        },
+        {
+          "character": "MCKAY",
+          "parenthetical": "",
+          "text": "Tuvia Sokolsky. He is on the extreme left here. The gentleman in the middle is Nasim Javidi, translator for the Israeli team."
+        },
+        {
+          "character": "COMMUNICATOR",
+          "parenthetical": "",
+          "text": "Roone... They want to talk to you."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "(into phone)"
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "(CONT’D)",
+          "text": "(to Geoff)"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "What!? We can't stop this now."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "In a few seconds, all viewers in the US will see a black screen. Jim has to say something. Now."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "(CONT’D)",
+          "text": "(into intercom)"
+        },
+        {
+          "character": "FULL SCREEN LINE MONITOR",
+          "parenthetical": "",
+          "text": "Sokolsky talks in Hebrew, when suddenly McKay interrupts him, as he received the information over his earpiece."
+        },
+        {
+          "character": "MCKAY",
+          "parenthetical": "",
+          "text": "I’m sorry, we’d like to continue the interview on tape. And we’re having it later. We are losing the satellite right now."
+        },
+        {
+          "character": "MCKAY",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MCKAY",
+          "parenthetical": "(CONT’D)",
+          "text": "66."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "What are we doing here?"
+        },
+        {
+          "character": "HANK",
+          "parenthetical": "",
+          "text": "We can't just choke that poor man off."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "CBS insisted on their slot. They’ll only give it to us if we share our feed. I’m not gonna do that."
+        },
+        {
+          "character": "GLADYS",
+          "parenthetical": "",
+          "text": "We can give it to CBS, but show our logo in the stream."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "What do you mean?"
+        },
+        {
+          "character": "GLADYS",
+          "parenthetical": "",
+          "text": "Put “ABC” up there. And leave it in. Constantly. In the top corner."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "What signal are we talking?"
+        },
+        {
+          "character": "GLADYS",
+          "parenthetical": "",
+          "text": "Output only. Put a permanent superimpose on it."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "Do it."
+        }
+      ],
+      "actionPreview": "Roone comes in for this. He sits next to Geoff. Jim, this is as close as we get to the hostages. Make something out of it. Slight nod from McKay on the monitor. We’re coming to you live from ABC hHeadquaters in Munich, West Germany. I’m sitting right now with a man who has just come in to the studio"
+    },
+    {
+      "number": 65,
+      "heading": "INT. EDITING ROOM - DAY",
+      "characters": [
+        "MCKAY"
+      ],
+      "dialogues": [
+        {
+          "character": "MCKAY",
+          "parenthetical": "(CONT’D)",
+          "text": "66."
+        }
+      ],
+      "actionPreview": "(FORMERLY 55) Gladys speeds to the Title Generator. Carefully lays a tiny “ABC Sports” Logo on the top corner of the board. Swiftly slides it underneath the table camera. Frames it. 67."
+    },
+    {
+      "number": 66,
+      "heading": "INT. CONTROL ROOM - DAY",
+      "characters": [
+        "GLADYS",
+        "ROONE",
+        "COMMUNICATOR",
+        "GEOFF",
+        "FULL SCREEN LINE MONITOR",
+        "TRANSLATOR",
+        "MCKAY"
+      ],
+      "dialogues": [
+        {
+          "character": "GLADYS",
+          "parenthetical": "",
+          "text": "Logo ready on 4."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "Then we are in agreement."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "(CONT’D)",
+          "text": "Back on the bird within the minute."
+        },
+        {
+          "character": "COMMUNICATOR",
+          "parenthetical": "",
+          "text": "10 seconds ‘til they take us."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "(to Jacques)"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "(CONT’D)",
+          "text": "(to Roone)"
+        },
+        {
+          "character": "FULL SCREEN LINE MONITOR",
+          "parenthetical": "",
+          "text": "Close up Sokolsky. He speaks Hebrew. Struggles with his emotions."
+        },
+        {
+          "character": "TRANSLATOR",
+          "parenthetical": "",
+          "text": "He hasn’t got any real practical suggestions. He feels that one should not give in. And he leaves the whole affair in the hands of the professionals. On the other hand he yearns for the moment his friends and all his colleagues, these athletes whom he had known for so many years, family men, will be outside safely."
+        },
+        {
+          "character": "MCKAY",
+          "parenthetical": "",
+          "text": "I can see the emotion, that he’s feeling. It’s very high in this room. I can’t tell you how much I appreciate Mr. Sokolsky taking the time to tell the story to us. (beat)"
+        },
+        {
+          "character": "COMMUNICATOR",
+          "parenthetical": "",
+          "text": "They’re suspending the Games!"
+        }
+      ],
+      "actionPreview": "Gladys reports over the walkie: Geoff looks intently at Roone, who is on the phone. He hangs up. Looks at Geoff without expression. Start with the interview. As if nothing happened. On the main monitor an ABC jingle plays. Logo fade-in. And the interview with Sokolsky begins again. Fly logo in. Jacq"
+    },
+    {
+      "number": 67,
+      "heading": "INT. TRANSMISSION ROOM - DAY",
+      "characters": [
+        "POLICE CHANNEL",
+        "MARIANNE"
+      ],
+      "dialogues": [
+        {
+          "character": "POLICE CHANNEL",
+          "parenthetical": "",
+          "text": "(Voice #2)"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "(into walkie)"
+        }
+      ],
+      "actionPreview": "The CB by Marianne crackles: Die Massen ausm Stadion laufen alle rüber in Richtung Connollystrasse. ( Voice #3 ) Tor 30 bestätigt. Die Situation wird unkontrollierbar. (Voice #2) An alle Einheiten. An alle Einheiten. Grünes Licht für Sonnenschein. She reaches for the walkie. Alarmed. The police just"
+    },
+    {
+      "number": 68,
+      "heading": "INT. CONTROL ROOM - DAY",
+      "characters": [
+        "MCKAY"
+      ],
+      "dialogues": [
+        {
+          "character": "MCKAY",
+          "parenthetical": "",
+          "text": "The important thing right now is that the games of the 20th Olympiad have now been officially suspended and as you can see from this footage that has just reached us, the situation around the apartment is becoming increasingly confusing."
+        }
+      ],
+      "actionPreview": "But Hank doesn’t hear her on his walkie. He stares at the monitor, as does everyone in the room: Footage of crowds gathering on a hill overlooking the apartment. Police officers shout through megaphones, trying to keep the situation under control. 68. 69."
+    },
+    {
+      "number": 69,
+      "heading": "INT. TRANSMISSION ROOM - DAY",
+      "characters": [
+        "POLICE CHANNEL",
+        "MARIANNE"
+      ],
+      "dialogues": [
+        {
+          "character": "POLICE CHANNEL",
+          "parenthetical": "",
+          "text": "(Voice #1)"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "Scheiße!"
+        }
+      ],
+      "actionPreview": "Marianne continues to listen to: Olympischer Ordnungsdienst in die umliegenden Gebäude. Die Presse muss weg. Marianne jumps up and runs out of the room--"
+    },
+    {
+      "number": 70,
+      "heading": "INT. HALLWAY - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "-- bumps into ABC staff in the hall. No time to apologize. She rushes to the control room door, wrenches it open."
+    },
+    {
+      "number": 71,
+      "heading": "INT. CONTROL ROOM - DAY",
+      "characters": [
+        "MARIANNE",
+        "GEOFF",
+        "JENNINGS",
+        "POLICE MARSHALL",
+        "JACQUES",
+        "MCKAY"
+      ],
+      "dialogues": [
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "Police are clearing all press out of the buildings."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "You need to hide, Peter."
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "What, why?"
+        },
+        {
+          "character": "POLICE MARSHALL",
+          "parenthetical": "",
+          "text": "German Police. Open up! Aufmachen."
+        },
+        {
+          "character": "JACQUES",
+          "parenthetical": "",
+          "text": "Guys, check the tower cam."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Get back to the police scanner. Do not take your ears off it."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "(CONT’D)",
+          "text": "What happened?"
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "We’re ok. We managed to hide."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Great, but it looks like now the police are making a move. Get back on the balcony. (into mic)"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "(into headset)"
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "They’re walking cautiously on the roof. Hopefully not being heard in the rooms below."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "They don’t seem prepared at all."
+        },
+        {
+          "character": "MCKAY",
+          "parenthetical": "",
+          "text": "This is happening now. If you can possibly believe it. At the Games of the 20th Olympics."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "(into headset)"
+        }
+      ],
+      "actionPreview": "Everybody looks at her. Then Geoff grabs the phone: At that moment over the speaker we hear violent knocking and muffled shouts: Click. Beep.Beep.Beep. The call’s disconnected. 69. 70. The whole room looks at the phone. Absolute silence. Just the fan’s whirring. All eyes flash to the Tower Camera’s "
+    },
+    {
+      "number": 72,
+      "heading": "INT. TRANSMISSION ROOM - DAY",
+      "characters": [
+        "POLICE CHANNEL"
+      ],
+      "dialogues": [
+        {
+          "character": "POLICE CHANNEL",
+          "parenthetical": "",
+          "text": "(Voice #3)"
+        }
+      ],
+      "actionPreview": "Marianne arrives out of breath. Sits by the CB radio, listening to the German police communicate. Gitter ist entfernt."
+    },
+    {
+      "number": 73,
+      "heading": "INT. CONTROL ROOM - DAY",
+      "characters": [
+        "JACQUES",
+        "GEOFF",
+        "HANK",
+        "COMMUNICATOR"
+      ],
+      "dialogues": [
+        {
+          "character": "JACQUES",
+          "parenthetical": "",
+          "text": "What a shame that most people see this in black and white."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Not in the US, buddy. By now, every bus driver has his color TV."
+        },
+        {
+          "character": "HANK",
+          "parenthetical": "",
+          "text": "And the athletes here. The Germans placed a color TV in every apartment."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "So, are they’re seeing what we’re seeing?"
+        },
+        {
+          "character": "HANK",
+          "parenthetical": "",
+          "text": "What are you talking about? 71."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Are they watching us in"
+        },
+        {
+          "character": "COMMUNICATOR",
+          "parenthetical": "",
+          "text": "They don’t receive ABC here."
+        },
+        {
+          "character": "HANK",
+          "parenthetical": "",
+          "text": "Oh, they do. There’s an inner circuit, so everyone can watch their home station."
+        }
+      ],
+      "actionPreview": "The disguised police give hand signals to each other, take positions. Their tracksuits glow on screen in bright colors. Jacques looks at the B/W monitor on network return. This gives Geoff a thought. 72. this apartment? He points at the monitor. Silence. The control room crew exchange looks."
+    },
+    {
+      "number": 74,
+      "heading": "INT. TRANSMISSION ROOM - DAY",
+      "characters": [
+        "POLICE CHANNEL",
+        "CARTER"
+      ],
+      "dialogues": [
+        {
+          "character": "POLICE CHANNEL",
+          "parenthetical": "",
+          "text": "(Voice #4)"
+        },
+        {
+          "character": "CARTER",
+          "parenthetical": "",
+          "text": "Did... did they just say “ABC”?"
+        }
+      ],
+      "actionPreview": "More waves of German voices rustle over the CB radio. Hier Reich. Habe freie Sicht auf das Fenster. Hier flackert Licht. Könnte von einem Fernsehgerät kommen. Wolf, habt ihr den Strom nicht ausgeschaltet? (Voice #2) Negativ. (beat) Eine Einheit ist unterwegs zur ABC. Marianne freezes. Carter looks a"
+    },
+    {
+      "number": 75,
+      "heading": "INT. HALLWAY - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Four uniformed German POLICE OFFICERS storm down the hall -- run to the door with the glowing “On Air” light."
+    },
+    {
+      "number": 76,
+      "heading": "INT. CONTROL ROOM - DAY",
+      "characters": [
+        "POLICE OFFICER",
+        "GEOFF",
+        "ROONE",
+        "JENNINGS",
+        "JACQUES"
+      ],
+      "dialogues": [
+        {
+          "character": "POLICE OFFICER",
+          "parenthetical": "",
+          "text": "Die Kameras aus. Aus. 72."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "What’s the Problem?!"
+        },
+        {
+          "character": "POLICE OFFICER",
+          "parenthetical": "",
+          "text": "Die Kameras aus!"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Calm down! What’s going on here?"
+        },
+        {
+          "character": "POLICE OFFICER",
+          "parenthetical": "",
+          "text": "(tone building)"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Have you lost your fucking mind?!"
+        },
+        {
+          "character": "POLICE OFFICER",
+          "parenthetical": "",
+          "text": "AUSMACHEN. AUSMACHEN! AUSMACHEN!"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "...Alright, for God’s sake. (into headset)"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "(CONT’D)",
+          "text": "Happy?"
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "Get the fuck out of my studio."
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "The policemen are climbing down from the roof now. They seem to be calling off their attack. Looks like this was yet another failed attempt by the Germans to get the situation under control."
+        },
+        {
+          "character": "JACQUES",
+          "parenthetical": "",
+          "text": "Was that... our fault?"
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "(walking out)"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Um, ok everybody, commercial break."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "(CONT’D)",
+          "text": "Marv, can we talk?"
+        }
+      ],
+      "actionPreview": "Door slams open as the Police charge in. Geoff and the crew look at the armed men, shocked. Geoff gets up. A Policeman points to the tower monitor -- 73. Ausmachen. Jetzt! The Officer points his gun at a Technician by the monitors. Geoff immediately steps in front of the Technician. Defending his te"
+    },
+    {
+      "number": 77,
+      "heading": "INT. HALLWAY - DAY",
+      "characters": [
+        "BADER",
+        "GEOFF",
+        "MARIANNE"
+      ],
+      "dialogues": [
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "They should have cut the electricity in the apartment. It’s not up to us to double-check on them."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "That doesn’t mean it’s okay if we made it worse. We don’t interfere with what’s happening. Even Roone says that."
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "Listen, we don’t know why they called it off. The Germans seem generally pretty overwhelmed."
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "(O.S.)",
+          "text": "They are."
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "(CONT’D)",
+          "text": "I heard it all on the police radio."
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "(CONT’D)",
+          "text": "75."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Why not use the army itself?"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "They’re not allowed to operate here. German constitution."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "That’s crazy."
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "Rumor is Israel even offered to send a special unit to help out."
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "They’re just making one mistake after another. Trying to act like they’ve got it all under control."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "They can turn off our cameras, but they can’t take us off the air."
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "(nods, heads for exit)"
+        }
+      ],
+      "actionPreview": "Geoff and Bader talk quietly in the hall. They turn to see Marianne walking up to them, angry. It’s local cops doing things they’ve never done before. (MORE) 74. The German Army gave them sniper rifles and had to instruct them on how to use them. But Germany refused it. Any doubts from Geoff and Bad"
+    },
+    {
+      "number": 78,
+      "heading": "INT. CONTROL ROOM - DAY",
+      "characters": [
+        "JENNINGS",
+        "MARIANNE",
+        "GEOFF",
+        "TOWER CAM"
+      ],
+      "dialogues": [
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "(over phone)"
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "(CONT’D)",
+          "text": "75."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "(into mic)"
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "Thanks, Jim. Yes. Moments ago a window opened. And for the first time now we’re seeing some of the hostages."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "No, we’re not. We might as well be listening to fucking radio."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "(CONT’D)",
+          "text": "Cam 2, Tower, either of you have an angle on this?"
+        },
+        {
+          "character": "TOWER CAM",
+          "parenthetical": "",
+          "text": "Clear as crystal."
+        }
+      ],
+      "actionPreview": "McKay is on the main monitor, while the live monitors show nothing but black. Geoff listens to Jennings descriptions. The Germans are back to negotiating. This time Interior Minister Genscher is joining them. Marianne and Carter enter with the CB. Geoff motions for them to set it up right next to hi"
+    },
+    {
+      "number": 79,
+      "heading": "INT. ROONE’S OFFICE - DAY",
+      "characters": [
+        "JENNINGS",
+        "ROONE"
+      ],
+      "dialogues": [
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "We’ve seen two hostages so far."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "This is ridiculous."
+        }
+      ],
+      "actionPreview": "Roone’s TV shows McKay in the studio as we hear Jennings: They were led to the window one after the other. One guerrilla with an AK-47 behind them. It’s a terrible sight.... Roone grabs the phone. Short number."
+    },
+    {
+      "number": 80,
+      "heading": "INT. CONTROL ROOM - DAY",
+      "characters": [
+        "GEOFF",
+        "MARIANNE"
+      ],
+      "dialogues": [
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "You got it, Roone."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "(CONT’D)",
+          "text": "All cams back on!"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "(CONT’D)",
+          "text": "Anyone know who that is?"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "...the fencing coach."
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "(CONT’D)",
+          "text": "Andrei Spitzer. Age 27."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "(turns to Gladys)"
+        }
+      ],
+      "actionPreview": "Phone rings. Geoff snaps it up. Hears what he wanted to hear. 76. 77. He hangs up. Hastily speaks into the headset. Jacques eyes him skeptically, but Geoff doesn't notice. The whole crew looks at the monitor, excited to be back in the game. Seconds later it blinks on - and shows a horrific image: A "
+    },
+    {
+      "number": 81,
+      "heading": "INT. EDITING ROOM - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Gladys hurries to the title generator. In record speed she pins letters to the board."
+    },
+    {
+      "number": 82,
+      "heading": "INT. CONTROL ROOM - DAY",
+      "characters": [
+        "JENNINGS",
+        "GLADYS",
+        "GEOFF",
+        "HANK",
+        "POLICEWOMAN",
+        "MARIANNE",
+        "POLICE RADIO"
+      ],
+      "dialogues": [
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "It looks like Spitzer wants to tell"
+        },
+        {
+          "character": "GLADYS",
+          "parenthetical": "",
+          "text": "Caption ready!"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Air it."
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "Now he’s dragged away from the window and the curtains are closed again. Genscher is talking to the leader. He seems furious."
+        },
+        {
+          "character": "HANK",
+          "parenthetical": "",
+          "text": "Police CB ready!"
+        },
+        {
+          "character": "POLICEWOMAN",
+          "parenthetical": "",
+          "text": "Minister Genscher hat sich als Austauschgeisel angeboten. Das Gesuch wurde abgelehnt. Er bestand jedoch darauf, persönlich nach dem"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "Genscher offered to swap himself for the Israeli hostages, but the terrorists refused the offer... Now"
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "The leader’s taking Genscher and another official into the apartment now."
+        },
+        {
+          "character": "POLICE RADIO",
+          "parenthetical": "",
+          "text": "(Voice #1)"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "They just mentioned they’re flying them out of the country!"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "(CONT’D)",
+          "text": "EVERYBODY SHUT THE FUCK UP!"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "(CONT’D)",
+          "text": "They’re giving orders... The policewoman has to delay, tell the leader it takes time to prepare the plane... they mentioned two helicopters... to take terrorists and hostages to an airport..."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Airport? Which airport?"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "They didn’t say."
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "They’re coming back out. Genscher seems shocked. God only knows what horrors he saw in there."
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "Cairo!... They named Cairo as their destination."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "(adrenaline back)"
+        }
+      ],
+      "actionPreview": "Jennings continues to describe the events at the scene. 77. 78. Genscher something. Geoff hears Gladys come in over the walkie: The finished caption pops up: ANDREI SPITZER, FENCING COACH On the monitor we see Andrei Spitzer standing at the window. Seeming to talk to Interior Minister Genscher. Then"
+    },
+    {
+      "number": 83,
+      "heading": "INT. HALLWAY - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "An Assistant rushes through the aisles. Maps under her arm. We follow her into the buzzing control room --"
+    },
+    {
+      "number": 84,
+      "heading": "INT. CONTROL ROOM - DAY",
+      "characters": [
+        "CARTER",
+        "GEOFF",
+        "MARIANNE",
+        "HANK"
+      ],
+      "dialogues": [
+        {
+          "character": "CARTER",
+          "parenthetical": "",
+          "text": "Thanks!"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Riem airport is the obvious choice, but I doubt it... too much plane traffic."
+        },
+        {
+          "character": "CARTER",
+          "parenthetical": "",
+          "text": "Augsburg?"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "Too far away..."
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "(CONT’D)",
+          "text": "... they mentioned a flight time of 5-7 minutes for the helicopters."
+        },
+        {
+          "character": "HANK",
+          "parenthetical": "",
+          "text": "(turns to Carter)"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "Fürstenfeldbruck!"
+        },
+        {
+          "character": "CARTER",
+          "parenthetical": "",
+          "text": "Exactly!"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "That’s a military airport."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "It’d make sense. No people nearby. 80."
+        },
+        {
+          "character": "CARTER",
+          "parenthetical": "",
+          "text": "Guys! (looking up) ...Do you hear that?"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "The choppers!"
+        }
+      ],
+      "actionPreview": "Carter runs towards her and takes the maps. He prepares them on the console in the middle of the room. Marianne looks at it, the cable of her CB headphones is taut. It’s a map of Munich and the surrounding area. Marianne presses the headphones tighter to her ear, she intercepts a radio message. What"
+    },
+    {
+      "number": 85,
+      "heading": "INT. ROONE’S OFFICE - DAWN",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "... becomes a booming noise, coming from all sides. Roone looks at the ceiling lamp. It’s slightly shaking."
+    },
+    {
+      "number": 86,
+      "heading": "INT. CONTROL ROOM - NIGHT",
+      "characters": [
+        "ROONE",
+        "GEOFF",
+        "TOWER OPERATOR",
+        "HOWARD",
+        "MARIANNE",
+        "JENNINGS",
+        "HANK",
+        "TOWER CAM"
+      ],
+      "dialogues": [
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "(over the noise)"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "(into headset)"
+        },
+        {
+          "character": "TOWER OPERATOR",
+          "parenthetical": "",
+          "text": "Negative."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "(into walkie)"
+        },
+        {
+          "character": "HOWARD",
+          "parenthetical": "",
+          "text": "Gentlemen, can you read me?"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "(picks up walkie)"
+        },
+        {
+          "character": "HOWARD",
+          "parenthetical": "",
+          "text": "I see them! They just came around that tall administration building... slowly descending-"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Where exactly are you? Are you inside the village?"
+        },
+        {
+          "character": "HOWARD",
+          "parenthetical": "",
+          "text": "Yes. They let me in after the boxing match. Ran into Gary here, I’m taking over his channel. CAM 2 OPERATOR"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "They’re talking about a bus now...a bus escorting them to the helicopters."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "(into walkie)"
+        },
+        {
+          "character": "HOWARD",
+          "parenthetical": "",
+          "text": "No, it’s packed. There are people with cameras everywhere. It’s like"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "They’ll use the parking level below the apartments! (points to map)"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Howard, turn around. Do you see a staircase?"
+        },
+        {
+          "character": "HOWARD",
+          "parenthetical": "",
+          "text": "Yeah."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Head down there and look for a bus."
+        },
+        {
+          "character": "HOWARD",
+          "parenthetical": "",
+          "text": "Got it."
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "The second floor light is on. Looks like they’re leaving the building."
+        },
+        {
+          "character": "HOWARD",
+          "parenthetical": "",
+          "text": "I’m on the stairs and... It’s a madhouse down there.... Police and press everywhere... Men with cameras next to men with guns."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "Put him on the air."
+        },
+        {
+          "character": "HANK",
+          "parenthetical": "",
+          "text": "There’s no connector."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "(into intercom)"
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "Thank you, Jim. My colleagues and I are scrambling to put the pieces together. But Howard Cosell is currently on location. (beat)"
+        },
+        {
+          "character": "HOWARD",
+          "parenthetical": "",
+          "text": "I certainly do, Peter. I’m in the parking garage... Terrorists and hostages are arriving. Their hands tied together. The police are here in almost platoon-like numbers."
+        },
+        {
+          "character": "TOWER CAM",
+          "parenthetical": "",
+          "text": "I have eyes on the bus."
+        },
+        {
+          "character": "HOWARD",
+          "parenthetical": "",
+          "text": "(breathes heavily)"
+        },
+        {
+          "character": "HOWARD",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "HOWARD",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "The first helicopter now proceeding out over the main Olympic stadium."
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "(CONT’D)",
+          "text": "85."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "For once I want to see history through more than just a camera. (goes towards door)"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Sports!?"
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "(as he heads off)"
+        }
+      ],
+      "actionPreview": "The roars become deafening. The action outside has come very close to the small studio. Gladys comes back in, followed by Roone: Do we have eyes on these choppers? Tower? Guys, we’re blind here. At that moment a new voice pops up on the walkie. Sharp. Forward. A tinge unpleasant. HOWARD COSELL (54),"
+    },
+    {
+      "number": 87,
+      "heading": "INT. CONTROL ROOM - NIGHT",
+      "characters": [
+        "GEOFF",
+        "JACQUES",
+        "JENNINGS",
+        "MARIANNE"
+      ],
+      "dialogues": [
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Sports? Is he fucking serious?"
+        },
+        {
+          "character": "JACQUES",
+          "parenthetical": "",
+          "text": "(shakes head)"
+        },
+        {
+          "character": "JACQUES",
+          "parenthetical": "(CONT’D)",
+          "text": "Screw it, I want to see it, too."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Carter! Marianne!"
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "(CONT’D)",
+          "text": "85."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "(CONT’D)",
+          "text": "(to Carter)"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "(CONT’D)",
+          "text": "(hands Marianne car keys)"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "Where is it parked?"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Back lot. Blue BMW. (pauses, thinks)"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "We can’t “fly out” the problem. It would be even more of an embarrassment than it already is."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "So they might finally use those sniper rifles?"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "(CONT’D)",
+          "text": "You’ll need sound."
+        }
+      ],
+      "actionPreview": "Geoff turns to Jacques. It’s nuts. The droning noise of the helicopters gets louder. He goes towards the door. Gladys shrugs and follows him. More and more crew leave the room. CAM 3 Mase, we’re losing the choppers. Geoff grabs Carter and waves at Marianne: Both turn towards him. 86. Grab a 16mm. Ge"
+    },
+    {
+      "number": 88,
+      "heading": "EXT. STUDIO MAIN ENTRANCE - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The ABC studio crew gathers around Roone at the studio’s front door. For the first time since the early hours of the morning we catch a glimpse of the outside. They all look up. See the flashing dots floating in the sky. The helicopters fly away behind the Olympic Tower. Marianne exits, pushes her w"
+    },
+    {
+      "number": 89,
+      "heading": "INT. CONTROL ROOM - NIGHT",
+      "characters": [
+        "GEOFF"
+      ],
+      "dialogues": [
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "(into headset)"
+        }
+      ],
+      "actionPreview": "Geoff, alone in the room, has his eyes still fixed on the monitor. Tower, keep tracking them. CUT TO: 22:23 PM"
+    },
+    {
+      "number": 90,
+      "heading": "INT. CONTROL ROOM - NIGHT",
+      "characters": [
+        "MCKA",
+        "GEOFF",
+        "JACQUES",
+        "JENNINGS",
+        "GLADYS",
+        "INTERVIEWER",
+        "MCKAY",
+        "BADER",
+        "CARTER"
+      ],
+      "dialogues": [
+        {
+          "character": "MCKA",
+          "parenthetical": "",
+          "text": "Y"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "(into headset)"
+        },
+        {
+          "character": "JACQUES",
+          "parenthetical": "",
+          "text": "(into headset)"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Peter? We need you here in the studio. To provide some analysis."
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "Already on my way."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "(into headset)"
+        },
+        {
+          "character": "GLADYS",
+          "parenthetical": "(O.C)",
+          "text": "Hey Geoff! You want to see this."
+        },
+        {
+          "character": "INTERVIEWER",
+          "parenthetical": "",
+          "text": "Mr. Berger, you’ve sat in front of your TV set most of the day, trying to get information. Have you gotten any help from the government?"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Mary-Ann, can you hear me?"
+        },
+        {
+          "character": "JACQUES",
+          "parenthetical": "",
+          "text": "Forget it, they’re out of range."
+        },
+        {
+          "character": "MCKAY",
+          "parenthetical": "",
+          "text": "Duane Bobick, the American heavyweight, had his toughest scheduled bout in the boxing competition meeting. Teófilo"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Marv, what have you got? 88."
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "Hold on just a second."
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Oh god."
+        },
+        {
+          "character": "CARTER",
+          "parenthetical": "",
+          "text": "(distorted) ... am I back in range... guys?"
+        }
+      ],
+      "actionPreview": "On the main monitor Jim struggles making the transition from terror to sports: ABC Sports News will be keeping you informed as this day and evening go on. We will be here whenever whatever is going to happen...does happen. But nonetheless, we have a responsibility as a sports channel. Especially whe"
+    },
+    {
+      "number": 91,
+      "heading": "INT. ABC STUDIO / HALLWAY - NIGHT",
+      "characters": [
+        "CARTER",
+        "GEOFF"
+      ],
+      "dialogues": [
+        {
+          "character": "CARTER",
+          "parenthetical": "",
+          "text": "(takes off motorcycle helmet)"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Tanks!?"
+        }
+      ],
+      "actionPreview": "The mighty studio camera is being rolled back in when Carter appears behind it and runs into the hallway, carrying a film can. Geoff rushes to meet him. It’s crazy out there. Massive traffic jam, hundreds of people blocking the road. Police couldn’t even get through with their tanks."
+    },
+    {
+      "number": 92,
+      "heading": "INT. EDITING ROOM - NIGHT",
+      "characters": [
+        "MARIANNE",
+        "CARTER",
+        "GEOFF"
+      ],
+      "dialogues": [
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "Was zur Hölle ist denn hier los?"
+        },
+        {
+          "character": "CARTER",
+          "parenthetical": "(O.S.)",
+          "text": "Are those journalists?"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "I don’t know. But I think the ride ends here."
+        },
+        {
+          "character": "CARTER",
+          "parenthetical": "(O.C.)",
+          "text": "See those lights? That’s the airport."
+        },
+        {
+          "character": "CARTER",
+          "parenthetical": "(CONT’D)",
+          "text": "Everyone just left their cars behind and walked there."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "How did you get here?"
+        },
+        {
+          "character": "CARTER",
+          "parenthetical": "",
+          "text": "Marianne convinced some guy to lend us his moped. (points to the screen)"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "That’s great stuff, Carter. We need more of it."
+        },
+        {
+          "character": "CARTER",
+          "parenthetical": "",
+          "text": "But this is useless there. (tosses Geoff the walkie)"
+        }
+      ],
+      "actionPreview": "FULL SCREEN. We’re in a car. Marianne is driving, Hank sits shotgun with the boom. Filmed from the backseat. The camera pans, now looks out of the windshield, reveals a massive traffic jam ahead. 89. 90. We hear Carter’s voice from behind the camera: White flash. New footage: We’re outside now. Hund"
+    },
+    {
+      "number": 93,
+      "heading": "INT. CONTROL ROOM",
+      "characters": [
+        "FLASH.",
+        "JENNINGS",
+        "GEOFF",
+        "MARIANNE",
+        "ROONE",
+        "ZDF CORRESPONDENT",
+        "BADER"
+      ],
+      "dialogues": [
+        {
+          "character": "FLASH.",
+          "parenthetical": "",
+          "text": "Marianne stands in the midst of a densely packed crowd at the airfield’s fence. Camera flashes everywhere. Excited voices."
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "Clearly, the German authorities want to end this here and now, Jim."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Yeah? (beat)"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "(CONT’D)",
+          "text": "Go again, Mary-Ann."
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "For the last hour we’ve been hearing gunshots. A few minutes ago the shooting suddenly stopped. Then a man from Hans Klein’s office came up from the airport and said the hostages are all free."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Is that confirmed?"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "I don’t know, Geoff. People are celebrating. Everyone here is––"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "Check the Germans. ZDF. Now. Don’t know what they’re saying, but they sound damn happy."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "(into phone 1)"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "(CONT’D)",
+          "text": "Turn it up!"
+        },
+        {
+          "character": "ZDF CORRESPONDENT",
+          "parenthetical": "",
+          "text": "...es scheint festzustehen, dass bei einem Schusswechsel alle"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "He says it too. They’re all free!"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "(into other phone)"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "(CONT’D)",
+          "text": "Marvin?"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "Yeah. We’re watching it."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "So, it’s official?"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "Not yet. I can see Klein’s press staff buzzing on the phone. Seems that they have serious doubts."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "(into phone)"
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "Then we have Jim use the phrase “as we’re hearing”."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "(into walkie)"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "Where is Roone? Let me talk to him. (no response)"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "It’s on ZDF. They’re airing it."
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "Geoff, if we air it, then everybody else will."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "So we let NBC or CBS get the scoop?"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "This isn’t a competition. Wait for confirmation."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "(thinks)"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "(CONT’D)",
+          "text": "Jim..."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "(CONT’D)",
+          "text": "We’ve got good news. It seems like the hostages are free. But use the phrase “as we are hearing”."
+        }
+      ],
+      "actionPreview": "- NIGHT Fullscreen main monitor: 90. 91. ...the camera chases silhouettes through the night. Towards the faint glow in the distance. Tanks roll across the fields, heading in the same direction. It looks like scenery from a war movie. Suddenly the same eerie noises we heard in the morning. Shots of A"
+    },
+    {
+      "number": 94,
+      "heading": "INT. CONTROL ROOM - NIGHT",
+      "characters": [
+        "BADER",
+        "GEOFF",
+        "GERMAN CHANCELLOR."
+      ],
+      "dialogues": [
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "Everybody is reporting it now. They are all following our lead."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Good thing we were first, then."
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "Klein can’t even find that man at the fence who broke this. We’re talking major worldwide news. Based on the word of one mysterious man."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "(starting to be unsure)"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "You! You pulled the trigger. Not"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "It’s on ZDF, Marvin! That’s German state television."
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "And this is ABC! I vouched for you,"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "But we used “as we’re hearing”..."
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "That’s a fucking technicality!"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "(to Bader)"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "(CONT’D)",
+          "text": "Marvin..."
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "Forget it. I’ve gotta find Roone."
+        }
+      ],
+      "actionPreview": "Bader storms in, walks straight towards Geoff. And no one has been able to confirm it. 94. 95. But Roone wanted- Roone. Geoff! Geoff looks around the Control Room. Anxious: What if he really was wrong? Everyone’s uncomfortable. The AP wire’s rattle breaks the tension. Jacques rips off the paper, rea"
+    },
+    {
+      "number": 95,
+      "heading": "INT. ROONE’S OFFICE - NIGHT",
+      "characters": [
+        "ROONE"
+      ],
+      "dialogues": [
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "(covers phone, to Bader)"
+        }
+      ],
+      "actionPreview": "Bader charges in, excitedly waving the AP Wire. Roone is on the phone, smiling, showing the AP Wire in his hands. It’s Starger. Bader nods knowingly: this could be big."
+    },
+    {
+      "number": 96,
+      "heading": "EXT. CONTROL ROOM - NIGHT",
+      "characters": [
+        "ASSISTANT DIRECTOR",
+        "GEOFF"
+      ],
+      "dialogues": [
+        {
+          "character": "ASSISTANT DIRECTOR",
+          "parenthetical": "",
+          "text": "German Press Secretary is on his way."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Cheers, everyone. Good job!"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "(CONT’D)",
+          "text": "But we’re not done yet. Conrad"
+        }
+      ],
+      "actionPreview": "The Assistant Director, phone in hand, announces: Jacques hands a beer to Geoff, smiles. Geoff turns to the room. More beers are passed around. Geoff raises his bottle: Everyone raises a beer. Ahlers is here any second. We need access to the cops from the airfield. I’m talking interviews, behind the"
+    },
+    {
+      "number": 97,
+      "heading": "INT. ROONE’S OFFICE - NIGHT",
+      "characters": [
+        "BADER",
+        "ROONE",
+        "AHLERS",
+        "MCKAY"
+      ],
+      "dialogues": [
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "What? What’d he say?"
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "He said that we made broadcast history. Probably more people have seen this than Armstrong stepping on the moon. 96."
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "So you gonna get a big bonus now?"
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "I’m getting a fucking drink,"
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "(CONT’D)",
+          "text": "Mason still on deck?"
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "(CONT’D)",
+          "text": "Kid’s good."
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "Ahlers is here."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "Actually Starger mentioned that they could use some help at ABC"
+        },
+        {
+          "character": "AHLERS",
+          "parenthetical": "",
+          "text": "Well, just two hours ago. Of course that was part of the game. We never meant to let them go free out of this country..."
+        },
+        {
+          "character": "AHLERS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "“As far as we can see”?"
+        },
+        {
+          "character": "AHLERS",
+          "parenthetical": "",
+          "text": "(struggles even more)"
+        },
+        {
+          "character": "MCKAY",
+          "parenthetical": "",
+          "text": "And if the reports, as we hear them, are true, the"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "“As we hope it will”..."
+        },
+        {
+          "character": "AHLERS",
+          "parenthetical": "",
+          "text": "Well I’m quite sure and you must understand that..ahm.. for us"
+        },
+        {
+          "character": "MCKAY",
+          "parenthetical": "",
+          "text": "And I think the people of the world are well aware that those volunteers who were trying to free the Israelis today were German."
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "This doesn’t sound right."
+        },
+        {
+          "character": "AHLERS",
+          "parenthetical": "",
+          "text": "Yes I hope that they won’t, that they won’t forget it."
+        },
+        {
+          "character": "MCKAY",
+          "parenthetical": "",
+          "text": "Thank you very much, Mr."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "Hmm...It’s the Chancellor’s"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "The IOC really wanted the games to continue. 98."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "Not even Brundage is that cold- blooded."
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "(shrugs)"
+        }
+      ],
+      "actionPreview": "Roone hangs up the phone. Can’t stop smiling. Roone savors the moment, enjoys keeping Bader in suspense. 97. Roone gets up and grabs a bottle: Marvin. Roone finds two glasses. Wants to start pouring: Bader nods. Roone starts pouring. The two men toast. On the TV screen CONRAD AHLERS (49) sits now ne"
+    },
+    {
+      "number": 98,
+      "heading": "INT. CONTROL ROOM - NIGHT",
+      "characters": [
+        "GEOFF",
+        "COMMUNICATOR",
+        "CONTENT MANAGER",
+        "JACQUES"
+      ],
+      "dialogues": [
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Ok. Thanks, everyone. (speaks to back row)"
+        },
+        {
+          "character": "COMMUNICATOR",
+          "parenthetical": "",
+          "text": "Can’t get through."
+        },
+        {
+          "character": "CONTENT MANAGER",
+          "parenthetical": "",
+          "text": "Same here. Been on hold for twenty minutes."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "What about the hostages?"
+        },
+        {
+          "character": "JACQUES",
+          "parenthetical": "",
+          "text": "Don’t you think we should give them a break?"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "You might be right there. (thinks)"
+        }
+      ],
+      "actionPreview": "On the line monitor McKay finishes with Ahlers. The commercial break starts. Where are we at with the airport police? What about the bus drivers or helicopter pilots? Guys, get creative, we have a story to tell. The crew gets busy again."
+    },
+    {
+      "number": 99,
+      "heading": "INT. ROONE’S OFFICE - NIGHT",
+      "characters": [
+        "BADER"
+      ],
+      "dialogues": [
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "No, let me talk to Hans. Why- (beat)"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "(CONT’D)",
+          "text": "(MORE) 100."
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "(CONT’D)",
+          "text": "What’d you just say?!"
+        }
+      ],
+      "actionPreview": "Bader’s on the phone. The tension’s back. What do you mean? (MORE) 99. Conrad Ahlers just announced it on live television. In our studio! Bader can’t believe what he’s hearing. Bader’s eyes widen. He turns to Roone. Horrified."
+    },
+    {
+      "number": 100,
+      "heading": "INT. HALLWAY - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Roone sprints down the hallway. Faster, more desperately, than anyone we’ve seen today. He bends the corner -- bumps into a crew member -- throws open the control room door --"
+    },
+    {
+      "number": 101,
+      "heading": "INT. CONTROL ROOM - NIGHT",
+      "characters": [
+        "ROONE"
+      ],
+      "dialogues": [
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "They’re still shooting at the airport!"
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "(CONT’D)",
+          "text": "Bader just got the info directly from Klein’s office."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "(CONT’D)",
+          "text": "Jim has to correct it. Immediately."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "(CONT’D)",
+          "text": "Jim, Peter, this is Roone."
+        }
+      ],
+      "actionPreview": "Bursts in, immediately delivering the news: A collective shock hits the room. Geoff looks at him. Face deathly white. Murmurs of horror and disbelief. This is no longer about “wanting to be first.” We can see how distraught he is. Geoff is stunned. Roone runs to his station and grabs the mic:"
+    },
+    {
+      "number": 102,
+      "heading": "INT. ROONE’S OFFICE - NIGHT",
+      "characters": [
+        "BADER"
+      ],
+      "dialogues": [
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "... I know that’s not true! I got a fucking TV set too!"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "(CONT’D)",
+          "text": "(MORE) 100."
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "(CONT’D)",
+          "text": "101."
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "(CONT’D)",
+          "text": "Hans..."
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "(CONT’D)",
+          "text": "... I’m asking you. As a friend."
+        }
+      ],
+      "actionPreview": "Bader screams into the phone: Just tell me what happened! (beat) Don’t give me that shit. Bader realizes he’s getting nowhere with this. Calms down, breathes deep. Then appeals in clear words: His voice shakes. Please tell me what happened."
+    },
+    {
+      "number": 103,
+      "heading": "INT. CONTROL ROOM - NIGHT",
+      "characters": [
+        "BADER"
+      ],
+      "dialogues": [
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "Geoff...Roone...hallway. Please."
+        }
+      ],
+      "actionPreview": "The crew watches McKay reporting on the unclear situation: McKAY The latest word we get from the airport is that quote “all of Hell was broken loose out there,” that there's still shooting going on, that there’s a report of a burning helicopter, but all seems to be confusion. Nothing is nailed down."
+    },
+    {
+      "number": 104,
+      "heading": "INT. HALLWAY - NIGHT",
+      "characters": [
+        "ROONE",
+        "BADER",
+        "GEOFF",
+        "JACQUES"
+      ],
+      "dialogues": [
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "How many?"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "(CONT’D)",
+          "text": "101."
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "... All of them."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "What if this is just another rumor?"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "Klein heard it from three separate sources."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "We-- We can’t rely on other people anymore, we-"
+        },
+        {
+          "character": "BADER",
+          "parenthetical": "",
+          "text": "Geoff, it’s over."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "(losing it)"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "(CONT’D)",
+          "text": "Lets send another team out –– I’ll go with them!"
+        },
+        {
+          "character": "JACQUES",
+          "parenthetical": "(O.S.)",
+          "text": "... Geoff?"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "(not hearing)"
+        },
+        {
+          "character": "JACQUES",
+          "parenthetical": "",
+          "text": "Geoff!"
+        },
+        {
+          "character": "JACQUES",
+          "parenthetical": "(CONT’D)",
+          "text": "Marianne is on the phone."
+        }
+      ],
+      "actionPreview": "--the empty hallway. Roone closes the door behind them. Bader looks at the ground. Removes his glasses. Can’t even start to talk. An endless beat, until Bader finally says it: 102. Silence. Roone stops breathing. Feels the world is spinning. Geoff jumps in. Can’t just accept this. There was an explo"
+    },
+    {
+      "number": 105,
+      "heading": "INT. CONTROL ROOM - NIGHT",
+      "characters": [
+        "GEOFF",
+        "FULL SCREEN LINE MONITOR",
+        "JENNINGS",
+        "MCKAY"
+      ],
+      "dialogues": [
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Marianne?"
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "...small groups of people, with a maximum of power over a minimum period of time to control the destinies of so many other people."
+        },
+        {
+          "character": "MCKAY",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "He walks to the phone like a man about to be hung. All eyes on him. He picks up the receiver. He listens. Dips his head. Hangs up. Feeling the crew’s questioning looks, he faces them. Then, with a slight nod, he gives the horrifying answer. On the monitors, Jim McKay is discussing with Jennings, but"
+    },
+    {
+      "number": 106,
+      "heading": "INT. HALLWAY - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The show is over. Geoff watches the crew members leave the building, dejected. He looks through the storage room window to see two worn faces: Hank and Carter unloading equipment, drawn from their mission at the airport. He walks to the room, stops in the doorway."
+    },
+    {
+      "number": 107,
+      "heading": "INT. STORAGE ROOM - NIGHT",
+      "characters": [
+        "GEOFF",
+        "MARIANNE",
+        "ASSISTANT"
+      ],
+      "dialogues": [
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Are you alright?"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "No. Innocent people died. In"
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "Marianne, I’m sorry I sent you out there. I can only imagine the things you saw."
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "I saw nothing. I was there with hundreds of people."
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "(CONT’D)",
+          "text": "105."
+        },
+        {
+          "character": "ASSISTANT",
+          "parenthetical": "(O.S.)",
+          "text": "Geoff, Roone would like a word."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "See you tomorrow?"
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "",
+          "text": "Yes."
+        }
+      ],
+      "actionPreview": "Geoff notices Marianne at the Steenbeck. She’s packing up her typewriter. Marianne looks at Geoff, her gaze reveals how deeply shaken she is. Germany. Again. And we failed. Germany failed. McKAY (CONT’D) (MORE) 104. We stared into the night. We were waiting for something to happen, because we wanted"
+    },
+    {
+      "number": 108,
+      "heading": "INT. ROONE’S OFFICE - NIGHT",
+      "characters": [
+        "ROONE",
+        "MARIANNE",
+        "GEOFF",
+        "JENNINGS"
+      ],
+      "dialogues": [
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "(into phone)"
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "(CONT’D)",
+          "text": "There will be a commemoration at the stadium. Tomorrow at 10 am. I got us the bird. Jim and Jennings will anchor. (beat)"
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "(CONT’D)",
+          "text": "I know it doesn't feel like it, but you did a hell of a job today."
+        },
+        {
+          "character": "MARIANNE",
+          "parenthetical": "(CONT’D)",
+          "text": "105."
+        },
+        {
+          "character": "GEOFF",
+          "parenthetical": "",
+          "text": "But... But it was a catastrophe."
+        },
+        {
+          "character": "ROONE",
+          "parenthetical": "",
+          "text": "Get some rest."
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "",
+          "text": "Roone, I wanted to talk to you about an hour-long special for tomorrow. I have a few approaches."
+        },
+        {
+          "character": "JENNINGS",
+          "parenthetical": "(O.S.)",
+          "text": "I’d take a flash unit out to the airport to see the place in daylight. The helicopters will certainly still be there. At least what is left of them...."
+        }
+      ],
+      "actionPreview": "Geoff enters. Roone’s on the phone. Hold on one second. Roone puts his hand on the receiver, hands Geoff a wire. And you’ll be in charge. Geoff has no idea how to deal with that. He is completely perplexed. Roone notices. Wants to clear things up. 106. Geoff is stunned. Doesn’t know how to respond. "
+    },
+    {
+      "number": 109,
+      "heading": "INT. CONTROL ROOM - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Geoff grabs his jacket. About to go when he pauses. Looks back. The room’s completely empty now. Like a ghost town. Pieces of paper scattered on the floor. Half-empty coffee mugs everywhere. One screen still flashes, showing ABC NY’s live late night programming. On the wall the pictures of the Israe"
+    },
+    {
+      "number": 110,
+      "heading": "EXT. PARKING LOT - DAWN",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The front door opens. Geoff steps outside for the first time on this long journey. Almost 24 hours later. The night is clear like yesterday. But the world is different. Geoff heads toward the parked cars. 106. 107."
+    },
+    {
+      "number": 111,
+      "heading": "INT. RENTAL CAR - DAWN",
+      "characters": [
+        "CUT TO BLACK"
+      ],
+      "dialogues": [
+        {
+          "character": "CUT TO BLACK",
+          "parenthetical": "",
+          "text": "107."
+        }
+      ],
+      "actionPreview": "Geoff drops into the driver’s seat. He closes his eyes. Needs to."
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "slug": "a-serious-man",
+  "title": "A Serious Man",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 2,
+  "characters": [
+    "LARRY",
+    "DANNY"
+  ],
+  "total_words": 24864,
+  "total_dialogue": 3,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "LARRY",
+        "DANNY"
+      ],
+      "action_text": "<b>                                   A SERIOUS MAN </b> Written by Joel Coen & Ethan Coen June 4th, 2007 <b> </b> <b> </b>          White letters on a black screen: Receive with simplicity everything that happens to you. <b>          -RASHI </b> <b> </b> <b>          FADE IN: </b> <b>          AGAINST BLACK: SNOWFLAKES </b> <b> </b>          The flakes drift lazily down toward us. Our angle looks straight up. Now an angle looking steeply down: the snow falls not quite dead away to collect on a",
+      "dialogue_count": 3,
+      "word_count": 24864
+    }
+  ]
+}

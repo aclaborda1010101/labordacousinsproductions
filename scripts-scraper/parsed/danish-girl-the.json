@@ -1,0 +1,50 @@
+{
+  "slug": "danish-girl-the",
+  "title": "Danish Girl, The",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 13,
+  "characters": [
+    "RASMUSSEN",
+    "GERDA",
+    "ULLA",
+    "EINAR",
+    "HENRIK",
+    "HEXLER",
+    "HANS",
+    "LILI",
+    "YOUNGER MAN",
+    "BUSON",
+    "MCBRIDE",
+    "WARNEKROS",
+    "URSULA"
+  ],
+  "total_words": 19646,
+  "total_dialogue": 116,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "RASMUSSEN",
+        "GERDA",
+        "ULLA",
+        "EINAR",
+        "HENRIK",
+        "HEXLER",
+        "HANS",
+        "LILI",
+        "YOUNGER MAN",
+        "BUSON",
+        "MCBRIDE",
+        "WARNEKROS",
+        "URSULA"
+      ],
+      "action_text": "<b>                THE DANISH GIRL </b> Written by Lucinda Coxon Based on the novel by David Ebershoff <b>EXT. KATTEGAT SEA, JUTLAND, DENMARK, 1920'S, DAY </b> <b>FADE IN: </b> A rectangle of ferociously stormy sea viewed from battered cliffs. Silver waves are whipped by a wind that flies at us, stinging, relentless. Somewhere, unseen in the barren landscape, something is at its mercy - we hear the RUSTLE and PUNCH of the weather going at it... <b>",
+      "dialogue_count": 116,
+      "word_count": 19646
+    }
+  ]
+}

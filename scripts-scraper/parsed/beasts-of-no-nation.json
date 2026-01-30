@@ -1,0 +1,22 @@
+{
+  "slug": "beasts-of-no-nation",
+  "title": "Beasts of No Nation",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 26888,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                 BEASTS OF NO NATION </b> Written by Cary Joji Fukunaga Based on the novel by Uzodinma Iweala May 8th, 2014 <b>                                                           SHOOTING SCRIPT </b> <b>                         FORWARD NOTE: </b> The dialogue in this screenplay is faithful in form to the novel, originally written in a lighter form of Nigerian Pidgin English known as Krio. Krio (and its various dialects) is used as a lingua franca throughout West Africa,",
+      "dialogue_count": 0,
+      "word_count": 26888
+    }
+  ]
+}

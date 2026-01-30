@@ -1,0 +1,42 @@
+{
+  "slug": "airplane-2-the-sequel",
+  "title": "Airplane 2: The Sequel",
+  "genre": "Action",
+  "genres": [
+    "Action",
+    "Adventure",
+    "Animation",
+    "Comedy",
+    "Crime",
+    "Drama",
+    "Family",
+    "Fantasy",
+    "Film-Noir",
+    "Horror",
+    "Musical",
+    "Mystery",
+    "Romance",
+    "Sci-Fi",
+    "Short",
+    "Thriller",
+    "War",
+    "Western"
+  ],
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 27714,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                            AIRPLANE 2: THE SEQUEL </b><b> </b><b> </b>                                  Written by <b> </b>                                Ken Finkleman <b> </b><b> </b><b> </b><b> </b><b> </b><b> </b><b>                                               SECOND DRAFT </b><b> </b>                                               February 18, 1982 <b> </b><b> </b><b> </b><b> </b><b> </b><b>          FADE IN: </b><b> </b><b>          EXT. JUNGLE - DAY </b><b> </b>          A machete sl",
+      "dialogue_count": 0,
+      "word_count": 27714
+    }
+  ]
+}

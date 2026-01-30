@@ -1,0 +1,42 @@
+{
+  "slug": "august-osage-county",
+  "title": "August: Osage County",
+  "genre": "Action",
+  "genres": [
+    "Action",
+    "Adventure",
+    "Animation",
+    "Comedy",
+    "Crime",
+    "Drama",
+    "Family",
+    "Fantasy",
+    "Film-Noir",
+    "Horror",
+    "Musical",
+    "Mystery",
+    "Romance",
+    "Sci-Fi",
+    "Short",
+    "Thriller",
+    "War",
+    "Western"
+  ],
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 28021,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                       AUGUST: OSAGE COUNTY </b> Written by Tracy Letts <b>1   AN ENDLESS SKY AT TWILIGHT                                  1 </b> Foreboding. Heat lightning in the distance. Miles of unforgiving, summer-scorched prairie. <b>                        BEVERLY (OS) </b>              ...\"Life is very long...\" <b>2   MILES OF STRAIGHT ROAD                                      2 </b> Two lanes, not a car in sight. Cracked asphalt undulates over gentle, browned hills, disappears into a",
+      "dialogue_count": 0,
+      "word_count": 28021
+    }
+  ]
+}

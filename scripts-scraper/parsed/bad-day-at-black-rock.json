@@ -1,0 +1,22 @@
+{
+  "slug": "bad-day-at-black-rock",
+  "title": "Bad Day at Black Rock",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 23695,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                  BAD DAY AT BLACK ROCK </b> Written by Don McGuire and Millard Kaufman Based on the story \"Bad Day At Hondo\" by Howard Breslin <b>                                                             SHOOTING DRAFT </b> <b> </b> <b>               FADE IN BEFORE MAIN TITLE </b> <b>               BAD DAY AT BLACK ROCK </b> <b>               ESTABLISHING SHOT - BLACK ROCK - PART OF TOWN: FOCAL POINT: </b><b>               RAILROAD STATION </b> abandoned, in an extreme sta",
+      "dialogue_count": 0,
+      "word_count": 23695
+    }
+  ]
+}

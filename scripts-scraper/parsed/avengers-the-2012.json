@@ -1,0 +1,22 @@
+{
+  "slug": "avengers-the-2012",
+  "title": "Avengers, The (2012)",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 26892,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                    THE AVENGERS </b> Written by Joss Whedon \"And there came a day, a day unlike any other, when Earth's mightiest heroes and heroines found themselves united against a common threat. On that day, the Avengers were born--to fight the foes no single superhero could withstand! Through the years, their roster has prospered, changing many times, but their glory has never been denied! Heed the call, then--for now, the Avengers Assemble!\" BURNING BLUE FLAMES. A smoky",
+      "dialogue_count": 0,
+      "word_count": 26892
+    }
+  ]
+}

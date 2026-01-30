@@ -1,0 +1,26 @@
+{
+  "slug": "being-john-malkovich",
+  "title": "Being John Malkovich",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 1,
+  "characters": [
+    "CRAIG"
+  ],
+  "total_words": 22883,
+  "total_dialogue": 1,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "CRAIG"
+      ],
+      "action_text": "<html> <head> <script> <b><!-- </b>if (window!= top) top.location.href=location.href <b>// --> </b></script> <title>BEING JOHN MALKOVICH A Screenplay by Charlie Kaufman</title> </head> <pre> <b>\t\t\t BEING JOHN MALKOVICH </b> A Screenplay by Charlie Kaufman <b>\tINT. CHEERLESS ROOM - DAY </b> The room is bare, dusty. A ceiling fan turns. The wall clock ticks. Craig, 30 years old and small, sits at a collapsible card table. The only item on the table is a book. Craig picks it up, looks at the jacket",
+      "dialogue_count": 1,
+      "word_count": 22883
+    }
+  ]
+}

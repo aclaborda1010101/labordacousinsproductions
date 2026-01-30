@@ -1,0 +1,4211 @@
+{
+  "slug": "past-lives-2023",
+  "title": "Past Lives",
+  "parsedWith": "v2",
+  "parsedAt": "2026-01-29T22:09:16.379Z",
+  "stats": {
+    "scenes": 99,
+    "dialogues": 626,
+    "characters": 22
+  },
+  "characters": [
+    {
+      "name": "NORA",
+      "dialogueLines": 231,
+      "totalWords": 943
+    },
+    {
+      "name": "HAE SUNG",
+      "dialogueLines": 201,
+      "totalWords": 673
+    },
+    {
+      "name": "ARTHUR",
+      "dialogueLines": 85,
+      "totalWords": 534
+    },
+    {
+      "name": "NA YOUNG",
+      "dialogueLines": 22,
+      "totalWords": 71
+    },
+    {
+      "name": "MOM",
+      "dialogueLines": 21,
+      "totalWords": 72
+    },
+    {
+      "name": "FRIEND TWO",
+      "dialogueLines": 11,
+      "totalWords": 24
+    },
+    {
+      "name": "HAE SUNG'S MOM",
+      "dialogueLines": 7,
+      "totalWords": 19
+    },
+    {
+      "name": "FRIEND ONE",
+      "dialogueLines": 7,
+      "totalWords": 17
+    },
+    {
+      "name": "CBP OFFICER",
+      "dialogueLines": 7,
+      "totalWords": 29
+    },
+    {
+      "name": "GIRL",
+      "dialogueLines": 6,
+      "totalWords": 56
+    },
+    {
+      "name": "GUY",
+      "dialogueLines": 5,
+      "totalWords": 42
+    },
+    {
+      "name": "SI YOUNG",
+      "dialogueLines": 5,
+      "totalWords": 15
+    },
+    {
+      "name": "FRIEND THREE",
+      "dialogueLines": 5,
+      "totalWords": 8
+    },
+    {
+      "name": "NA YOUNG'S MOM",
+      "dialogueLines": 3,
+      "totalWords": 11
+    },
+    {
+      "name": "AN IMAGE",
+      "dialogueLines": 2,
+      "totalWords": 32
+    },
+    {
+      "name": "ACTRESS",
+      "dialogueLines": 2,
+      "totalWords": 16
+    },
+    {
+      "name": "DAD",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "ROBERT",
+      "dialogueLines": 1,
+      "totalWords": 26
+    },
+    {
+      "name": "TIME PASSES IN A BLINK.",
+      "dialogueLines": 1,
+      "totalWords": 20
+    },
+    {
+      "name": "EVENING EST",
+      "dialogueLines": 1,
+      "totalWords": 25
+    },
+    {
+      "name": "HOURS LATER",
+      "dialogueLines": 1,
+      "totalWords": 12
+    },
+    {
+      "name": "ALMOST DAWN",
+      "dialogueLines": 1,
+      "totalWords": 15
+    }
+  ],
+  "scenes": [
+    {
+      "number": 1,
+      "heading": "INT. EAST VILLAGE BAR / SPEAKEASY ‑ NEW YORK ‑ LATE NIGHT",
+      "characters": [
+        "GIRL",
+        "GUY",
+        "Y E A R S",
+        "A G O"
+      ],
+      "dialogues": [
+        {
+          "character": "GIRL",
+          "parenthetical": "(O.S.)",
+          "text": "Who do you think they are to each"
+        },
+        {
+          "character": "GUY",
+          "parenthetical": "(O.S.)",
+          "text": "I don't know."
+        },
+        {
+          "character": "GIRL",
+          "parenthetical": "(O.S.)",
+          "text": "Yeah, this is a hard one."
+        },
+        {
+          "character": "GUY",
+          "parenthetical": "(O.S.)",
+          "text": "I think the white guy and the asian girl are a couple, and the asian guy is her brother."
+        },
+        {
+          "character": "GIRL",
+          "parenthetical": "(O.S.)",
+          "text": "Or is it the asian girl and the asian guy are a couple, and the white guy is their American friend?"
+        },
+        {
+          "character": "GUY",
+          "parenthetical": "(O.S.)",
+          "text": "I don't know, they're not really talking to the white guy."
+        },
+        {
+          "character": "GIRL",
+          "parenthetical": "(O.S.)",
+          "text": "Maybe they're tourists and the white guy is their tour guide?"
+        },
+        {
+          "character": "GUY",
+          "parenthetical": "(O.S.)",
+          "text": "Drinking at 3 a.m.?"
+        },
+        {
+          "character": "GIRL",
+          "parenthetical": "(O.S.)",
+          "text": "I guess that doesn't make sense."
+        },
+        {
+          "character": "GUY",
+          "parenthetical": "(O.S.)",
+          "text": "Maybe they're all just colleagues."
+        },
+        {
+          "character": "GIRL",
+          "parenthetical": "(O.S.)",
+          "text": "I have no idea."
+        }
+      ],
+      "actionPreview": "In a booth at a hip East Village speakeasy, three people sit, each with a cocktail in front of them꞉ NORA MOON (30s, Korean‑Canadian‑American, short‑hair, dressed casually in muted colors)... HAE SUNG JUNG (30s, Korean, clean‑shaven and in business‑ casual)... And ARTHUR ZATURANSKY (30s, white Jewis"
+    },
+    {
+      "number": 2,
+      "heading": "EXT. PYOUNGCHON ‑ SEOUL ‑ LATE‑90S ‑ DAY",
+      "characters": [
+        "HAE SUNG",
+        "NA YOUNG"
+      ],
+      "dialogues": [
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "나 영 ."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "(CONT’D)",
+          "text": "2 등"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "(CONT’D)",
+          "text": "내 가"
+        },
+        {
+          "character": "NA YOUNG",
+          "parenthetical": "",
+          "text": "응 . / Yes."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "야 !"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "(CONT’D)",
+          "text": "울지 마 ,"
+        }
+      ],
+      "actionPreview": "Young NA YOUNG (12, pigtails) is walking home from school. (Na Young is Nora's childhood name.) She is crying, hard. Walking next to her is young HAE SUNG (12, in shorts), holding a basketball. They walk in silence for a little while. 왜 울 어 ? / Na Young. Why are you crying? Na Young just keeps cryin"
+    },
+    {
+      "number": 3,
+      "heading": "INT. SEOUL FAMILY APARTMENT ‑ DAD'S OFFICE ‑ DAY",
+      "characters": [
+        "MOM",
+        "NA YOUNG",
+        "SI YOUNG",
+        "DAD"
+      ],
+      "dialogues": [
+        {
+          "character": "MOM",
+          "parenthetical": "",
+          "text": "(waving the smoke away from her children)"
+        },
+        {
+          "character": "NA YOUNG",
+          "parenthetical": "",
+          "text": "우 리"
+        },
+        {
+          "character": "MOM",
+          "parenthetical": "",
+          "text": "어 떻 게"
+        },
+        {
+          "character": "NA YOUNG",
+          "parenthetical": "",
+          "text": "내"
+        },
+        {
+          "character": "MOM",
+          "parenthetical": "",
+          "text": "시영 이 가"
+        },
+        {
+          "character": "SI YOUNG",
+          "parenthetical": "",
+          "text": "내 가"
+        },
+        {
+          "character": "MOM",
+          "parenthetical": "",
+          "text": "(to Na Young)"
+        },
+        {
+          "character": "NA YOUNG",
+          "parenthetical": "",
+          "text": "내 가"
+        },
+        {
+          "character": "MOM",
+          "parenthetical": "",
+          "text": "나 영아 ,"
+        },
+        {
+          "character": "NA YOUNG",
+          "parenthetical": "",
+          "text": "(dramatically)"
+        },
+        {
+          "character": "MOM",
+          "parenthetical": "",
+          "text": "쫌 만"
+        },
+        {
+          "character": "DAD",
+          "parenthetical": "",
+          "text": "\"Leonore\""
+        },
+        {
+          "character": "NA YOUNG",
+          "parenthetical": "",
+          "text": "(trying it out)"
+        }
+      ],
+      "actionPreview": "Na Young's MOM (35, a graphic designer and illustrator) and DAD (38, a screenwriter and film director) are smoking in dad's office. The office is filled with books, video tapes, French movie posters, and cigarette smoke. Dad is pulling down his movie posters and putting his books in boxes. He closes"
+    },
+    {
+      "number": 4,
+      "heading": "INT. SEOUL FAMILY APARTMENT ‑ MOM'S OFFICE ‑ DAY",
+      "characters": [
+        "MOM",
+        "NA YOUNG",
+        "AN IMAGE"
+      ],
+      "dialogues": [
+        {
+          "character": "MOM",
+          "parenthetical": "",
+          "text": "나 영아 . / Na Young."
+        },
+        {
+          "character": "NA YOUNG",
+          "parenthetical": "",
+          "text": "응 ? / Yeah?"
+        },
+        {
+          "character": "MOM",
+          "parenthetical": "",
+          "text": "넌"
+        },
+        {
+          "character": "AN IMAGE",
+          "parenthetical": "",
+          "text": "of Hae Sung and Na Young, we see in silence꞉"
+        }
+      ],
+      "actionPreview": "Mom's office is filled with prints of Matisse, Basquiat, and drawings by her children. The bookcases are filled with children's books, many of which she illustrated herself. Si Young is drawing with a pen‑mouse on Mom's Apple Macintosh computer. Mom is in the middle of packing up her office that she"
+    },
+    {
+      "number": 5,
+      "heading": "INT. NA YOUNG AND HAE SUNG'S CLASSROOM ‑ ANOTHER DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Hae Sung is leaned against Na Young's desk at school, talking to her about something as he lets her draw a bunch of flowers on his arm with a ballpoint pen. They have an easy intimacy with one another, and it feels like it’s been this way between them forever. CUT BACK TO꞉"
+    },
+    {
+      "number": 6,
+      "heading": "INT. MOM'S OFFICE ‑ NA YOUNG'S FAMILY APARTMENT ‑ DAY",
+      "characters": [
+        "NA YOUNG",
+        "MOM"
+      ],
+      "dialogues": [
+        {
+          "character": "NA YOUNG",
+          "parenthetical": "",
+          "text": "해 성 이 . / Hae Sung."
+        },
+        {
+          "character": "MOM",
+          "parenthetical": "",
+          "text": "왜 ? / Why?"
+        },
+        {
+          "character": "NA YOUNG",
+          "parenthetical": "",
+          "text": "남 자 다 워 . /"
+        },
+        {
+          "character": "MOM",
+          "parenthetical": "",
+          "text": "(lol)"
+        },
+        {
+          "character": "NA YOUNG",
+          "parenthetical": "",
+          "text": "응 ."
+        },
+        {
+          "character": "MOM",
+          "parenthetical": "",
+          "text": "그 래 ?"
+        },
+        {
+          "character": "NA YOUNG",
+          "parenthetical": "",
+          "text": "나"
+        },
+        {
+          "character": "MOM",
+          "parenthetical": "",
+          "text": "걔 랑"
+        }
+      ],
+      "actionPreview": "6. He's manly. 남 자 다 워 ? / He's manly? 아 마 걔 랑 결 혼 할 꺼 야 . / Yeah. I will probably marry him. 걔 도 너 랑 결 혼 한 데 ? / Really? Does he want to marry you too? 좋 아 하 니 까 내 가 하 자 고 그 러 면 하 겠 지 . / He likes me, so he will if I tell him to. Mom takes out four new Korean passports (mom's, dad's, Na Young's and"
+    },
+    {
+      "number": 7,
+      "heading": "EXT. GWACHEON NATIONAL MUSEUM OF MODERN CONTEMPORARY ART ‑",
+      "characters": [
+        "HAE SUNG'S MOM",
+        "NA YOUNG'S MOM"
+      ],
+      "dialogues": [
+        {
+          "character": "HAE SUNG'S MOM",
+          "parenthetical": "",
+          "text": "둘 이"
+        },
+        {
+          "character": "HAE SUNG'S MOM",
+          "parenthetical": "(CONT’D)",
+          "text": "해 성 이 가"
+        },
+        {
+          "character": "NA YOUNG'S MOM",
+          "parenthetical": "",
+          "text": "나 영 이 가"
+        },
+        {
+          "character": "HAE SUNG'S MOM",
+          "parenthetical": "",
+          "text": "이 민 을"
+        },
+        {
+          "character": "NA YOUNG'S MOM",
+          "parenthetical": "",
+          "text": "네 . / Yes."
+        },
+        {
+          "character": "HAE SUNG'S MOM",
+          "parenthetical": "",
+          "text": "근 데"
+        },
+        {
+          "character": "NA YOUNG'S MOM",
+          "parenthetical": "",
+          "text": "버리 는 게"
+        }
+      ],
+      "actionPreview": "DAY It is a beautiful fall day. A shot of Jonathan Borofsky's SINGING MAN (1994) in the sculpture garden of the art museum. This tall aluminum robot man sculpture with his head tilted up and mouth open is a minor work by Borofsky that doesn't even make it to his Wikipedia page, but for Koreans livin"
+    },
+    {
+      "number": 8,
+      "heading": "EXT. GWACHEON NATIONAL MUSEUM OF MODERN CONTEMPORARY ART ‑",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "LATER Na Young and Hae Sung approach Ilho Lee's NEW GAZING AT BEING (1994), a granite sculpture of two giant 2.5‑dimensional geometric faces gazing at each other. Hae Sung looks at Na Young. He studies her face."
+    },
+    {
+      "number": 9,
+      "heading": "INT. NA YOUNG'S MOM'S CAR ‑ EVENING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Na Young and Hae Sung are in the backseat. Na Young has fallen asleep, tired from their date. She has her head on his lap. Their hands are tangled up together. Hae Sung looks at sleeping Na Young."
+    },
+    {
+      "number": 10,
+      "heading": "INT. NA YOUNG AND HAE SUNG'S CLASSROOM ‑ DAY",
+      "characters": [
+        "FRIEND ONE",
+        "NA YOUNG",
+        "FRIEND TWO",
+        "FRIEND THREE"
+      ],
+      "dialogues": [
+        {
+          "character": "FRIEND ONE",
+          "parenthetical": "",
+          "text": "너"
+        },
+        {
+          "character": "NA YOUNG",
+          "parenthetical": "",
+          "text": "응 . / Yeah."
+        },
+        {
+          "character": "FRIEND TWO",
+          "parenthetical": "",
+          "text": "다 시 는"
+        },
+        {
+          "character": "NA YOUNG",
+          "parenthetical": "",
+          "text": "안"
+        },
+        {
+          "character": "FRIEND ONE",
+          "parenthetical": "",
+          "text": "왜"
+        },
+        {
+          "character": "NA YOUNG",
+          "parenthetical": "",
+          "text": "가고"
+        },
+        {
+          "character": "FRIEND THREE",
+          "parenthetical": "",
+          "text": "왜"
+        },
+        {
+          "character": "NA YOUNG",
+          "parenthetical": "",
+          "text": "한 국"
+        }
+      ],
+      "actionPreview": "This is the last day of class before Na Young's immigration to Canada. Na Young has just told her classmates the news that she is never ever coming back. Na Young's friends are huddled around her, interrogating her. Hae Sung is sitting away from the huddle. He tries to ignore Na Young and her conver"
+    },
+    {
+      "number": 11,
+      "heading": "EXT. NA YOUNG'S NEIGHBORHOOD ‑ DAY",
+      "characters": [
+        "FRIEND TWO",
+        "NA YOUNG",
+        "HAE SUNG"
+      ],
+      "dialogues": [
+        {
+          "character": "FRIEND TWO",
+          "parenthetical": "",
+          "text": "(from afar)"
+        },
+        {
+          "character": "NA YOUNG",
+          "parenthetical": "",
+          "text": "안 녕 ! / Bye!"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "야 ! / Hey!"
+        },
+        {
+          "character": "NA YOUNG",
+          "parenthetical": "",
+          "text": "왜 ! / What!"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "잘 가 라 . / Bye."
+        }
+      ],
+      "actionPreview": "Hae Sung is walking Na Young home for the last time. He dribbles his basketball. 나 영아 ! 잘 가 ! / Na Young! Take care! They keep walking together, standing a little apart. They don't say anything to each other. Hae Sung's face is impenetrable, completely expressionless. Na Young can tell that Hae Sung"
+    },
+    {
+      "number": 12,
+      "heading": "INT. PLANE TO TORONTO ‑ A FEW WEEKS LATER ‑ NIGHT",
+      "characters": [
+        "NA YOUNG",
+        "SI YOUNG"
+      ],
+      "dialogues": [
+        {
+          "character": "NA YOUNG",
+          "parenthetical": "",
+          "text": "Hello."
+        },
+        {
+          "character": "SI YOUNG",
+          "parenthetical": "",
+          "text": "Hello."
+        },
+        {
+          "character": "NA YOUNG",
+          "parenthetical": "",
+          "text": "My name is Nora. What is your name?"
+        },
+        {
+          "character": "SI YOUNG",
+          "parenthetical": "",
+          "text": "My name is Michelle."
+        },
+        {
+          "character": "NA YOUNG",
+          "parenthetical": "",
+          "text": "How are you, Michelle?"
+        },
+        {
+          "character": "SI YOUNG",
+          "parenthetical": "",
+          "text": "I'm fine. And you?"
+        },
+        {
+          "character": "NA YOUNG",
+          "parenthetical": "",
+          "text": "I'm fine. And you?"
+        },
+        {
+          "character": "SI YOUNG",
+          "parenthetical": "",
+          "text": "I'm fine. And you?"
+        },
+        {
+          "character": "NA YOUNG",
+          "parenthetical": "",
+          "text": "I'm fine. And you?"
+        }
+      ],
+      "actionPreview": "Mom is reading through her immigration prep notes, and dad is looking at a Korean‑English dictionary. The dictionary is covered in notes. Na Young and Si Young are practicing their English together. Na Young and Si Young start giggling. They keep looping \"I'm fine. And you?\" and laughing. From this "
+    },
+    {
+      "number": 13,
+      "heading": "INT. TORONTO PEARSON AIRPORT ‑ CANADA ‑ DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "They have landed. Mom and Dad are talking to the immigration officers in very limited English. Mom has a stack of paperwork, and four South Korean passports. Nora is sitting on a massive suitcase, looking sleepy. Michelle is sleeping next to Nora, using her older sister's knees as a pillow. 11. Nora"
+    },
+    {
+      "number": 14,
+      "heading": "INT. NORA'S TORONTO CLASS ‑ MORNING",
+      "characters": [
+        "Y E A R S",
+        "P A S S"
+      ],
+      "dialogues": [],
+      "actionPreview": "First day of school for Nora in Canada. The classroom is mostly full of white kids. It's hard to read her expression, but you can sense that she is buzzing with nervousness and excitement and uncertainty and loneliness. What is next for her? The bell rings to mark the beginning of her first class in"
+    },
+    {
+      "number": 15,
+      "heading": "INT. FIELDS ‑ KOREA ‑ LUNCHTIME",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "WIDE SHOT of hundreds of young Korean men in military uniforms marching through the fields. TIME CUT TO꞉ It's meal time. The uniformed Korean men sit down on the ground and eat dinner. Their metal trays and cutlery clang together noisily. They shovel the food into their mouths, chatting about things"
+    },
+    {
+      "number": 16,
+      "heading": "INT. NYC TAXI ‑ APPROACHING NYC ‑ DUSK",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Nora, now 24 years old, is in a yellow cab, driving from LGA to Manhattan. She is now a grown‑up too. She looks marginally more mature, but equally ambitious. 12. Outside the cab window, we see the outline of New York City. The city gleams. Nora stares at it, in love with the view."
+    },
+    {
+      "number": 17,
+      "heading": "INT. GRAD SCHOOL ‑ CLASSROOM ‑ DAY",
+      "characters": [
+        "ROBERT"
+      ],
+      "dialogues": [
+        {
+          "character": "ROBERT",
+          "parenthetical": "",
+          "text": "There was so much in it that I responded to, but the one phrase that sticks with me most is the line꞉ \"The long journey of"
+        }
+      ],
+      "actionPreview": "The class ‑‑ lead by a lovely and dignified white man in his 70s ‑‑ is in the middle of a feedback session about Nora's pages of the play she is working on. Nora is sitting between her brand new grad school friends JANICE (hipster, black, queer, late 20s) and RACHEL (intentionally badly‑dressed, whi"
+    },
+    {
+      "number": 18,
+      "heading": "INT. NORA'S DORM ROOM ‑ DAY",
+      "characters": [
+        "NORA",
+        "MOM"
+      ],
+      "dialogues": [
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "와 ,"
+        },
+        {
+          "character": "MOM",
+          "parenthetical": "",
+          "text": "걔"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "맞 아 ,"
+        },
+        {
+          "character": "MOM",
+          "parenthetical": "",
+          "text": "너"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "오 줌 싸 개가"
+        },
+        {
+          "character": "MOM",
+          "parenthetical": "",
+          "text": "그 러 니 까 ,"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "또"
+        },
+        {
+          "character": "MOM",
+          "parenthetical": "",
+          "text": "아 ,"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MOM",
+          "parenthetical": "",
+          "text": "응 ? / Mm?"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "얘 가"
+        },
+        {
+          "character": "MOM",
+          "parenthetical": "",
+          "text": "뭔 소 리 야 ? / What do you mean?"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "얘 가"
+        },
+        {
+          "character": "MOM",
+          "parenthetical": "",
+          "text": "진짜 ? / Really?"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "응 ,"
+        },
+        {
+          "character": "MOM",
+          "parenthetical": "",
+          "text": "와 ."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "잠 깐 만 ,"
+        },
+        {
+          "character": "MOM",
+          "parenthetical": "",
+          "text": "그 래 . / Okay."
+        }
+      ],
+      "actionPreview": "Nora is in her new dorm room. It is a crappy little room that she will spend her next three years in. It is empty and utilitarian, furnished with an aggressively uncomfortable twin bed and a crappy wooden desk. Nora is in the middle of a phone call with her mom. They are googling Nora's different ch"
+    },
+    {
+      "number": 19,
+      "heading": "INT. ALL‑NIGHT SOJU BAR ‑ SEOUL ‑ 3 A.M. KST",
+      "characters": [
+        "FRIEND ONE",
+        "HAE SUNG",
+        "FRIEND TWO",
+        "FRIEND THREE"
+      ],
+      "dialogues": [
+        {
+          "character": "FRIEND ONE",
+          "parenthetical": "",
+          "text": "야 ,"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "헤 어 져 서"
+        },
+        {
+          "character": "FRIEND TWO",
+          "parenthetical": "",
+          "text": "세상 에"
+        },
+        {
+          "character": "FRIEND THREE",
+          "parenthetical": "",
+          "text": "아"
+        },
+        {
+          "character": "FRIEND TWO",
+          "parenthetical": "",
+          "text": "당 연 히"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "야 ,"
+        },
+        {
+          "character": "FRIEND ONE",
+          "parenthetical": "",
+          "text": "잘 됐 다 ,"
+        },
+        {
+          "character": "FRIEND TWO",
+          "parenthetical": "",
+          "text": "너"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "(taking out his phone to"
+        },
+        {
+          "character": "FRIEND TWO",
+          "parenthetical": "",
+          "text": "새 벽"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "모르 겠 는 데 . / I have no idea."
+        }
+      ],
+      "actionPreview": "Hae Sung is drinking with a few of his buddies ‑‑ all fellow grad students, all Korean men. The table they are sitting around is filled with a dozen empty soju bottles. 15. They're all very drunk. Not a little tipsy, but out‑of‑their‑ minds drunk. Their faces are bright red. They have gathered toget"
+    },
+    {
+      "number": 20,
+      "heading": "EXT. STREETS OF SEOUL ‑ LATER, WEE HOURS OF THE MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Hae Sung stumbles through the streets of Seoul alone, totally drunk. He has trouble walking in the straight line, but even in his complete drunken stupor, he can make his way home. The dawn breaks. Seoul is waking up."
+    },
+    {
+      "number": 21,
+      "heading": "INT. HAE SUNG'S FAMILY APARTMENT ‑ SEOUL ‑ MOMENTS LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Hae Sung unlocks the automatic door (most doors in Korea are locked with a password) to his home. He stumbles in as quietly as he can manage in his inebriated state, trying not to wake up his parents with whom he lives."
+    },
+    {
+      "number": 22,
+      "heading": "INT. HAE SUNG'S ROOM ‑ SEOUL ‑ MOMENTS LATER",
+      "characters": [
+        "TIME PASSES IN A BLINK.",
+        "HAE SUNG",
+        "HAE SUNG'S MOM"
+      ],
+      "dialogues": [
+        {
+          "character": "TIME PASSES IN A BLINK.",
+          "parenthetical": "",
+          "text": "Hae Sung wakes up. There is a glass of water his mom placed on the nightstand for him to drink."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "와 . / Woah."
+        },
+        {
+          "character": "HAE SUNG'S MOM",
+          "parenthetical": "(O.S.)",
+          "text": "해 성 아 !"
+        }
+      ],
+      "actionPreview": "He takes off his socks and crawls into bed. He falls asleep. He sighs deeply. His head hurts a lot. He sits up and drinks the water. He lays back down. 17. He remembers something. He grabs his phone, and looks through his notifications. He looks at that name again꞉ \"Nora Moon.\" He opens the message,"
+    },
+    {
+      "number": 23,
+      "heading": "INT. HAE SUNG'S KITCHEN ‑ SEOUL ‑ MOMENTS LATER",
+      "characters": [
+        "HAE SUNG",
+        "HAE SUNG'S MOM"
+      ],
+      "dialogues": [
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "잘"
+        },
+        {
+          "character": "HAE SUNG'S MOM",
+          "parenthetical": "",
+          "text": "많 이"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "응 ,"
+        },
+        {
+          "character": "HAE SUNG'S MOM",
+          "parenthetical": "",
+          "text": "뭐 가"
+        }
+      ],
+      "actionPreview": "Hae Sung stumbles into the kitchen. It is the kitchen of a very ordinary young Korean man, his salaryman father, and his housewife mother. Hae Sung's mom, now late‑40s, has made traditional Korean breakfast. HAE SUNG'S DAD (ordinary, 50) is already sitting in his seat, reading the newspaper over his"
+    },
+    {
+      "number": 24,
+      "heading": "INT. GRAD SCHOOL LIBRARY ‑ NEW YORK ‑ EVENING EST (MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "KST) Nora is in the library with Janice, working at her laptop. They are doing their school assignment in silence. Nora gets a facebook notification. She eagerly opens the message that just arrived. It's from Hae Sung. It's a short old‑fashioned punny response (means literally \"carrot\") to Nora's qu"
+    },
+    {
+      "number": 25,
+      "heading": "EXT. UPPER WEST SIDE STREETS ‑ NEW YORK ‑ MOMENTS LATER ‑",
+      "characters": [
+        "EVENING EST"
+      ],
+      "dialogues": [
+        {
+          "character": "EVENING EST",
+          "parenthetical": "(MORNING KST)",
+          "text": "Nora is walking back to her dorm room. There is a briskness to her steps. She walks faster and faster, until she finds herself running."
+        }
+      ],
+      "actionPreview": "19. She can't help it. She is still grinning as she sprints down New York streets."
+    },
+    {
+      "number": 26,
+      "heading": "INT. NORA'S DORM ROOM/HAE SUNG'S ROOM ‑ NEW YORK/SEOUL ‑",
+      "characters": [
+        "HAE SUNG",
+        "NORA"
+      ],
+      "dialogues": [
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "와 ,"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "와 . / Woah."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "알아 보 겠 다 . / I recognize you."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "너 도 . / You too."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "어 떻 게"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "난"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "난"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "응 ."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "그 래 서"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "당 근 ."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "넌"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "응 ,"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "너 희"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "응 . / Yeah."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "멋 있 다 . / That's cool."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "여 보세 요 ? / Hello?"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "여 기"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "넌"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "응 ."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "부 모 님 이 랑"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "응 . / Yeah."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "엄 마 가"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "나 쁘 지"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "공 부"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "그 냥"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "옛 날 에"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "너"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "(correcting the record)"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "요즘 도"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "아 니 . / No."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "그 래 ?"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "거 의"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "이젠"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "이 민"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "그 랬 구 나 . / I see."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "넌"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "공 학 . / Engineering."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "(laughing)"
+        }
+      ],
+      "actionPreview": "EVENING EST/MORNING KST Nora bursts into the dorm room, out of breath. She sits down at her desk. She opens up her laptop and turns on Skype, waiting eagerly. Hae Sung adds her on Skype. She beams as she adds him back. He calls her. She answers. After a brief moment of loading, we see Hae Sung's fac"
+    },
+    {
+      "number": 27,
+      "heading": "INT. NORA'S DORM ROOM/HAE SUNG'S ROOM ‑ NEW YORK ‑ NIGHT EST",
+      "characters": [
+        "HAE SUNG",
+        "NORA"
+      ],
+      "dialogues": [
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "좋 다 . / I like this."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "뭐 가 ? / What?"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "그 냥 ."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "나"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "그 래 ? / Oh yeah?"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "응 . / Yeah."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "아 ,"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "나 도"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "저 녁"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "아 직 . / Not yet."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "지 금"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "밤"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "(shocked)"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "(CONT’D)",
+          "text": "당 장"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "그 럴 께 . / I will."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "좀"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "뭐 라 고"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "(awkwardly)"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "나 도 ."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "나"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "그 래 ."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "또"
+        }
+      ],
+      "actionPreview": "(DAY KST) ‑ HOURS LATER 23. 너 랑 얘 기 하 는 거 . / This. Talking to you. 좀 재 밌 는 사 람 이 야 . / I'm a really fun person to talk to. They laugh. Hae Sung notices the time. 나 수업 가 야 하 는 데 . / Ah, I gotta go to class. 배 고 파 . 저 녁 먹 어야 돼 . / I'm hungry. I have to eat dinner. 안 먹 었어 ? / You haven't eaten dinner "
+    },
+    {
+      "number": 28,
+      "heading": "INT. NORA'S DORM ROOM ‑ NEW YORK ‑ NIGHT EST (DAY KST) ‑ TWO",
+      "characters": [
+        "HOURS LATER",
+        "HAE SUNG",
+        "NORA"
+      ],
+      "dialogues": [
+        {
+          "character": "HOURS LATER",
+          "parenthetical": "",
+          "text": "Nora has showered and is now brushing her teeth on her bed."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "안 녕 ..."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "(half‑asleep)"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "절 때"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "지 금"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "오 늘"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "응 ,"
+        }
+      ],
+      "actionPreview": "Nora creates a simple Korean keyboard on a sheet of paper to refer to when typing in Korean on her English keyboard. She opens up her email and starts writing in bad Korean an email to Hae Sung. It starts with \" 널 다 시 만 나 게 될 준 몰 랐 어 ...\" / \"I didn't know that we would ever meet again...\" TIME CUT꞉ "
+    },
+    {
+      "number": 29,
+      "heading": "INT. HAE SUNG'S ROOM IN SEOUL/NORA'S DORM ROOM IN NEW YORK ‑",
+      "characters": [
+        "HAE SUNG",
+        "NORA"
+      ],
+      "dialogues": [
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "(making fun of her)"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "너 랑"
+        }
+      ],
+      "actionPreview": "EVENING KST/MORNING EST Hae Sung is talking to Nora. On his laptop, in the Skype window, we see her in her pajamas, lying in bed. She is just waking up. These are the first moments of her day, and the last moments of his. They are laughing. 한 국 말 이 좀 녹 슬었 는 데 ? / Your Korean is rusty. 우 리 엄 마 하 고 밖 "
+    },
+    {
+      "number": 30,
+      "heading": "INT. NORA'S DORM ROOM IN NEW YORK/HAE SUNG'S ROOM IN SEOUL ‑",
+      "characters": [
+        "HAE SUNG",
+        "NORA"
+      ],
+      "dialogues": [
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "넌"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "요즘은"
+        }
+      ],
+      "actionPreview": "EVENING EST/MORNING KST Nora is talking to Hae Sung on her laptop. 노 벨 상 타 야 돼 서 간 다 고 그 랬 잖 아 . 아 직 도 타 고 싶어 ? / You said you're leaving Korea because you have to win the Nobel Prize. You still want one? 퓰 리 처 에 꽃 혀 있 어 . / Nowadays, I'm really interested in the Pulitzer. Hae Sung laughs. 27."
+    },
+    {
+      "number": 31,
+      "heading": "INT. NORA'S DORM ROOM IN NEW YORK/HAE SUNG'S ROOM IN SEOUL ‑",
+      "characters": [
+        "HAE SUNG",
+        "NORA"
+      ],
+      "dialogues": [
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "옛 날"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "욕 심 쟁이 . / Greedy."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "하 고 싶 은 것 도 ,"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "성 질 도"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "(cracking up)"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "(CONT’D)",
+          "text": "아 니"
+        }
+      ],
+      "actionPreview": "LATE NIGHT EST/AFTERNOON KST Hae Sung is staring and smiling at Nora through the screen, which makes her fidget and smile back. 내 기 억 속 에 12 살 이 던 애 랑 똑 같 애 . / You're the same as the 12‑year‑old kid in my memory. 갖고 싶 은 것 도 많 고 . / Wants to do everything, wants to have everything. 나 쁘 고 . / Has a t"
+    },
+    {
+      "number": 32,
+      "heading": "INT. NORA'S DORM ROOM IN NEW YORK/HAE SUNG'S ROOM IN SEOUL ‑",
+      "characters": [
+        "HAE SUNG",
+        "NORA"
+      ],
+      "dialogues": [
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "거기 서"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "응 ."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "멋 지 다 ."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "뉴 욕 에 서"
+        }
+      ],
+      "actionPreview": "MORNING EST/EVENING KST Nora is getting ready to go to class as she talks to Hae Sung on his laptop. 한 달 내내 글 을 쓰 는 거 야 ? / So you're writing there the whole month? 아 티 스 트 레 지 던 시야 . / Yeah. It's an artist residency. 몬 탁 은 어 디 야 ? / That's cool. Where's Montauk? 28. 기 차 타 고 4 시 간 쯤 동 쪽 . Eternal Su"
+    },
+    {
+      "number": 33,
+      "heading": "INT. HAE SUNG'S ROOM IN SEOUL ‑ LATE NIGHT KST",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Hae Sung watches Eternal Sunshine of the Spotless Mind ."
+    },
+    {
+      "number": 34,
+      "heading": "INT. GRAD SCHOOL ‑ CLASSROOM ‑ MORNING EST",
+      "characters": [
+        "NORA",
+        "HAE SUNG"
+      ],
+      "dialogues": [
+        {
+          "character": "NORA",
+          "parenthetical": "(V.O.)",
+          "text": "넌"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "(V.O.)",
+          "text": "내 가"
+        }
+      ],
+      "actionPreview": "Nora is writing Hae Sung a long email instead of writing the school assignment. Janice and Rachel peek at her screen. 언 제 뉴 욕 안와 ? / Will you come to New York sometime? 왜 뉴 욕을 가 ? / Why would I go to New York?"
+    },
+    {
+      "number": 35,
+      "heading": "INT. HAE SUNG'S ROOM IN SEOUL/NORA'S DORM ROOM IN NEW YORK ‑",
+      "characters": [
+        "NORA",
+        "HAE SUNG"
+      ],
+      "dialogues": [
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "왜"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "중 국 어"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "뉴 욕 에"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "항 상"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "Ni hao ma."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "잘 하 네 . / That's good."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "그것 밖 에"
+        }
+      ],
+      "actionPreview": "MORNING KST/EVENING EST Nora's face is in the Skype window on Hae Sung's laptop. 중 국 으 로 가 ? / Why are you going to China? 배 우 러 . / To learn Mandarin. 와 서 영어 배 우지 ... / You should come to New York to learn English. 중 국 어 를 배 우 고 싶었어 . 그 리 고 내 일 에 도 도 움이 되 거 든 ... / I always wanted to learn Mandarin"
+    },
+    {
+      "number": 36,
+      "heading": "INT. NORA'S DORM ROOM ‑ NEW YORK ‑ EVENING EST (MORNING KST)",
+      "characters": [
+        "NORA"
+      ],
+      "dialogues": [
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "들려 ? / Can you hear me? INT./EXT. SEOUL COFFEE SHOP ‑ MORNING KST (EVENING EST)"
+        }
+      ],
+      "actionPreview": "Into Skype꞉ She is breaking up. Hae Sung patiently waits for his screen to load."
+    },
+    {
+      "number": 37,
+      "heading": "INT. HAE SUNG'S ROOM ‑ SEOUL ‑ EVENING KST (MORNING EST)",
+      "characters": [
+        "HAE SUNG"
+      ],
+      "dialogues": [
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "들려 ? / Can you hear me?"
+        }
+      ],
+      "actionPreview": "Into Skype꞉"
+    },
+    {
+      "number": 38,
+      "heading": "INT. GRAD SCHOOL LIBRARY ‑ MORNING EST (EVENING KST)",
+      "characters": [
+        "NORA"
+      ],
+      "dialogues": [
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "여 보세 요 ? / Hello?"
+        }
+      ],
+      "actionPreview": "Nora is not‑at‑all patiently waiting for Hae Sung to load on her screen."
+    },
+    {
+      "number": 39,
+      "heading": "INT. SEOUL COFFEE SHOP ‑ MORNING KST (EVENING EST)",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Hae Sung is patiently waiting for Nora to load on his screen. It doesn't load for a very long time. The call fails."
+    },
+    {
+      "number": 40,
+      "heading": "INT. NORA'S DORM ROOM ‑ NEW YORK ‑ MORNING EST (EVENING KST)",
+      "characters": [
+        "HAE SUNG",
+        "NORA"
+      ],
+      "dialogues": [
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "(V.O.)",
+          "text": "넌"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "(V.O.)",
+          "text": "내 가"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "여 기 야 . / We're here."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "(CONT’D)",
+          "text": "여 기 선"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "좋 다 . / It's beautiful."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "언 제"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "보 고 싶 다 . / I miss you."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "Nora is asleep. Skype rings. Hae Sung keeps calling. 30. She stirs. Over Nora sleeping through Hae Sung's call and missing it꞉ 언 제 서 울 안와 ? / Will you come to Seoul sometime? 왜 서 울을 가 ? / Why would I go to Seoul? EXT./INT. SEOUL CABLE CAR/NORA'S DORM ROOM IN NEW YORK ‑ MORNING KST/EVENING EST Hae Su"
+    },
+    {
+      "number": 41,
+      "heading": "EXT. HAE SUNG'S UNIVERSITY ‑ SEOUL ‑ AFTERNOON KST (LATE",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "NIGHT EST) Hae Sung is smoking a cigarette with his friends outside of a building after class. A message from Nora appears on his phone꞉ 우 리 얘 기 할 수 있을 까 ? / Can we talk?"
+    },
+    {
+      "number": 42,
+      "heading": "INT. NORA'S DORM ROOM IN NEW YORK/HAE SUNG'S ROOM IN SEOUL ‑",
+      "characters": [
+        "HAE SUNG",
+        "NORA"
+      ],
+      "dialogues": [
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "안 녕 . / Hi."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "안 녕 . / Hi."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "아 직"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "아 직 . / Not yet."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "괜 찮 아 ? / You okay?"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "(lying)"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "무 슨"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "이 건"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "1 년"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "설 명"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "(like a kid)"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "난"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "(like a kid)"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "지 금 만 . / Just for now."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "야 , 12 년 만 에"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "금 방 이 야 ."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "(painfully)"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "(CONT’D)",
+          "text": "(deadpan, trying to stop"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "미 안 해 . / I'm sorry."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "뭐 가"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "(CONT’D)",
+          "text": "그 래 ,"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "응 ,"
+        }
+      ],
+      "actionPreview": "ALMOST MORNING EST/LATE AFTERNOON KST Hae Sung answers the Skype call from his room. Hae Sung looks restless, sensing that something is wrong. 안 자 ? / You're not asleep yet? 그 럼 . / Of course. 얘 기 하 고 싶 은 데 ? / What did you want to talk about? Silence, as Nora gathers her thoughts and words. 그 냥 물 어"
+    },
+    {
+      "number": 43,
+      "heading": "INT. HAMPTON JITNEY ‑ MONTAUK BOUND ‑ MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Beautiful views of the New York City rapidly pass outside the windows, but Nora is missing the view. She is on her way out of the city. She is napping, curled up in her seat."
+    },
+    {
+      "number": 44,
+      "heading": "EXT. MONTAUK RESIDENCY BARN HOUSE ‑ DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "In Montauk, New York, Nora arrives at the artist residency in a cab. This is where she will stay for a month."
+    },
+    {
+      "number": 45,
+      "heading": "INT. MONTAUK RESIDENCY BARN HOUSE ‑ DOWNSTAIRS ‑ DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Nora enters the building and looks around. The house is rustic but absolutely charming, with beautiful art on the walls and filled to the brim with books ‑‑ but no one is there. She walks upstairs in search of an unoccupied room."
+    },
+    {
+      "number": 46,
+      "heading": "INT. MONTAUK RESIDENCY BARN HOUSE ‑ UPSTAIRS ‑ CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "On the second floor, the first bedroom she sees is occupied with suitcases. She continues down the hallway and finds two unoccupied bedrooms directly across from each other. She looks at both꞉ one is obviously nicer. She walks into that one."
+    },
+    {
+      "number": 47,
+      "heading": "INT. BARN HOUSE ‑ NORA'S ROOM ‑ CONTINUOUS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "There is a bed, a fan, and a large wooden desk. On the wall, the previous artist residents of the room have written their names and the year they occupied it. Nora walks up to the wall, finds an empty spot on the wall, and adds her name to it꞉ Nora Moon . There are spider webs and dust in the corner"
+    },
+    {
+      "number": 48,
+      "heading": "INT. SEOUL SUBWAY TRAIN ‑ LATE NIGHT KST (AFTERNOON EST)",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "In Seoul, Hae Sung is hunched over his phone on a subway train. Unlike New York subways, Korean subways are clean, beautiful, and efficient. Hae Sung is writing a very long email to Nora. He is sitting next to a drunk salaryman who has fallen asleep, and a Korean couple making out heavily. The train"
+    },
+    {
+      "number": 49,
+      "heading": "INT. ALL‑NIGHT SOJU BAR ‑ SEOUL ‑ LATE NIGHT",
+      "characters": [
+        "FRIEND TWO",
+        "FRIEND ONE",
+        "HAE SUNG",
+        "FRIEND THREE"
+      ],
+      "dialogues": [
+        {
+          "character": "FRIEND TWO",
+          "parenthetical": "",
+          "text": "해 성 아 ,"
+        },
+        {
+          "character": "FRIEND ONE",
+          "parenthetical": "",
+          "text": "야 ,"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "거 의 . / Almost."
+        },
+        {
+          "character": "FRIEND THREE",
+          "parenthetical": "",
+          "text": "그 래 서"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "이 번 주"
+        },
+        {
+          "character": "FRIEND ONE",
+          "parenthetical": "",
+          "text": "그 러 면"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "야 ,"
+        }
+      ],
+      "actionPreview": "Hae Sung arrives, and his friends are all there, already a bottle of soju in. They cheer, greeting him. 몇 시 냐 ? 너 때 문 에 모 였 는 데 . / Hae Sung, you're late. We're here because of you. 짐은 다 쌌 냐 ? / Hey, you all packed? 언 제 가 는 거 야 ? / So when you flying out? 일요일 . / This Sunday. 여 름 내내 거기 있 겠 네 ? / So "
+    },
+    {
+      "number": 50,
+      "heading": "INT. BARN HOUSE ‑ NORA'S ROOM ‑ AFTERNOON",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Nora is taking a nap. We peek outside Nora's window next to her bed. A cab arrives. Arthur ‑‑ the white guy at the booth with Hae Sung and Nora from the opening scene inside the speakeasy, current day ‑‑ gets out with a dirty duffle bag. He wears a ratty t‑shirt and cheap jeans. His hair is dishevel"
+    },
+    {
+      "number": 51,
+      "heading": "INT. BARN HOUSE ‑ NORA'S BEDROOM TO KITCHEN ‑ MIDDAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Nora is awake now from her nap. She exits her bedroom and realizes that the bedroom across the hallway is now occupied with Arthur's things. (Arthur is not there.) She clocks it and walks downstairs. She grabs a cup of freshly brewed coffee, and walks outside of the house."
+    },
+    {
+      "number": 52,
+      "heading": "EXT. BARN HOUSE PICNIC TABLE ‑ MOMENTS LATER",
+      "characters": [
+        "ARTHUR",
+        "NORA"
+      ],
+      "dialogues": [
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "Hi."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "Hi, I'm Nora."
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "Nice to meet you. I'm Arthur."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "When did you get in?"
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "This morning."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "You got the worst room."
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "I know."
+        }
+      ],
+      "actionPreview": "Nora exits the barn house and walks over to stare at nature. She sees Arthur approach. Because of the distance, it is still a little hard to see his face. Their eyes meet first ‑ Arthur and Nora meet. 37. They look at each other for a beat."
+    },
+    {
+      "number": 53,
+      "heading": "EXT. BARN HOUSE PICNIC TABLE ‑ NIGHT ‑ SOMETIME THAT SUMMER",
+      "characters": [
+        "NORA"
+      ],
+      "dialogues": [
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "There is a word in Korean꞉"
+        }
+      ],
+      "actionPreview": "The artists are all a little tipsy with empty bottles of wine and beer ‑‑ the evidence of a good night out ‑‑ splayed out all over the table. They listen to slightly‑drunk Nora with varying degrees of interest꞉ 인 연 In‑ Yun. It means providence or fate, but it's specifically about relationships betwe"
+    },
+    {
+      "number": 54,
+      "heading": "INT. PLANE TO SHANGHAI ‑ MORNING",
+      "characters": [
+        "NORA"
+      ],
+      "dialogues": [
+        {
+          "character": "NORA",
+          "parenthetical": "(V.O.)",
+          "text": "I think it comes from Buddhism and"
+        }
+      ],
+      "actionPreview": "Hae Sung is on a flight to Shanghai. reincarnation. 38."
+    },
+    {
+      "number": 55,
+      "heading": "INT. SHANGHAI DORM ROOM ‑ DUSK",
+      "characters": [
+        "NORA"
+      ],
+      "dialogues": [
+        {
+          "character": "NORA",
+          "parenthetical": "(V.O.)",
+          "text": "It's an In‑Yun if two strangers even walk by each other in the street and their clothes accidentally brush ‑"
+        }
+      ],
+      "actionPreview": "Hae Sung is sleeping in his new dorm room. It is small and crappy, but the view of Shanghai is magnificent. On the bed is an information package about his language exchange program in both Korean and Mandarin with things like class schedule and local restaurant recommendations."
+    },
+    {
+      "number": 56,
+      "heading": "EXT. SHANGHAI NIGHT MARKET ‑ NIGHT",
+      "characters": [
+        "NORA"
+      ],
+      "dialogues": [
+        {
+          "character": "NORA",
+          "parenthetical": "(V.O.)",
+          "text": "‑ because it means there must have been something between them in their past lives."
+        }
+      ],
+      "actionPreview": "Hae Sung and the other language exchange students walk around the fish market on a group outing. Steam emanates from the food stalls, and it is full of late‑night lovers. It smells pungent and looks gorgeous. There is a very cute GIRL (Korean, fellow language exchange student, 20) in the group who k"
+    },
+    {
+      "number": 57,
+      "heading": "INT. SHANGHAI NOODLE SHOP ‑ LATE NIGHT",
+      "characters": [
+        "NORA"
+      ],
+      "dialogues": [
+        {
+          "character": "NORA",
+          "parenthetical": "(V.O.)",
+          "text": "If two people get married, they say it's because there have been eight‑ thousand layers of In‑Yun over eight‑thousand lifetimes."
+        }
+      ],
+      "actionPreview": "The students are rowdy, excited to be in a foreign country. They all eat their delicious noodle soup, getting drunk. Hae Sung accidentally makes eye contact with the very cute girl from earlier. She smiles at him over his bowl of noodle soup. She likes him. 39. He smiles back. He likes her too."
+    },
+    {
+      "number": 58,
+      "heading": "EXT. BARN HOUSE PICNIC TABLE ‑ NIGHT ‑ SOMETIME THAT SUMMER",
+      "characters": [
+        "NORA",
+        "ARTHUR",
+        "Y E A R S",
+        "P A S S"
+      ],
+      "dialogues": [
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "Maybe you and I were somebody to each other in another lifetime."
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "Do you believe that?"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "Believe what?"
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "That you and I knew each other in another life?"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "Just because we're sitting at the same table in the same city on the same night?"
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "Yeah. Wouldn't that make this an"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "It's just something Koreans say to seduce someone."
+        }
+      ],
+      "actionPreview": "We see Nora's face as she finishes explaining the concept of In‑Yun in Montauk, over pints of beer. She is a little tipsy, and is in a lovely mood. Nora looks up at us, i.e. the person she has been explaining this concept to, a little flushed. We realize that the person she is speaking to is Arthur."
+    },
+    {
+      "number": 59,
+      "heading": "INT. TORONTO PEARSON AIRPORT ‑ A FEW DAYS LATER ‑ MORNING",
+      "characters": [
+        "CBP OFFICER",
+        "ARTHUR",
+        "AN IMAGE"
+      ],
+      "dialogues": [
+        {
+          "character": "CBP OFFICER",
+          "parenthetical": "",
+          "text": "Where are you going?"
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "New York City."
+        },
+        {
+          "character": "CBP OFFICER",
+          "parenthetical": "",
+          "text": "Why are you going there?"
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "We live there."
+        },
+        {
+          "character": "CBP OFFICER",
+          "parenthetical": "",
+          "text": "What's your occupation?"
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "We're writers."
+        },
+        {
+          "character": "CBP OFFICER",
+          "parenthetical": "",
+          "text": "You're what?"
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "Writers."
+        },
+        {
+          "character": "CBP OFFICER",
+          "parenthetical": "",
+          "text": "How long were you visiting Toronto?"
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "Ten days."
+        },
+        {
+          "character": "CBP OFFICER",
+          "parenthetical": "",
+          "text": "What was the purpose of your visit?"
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "We were visiting her family. CBP officer glances up at them."
+        },
+        {
+          "character": "CBP OFFICER",
+          "parenthetical": "",
+          "text": "(addressing Nora)"
+        },
+        {
+          "character": "AN IMAGE",
+          "parenthetical": "",
+          "text": "of Nora and Arthur, we see in silence... (Last/only other time we saw images like this is with Hae Sung and Na"
+        }
+      ],
+      "actionPreview": "Nora and Arthur are talking to a CBP OFFICER at the airport together. CBP officer looks at them suspiciously. 41. For the first time, we can see them very clearly as they are as adults in their 30s. Nora looks a little wiser, much happier, but still burning with ambition. Arthur looks more mature, m"
+    },
+    {
+      "number": 60,
+      "heading": "EXT. EAST VILLAGE STREET ‑ DAY",
+      "characters": [
+        "NORA"
+      ],
+      "dialogues": [
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "We're married."
+        }
+      ],
+      "actionPreview": "Nora and Arthur are standing on either side of the street in New York. The pedestrian walk signal is red. They make funny faces at each other, waiting for the signal to turn green. They make each other laugh. When it turns green, Arthur crosses the street and approaches Nora. They walk away together"
+    },
+    {
+      "number": 61,
+      "heading": "INT. REHEARSAL ROOM ‑ NEW YORK ‑ AFTERNOON",
+      "characters": [
+        "ACTRESS"
+      ],
+      "dialogues": [
+        {
+          "character": "ACTRESS",
+          "parenthetical": "",
+          "text": "\"And all this cost me something too. I crossed the Pacific Ocean to be here."
+        },
+        {
+          "character": "ACTRESS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "Nora is in rehearsal for a play of hers. She is sitting there with a white woman, HELENA, who is her director (40s), and their STAGE MANAGER (30s). They sit on one side of the table. On the other side, a young Korean‑American ACTRESS (20s) is doing a part of a monologue from Nora's play. She is love"
+    },
+    {
+      "number": 62,
+      "heading": "INT. BOOKSTORE ‑ BROOKLYN ‑ LATER THAT DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Arthur is at a book signing of his own novel. We can see the cover of the book that says \"Boner by Arthur Zaturansky.\" He is talking to a couple hip younger women that are big fans. Nora approaches him, her face buried in her phone. She has his lunch ‑ a bagel sandwich ‑ that she hands him. Arthur t"
+    },
+    {
+      "number": 63,
+      "heading": "INT. NORA AND ARTHUR'S APT ‑ LIVING ROOM ‑ NEW YORK ‑ DAY",
+      "characters": [
+        "ARTHUR",
+        "NORA"
+      ],
+      "dialogues": [
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "배 고 파 요 . / I'm hungry."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "Me too."
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "뭐"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "I don't know."
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "(using the one good phrase in Korean he knows)"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "You know what I want?"
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "Chicken wings."
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "Holy shit."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "Yeah."
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "Genius."
+        }
+      ],
+      "actionPreview": "Nora and Arthur just finished having sex. 먹 고 싶어 요 ? / What do you want to eat? 아 ... 어 떡 하 나 . / Ah... what can ya do? 43."
+    },
+    {
+      "number": 64,
+      "heading": "EXT. EAST VILLAGE STREET ‑ LATER ‑ DAY",
+      "characters": [
+        "ARTHUR",
+        "NORA"
+      ],
+      "dialogues": [
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "What are you thinking about?"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "Remember I told you about Hae Sung?"
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "Oh yeah. Is that this week?"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "Yeah."
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "Why is he coming here again?"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "I think vacation."
+        }
+      ],
+      "actionPreview": "Nora and Arthur walk down the street, holding hands."
+    },
+    {
+      "number": 65,
+      "heading": "INT. ALL‑NIGHT SOJU BAR ‑ SEOUL ‑ LATE NIGHT",
+      "characters": [
+        "FRIEND TWO",
+        "HAE SUNG",
+        "FRIEND ONE",
+        "FRIEND THREE"
+      ],
+      "dialogues": [
+        {
+          "character": "FRIEND TWO",
+          "parenthetical": "",
+          "text": "뉴 욕은"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "휴 가 ."
+        },
+        {
+          "character": "FRIEND TWO",
+          "parenthetical": "",
+          "text": "야 ,"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "누 구 ? / Who?"
+        },
+        {
+          "character": "FRIEND TWO",
+          "parenthetical": "",
+          "text": "뭘"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "내 가"
+        },
+        {
+          "character": "FRIEND ONE",
+          "parenthetical": "",
+          "text": "진짜 ? / Really?"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "응 ."
+        },
+        {
+          "character": "FRIEND TWO",
+          "parenthetical": "",
+          "text": "빨 리"
+        },
+        {
+          "character": "FRIEND THREE",
+          "parenthetical": "",
+          "text": "아 ..."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "뭐 가 ? / What?"
+        },
+        {
+          "character": "FRIEND THREE",
+          "parenthetical": "",
+          "text": "너"
+        }
+      ],
+      "actionPreview": "Hae Sung is now in his 30s. He is older, more mature, more attractive in his calm and self‑assurance. He smiles more easily. He is more patient. He is still friends with the same guys he's been friends with for the last 20 years. They are all already a little drunk. 왜 가 냐 ? / Why are you going to Ne"
+    },
+    {
+      "number": 66,
+      "heading": "EXT. NEW YORK CITY ‑ WHEN HAE SUNG ARRIVES",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "It is pouring rain. 45. New York welcomes Hae Sung with its wettest and saddest self."
+    },
+    {
+      "number": 67,
+      "heading": "INT. MIDTOWN HOTEL LOBBY ‑ NEW YORK ‑ DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "We are inside the hotel lobby, looking outside through the window. The yellow cab that Hae Sung is riding in arrives in front of the hotel. Hae Sung gets out of the cab, and grabs his suitcase. It is miserable, and the New Yorkers are not accommodating of this tourist. They bump into him and make it"
+    },
+    {
+      "number": 68,
+      "heading": "INT. MIDTOWN HOTEL ‑ HAE SUNG'S ROOM ‑ MOMENTS LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "He opens the curtains in his room. It's raining and raining and raining."
+    },
+    {
+      "number": 69,
+      "heading": "EXT. MIDTOWN HOTEL ‑ AWNING AT THE ENTRANCE ‑ LATER THAT DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Hae Sung looks at the water falling relentlessly while trying to light a cigarette. There are other people who exit the hotel and bravely go forth into the shitty weather, each armed with a \"I <3 NY\" tourist umbrella. He manages to light the cigarette."
+    },
+    {
+      "number": 70,
+      "heading": "INT. MIDTOWN HOTEL ‑ LOBBY ‑ EVENING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "He has give up on having a sightseeing day. He lounges in the lobby watching TV (local NY news), looking at his phone, having a drinking and eating something. He looks absolutely miserable. The rain keeps pouring."
+    },
+    {
+      "number": 71,
+      "heading": "EXT. NEW YORK CITYSCAPES ‑ EVENING TO NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "But then, like a miracle, rain stops. 46."
+    },
+    {
+      "number": 72,
+      "heading": "EXT. MADISON SQUARE PARK ‑ NEXT DAY ‑ SUNRISE",
+      "characters": [
+        "NORA",
+        "HAE SUNG"
+      ],
+      "dialogues": [
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "해 성 ! / Hae Sung!"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "(in pain, but smiling)"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "(CONT’D)",
+          "text": "뭐 라 고"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "모르 겠 어 . / I don't know."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "마 지 막 으 로"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "오 늘"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "그 러 게 . / You're right."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "갈까 ? / Should we go?"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "그 래 . / Yes."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "(CONT’D)",
+          "text": "와 . / Woah."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "와 . / Woah."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "와 . / Woah."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "와 . / Woah."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "와 . / Woah."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "와 . / Woah."
+        }
+      ],
+      "actionPreview": "This is as quiet and unpopulated as Madison Square Park ever gets. It's the morning after rain, so it is especially beautiful. A moment on the water lily in the Reflecting Pool. Hae Sung walks around the Reflecting Pool in Madison Square Park and stands there, waiting. To a casual observer, he looks"
+    },
+    {
+      "number": 73,
+      "heading": "INT. MADISON SQUARE PARK SUBWAY STATION ‑ MOMENTS LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Nora and Hae Sung walk down the stairs and briefly wait for the train to arrive. The train arrives. They get in. The train leaves."
+    },
+    {
+      "number": 74,
+      "heading": "INT. SUBWAY ‑ R TRAIN ‑ LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "There is nowhere to sit, so Nora and Hae Sung stand together, holding onto the same subway pole. They do not stand too close and their hands do not touch. There is a garbled voice over the PA system that is totally incomprehensible. Nora sorta understands. They awkwardly but sweetly smile at each ot"
+    },
+    {
+      "number": 75,
+      "heading": "EXT. BROOKLYN BRIDGE PARK ‑ LATE AFTERNOON",
+      "characters": [
+        "NORA",
+        "HAE SUNG"
+      ],
+      "dialogues": [
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "내 가"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "알아 . / I know."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "이 메 일"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "응 . / Yeah."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "보 고 싶었 는 데 ."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "미 안 해 . / I'm sorry."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "여 자 친 구 도"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "잠 깐"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "헤 어 졌 어 ? / You broke up?"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "아 니 ,"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "(CONT’D)",
+          "text": "We just need time to think. We just started talking about getting"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "넌"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "모르 겠 어 . / I don't know."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "사 랑 하 는 데 ,"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "좀"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "뭐 가"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "조 건 이"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "그건"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "우 리 집 에"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "너 가"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "직 업 도"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "돈 을"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "처 음 엔"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "사 진"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "그 래 . / Yeah."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "멋 있 게"
+        }
+      ],
+      "actionPreview": "Hae Sung and Nora have arrived at the Dumbo pier. They walk towards Jane's Carousel. Nora seems deep in thought. 결 혼 하 기 전 에 , 남 편 이 랑 한 국 에 갔 었 잖 아 . / Before I got married, I went to Korea with my husband. This is the first time Nora has mentioned her husband in front of Hae Sung. He winces a litt"
+    },
+    {
+      "number": 76,
+      "heading": "EXT. BY THE WATER ‑ BROOKLYN BRIDGE PARK ‑ CONTINUOUS",
+      "characters": [
+        "HAE SUNG",
+        "NORA"
+      ],
+      "dialogues": [
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "여 기"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "이 스 트"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "싸 워 ? / You two fight?"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "어 휴 ,"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "왜"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "그 냥 ."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "남 편 은"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "우 리 집 에 서"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "(surprised)"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "(smirking)"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "할 줄 알아 ?! / He knows how?!"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "응 ,"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "한 국 말 도"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "아 니 ,"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "오 ,"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "육 개 장 를"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "육 개 장 ?"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "장 난"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "아 니 . / No."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "(CONT’D)",
+          "text": "뭐"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "너"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "(smirking)"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "너 같 이"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "야 ,"
+        }
+      ],
+      "actionPreview": "Nora and Hae Sung walk past Jane's Carousel and approach the water. The view is magnificent as always... a vivid view of Manhattan, framed by two historical old bridges. The carousel is lit up. The pier is filled with lovers on dates. In fact, literally everyone is on a date, making out and taking s"
+    },
+    {
+      "number": 77,
+      "heading": "EXT. IN FRONT OF JANE'S CAROUSEL ‑ SOMETIME LATER ‑ SUNSET",
+      "characters": [
+        "NORA",
+        "HAE SUNG"
+      ],
+      "dialogues": [
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "근 데"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "응 ? / Mm?"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "너는"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "12 년"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "응 . / Yeah."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "그게"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "(CONT’D)",
+          "text": "그 냥"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "미 안 . / Sorry."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "뭐 가"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "그 치 ."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "너 가"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "왜"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "그 냥 . / Just because."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "(CONT’D)",
+          "text": "몰 라 ."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "그 랬 구 나 . / I see."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "맞 아 ."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "이제 는"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "그 치 . / Right."
+        }
+      ],
+      "actionPreview": "Some time has passed. The two of them sit in front of Jane's Carousel, watching the sun fade away, listening to the sound of the water. They've run out of words for the moment. Long silence. Nora turns to look at Hae Sung. Hae Sung looks back at her. 해 성 아 . / Hae Sung. 나 를 왜 찾 았어 ? / Why did you lo"
+    },
+    {
+      "number": 78,
+      "heading": "INT. NORA AND ARTHUR'S APARTMENT ‑ NIGHT",
+      "characters": [
+        "NORA",
+        "ARTHUR"
+      ],
+      "dialogues": [
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "Hi."
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "Hi, my love."
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "You were right."
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "I was?"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "Yeah. He came here to see me."
+        }
+      ],
+      "actionPreview": "Nora gets home. Arthur is playing Overwatch on their XBOX One. He plays Zenyatta, a zen Buddhist monk robot who heals and deals damage to his opponents and says things about the balance of the universe. Nora sits down on the couch and waits for Arthur to finish his game. How was it? Arthur's game en"
+    },
+    {
+      "number": 79,
+      "heading": "INT. MIDTOWN HOTEL ‑ NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Hae Sung returns to his empty hotel room. It is one of those suffocatingly small New York hotel rooms. He takes off his shoes and sits down on the bed. 57. He looks outside the window at the cityscape. Silence. He suddenly looks incredibly lonely."
+    },
+    {
+      "number": 80,
+      "heading": "INT. NORA AND ARTHUR'S APARTMENT ‑ BATHROOM ‑ LATE NIGHT",
+      "characters": [
+        "NORA",
+        "ARTHUR"
+      ],
+      "dialogues": [
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "It's so crazy to see him be this grown‑up man who has a normal job and a normal life... and he's"
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "Is he attractive?"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "I think so. He's really masculine, in this way I think is"
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "Are you attracted to him?"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "I don't know. I don't think so."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "(CONT’D) (as honestly as she can"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "Did"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "I think he missed the twelve year old crybaby he knew a long time"
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "You were a crybaby?"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "Most of the time, he’d just have to stand around and watch me."
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "When is he leaving again?"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "The morning after tomorrow."
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "Mm."
+        }
+      ],
+      "actionPreview": "Nora and Arthur have both just showered, and are making their way to bed. Nora is talking while she moisturizes. so Korean. He still lives with his parents, which is really Korean, and he has all these really Korean views on everything, and I just feel really not ‑Korean with him. But also, in some "
+    },
+    {
+      "number": 81,
+      "heading": "INT. NORA AND ARTHUR'S APARTMENT ‑ BEDROOM ‑ MOMENTS LATER",
+      "characters": [
+        "NORA",
+        "ARTHUR"
+      ],
+      "dialogues": [
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "Are you mad?"
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "(yes)"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "It feels like you are."
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "I don't have a right to be mad."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "What do you mean? Of course you do."
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "He flew thirteen hours to be here. I'm not gonna tell you you shouldn't see him or something."
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "(CONT’D) (semi‑seriously)"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "(deadpan, lol)"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "I know."
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "(CONT’D) I know you."
+        }
+      ],
+      "actionPreview": "Nora and Arthur continue to get ready for bed. Beat. No. 59. He's your childhood sweetheart. And it's not like you're gonna run away with him. Nora laughs. Are you? Definitely. I'm gonna throw away my life here and run away with him to Seoul. Arthur doesn't think that's very funny. Do you even know "
+    },
+    {
+      "number": 82,
+      "heading": "INT. MIDTOWN HOTEL ‑ HAE SUNG'S ROOM ‑ SAME TIME",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Hae Sung gets out of the shower and gets into bed. He turns off the lights in the hotel room. It's pitch dark. 60."
+    },
+    {
+      "number": 83,
+      "heading": "INT. NORA AND ARTHUR'S APARTMENT ‑ BEDROOM ‑ LATE NIGHT",
+      "characters": [
+        "NORA",
+        "ARTHUR"
+      ],
+      "dialogues": [
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "Just thinking about how good of a story this is."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "The story of Hae Sung and me?"
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "Yeah. I just can't compete."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "What do you mean?"
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "Childhood sweethearts who reconnect twenty years later and realize they were meant for each other."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "We're not meant for each other."
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "I know, but in the story I'm the evil white American husband standing in the way of destiny."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "(laughs)"
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "Meanwhile, our story is so boring."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "You make it sound so romantic."
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "That's what I'm saying. I'm the guy you leave when your ex‑lover comes to take you away."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "(gently)"
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "What if you met someone else at the residency? What if there was some other writer from New York who’d also read all the same books and watched all the same movies and who could also give you useful notes on your plays and listen to you complain about your rehearsals?"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "That’s not how life works."
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "Yeah, but wouldn’t you be laying here with him?"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "This is my life. And I'm living it with"
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "Are you happy with it? Is this the life you imagined you'd have when you left Seoul?"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "When I was a"
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "Yeah. Is this how you thought it would turn out? Laying in a bed in a tiny apartment in the East"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "You're asking me if"
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "Yes. Basically."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "Wow."
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "I know."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "This is where I ended up. This is where I'm supposed to be."
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "Okay."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "It’s just that you make my life so much bigger, and I’m wondering if I do the same thing for you."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "You do."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "(CONT’D) I'm just a girl from Korea, you"
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "Okay."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "You're forgetting the part where I love you."
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "I don't forget it, I just have trouble believing it sometimes."
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "I do?"
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "Yeah. You never sleep talk in"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "I didn't know that. You never told"
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "Most of the time I think it's cute, but sometimes ‑ I don't know ‑ I get scared."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "Why do you get scared?"
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "You dream in a language that I can't understand. There's this whole place inside of you where I can't go."
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "(CONT’D) I think that's why I've been trying to learn Korean, even though I know it's a little annoying for you."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "You want to understand me when I'm"
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "Yeah."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "I'm sure I'm just saying gibberish."
+        }
+      ],
+      "actionPreview": "Arthur and Nora are laying in bed with the lights off. They lightly touch each other with the intimacy of a married couple. It's pitch dark. Arthur lets out a light laugh. Beat. Shut up. 61. We met at an artist’s residency, we slept together because we both happened to be single, it turned out we we"
+    },
+    {
+      "number": 84,
+      "heading": "EXT. BROOKLYN BRIDGE PARK ‑ LATE NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Late at night, the Dumbo pier is impossibly beautiful in a different way. Manhattan lights up brightly. It's the most romantic place in the world. It is not as populated as when Hae Sung and Nora left it, but there are some straggling lovers staying out all night and making out."
+    },
+    {
+      "number": 85,
+      "heading": "EXT. LINE FOR THE FERRY / SECURITY ‑ DAY",
+      "characters": [
+        "NORA",
+        "HAE SUNG"
+      ],
+      "dialogues": [
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "안 녕 ! / Hey!"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "안 녕 ."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "응 ."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "뭐"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "아 니 . / No."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "이 거"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "내꺼 야 ? / Is it for me?"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "어 제"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "응 ? / Hmm?"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "너"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "요즘"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "그 래 ?"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "토 니 상 . / A Tony."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "넌"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "(smirking)"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "(smirking)"
+        }
+      ],
+      "actionPreview": "Hae Sung waits for Nora, lining up for the Statue Cruises Ferry that takes you to the tiny island that hosts the Statue of Liberty. The line is long and populated with tourists. Hae Sung beams, spotting Nora who is approaching. Nora smiles back at him. To someone who doesn't know their situation, th"
+    },
+    {
+      "number": 86,
+      "heading": "EXT. ON THE FERRY ‑ MOMENTS LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "They get on the ferry. They walk up the stairs to the top level, and lean against the railing. They quietly look at the water. This is intolerably romantic. Nora can't make eye contact with Hae Sung. Hae Sung looks at her openly, though, since he's not the one who's married."
+    },
+    {
+      "number": 87,
+      "heading": "EXT. ON THE FERRY ‑ MOMENTS LATER",
+      "characters": [
+        "NORA"
+      ],
+      "dialogues": [
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "사 진"
+        }
+      ],
+      "actionPreview": "Hae Sung and Nora are leaning against the railing, looking at both a beautiful jewel‑like view of Manhattan and the front of the Statue of Liberty. They stare for a moment in silence. 찍 어 줄 까 ? / Want me to take a photo of you? Nora takes Hae Sung's phone and takes a few photos of him. One standing "
+    },
+    {
+      "number": 88,
+      "heading": "EXT. ON THE FERRY ‑ BACK OF THE STATUE OF LIBERTY ‑ MOMENTS",
+      "characters": [
+        "HAE SUNG"
+      ],
+      "dialogues": [
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "뒤돌 아"
+        }
+      ],
+      "actionPreview": "LATER From the ferry, they see the Statue of Liberty from behind. They stare up her back, turned against them. 있 네 . / She's turned against us."
+    },
+    {
+      "number": 89,
+      "heading": "EXT. ON THE FERRY ‑ HEADING BACK TO MANHATTAN ‑ AFTERNOON",
+      "characters": [
+        "HAE SUNG",
+        "NORA"
+      ],
+      "dialogues": [
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "너"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "그 린 카 드"
+        }
+      ],
+      "actionPreview": "The ferry is heading back to Manhattan. They sit side by side. Nora is showing Hae Sung photos of her wedding. In the photo, she wears a bridal and modernized 한 복 Hanbok, a traditional and colorful Korean dress, smiling widely with Arthur, who is in a black suit and bow tie. They look really happy t"
+    },
+    {
+      "number": 90,
+      "heading": "EXT. EAST VILLAGE STREET ‑ LATER ‑ EVENING",
+      "characters": [
+        "HAE SUNG",
+        "NORA"
+      ],
+      "dialogues": [
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "나"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "그 럼 . / Of course."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "내 가"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "그 럼 !"
+        }
+      ],
+      "actionPreview": "Hae Sung and Nora walk for a while in silence. 가 는 건 알아 ? / He knows I'm coming over? 68. 누 군 진 알 고 ? / He knows who I am? 만 나 고 싶어 해 . / Of course! He wants to meet you. They keep walking, headed to East 10th Street and 1st Avenue, where Nora and Arthur live."
+    },
+    {
+      "number": 91,
+      "heading": "INT. NORA AND ARTHUR'S APARTMENT ‑ NIGHT",
+      "characters": [
+        "NORA",
+        "ARTHUR",
+        "HAE SUNG"
+      ],
+      "dialogues": [
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "들 어와 . / Come in."
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "안 녕 하 세 요 ."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "Hi, nice to meet you. Arthur."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "(CONT’D)",
+          "text": "(to Nora)"
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "(to Hae Sung)"
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "배 고 파 ? / You hungry?"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "Oh! Yes."
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "뭐"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "Uh... pasta!"
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "You like pasta?"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "Yes!"
+        }
+      ],
+      "actionPreview": "The apartment is cleaner than we have ever seen it, because Arthur spent a part of his afternoon cleaning the place. Arthur sits on the couch, on his phone, waiting a bit anxiously for Nora and Hae Sung to get there. The front door unlocks , and Arthur gets up from the couch. Nora and Hae Sung enter"
+    },
+    {
+      "number": 92,
+      "heading": "EXT. EAST VILLAGE STREET ‑ NIGHT",
+      "characters": [
+        "ARTHUR",
+        "HAE SUNG",
+        "NORA"
+      ],
+      "dialogues": [
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "So what did you two do today?"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "Um..."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "The Statue of Liberty."
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "You took the ferry?"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "Yeah."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "It's nice."
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "I've never been."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "What?!"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "Really?!"
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "Yeah. I've never actually been"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "(to Nora, chiding)"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "(feeling bad)"
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "(laughing)"
+        }
+      ],
+      "actionPreview": "Hae Sung, Nora, and Arthur walk down busy East Village streets, filled with the yuppies checking out hip restaurants and the lost souls that have spilled out of Tompkins Square Park. 70. Hae Sung raises his arm to do an impression of the Statue of Liberty. there. 야 , 남 편 이 랑도 가 봐 야 지 ! / Hey, you go"
+    },
+    {
+      "number": 93,
+      "heading": "EXT. EAST VILLAGE RESTAURANT ‑ MOMENTS LATER",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "We look through the window of a restaurant in East Village. Arthur, Nora, and Hae Sung are sitting around a table and eating bowls of amazing pasta. The restaurant is bustling with loud diners, and we cannot hear what the three of them are talking about over the sound of the crowd, but they laugh an"
+    },
+    {
+      "number": 94,
+      "heading": "INT. EAST VILLAGE BAR / SPEAKEASY ‑ LATE NIGHT",
+      "characters": [
+        "HAE SUNG",
+        "NORA",
+        "ARTHUR"
+      ],
+      "dialogues": [
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "Uh... When I was 24 year, I..."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "군 대 ? / Military service?"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "Yes!"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "Military service."
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "Right."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "You know Korean men have mandatory military service."
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "Of course, your dad talks about it."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "어 땠 어 ?"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "... No."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "(CONT’D)",
+          "text": "But. Military, work, it's... same."
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "Same?"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "같 아 ?"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "You have boss."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "(CONT’D)",
+          "text": "여 기 는"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "그 치 . / Yes."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "한 국 은"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "(to Arthur)"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "응 ."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "(CONT’D)",
+          "text": "You have to do all of your boss's work first, then you do your own work, and then you can go home."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "밤"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "응 . / Yeah."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "빡 쎄 네 . / That's so hard."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "응 . / Yeah. (to Arthur)"
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "Hard physically, or mentally?"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "몸 적으 로 ,"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "Both. Definitely physical. Hard."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "Mentally?"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "Mentally, I... strong."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "정 신 적으 로 는"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "응 ,"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "(CONT’D)",
+          "text": "이 민"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "응 ,"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "한 국 은"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "(CONT’D)",
+          "text": "남 편"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "당 연 하 지 . / Of course."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "정 말로"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "응 . / Yeah."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "행 복 해 ? / Are you happy?"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "그 럼 . / Of course."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "니"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "그 래 ? / Yeah?"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "응 . / Yeah."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "(CONT’D)",
+          "text": "우 리 가"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "그 럼 . / Of course."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "(sharply)"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "(defensively)"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "(sincerely)"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "괜 찮 아 . / It's okay."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "왠지"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "(CONT’D)",
+          "text": "/ I don't know, seeing you again and being here makes me have a lot of weird thoughts."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "무 슨"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "12 년"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "(CONT’D)",
+          "text": "12 년 전"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "(CONT’D)",
+          "text": "근 데"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "너 가"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "알아 . / I know."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "근 데"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "알아 ."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "또라 이 네 . / You psycho."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "여 기"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "(CONT’D)",
+          "text": "이 번"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "Just talking about you."
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "Mm."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "전 생 에"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "글 쎄 . / I don't know."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "뭔 가 ..."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "아 니 면"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "막"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "상 처 주 는"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "아 니 면"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "왜 ? / Why?"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "그 냥"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "그 냥"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "I'm sorry we speak alone. We will"
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "It's okay. You haven't seen each other in a long time."
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "(CONT’D) I never thought I'd be part of something like this."
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "Do you know what... In‑Yun?"
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "Yes. Nora told me when we first"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "You and me."
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "Yes, you and I are In‑Yun too."
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "(CONT’D) I’m really glad you came here. It was the right thing to do."
+        }
+      ],
+      "actionPreview": "The three of them sit down in a booth at the hip East Village speakeasy. The speakeasy is cute enough and the drinks are good. This is the bar in the opening scene of the film. Nora notices a cute young white couple flirting on the other side of the bar. This is the young white couple that was looki"
+    },
+    {
+      "number": 95,
+      "heading": "INT. NORA AND ARTHUR'S APARTMENT ‑ CONTINUOUS",
+      "characters": [
+        "NORA",
+        "ARTHUR",
+        "HAE SUNG"
+      ],
+      "dialogues": [
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "(to Arthur)"
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "Okay."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "Nice to meet you."
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "Nice to meet you too."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "Visit me in Korea."
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "(convincingly)"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "(softly)"
+        },
+        {
+          "character": "ARTHUR",
+          "parenthetical": "",
+          "text": "Okay."
+        }
+      ],
+      "actionPreview": "Hae Sung picks up his bag. Gonna walk him to his uber. They head out the doorway. Definitely. Nora and Arthur look at each other. I'll be right back. Nora and Hae Sung leave. The door shuts behind them. For a moment, we see Arthur alone in the home he shares with Nora."
+    },
+    {
+      "number": 96,
+      "heading": "EXT. EAST VILLAGE STREET ‑ VERY LATE NIGHT ‑ ALMOST DAWN",
+      "characters": [
+        "NORA",
+        "HAE SUNG"
+      ],
+      "dialogues": [
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "금 방"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "(checking his uber's ETA)"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "(CONT’D)",
+          "text": "야 ! / Hey!"
+        }
+      ],
+      "actionPreview": "Nora and Hae Sung walk quietly down the street. They walk to Hae Sung's uber is supposed to arrive. Nora and Arthur's apartment is out of sight. 오 나 ? / Will it be here soon? 82. 응 . 2 분 . / Yes. 2 minutes. Beat. Heavy silence falls between them. It's just the two of them in the street. This really "
+    },
+    {
+      "number": 97,
+      "heading": "EXT. NA YOUNG'S NEIGHBORHOOD ‑ PYOUNGCHON ‑ LATE‑90S",
+      "characters": [
+        "ALMOST DAWN"
+      ],
+      "dialogues": [
+        {
+          "character": "ALMOST DAWN",
+          "parenthetical": "",
+          "text": "Back in the hometown where they grew up, back when they were 12 years old."
+        }
+      ],
+      "actionPreview": "‑ 83. 12‑year‑old Na Young and 12‑year‑old Hae Sung just look at each other for a moment in front of Na Young's childhood apartment building. This is exactly the way it was when they first said goodbye to each other. But while they had said goodbye back in Korea in the afternoon ‑ after school ‑ all"
+    },
+    {
+      "number": 98,
+      "heading": "EXT. EAST VILLAGE STREET ‑ 5 A.M. ‑ ALMOST DAWN",
+      "characters": [
+        "HAE SUNG",
+        "NORA"
+      ],
+      "dialogues": [
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "나 영아 . / Na Young."
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "응 ? / Mm?"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "이 것 도"
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "(CONT’D)",
+          "text": "그 때"
+        },
+        {
+          "character": "NORA",
+          "parenthetical": "",
+          "text": "모르 겠 어 . / I don't know."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "",
+          "text": "나 도 . / Me neither."
+        },
+        {
+          "character": "HAE SUNG",
+          "parenthetical": "(CONT’D)",
+          "text": "그 때"
+        }
+      ],
+      "actionPreview": "전 생 이 라 면 , 우 리 의 다 음 생 에 선 벌 써 서 로 에 게 다 른 인 연 인 게 아 닐 까 ? / What if this is a past life too, and we are already something else to each other in our next life? Beat. 우 리 는 누 구 일 까 ? / Who do you think we are then? Hae Sung smiles. 보 자 . / See you then. Hae Sung gets in the uber. After a moment, the"
+    },
+    {
+      "number": 99,
+      "heading": "INT. UBER ‑ DAWN",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Hae Sung sits alone in the back seat as the uber drives away from Nora. This scene reflects the backseat of Na Young's mom's car in their childhood, on their way home from the museum. He is in his own tiny box, looking outside the window, watching New York as it wakes up. He faintly smiles as the ub"
+    }
+  ]
+}

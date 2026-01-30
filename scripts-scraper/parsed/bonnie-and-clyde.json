@@ -1,0 +1,22 @@
+{
+  "slug": "bonnie-and-clyde",
+  "title": "Bonnie and Clyde",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 31153,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                      \"BONNIE & CLYDE\" </b> by David Newman & Robert Benton <b> </b> <b>FADE IN. </b> <b>INT. BEDROOM.  CLOSE-UP OF BONNIE PARKER.  DAY </b> Blonde, somewhat fragile, intelligent in expression.  She is putting on make-up with intense concentration and appreciation, applying lipstick and eye make-up.  As the camera slowly pulls back from the closeup we see that we have been looking into a mirror.  She is standing before the full-length mirror in her bedroom doing her make-up.",
+      "dialogue_count": 0,
+      "word_count": 31153
+    }
+  ]
+}

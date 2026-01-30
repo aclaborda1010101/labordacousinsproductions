@@ -1,0 +1,30 @@
+{
+  "slug": "american-president-the",
+  "title": "American President, The",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 2,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 28925,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<html> <head> <script> <b><!-- </b>if (window!= top) top.location.href=location.href <b>// --> </b></script> <title>THE AMERICAN PRESIDENT</title> </head> <pre> <b>\tT H E   A M E R I C A N   P R E S I D E N T </b> Screenplay by Aaron Sorkin <b>\t-------------------------------------------------------------- </b> <b>\tFADE IN: </b> As the OPENING TTTLES ROLL against a series of shots of statues and paintings of former presidents, we HEAR shards of dialogue from various presidential speeches. <b>\tMA",
+      "dialogue_count": 0,
+      "word_count": 4188
+    },
+    {
+      "scene_number": 2,
+      "slugline": "INT. A.J.'s OFFICE - DAY",
+      "characters": [],
+      "action_text": "<b>\t\t\t\tA.J. </b>\t\tYour concerns are not falling on deaf ears. The environmental lobby has known no greater alley in the White House than President Shepherd. <b>\t\t\t\tSYDNEY </b>\t\tHardly an impressive distinction, A.J. SUSAN is trying to avert the inevitable-- <b>\t\t\t\tSUSAN </b>\t\tSydney, we should leave Mr. MacInerney alone now. He's already given us more time than-- <b>\t\t\t\tSYDNEY </b>\t\tSusan, Mr. MacInerney doesn't want us to leave, because Mr. MacInerney's not yet done what he needs to do today. <",
+      "dialogue_count": 0,
+      "word_count": 24737
+    }
+  ]
+}

@@ -1,0 +1,4901 @@
+{
+  "slug": "emilia-pérez-2024",
+  "title": "Emilia Pérez",
+  "parsedWith": "v2",
+  "parsedAt": "2026-01-29T22:09:08.865Z",
+  "stats": {
+    "scenes": 99,
+    "dialogues": 727,
+    "characters": 51
+  },
+  "characters": [
+    {
+      "name": "RITA",
+      "dialogueLines": 236,
+      "totalWords": 1815
+    },
+    {
+      "name": "EMILIA",
+      "dialogueLines": 190,
+      "totalWords": 1291
+    },
+    {
+      "name": "JESSI",
+      "dialogueLines": 103,
+      "totalWords": 649
+    },
+    {
+      "name": "MANITAS",
+      "dialogueLines": 34,
+      "totalWords": 299
+    },
+    {
+      "name": "CORO",
+      "dialogueLines": 16,
+      "totalWords": 71
+    },
+    {
+      "name": "GUSTAVO",
+      "dialogueLines": 16,
+      "totalWords": 91
+    },
+    {
+      "name": "WASSERMAN",
+      "dialogueLines": 15,
+      "totalWords": 79
+    },
+    {
+      "name": "DOCTOR",
+      "dialogueLines": 14,
+      "totalWords": 32
+    },
+    {
+      "name": "WOMAN",
+      "dialogueLines": 13,
+      "totalWords": 121
+    },
+    {
+      "name": "MAN",
+      "dialogueLines": 9,
+      "totalWords": 62
+    },
+    {
+      "name": "TRAVEL AGENT",
+      "dialogueLines": 9,
+      "totalWords": 67
+    },
+    {
+      "name": "BERLINGER",
+      "dialogueLines": 6,
+      "totalWords": 48
+    },
+    {
+      "name": "INT.",
+      "dialogueLines": 6,
+      "totalWords": 46
+    },
+    {
+      "name": "DIEGO",
+      "dialogueLines": 6,
+      "totalWords": 22
+    },
+    {
+      "name": "CHORUS",
+      "dialogueLines": 5,
+      "totalWords": 24
+    },
+    {
+      "name": "SECRETARY",
+      "dialogueLines": 3,
+      "totalWords": 16
+    },
+    {
+      "name": "KID",
+      "dialogueLines": 3,
+      "totalWords": 18
+    },
+    {
+      "name": "OWNER",
+      "dialogueLines": 2,
+      "totalWords": 9
+    },
+    {
+      "name": "ANCHORMAN",
+      "dialogueLines": 2,
+      "totalWords": 21
+    },
+    {
+      "name": "WOMAN IN BLACK",
+      "dialogueLines": 2,
+      "totalWords": 25
+    },
+    {
+      "name": "EL FLACO",
+      "dialogueLines": 2,
+      "totalWords": 25
+    },
+    {
+      "name": "A REPENTANT HITMAN",
+      "dialogueLines": 2,
+      "totalWords": 8
+    },
+    {
+      "name": "WOMEN AND HITMEN",
+      "dialogueLines": 2,
+      "totalWords": 6
+    },
+    {
+      "name": "REPORTER",
+      "dialogueLines": 2,
+      "totalWords": 15
+    },
+    {
+      "name": "MAID",
+      "dialogueLines": 2,
+      "totalWords": 23
+    },
+    {
+      "name": "GUSTAVO BRUN",
+      "dialogueLines": 2,
+      "totalWords": 5
+    },
+    {
+      "name": "DEFENSE SPEECH",
+      "dialogueLines": 1,
+      "totalWords": 23
+    },
+    {
+      "name": "B R IN E",
+      "dialogueLines": 1,
+      "totalWords": 2
+    },
+    {
+      "name": "A WOMAN",
+      "dialogueLines": 1,
+      "totalWords": 10
+    },
+    {
+      "name": "TATTOOED GUY",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "TATTOED MAN",
+      "dialogueLines": 1,
+      "totalWords": 3
+    },
+    {
+      "name": "SICARIO",
+      "dialogueLines": 1,
+      "totalWords": 12
+    },
+    {
+      "name": "BANGKOK",
+      "dialogueLines": 1,
+      "totalWords": 2
+    },
+    {
+      "name": "O U",
+      "dialogueLines": 1,
+      "totalWords": 2
+    },
+    {
+      "name": "AND CHORUS",
+      "dialogueLines": 1,
+      "totalWords": 6
+    },
+    {
+      "name": "R TA",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "EXT.",
+      "dialogueLines": 1,
+      "totalWords": 3
+    },
+    {
+      "name": "END",
+      "dialogueLines": 1,
+      "totalWords": 3
+    },
+    {
+      "name": "FADE TO BLACK.",
+      "dialogueLines": 1,
+      "totalWords": 2
+    },
+    {
+      "name": "PRIEST",
+      "dialogueLines": 1,
+      "totalWords": 2
+    },
+    {
+      "name": "LA LUCECITA",
+      "dialogueLines": 1,
+      "totalWords": 4
+    },
+    {
+      "name": "CHILD",
+      "dialogueLines": 1,
+      "totalWords": 6
+    },
+    {
+      "name": "PERSON",
+      "dialogueLines": 1,
+      "totalWords": 5
+    },
+    {
+      "name": "CHOIR OF CHILDREN",
+      "dialogueLines": 1,
+      "totalWords": 2
+    },
+    {
+      "name": "NUIT",
+      "dialogueLines": 1,
+      "totalWords": 11
+    },
+    {
+      "name": "O E",
+      "dialogueLines": 1,
+      "totalWords": 7
+    },
+    {
+      "name": "THE ASSEMBLY",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "HENCHMAN",
+      "dialogueLines": 1,
+      "totalWords": 42
+    },
+    {
+      "name": "EMILIA.",
+      "dialogueLines": 1,
+      "totalWords": 2
+    },
+    {
+      "name": "HOUSEMAID",
+      "dialogueLines": 1,
+      "totalWords": 4
+    }
+  ],
+  "scenes": [
+    {
+      "number": 1,
+      "heading": "EXT. MEXICO CITY - NIGHT",
+      "characters": [
+        "WOMAN"
+      ],
+      "dialogues": [
+        {
+          "character": "WOMAN",
+          "parenthetical": "(FROM AFAR)",
+          "text": "Se compran, colchones, tambores, refrigeradores, estufas, lavadoras, micro-ondas… ¿o algo de fierro viejo que vendan?"
+        }
+      ],
+      "actionPreview": "Top shot and perpendicular zoom: Mexico City. Lights shimmer like stars, building facades lit up like video games, etc. In the far distance, a peddler’s saturated chant: “Se compran colchones.”"
+    },
+    {
+      "number": 2,
+      "heading": "EXT. APARTMENT MENDOZA - NIGHT",
+      "characters": [
+        "WOMAN",
+        "DEFENSE SPEECH",
+        "RITA"
+      ],
+      "dialogues": [
+        {
+          "character": "WOMAN",
+          "parenthetical": "(FROM AFAR)",
+          "text": "Se compran, colchones, tambores, refrigeradores, estufas, lavadoras, micro-ondas… ¿o algo de fierro viejo que vendan?"
+        },
+        {
+          "character": "DEFENSE SPEECH",
+          "parenthetical": "",
+          "text": "A woman’s voice. Almost internal, and halting, as if groping for her words in what sounds like a defense speech. 1M1 EL ALEGATO"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "(O.S.)",
+          "text": "Este caso, este caso, este caso"
+        }
+      ],
+      "actionPreview": "As we approach the buildings, we first discover empty offices, then apartments. On the top floor of a luxury building, we make out silhouettes behind the curtains. A woman tries to escape a man’s attack. Extreme violence. Suddenly he grabs her, pulls her to the bay wi ndow, lifts her up and throws h"
+    },
+    {
+      "number": 3,
+      "heading": "INT. 7-ELEVEN MARKET - EVENING",
+      "characters": [
+        "RITA"
+      ],
+      "dialogues": [
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Señor presidente, señor juez"
+        }
+      ],
+      "actionPreview": "A mixed noise of radio and television broadcasting video surveillance images. RITA MORA CASTRO is 27. Wearing braided stretch pants, a shapeless jacket, and gold loafers, she does not look like much. A heavy bag is slung over her shoulder. She continues with her speech that no one seems to be listen"
+    },
+    {
+      "number": 4,
+      "heading": "EXT. STREET IN CHAPULTEPEC - NIGHT",
+      "characters": [
+        "RITA"
+      ],
+      "dialogues": [
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Ir hacia arriba, ir hacia abajo."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "(CONT’D) ¿De qué hablamos hoy y ahora?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "(CONT’D) ¿De quién hablamos hoy y ahora?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "Rita walks out into the empty street. She walks for a moment, lost in thought. Ir hacia arriba, ir hacia abajo. Ir hacia arriba, ir hacia abajo Ir hacia arriba, ir hacia abajo Going up, going down. Going up, going down. Going up, going down. Going up, going down. 2. 3. Her words are suddenly repeate"
+    },
+    {
+      "number": 5,
+      "heading": "EXT. STREET IN CHAPULTEPEC - NIGHT",
+      "characters": [
+        "RITA",
+        "CHORUS",
+        "OWNER",
+        "MAN"
+      ],
+      "dialogues": [
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "De qué hablamos hoy y ahora?"
+        },
+        {
+          "character": "CHORUS",
+          "parenthetical": "",
+          "text": "Ir hacia arriba, ir hacia abajo"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "¿Con veredictos pagados, cuellos cortados, las chicas bonitas el morbo corriendo en las calles? 4."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CHORUS",
+          "parenthetical": "",
+          "text": "Su Señoría, pido el triunfo del"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Cuando hablemos de Violencia"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "(CONT’D) … Aún así es víctima de estos mismos medios que se han encargado de calumniarlo. Han sometido a mi cliente y a su pareja al escrutinio público. Ahora todos, nos sentimos con el derecho de apuntar con el dedo y tener una opinión condenatoria hacia ellos dos… ... Yet he is a victim of these same media that have been responsible for slandering him. They have put my client and his partner under public scrutiny. Now, we all feel we have the right to point fingers and have a condemning opinio"
+        },
+        {
+          "character": "OWNER",
+          "parenthetical": "",
+          "text": "¿Más café?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Sí, por favor."
+        },
+        {
+          "character": "OWNER",
+          "parenthetical": "",
+          "text": "Ya es hora, vas a llegar tarde."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "(ON/OFF)",
+          "text": "Sí, sí… Me parece haber desmontado no una, sino todas las pruebas de la acusación."
+        },
+        {
+          "character": "MAN",
+          "parenthetical": "",
+          "text": "¡Corte, pónganse de pie!"
+        },
+        {
+          "character": "MAN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "Insert: images of the MENDOZAS (both in their 50s). Husband elegant and fit. Wife, same age, overly coiffed and made up. Rita walks through the crowded market. Young women accompany her, repeating her words in unison. De justicia que se compra? ¿Con veredictos pagados, que engordan periodico, cuello"
+    },
+    {
+      "number": 6,
+      "heading": "INT. MEXICO CITY COURTROOM - NIGHT",
+      "characters": [
+        "BERLINGER",
+        "B R IN E"
+      ],
+      "dialogues": [
+        {
+          "character": "BERLINGER",
+          "parenthetical": "",
+          "text": "Ahora todos, nos sentimos con el derecho de apuntar con el dedo y tener una opinión condenatoria hacia ellos dos. Hoy quisiera apelar a sus conciencias señoras y s eñores."
+        },
+        {
+          "character": "B R IN E",
+          "parenthetical": "",
+          "text": "( O"
+        },
+        {
+          "character": "BERLINGER",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "Rita watches her boss, the lawyer BERLINGER, unfold \"his\" plea with poses of torero. Occasionally she mouths the words of “her” closing argument. She pushes a sheet of paper on the table so that Berlinger can discreetly read it. (MORE) 7. ’ ) 8. ¿Ustedes creen que Gabriel Mendoza ha levantado un ded"
+    },
+    {
+      "number": 7,
+      "heading": "INT. COURTHOUSE - NIGHT",
+      "characters": [
+        "RITA",
+        "BERLINGER"
+      ],
+      "dialogues": [
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "... ¿Bueno, mamá? Ganamos. Sí, ganamos... sí, sí estoy contenta..."
+        },
+        {
+          "character": "BERLINGER",
+          "parenthetical": "(CONT’D)",
+          "text": "8."
+        },
+        {
+          "character": "BERLINGER",
+          "parenthetical": "",
+          "text": "Ni mi cliente, ni yo no dudamos jamas de la justicia de mi país."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "…¡No, vale madre!"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "In the foreground, Rita's face on the phone, behind Mendoza and Berlinger in the spotlight of the TV cameras. Pero tengo un mal sabor en la boca... te decía que... Nada, olvídalo... ¿el domingo? No puedo..Tengo un buen de pendientes... Yo también, besos bye... ... Hello, Mom? We won. Yes, we won... "
+    },
+    {
+      "number": 8,
+      "heading": "INT. WOMEN’S RESTROOM COURTHOUSE - DAY",
+      "characters": [
+        "RITA",
+        "MAN"
+      ],
+      "dialogues": [
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "¿Sí, qué?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "(CONT’D) ¿Bueno?"
+        },
+        {
+          "character": "MAN",
+          "parenthetical": "(O.S.)",
+          "text": "¿Señora Rita Mora Castro?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Sí."
+        },
+        {
+          "character": "MAN",
+          "parenthetical": "(O.S.)",
+          "text": "… ¿Pero qué anda haciendo en el baño? A quien deberían aplaudirle es a usted."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "…"
+        },
+        {
+          "character": "MAN",
+          "parenthetical": "(O.S.)",
+          "text": "¿Le gustaría ser ama y señora de su propio destino, aunque sea una vez?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "¿Quién habla?"
+        },
+        {
+          "character": "MAN",
+          "parenthetical": "(O.S.)",
+          "text": "Si le interesa va a buscarla un carro en diez minutos al puesto de periódicos."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Es que yo..."
+        }
+      ],
+      "actionPreview": "We hear bathroom noises. Toilets flushing, faucets, blowers, etc. Blood on her hands. Her phone vibrates. She wipes her hand on toilet paper and grabs her phone with two fingers so it won't get bloodied. She looks at the screen. Unknown caller. She answers. Hello? Heavy breathing. Hello? Señora Rita"
+    },
+    {
+      "number": 9,
+      "heading": "INT. COURTHOUSE - NIGHT",
+      "characters": [
+        "A WOMAN",
+        "RITA",
+        "CORO"
+      ],
+      "dialogues": [
+        {
+          "character": "A WOMAN",
+          "parenthetical": "",
+          "text": "Ahí ya está cerrado, hay que pasar por la sala."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Después de todo ¿Cuánto cuánto tiempo más agacharé la cabeza? ¿Cuánto cuánto tiempo más les lameré las botas? (MORE) 10."
+        },
+        {
+          "character": "CORO",
+          "parenthetical": "",
+          "text": "¡¿Qué tienes que ganar?!"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "¿Qué tengo que ganar?"
+        },
+        {
+          "character": "CORO",
+          "parenthetical": "",
+          "text": "¡¿Qué tienes que perder?!"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "¿Qué tengo que perder?"
+        },
+        {
+          "character": "CORO",
+          "parenthetical": "",
+          "text": "XXX"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Yo y mi puto salario"
+        },
+        {
+          "character": "CORO",
+          "parenthetical": "",
+          "text": "XXX chiquito"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Yo y mi corazón de piedra"
+        },
+        {
+          "character": "CORO",
+          "parenthetical": "",
+          "text": "XXX duro"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Yo y mis pompis mantecosas"
+        },
+        {
+          "character": "CORO",
+          "parenthetical": "",
+          "text": "XXX"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "¿Cuánto cuánto tiempo más?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "(CONT’D)",
+          "text": "11."
+        },
+        {
+          "character": "CORO",
+          "parenthetical": "",
+          "text": "¡¿Qué tenemos que ganar?!"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "¿Cuánto cuánto tiempo más?"
+        },
+        {
+          "character": "CORO",
+          "parenthetical": "",
+          "text": "¡¿Qué tenemos que perder?!"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Y la bola de mis dizque amigos dice:"
+        },
+        {
+          "character": "CORO",
+          "parenthetical": "",
+          "text": "“¿Cuándo te vas a casar? ¿a tener hijos?”"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "No tengo tiempo para hacerlos. Y la bola de víboras me dice: I've not got the time to have them"
+        },
+        {
+          "character": "CORO",
+          "parenthetical": "",
+          "text": "“¿Cuándo vas a abrir tu gabinete, bonita?”"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "¡Ya mero! ¡Cuando ya no sea prieta!"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "(CONT’D) ¿Por qué me llamó? ¿Por qué yo? ¿Por qué en el puesto de periódicos? (x 4)"
+        },
+        {
+          "character": "CORO",
+          "parenthetical": "",
+          "text": "¿Por qué? ¿Por qué? ¿Por qué en el puesto de periódicos? (x 4)"
+        }
+      ],
+      "actionPreview": "She is back in the corridor. It’s closed that way. Go in through the courtroom. She stumbles into a crew of cleaning ladies wearing pink smocks. Rita follows them, singing, at first with her inner voice, as if a thought were grazing her lips. Start 1M1BIS TODO Y NADA T ) 11. ¿Cuánto cuánto tiempo má"
+    },
+    {
+      "number": 10,
+      "heading": "EXT. NEWSSTAND - NIGHT",
+      "characters": [
+        "RITA",
+        "CORO",
+        "TATTOOED GUY",
+        "TATTOED MAN",
+        "MAN"
+      ],
+      "dialogues": [
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "No tengo nada que perder I have nothing to lose"
+        },
+        {
+          "character": "CORO",
+          "parenthetical": "",
+          "text": "No tienes nada que perder"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Tengo todo que ganar I have everything to gain"
+        },
+        {
+          "character": "CORO",
+          "parenthetical": "",
+          "text": "Tienes todo que ganar"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "No tengo nada que perder I have nothing to lose"
+        },
+        {
+          "character": "CORO",
+          "parenthetical": "",
+          "text": "No tienes nada que perder"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Tengo todo que ganar I have everything to gain"
+        },
+        {
+          "character": "CORO",
+          "parenthetical": "",
+          "text": "Tienes todo que ganar"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Nada, nada, nada"
+        },
+        {
+          "character": "CORO",
+          "parenthetical": "",
+          "text": "Nada, nada, nada"
+        },
+        {
+          "character": "TATTOOED GUY",
+          "parenthetical": "(O.S.)",
+          "text": "¡Señora!"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Sí."
+        },
+        {
+          "character": "TATTOED MAN",
+          "parenthetical": "",
+          "text": "¿Señora Mora Castro?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "... sí. ...Yes."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "(CONT’D) ¡Ah!"
+        },
+        {
+          "character": "MAN",
+          "parenthetical": "",
+          "text": "Tranquila."
+        }
+      ],
+      "actionPreview": "The newsstand shines like a box of light in the night. It is plastered with tabloid covers. An assassin’s face on one of them has been pixelated. She continues to sing, increasingly convinced. You have nothing to lose You have everything to gain You have nothing to lose You have everything to gain T"
+    },
+    {
+      "number": 11,
+      "heading": "EXT. CHIHUAHUA DESERT - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "1M3 SUV Instrumental Top shot: an SUV zooms through the desert. The headlights project two beams onto the sand. 14. 15. A trail of dust lingers behind. On the radio, the guttural inflections of a cheesy narco-corrido song."
+    },
+    {
+      "number": 12,
+      "heading": "INT. SUV - NIGHT",
+      "characters": [
+        "RITA"
+      ],
+      "dialogues": [
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "¡Ah!"
+        }
+      ],
+      "actionPreview": "The music continues. Rita is still hooded. A sudden shock: The car hits a bump. Rita is brutally sent flying to one side. Ah! One of the men sits her up straight. Her hood slips enough to leave a chink through which she sees: the silhouettes of the men up front, the lights on the dashboard, the mono"
+    },
+    {
+      "number": 13,
+      "heading": "EXT. DESERT - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "... Then, suddenly, a ruined bridge with corpses hanging from the railings."
+    },
+    {
+      "number": 14,
+      "heading": "EXT. DESERT - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The SUV dims its lights and drives in the night. On closer look, what first looked like specks of light and clouds of dust becomes a convoy of thirty trucks in the desert. Pickup trucks equipped with machine guns, trailers, armored SUVs, etc. The SUV drives alongside the convoy that slows down to st"
+    },
+    {
+      "number": 15,
+      "heading": "EXT. DESERT - NIGHT",
+      "characters": [
+        "SICARIO",
+        "RITA",
+        "MANITAS"
+      ],
+      "dialogues": [
+        {
+          "character": "SICARIO",
+          "parenthetical": "(OFF)",
+          "text": "Dile al patrón que están a 30 km, que tenemos que ir."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "¿Hay alguién ahí?"
+        },
+        {
+          "character": "MANITAS",
+          "parenthetical": "(OFF)",
+          "text": "¿Tiene miedo?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "¿Debería?"
+        },
+        {
+          "character": "MANITAS",
+          "parenthetical": "(OFF)",
+          "text": "No."
+        },
+        {
+          "character": "MANITAS",
+          "parenthetical": "(OFF)",
+          "text": "(CONT’D) ¿Sabe quién soy?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Creo que sí. I think so."
+        },
+        {
+          "character": "MANITAS",
+          "parenthetical": "(OFF)",
+          "text": "Dígame."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Usted es Manitas Del Monte."
+        },
+        {
+          "character": "MANITAS",
+          "parenthetical": "(OFF)",
+          "text": "¿Y qué sabe de mi situación abogada"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Al parecer el cártel Del Monte tiene algunos problemas actualmente. La prensa dice que sus fuentes de abastecimiento se encuentran en manos del Cártel de"
+        },
+        {
+          "character": "MANITAS",
+          "parenthetical": "",
+          "text": "No... No puedo seguir escondiéndome, cambiando de casa, de departamento, como se cambia de camisa … La jubilación no existe para la gente como yo."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "¿En qué le puedo ayudar?"
+        },
+        {
+          "character": "MANITAS",
+          "parenthetical": "",
+          "text": "Contestar esta pregunta supondría que ya aceptó"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Ok, dígame ¿qué quiere de mí?"
+        },
+        {
+          "character": "MANITAS",
+          "parenthetical": "",
+          "text": "¿Estás segura?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Sí."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "(CONT’D) ¿A qué me arriesgo? 18."
+        },
+        {
+          "character": "MANITAS",
+          "parenthetical": "",
+          "text": "A volverse rica."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "(suspirando) …está bien. (in a breath) All right."
+        },
+        {
+          "character": "MANITAS",
+          "parenthetical": "",
+          "text": "No oí. I didn’t hear."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Está bien."
+        },
+        {
+          "character": "MANITAS",
+          "parenthetical": "",
+          "text": "¿Qué está bien?"
+        },
+        {
+          "character": "MANITAS",
+          "parenthetical": "",
+          "text": "(CONT’D) ¿Segura, señora Mora Castro?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "¿Qué quiere que haga?"
+        },
+        {
+          "character": "MANITAS",
+          "parenthetical": "",
+          "text": "Quiero ser una mujer I want to become a woman."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "No entiendo. I don’t understand."
+        },
+        {
+          "character": "MANITAS",
+          "parenthetical": "",
+          "text": "¿Qué no entiende?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "(en voz baja, como en secreto) …quiere decir: ¿físicamente mujer? (softly, like a secret) You mean a woman… physically?"
+        },
+        {
+          "character": "MANITAS",
+          "parenthetical": "",
+          "text": "Sí."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "¿Quiere volverse mujer físicamente?"
+        },
+        {
+          "character": "MANITAS",
+          "parenthetical": "",
+          "text": "Sí."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "No entiendo. ¿Quiere cambiar de vida o cambiar de sexo? I don’t understand, do you want a new life or a new gender?"
+        },
+        {
+          "character": "MANITAS",
+          "parenthetical": "",
+          "text": "¿Cuál es la diferencia?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Pues… es qu… (intentando sonreír) ¡soy abogada, señor Del Monte, no cirujana!"
+        },
+        {
+          "character": "MANITAS",
+          "parenthetical": "",
+          "text": "Para eso acabo de contratarla, para conseguir a uno bueno."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Pero… mmm… pues… eso no se hace así nada más, ¡puede tomar años!"
+        },
+        {
+          "character": "MANITAS",
+          "parenthetical": "",
+          "text": "Ya empecé el tratamiento, hace dos años. I started treatment two years ago."
+        },
+        {
+          "character": "MANITAS",
+          "parenthetical": "",
+          "text": "(CONT’D) ¿Qué te pasa? ¿Te quieres echar pa’ atrás? Ya no se puede, ni tú, ni yo podemos salir de esto."
+        }
+      ],
+      "actionPreview": "The convoy is now stopped with the engine still on. Still hooded, Rita is escorted by the two sicarios. On the platforms of the pickups, there are armed and sometimes masked men, covered with dust. 15. 16. In the back of a pickup there are also wounded men who are being bandaged or given local paink"
+    },
+    {
+      "number": 16,
+      "heading": "INT. BERLINGER’S OFFICES - NIGHT",
+      "characters": [
+        "MANITAS",
+        "RITA",
+        "TRAVEL AGENT",
+        "SECRETARY"
+      ],
+      "dialogues": [
+        {
+          "character": "MANITAS",
+          "parenthetical": "(O.S.)",
+          "text": "Habrá que buscar un lugar seguro para el “reseteo”, lejos de aquí, ni en este país, ni en Estados"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "¿Bueno? no... sí, no... mamá, tengo que colgar... sí, no... me están llamando, voy a colgar mamá... voy a colgar..."
+        },
+        {
+          "character": "TRAVEL AGENT",
+          "parenthetical": "(O.S.)",
+          "text": "(Un poco irritada) México/Bangkok... Luego podemos tomar Bangkok/Bombay, Bombay/Rio..."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "(En voz baja) ¿Cuánto tiempo es en total? (softly) How long all together?"
+        },
+        {
+          "character": "TRAVEL AGENT",
+          "parenthetical": "(O.S.)",
+          "text": "26 horas. 26 hours."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Tengo que estar de vuelta el próximo jueves antes de las 9, tengo una audiencia. I have to be in court by 9 o’clock next"
+        },
+        {
+          "character": "TRAVEL AGENT",
+          "parenthetical": "(O.S.)",
+          "text": "No llegará a tiempo."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Entonces encuéntreme otra cosa."
+        },
+        {
+          "character": "TRAVEL AGENT",
+          "parenthetical": "(O.S.)",
+          "text": "¿Cómo qué? ¿Un cohete?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "¿Y en otra clase?"
+        },
+        {
+          "character": "TRAVEL AGENT",
+          "parenthetical": "(O.S.)",
+          "text": "¿En business? Es mucho, mucho más caro, ya lo sabe. ¿Paga su empresa?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "¿Y más arriba?"
+        },
+        {
+          "character": "TRAVEL AGENT",
+          "parenthetical": "(O.S.)",
+          "text": "¿Arriba de qué?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "De la business."
+        },
+        {
+          "character": "TRAVEL AGENT",
+          "parenthetical": "(O.S.)",
+          "text": "(Suspirando) Espere… ¿quiere… quiere uno en primera clase? (softly) Wait, do you mean First Class?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Sí."
+        },
+        {
+          "character": "TRAVEL AGENT",
+          "parenthetical": "(O.S.)",
+          "text": "Eso ya está muy afuera de nuestro acuerdo tarifario… ¿Cómo pagará?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Con tarjeta…"
+        },
+        {
+          "character": "TRAVEL AGENT",
+          "parenthetical": "(O.S.)",
+          "text": "¿Qué tipo de tarjeta?"
+        },
+        {
+          "character": "SECRETARY",
+          "parenthetical": "(O.S)",
+          "text": "¿Rita estás ahí?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Eh, sí, sí…"
+        },
+        {
+          "character": "SECRETARY",
+          "parenthetical": "(O.S.)",
+          "text": "El patrón está con el cliente, ¡te están esperando!"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "¡Ahí voy, ahí voy!… I’m coming. 23."
+        }
+      ],
+      "actionPreview": "Rita sits behind a pile of files in Berlinger’s offices. Her glass cubicle is in the back of the landscaped space. She seems to be at work like everyone else. Unidos… un lugar donde sea imposible encontrarme. Búscame alguien difícil de rastrear, alguien competente, intachable… El que te precedió me "
+    },
+    {
+      "number": 17,
+      "heading": "EXT. SUVARNABHUMI AIRPORT - NIGHT",
+      "characters": [
+        "BANGKOK",
+        "RITA",
+        "DOCTOR",
+        "CHORUS",
+        "O U",
+        "AND CHORUS",
+        "MAN",
+        "MANITAS"
+      ],
+      "dialogues": [
+        {
+          "character": "BANGKOK",
+          "parenthetical": "",
+          "text": "EXT/INT. CLINICS"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Hello, very nice to meet you. I’d like to know about sex change operations."
+        },
+        {
+          "character": "DOCTOR",
+          "parenthetical": "",
+          "text": "I see, I see,"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Man to Woman."
+        },
+        {
+          "character": "DOCTOR",
+          "parenthetical": "",
+          "text": "From penis to vagina. Is it for you?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "For me? No, thank you."
+        },
+        {
+          "character": "DOCTOR",
+          "parenthetical": "",
+          "text": "What do you want to know, Madam?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Everything. Everything. What is the protocol, the technique, the risks. How many operations, how much time do you need? 24."
+        },
+        {
+          "character": "DOCTOR",
+          "parenthetical": "",
+          "text": "Mammoplasty?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "DOCTOR",
+          "parenthetical": "",
+          "text": "Vaginoplasty?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "DOCTOR",
+          "parenthetical": "",
+          "text": "Rhinoplasty?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "DOCTOR",
+          "parenthetical": "",
+          "text": "Laryngoplasty?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "DOCTOR",
+          "parenthetical": "",
+          "text": "Mammoplasty?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "DOCTOR",
+          "parenthetical": "",
+          "text": "Vaginoplasty?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "DOCTOR",
+          "parenthetical": "",
+          "text": "Rhinoplasty?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "DOCTOR",
+          "parenthetical": "",
+          "text": "Laryngoplasty?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Yes. 25."
+        },
+        {
+          "character": "DOCTOR",
+          "parenthetical": "",
+          "text": "Chondrolaryngoplasty?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "What is that?"
+        },
+        {
+          "character": "DOCTOR",
+          "parenthetical": "",
+          "text": "Adam’s apple reduction."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "YES! YES! YES! YES!"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "(CONT’D) (speaking) And for my butt, just my butt,"
+        },
+        {
+          "character": "DOCTOR",
+          "parenthetical": "",
+          "text": "Mammoplasty?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Ye s!"
+        },
+        {
+          "character": "CHORUS",
+          "parenthetical": "",
+          "text": "Man to woman, woman to man"
+        },
+        {
+          "character": "O U",
+          "parenthetical": "",
+          "text": "( O"
+        },
+        {
+          "character": "AND CHORUS",
+          "parenthetical": "",
+          "text": "Men to women, women to men"
+        },
+        {
+          "character": "MAN",
+          "parenthetical": "",
+          "text": "¡Oye bien, pendeja!"
+        },
+        {
+          "character": "CHORUS",
+          "parenthetical": "(CONT’D)",
+          "text": "27."
+        },
+        {
+          "character": "MANITAS",
+          "parenthetical": "(O.S.)",
+          "text": "¿Cómo va ese asunto Mora Castro? ¿Crees que te pago pa’ que te gastes mi lana? ¿Pa’ que le hagas a la mamada en primera clase? ¿Quieres que te cuente lo que le pasó al que hacía tu chamba? ¡Apúrate chingada madre, que se me acaba el tiempo!"
+        }
+      ],
+      "actionPreview": "Suvarnabhumi Airport: A Bangkok Airways flight makes a night landing. Title card: Start music 1M8 VAGINOPLASTY Duo Rita / various surgeons. Everything is white. A bright white carpet leads from the jetliner to a clinic where the Asian surgeon and his staff - earlier seen on Rita’s computer - greet R"
+    },
+    {
+      "number": 18,
+      "heading": "EXT. BEN GURION AIRPORT, TEL AVIV – DAY",
+      "characters": [
+        "TEL AVIV"
+      ],
+      "dialogues": [],
+      "actionPreview": "An El-Al 787 lands at Ben Gurion International Airport. Title card:"
+    },
+    {
+      "number": 19,
+      "heading": "EXT. AVENUE, TEL AVIV - DAY",
+      "characters": [
+        "HICHILOV HOSPITAL."
+      ],
+      "dialogues": [],
+      "actionPreview": "A large modern, white building with big letters on its facade:"
+    },
+    {
+      "number": 20,
+      "heading": "INT. LEVITCH MEDICAL CENTER, WAITING ROOM - DAY",
+      "characters": [
+        "INT.",
+        "RITA",
+        "MANITAS",
+        "WASSERMAN",
+        "R TA"
+      ],
+      "dialogues": [
+        {
+          "character": "INT.",
+          "parenthetical": "",
+          "text": "LEVITCH MEDICAL CENTER, WASSERMAN’S OFFICE – DAY DR. WASSERMAN sits across from her. White lab coat, buzz cut, blue eyes, an inscrutable half smile."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "(O.S.)",
+          "text": "Creo que ahora sí lo encontré. I think I've found it this time. 28."
+        },
+        {
+          "character": "MANITAS",
+          "parenthetical": "(O.S.)",
+          "text": "Lo dices porque te estás apanicando."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "(O.S.)",
+          "text": "No, lo digo porque es el indicado."
+        },
+        {
+          "character": "WASSERMAN",
+          "parenthetical": "",
+          "text": "Your client has no name?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "For the moment, no. He desires to remain anonymous."
+        },
+        {
+          "character": "WASSERMAN",
+          "parenthetical": "",
+          "text": "No name but a lot of money…"
+        },
+        {
+          "character": "WASSERMAN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "WASSERMAN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "WASSERMAN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "WASSERMAN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Doctor, I know you did a lot of studies"
+        },
+        {
+          "character": "WASSERMAN",
+          "parenthetical": "",
+          "text": "Please!"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "But let me sa y I disagree"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "WASSERMAN",
+          "parenthetical": "(CONT’D)",
+          "text": "(MORE) 30."
+        },
+        {
+          "character": "R TA",
+          "parenthetical": "( ONT’D)",
+          "text": "31."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "(CONT’D) D octor I didn’t come your way to waste your time"
+        },
+        {
+          "character": "WASSERMAN",
+          "parenthetical": "",
+          "text": "Lady,"
+        },
+        {
+          "character": "INT.",
+          "parenthetical": "",
+          "text": "LEVITCH MEDICAL CENTER, WASSERMAN’S OFFICE - DAY"
+        },
+        {
+          "character": "WASSERMAN",
+          "parenthetical": "",
+          "text": "Can… Can I at least talk to him?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "That depends."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "(CONT’D)",
+          "text": "31."
+        },
+        {
+          "character": "WASSERMAN",
+          "parenthetical": "",
+          "text": "On what?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "On you. If you are not willing to accept, it’s not worth it to talk to him. To listen to him is to accept."
+        }
+      ],
+      "actionPreview": "Rita sits in a modest white waiting room. She surveys the people waiting: a soldier with a bandaged face. A mother with her teenaged son whose jaws are K-wired. She overhears snippets of a conversation in Hebrew in the doctor’s office. Rita watches him silently leaf through a file. ( ORE) 29. You sa"
+    },
+    {
+      "number": 21,
+      "heading": "EXT. CHIHUAHUA DESERT – NIGHT",
+      "characters": [
+        "WASSERMAN",
+        "RITA"
+      ],
+      "dialogues": [
+        {
+          "character": "WASSERMAN",
+          "parenthetical": "(O.S.)",
+          "text": "Ah! (yelling) Could you ask them to lower their shitty music?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "(O.S.)",
+          "text": "(gritando) Oigan muchachos, ¿pueden bajarle un poco al volumen por favor? (yelling) Hey guys, can you please turn it down!"
+        }
+      ],
+      "actionPreview": "Top shot: the headlights of an SUV in the Mexican desert. Ranchera music follows the car like the cloud of dust in its wake. The music stops."
+    },
+    {
+      "number": 22,
+      "heading": "EXT. MANITAS’ COMPOUND - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Five cars are parked in a circle around Manitas’ compound. A cloud of dust, the doors open… the hoods are pulled off… .../... A finger presses a button, turning on the generator. Projectors on the vehicles light up to shape a circle. Stakes are unloaded from the cars. Ropes are tied and canvas stret"
+    },
+    {
+      "number": 23,
+      "heading": "EXT. MANITAS’ COMPOUND - NIGHT",
+      "characters": [
+        "RITA",
+        "MANITAS",
+        "WASSERMAN"
+      ],
+      "dialogues": [
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Manitas Del Monte… Professor"
+        },
+        {
+          "character": "MANITAS",
+          "parenthetical": "",
+          "text": "Good evening, Professor, did you have a good trip?"
+        },
+        {
+          "character": "WASSERMAN",
+          "parenthetical": "",
+          "text": "Besides the shitty music, excellent."
+        },
+        {
+          "character": "MANITAS",
+          "parenthetical": "",
+          "text": "Are you hungry, would you like to rest?"
+        },
+        {
+          "character": "WASSERMAN",
+          "parenthetical": "",
+          "text": "Neither… We can start whenever you want."
+        }
+      ],
+      "actionPreview": "A hand reaches into the frame… Rita makes the introductions in English: Wasserman. Wasserman shakes his hand. Rita watches them disappear into Manitas’ armored vehicle. We approach until her face fills the frame. Start of 1M13 Chiaroscuro On this image are superimposed:"
+    },
+    {
+      "number": 24,
+      "heading": "EXT. MANITAS’ COMPOUND - NIGHT",
+      "characters": [
+        "MANITAS"
+      ],
+      "dialogues": [
+        {
+          "character": "MANITAS",
+          "parenthetical": "(OFF)",
+          "text": "A pigsty. You have no idea what it is like growing up in pigsty?"
+        },
+        {
+          "character": "MANITAS",
+          "parenthetical": "(OFF)",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MANITAS",
+          "parenthetical": "(OFF) (CONT'D)",
+          "text": "35."
+        }
+      ],
+      "actionPreview": "- A guy fiddles with a record player. Throbbing music. - Tilted down: infared images of the camp and the landscape. These are the images of a drone remote control. The pilot with other armed guards are set up on a height overlooking the camp. Walkie-talkies crackle and the sound system echoes as it "
+    },
+    {
+      "number": 25,
+      "heading": "EXT. COMPOUND - NIGHT",
+      "characters": [
+        "JESSI",
+        "RITA",
+        "MANITAS"
+      ],
+      "dialogues": [
+        {
+          "character": "JESSI",
+          "parenthetical": "(O.S.)",
+          "text": "¿Qué está haciendo aquí?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "¿Y usted?"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "¿Yo? Soy su mujer. Soy Jessi Del"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Yo soy Rita Mora Castro, abogada."
+        },
+        {
+          "character": "MANITAS",
+          "parenthetical": "(OFF) (CONT'D)",
+          "text": "35."
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "Sí, me imagino, ¿pero qué hace para él? I figured, but what do you do exactly for him?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Muchas cosas…"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "¿Es cierto que nos va a sacar del país?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "No lo sé, no estoy al tanto. I do not know, I am not aware of it."
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "¿Y quién es ese tipo que viene con usted?"
+        },
+        {
+          "character": "MANITAS",
+          "parenthetical": "(O.S.)",
+          "text": "Ah, ya se conocieron."
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "Sí. Le preguntaba a Rita quién era el tipo que está contigo."
+        },
+        {
+          "character": "MANITAS",
+          "parenthetical": "",
+          "text": "Los negocios… ¿Dónde están los niños?"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "Están bailando con los demás."
+        },
+        {
+          "character": "MANITAS",
+          "parenthetical": "",
+          "text": "¿Vamos con ellos?"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "(a Rita) ¿Viene con nosotros? (to Rita) Are you coming with us?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "No, gracias… estoy bien aquí."
+        }
+      ],
+      "actionPreview": "Silence. We are still on Rita, who is watching. In front of her: men and women dance around a campfire. Sicarios, wives of sicarios, children of sicarios. The music has changed but not the source. Normal volume. Strident. A woman's voice from behind. What are you doing here? She turns around. What a"
+    },
+    {
+      "number": 26,
+      "heading": "EXT. COMPOUND - NIGHT",
+      "characters": [
+        "EXT.",
+        "RITA",
+        "WASSERMAN",
+        "INT.",
+        "MANITAS"
+      ],
+      "dialogues": [
+        {
+          "character": "EXT.",
+          "parenthetical": "",
+          "text": "CAMPEMENT - NIGHT"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Under normal circumstances, a single word in this notebook would condemn to death the person who wrote it, the person who reads it and all their"
+        },
+        {
+          "character": "WASSERMAN",
+          "parenthetical": "",
+          "text": "I told him I would give it to you. I don’t need it anymore. The operation and recovery will take place back home in Tel Aviv."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Goodbye, Doctor. 37."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "(CONT’D) I think Manitas told them about the music…"
+        },
+        {
+          "character": "INT.",
+          "parenthetical": "",
+          "text": "MANITAS’ TRAILER"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "…los pasaportes con sus nuevos nombres. Tienen que aprendérselos de memoria."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "(CONT’D) …estas son las cuentas. Programé y codifiqué todas las transferencias."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MANITAS",
+          "parenthetical": "",
+          "text": "No me falta el cielo, no me falta el mar no me falta la voz pero me falta cantar. I don't lack the sky, I don't lack the sea I don't lack a voice but I lack singing."
+        }
+      ],
+      "actionPreview": "Smoke rises from the dead fire. The party is over. Sicarios sleep off their mezcal in their pickup trucks. With a blanket draped over her shoulders, Rita smokes a cigarette, watching the sun rise over the desert. Wasserman hands Rita the burner phone. At his feet, his travel bag. Rita takes the phon"
+    },
+    {
+      "number": 27,
+      "heading": "EXT. LAUSANNE VILLA",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The moon hangs over the Alps and Lake Geneva like a steel mirror. Title card: “SWITZERLAND”"
+    },
+    {
+      "number": 28,
+      "heading": "EXT. VILLA LAUSANNE",
+      "characters": [
+        "JESSI",
+        "RITA"
+      ],
+      "dialogues": [
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "Aquí no estamos en casa, ¡quiero volver! ¿Por qué me hace esto? ¿Yo qu é le hice?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "(con voz baja) Es para protegerlos,"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "Por favor, señora… no quiero esto… no tengo nada que hacer aquí."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Se lo ruego…"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "¿Y cuánto tiempo va a durar?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "No lo sé. I don’t know. 40."
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "¿Varios meses?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Tal vez más."
+        }
+      ],
+      "actionPreview": "Two parked minibuses, trunks and doors wide open in the snow. Five men come and go between the house and minibuses, carrying Vuitton trunks and suitcases. When they have finished, they carry the two sleeping children, ÁNGEL and DIEGO, to the house. Off to one side wrapped in her parka, Jessi shivers"
+    },
+    {
+      "number": 29,
+      "heading": "INT. TAXI - DAY",
+      "characters": [
+        "RITA",
+        "MANITAS"
+      ],
+      "dialogues": [
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Listo, están a salvo."
+        },
+        {
+          "character": "MANITAS",
+          "parenthetical": "(O.S.)",
+          "text": "Todo desaparecerá. De ahora en adelante, eres mi último lazo con el pasado."
+        }
+      ],
+      "actionPreview": "Shadows play on Rita’s face. She is in a sedan on the way to the airport. It’s done. They’re safe. On the other end, Manitas is breathing, then: Everything must disappear. From now on, you're my last link to the past. CUT TO:"
+    },
+    {
+      "number": 30,
+      "heading": "INT. TAXI - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Wasserman’s notebook goes up in flames. The pages twist and burn."
+    },
+    {
+      "number": 31,
+      "heading": "INT. JESSI’S VILLA - NIGHT",
+      "characters": [
+        "ANCHORMAN"
+      ],
+      "dialogues": [
+        {
+          "character": "ANCHORMAN",
+          "parenthetical": "",
+          "text": "Los restos humanos encontrados en el almacén de Veracruz arrojaron su ADN: pertenecen a Manitas Del"
+        }
+      ],
+      "actionPreview": "Close-up of a television screen. Televisa Veracruz 8 o’clock news. After a few local news items, the ANCHORMAN announces, over fire footage of what could be Manitas' trailer: Monte. El conocido narcotraficante que parecía haberse esfumado desde hace meses habría, en realidad, caído en manos de sus e"
+    },
+    {
+      "number": 32,
+      "heading": "INT. JESSI’S VILLA - NIGHT",
+      "characters": [
+        "ANCHORMAN",
+        "JESSI"
+      ],
+      "dialogues": [
+        {
+          "character": "ANCHORMAN",
+          "parenthetical": "(O.S.)",
+          "text": "Y ahora la cápsula deportiva."
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "¡Noooo!"
+        }
+      ],
+      "actionPreview": "In the blue flickering light of the screen, Jessi’s face, a hand clasped over her mouth and her eyes wet with tears. We see photos of Manitas in all his splendor: photos of rival drug lords murdered at his behest – heads cut off, corpses hanging from bridges, etc. And now, sports… No! Black. CUT TO:"
+    },
+    {
+      "number": 33,
+      "heading": "EXT. TEL AVIV - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The sun rises over Tel Aviv. Start 2M15 Tel Aviv"
+    },
+    {
+      "number": 34,
+      "heading": "INT. ROOM HICHILOV HOSPITAL - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "End of 2M15 Tel Aviv We slowly open on… Subjective camera: You open your eyes in a dark hospital room. You groan. You are breathing heavily. The door opens. A silhouette steps in from the bright corridor and approaches. You recognize Wasserman, who has come to see you. You shut your eyes. You open t"
+    },
+    {
+      "number": 35,
+      "heading": "INT. ROOM HICHILOV HOSPITAL - DAY",
+      "characters": [
+        "EMILIA"
+      ],
+      "dialogues": [
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "… Dios mío… Dios mío…"
+        }
+      ],
+      "actionPreview": "You hear the sound of the TV attached to the wall. The weather report and regional news. Your hand shakes. You aim a small mirror at your stomach. You hyperventilate. Delighted with what you see. Groaning: gracias, Dios mío… … My God… my God… thank you, God…"
+    },
+    {
+      "number": 36,
+      "heading": "INT. ROOM HICHILOV HOSPITAL - DAY",
+      "characters": [
+        "EMILIA",
+        "LONDON",
+        "FOUR YEARS LATER"
+      ],
+      "dialogues": [
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "(para sí misma) Emilia Pérez…"
+        }
+      ],
+      "actionPreview": "Still in the room. On the TV screen: a telenovela dubbed into Hebrew. Sitting on the edge of her bed in her panties, Emilia tries on bras. Her head is covered in bandages, her body in traces of her operations. She puts on a bra and repeats to herself, to try her new voice: Señora Pérez… Emilia… Emil"
+    },
+    {
+      "number": 37,
+      "heading": "INT. RESTAURANT - NIGHT",
+      "characters": [
+        "RITA",
+        "MAN"
+      ],
+      "dialogues": [
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "I believe if we change the text here with what you proposed - which was very good, by the way. He will get him to sign off on the agreement by Monday. He’s a mercurial client…"
+        },
+        {
+          "character": "MAN",
+          "parenthetical": "",
+          "text": "What do you mean mercurial?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "It means today he says yes, tomorrow he says no. By Monday he will cave in and agree to the proposal, I can guarantee it."
+        }
+      ],
+      "actionPreview": "A chic restaurant in the city of London, greens and reds in the English style. Ten guests dine at a table. They all look alike: 40s, same milieu, same natural superiority, same high incomes. Rita Mora Castro fits in, sitting in the middle of the table. She has become the perfect executive woman she "
+    },
+    {
+      "number": 38,
+      "heading": "INT. RESTAURANT - NIGHT",
+      "characters": [
+        "WOMAN",
+        "RITA",
+        "EMILIA",
+        "BINGO.",
+        "END"
+      ],
+      "dialogues": [
+        {
+          "character": "WOMAN",
+          "parenthetical": "(O.S.)",
+          "text": "You’re not English, are you?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "No, I’m not, why?"
+        },
+        {
+          "character": "WOMAN",
+          "parenthetical": "",
+          "text": "You have something very special… something not very…"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "I’m Mexican."
+        },
+        {
+          "character": "WOMAN",
+          "parenthetical": "",
+          "text": "No way! Me too!"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "No mames. ¿De verdad? ¿De qué parte?"
+        },
+        {
+          "character": "WOMAN",
+          "parenthetical": "",
+          "text": "De Monterrey ¿Y tú?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "De Veracruz. Bueno, nací en"
+        },
+        {
+          "character": "WOMAN",
+          "parenthetical": "",
+          "text": "¡Qué buena onda!"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "¿Puedo acercarme más?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "WOMAN",
+          "parenthetical": "",
+          "text": "¿Extrañas México?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "No. Un poco. La verdad no lo sé, siempre soñé con irme a otro lado… ¿Y tú, vives allá?"
+        },
+        {
+          "character": "WOMAN",
+          "parenthetical": "",
+          "text": "Ya hace mucho que ando de un lado a otro. Pero, sí lo extraño, claro."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Sí… Pero no oí bien, ¿cómo te llamas?"
+        },
+        {
+          "character": "WOMAN",
+          "parenthetical": "",
+          "text": "(riendo) No oíste porque no te dije. (Laughing) You didn’t hear because I didn’t tell you."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Yo me llamo Rita, Rita Mora Castro."
+        },
+        {
+          "character": "WOMAN",
+          "parenthetical": "",
+          "text": "Yo soy Emilia Pérez. Un placer. I’m Emilia Pérez. Nice to meet you."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "¿Con quién vienes?"
+        },
+        {
+          "character": "WOMAN",
+          "parenthetical": "",
+          "text": "Con Simon, Sí lo conoces ¿no? él se ocupa de mis asuntos en Europa."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Claro, de hecho, trabajamos más o menos en…"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "(CONT’D) (como suspirando) ¿Eres tú? (as if sighing) Is it you?"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Bingo."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "¿Por qué estás aquí?"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Tenía negocios en Londres… I had business in London…"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "¡No te hagas pendeja! ¿Pusiste a alguien a rastrearme?"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Nadie."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "No reconozco tu voz. I don't recognize your voice. 46."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "¿Nada más mi voz?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "No me digas que viniste por casualidad, que pasabas por aquí así nada más."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "No, no, no."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "¿No viniste a pedirme algo de casualidad?"
+        },
+        {
+          "character": "END",
+          "parenthetical": "",
+          "text": "3M19 POR CASUALIDAD"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Necesito que me lleves a mis hijos a México. I need you to take my children to Mexico."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Olvídalo."
+        }
+      ],
+      "actionPreview": "Rita looks at her. She looks forty-five, friendly and dresses with taste. We suppose that it is Emilia. We recognize her. Rita does not. Really? Where from? From Monterrey, and you? 44. 45. República Dominicana pero crecí en México. From Veracruz. Well, I was born in the Dominican Republic but grew "
+    },
+    {
+      "number": 39,
+      "heading": "INT. LAUSANNE VILLA - DAY",
+      "characters": [
+        "JESSI"
+      ],
+      "dialogues": [
+        {
+          "character": "JESSI",
+          "parenthetical": "(OFF)",
+          "text": "¿México?"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "(CONT’D) Y de la noche a la mañana una tía caída del cielo nos dice que regresemos ¿y resulta que tenemos que regresar? ¿En dónde se ha visto eso? Tengo toda la lana que quiero y estoy muy bien aquí. Sí… sí… y hazme un favor, porfis, ya no me llames. 48."
+        }
+      ],
+      "actionPreview": "Lake Geneva. Behind it, the Alps. ¿pero porqué regresaría yo? A ver dime ¿quién se preocupó por mí los últimos cuatro años? ¡Nadie! Mexico? Why would I go back there? Tell me, who cared about me for the last four years? Nobody! In close-up, Jessi, blonde now, is on the phone, annoyed. 49. And overni"
+    },
+    {
+      "number": 40,
+      "heading": "EXT. LAUSANNE VILLA - DAY",
+      "characters": [
+        "JESSI",
+        "RITA",
+        "FADE TO BLACK."
+      ],
+      "dialogues": [
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "¿Dónde vamos a vivir?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "En su casa, tiene una mansión en la Colonia Roma."
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "¿Tú conoces a esa Emilia Pérez?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "No, pero Manitas me había hablado de una prima lejana suya con quien podrían contar un día si le pasaba algo. Ella sabía cómo localizarme y, llegado el momento, fue ella quien me dijo que los llevara."
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "Yo no sabía nada de eso. I knew nothing about this."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Nadie debía saberlo."
+        },
+        {
+          "character": "FADE TO BLACK.",
+          "parenthetical": "",
+          "text": "CUT TO:"
+        }
+      ],
+      "actionPreview": "Two parked MINIBUSES, trunks and doors open. Five men come and go, piling Vuitton suitcases and trunks into the back of the minibuses. Ángel and Diego are now teenagers. Their hair is dyed blond like their mother’s. They climb into the vehicles, bickering. Rita and Jessi discuss something a few mete"
+    },
+    {
+      "number": 41,
+      "heading": "EXT. MEXICO CITY - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "An aerial pan shot of the Mexico City conurbation: its endless sprawl, pollution, noise… We hear the “Se compran” mantra from afar. Title card: Mexico City"
+    },
+    {
+      "number": 42,
+      "heading": "EXT. EMILIA'S VILLA - DAY",
+      "characters": [
+        "WOMAN",
+        "EMILIA"
+      ],
+      "dialogues": [
+        {
+          "character": "WOMAN",
+          "parenthetical": "",
+          "text": "(O.S.) ¡Doña Emilia, Doña Emilia, ahí vienen!"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "(O.S.)",
+          "text": "¡Ya voy! I’m coming!"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "(O.S.)",
+          "text": "(CONT’D) ¡Ay, los niños, Jessi, mi familia!"
+        }
+      ],
+      "actionPreview": "Another pan shot. Tighter this time. We see a magnificent modern villa clinging to a hillside. Luxuriant greenery, birdsong and sprinkling systems: Mrs. Emilia, Mrs. Emilia, they’re here! Car doors slam. Oh, the children, Jessi, my family!"
+    },
+    {
+      "number": 43,
+      "heading": "INT. EMILIA'S VILLA - DAY",
+      "characters": [
+        "EMILIA",
+        "JESSI",
+        "RITA"
+      ],
+      "dialogues": [
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "No nos conocemos"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "… no, no creo, no…"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Tú eras la mujer de Manitas. Se nos fue, descanse en paz… ahora tú eres como mi hermana. Tú y los niños ya están de vuelta y esta es su casa. ¿Entendido?"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "Gracias señora."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "(corrigiéndola) Emilia, por favor. (correcting her) Emilia, please."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "No, tomé un cuarto en el Four"
+        }
+      ],
+      "actionPreview": "The spacious ground floor with a staircase to the second floor. Rita watches Emilia slowly go and take Jessi’s face in her hands. She looks deep into her eyes. Jessi stands dumbstruck with bated breath. Like a statue. After a beat: ¿verdad Jessi, o sí? We've never met before, Jessi, have we? Jessi i"
+    },
+    {
+      "number": 44,
+      "heading": "INT. VILLA - NIGHT",
+      "characters": [
+        "EMILIA",
+        "RITA"
+      ],
+      "dialogues": [
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "(en voz baja) ¿Cómo la ves? (quietly) How do you see her?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "¿...? ?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "La conocía antes, ahora me da la impresión que ya no es la misma. I knew her before. I get the impression she’s not the same."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "No vamos a insistir en los cambios de los demás, ¿no?"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Tienes razón."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Ten cuidado con los niños."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "¿Por qué?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Deja de besarlos a cada rato. Jessi no entiende por qué lo haces. Eres su tía, no su madre."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Rita, que Dios te bendiga por todo esto."
+        }
+      ],
+      "actionPreview": "Rita in the entrance puts on her coat. Emilia points the upstairs floor with her finger. Totalmente perdida. Vas a tener que hacerte cargo de ella, distraerla… Pero tú la conoces mejor que yo, ¿no? Totally lost. You're going to have to take care of her, distract her... But you know her better than I"
+    },
+    {
+      "number": 45,
+      "heading": "EXT. EMILIA’S VILLA - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The sun has risen. The weather is fine. Hoses chug-a-lug, watering the grounds."
+    },
+    {
+      "number": 46,
+      "heading": "EXT. EMILIA’S VILLA - DAY",
+      "characters": [
+        "EMILIA",
+        "DIEGO"
+      ],
+      "dialogues": [
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "¿Qué pasa? ¿No les gusta?"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "(CONT’D) ¿Quieren otra cosa?"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "(CONT’D) ¿No me quieren hablar?"
+        },
+        {
+          "character": "DIEGO",
+          "parenthetical": "",
+          "text": "¿De veras vamos a ir a la escuela?"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Sí… Los padres trabajan y los niños van a la escuela."
+        },
+        {
+          "character": "DIEGO",
+          "parenthetical": "",
+          "text": "Mamá no trabaja."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Sí."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Las vacaciones eran en Suiza, aquí es el regreso a clases…"
+        },
+        {
+          "character": "DIEGO",
+          "parenthetical": "",
+          "text": "¡Yo tampoco!"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Sale, no quieres ir a la escuela…"
+        },
+        {
+          "character": "DIEGO",
+          "parenthetical": "",
+          "text": "¡Ni yo!"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Bueno, no quieren ir a la escuela, es fea y apesta… ¿entonces qué quieren hacer?"
+        },
+        {
+          "character": "DIEGO",
+          "parenthetical": "",
+          "text": "¿Nos podemos quedar con mamá?"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "¿Qué?"
+        },
+        {
+          "character": "DIEGO",
+          "parenthetical": "",
+          "text": "¡Yo también!"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "(Entre los dientes) Híjole, va a estar carbón. (A la criada) Llévale el desayuno a la señora Jessi. (Between her teeth) Oh boy, it's going to be hard. (To the maid) Bring breakfast to Mrs. Jessi."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "(OFF)",
+          "text": "(CONT’D) ¿En qué íbamos?"
+        }
+      ],
+      "actionPreview": "Three maids in uniforms prepare another breakfast while chatting. On the big table of the kitchen, the children take their breakfast under the eyes of Emilia. They have their noses in the bowls of cereals; they eat in silence trying to avoid eye contact with Emilia. What's wrong? You don't like it? "
+    },
+    {
+      "number": 47,
+      "heading": "INT. EMILIA’S VILLA - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "A maid carries a tray upstairs. She walks down the corridor."
+    },
+    {
+      "number": 48,
+      "heading": "INT. VILLA JESSI’S ROOM - DAY",
+      "characters": [
+        "JESSI"
+      ],
+      "dialogues": [
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "Nooo!"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "(CONT’D)",
+          "text": "56. donde todo es caro"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "(CONT’D)",
+          "text": "56."
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "(CONT’D)",
+          "text": "58."
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "(CONT’D)",
+          "text": "58."
+        }
+      ],
+      "actionPreview": "In CU in the dark: a goose feather from the duvet quivers in time with sleeping Jessi’s breathing. Knocks at the door. It opens. The maid places the tray on a table and goes to draw the curtains. The maid leaves. Start 3M20 BIENVENIDA / Jessi Still burrowing in her pillows, Jessi sings softly. Bienv"
+    },
+    {
+      "number": 49,
+      "heading": "EXT. STREET - DAY",
+      "characters": [
+        "EMILIA",
+        "RITA",
+        "WOMAN IN BLACK"
+      ],
+      "dialogues": [
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "¡Cómo crees! ¡Diez minutos en la boca y diez años en la lonja!"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "(CONT’D) ¡Tengo una idea! ¿Y si te pago? I have an idea! What if I pay you?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "¿Para qué?"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Para que te quedes."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "¿Y qué hago acá?"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Nada, sólo estar."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Es muy amable, pero no."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Mujer… por lo menos intenté. 59."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "¿Quién es?"
+        },
+        {
+          "character": "WOMAN IN BLACK",
+          "parenthetical": "",
+          "text": "Octavio, mi hijo mayor, tenía veinte años. Desapareció en el 2013, el 18 de noviembre en el estado de Michoacán."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "¿Para quién trabajaba su hijo? ¿Para una banda? ¿Para un cártel?"
+        },
+        {
+          "character": "WOMAN IN BLACK",
+          "parenthetical": "",
+          "text": "No, señora, él era estudiante."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Lo siento mucho. I’m so sorry."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Ve a buscar el carro, te esperamos allá."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "(en voz baja)¿No piensas de vez en cuando en lo que hizo Manitas… en todas sus barbaridades…? (in a low voice) Do you ever think about what Manitas did… all the horror?"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Ya no sé quién es Manitas.(después de cierto tiempo) Obvio que pienso en eso, ¡cómo no! I don't know who Manitas is anymore. (after some time) Of course I think about it, of course!"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "(CONT’D) Pásame la foto del estudiante."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "¿Qué te pasa?"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Ay no sé… (levantando la cabeza)"
+        }
+      ],
+      "actionPreview": "A busy street. A market. The same taqueria as earlier. Rita speaks with the owner and her daughter. They recognize each other. The atmosphere is friendly. The owner calls the surrounding shop owners to come say hello to Rita. Emilia smiles, watching. Her bodyguard hangs back, discreet but dissuasive"
+    },
+    {
+      "number": 50,
+      "heading": "INT. EMILIA’S VILLA - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Emilia is home late. Exhausted. She drops the photo of the young desaparecido on a table and goes to the stairs. We linger on the photo."
+    },
+    {
+      "number": 51,
+      "heading": "INT. EMILIA’S VILLA - NIGHT",
+      "characters": [
+        "EMILIA"
+      ],
+      "dialogues": [
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Sí, mi amor. Duérmete."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Cierra los ojos."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "(CONT’D) ¿Qué haces?"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "…"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "¿Te acuerdas de él?"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "mm… ¿prefieres que me ponga perfume?"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "¿Hasta el que huele a rosas?"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "She looks into the children’s room. She is about to turn a light off when: ÁNGEL Tía Emi? Aunt Emi? Yes, honey. Go to sleep now. ÁNGEL No, no puedo. No, I can't. Emilia, on the side of his bed, strokes his hair. 61. 62. Close your eyes. He closes his eyes. She leans over and kisses him. He hugs onto"
+    },
+    {
+      "number": 52,
+      "heading": "EXT. CENTRAL PRISON - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The camera sweeps over an inscription on a wall, or the letters scroll by: P-R-I-S-O-N A man in clerical garb watches the car arrive. He waves. Emilia’s car parks alongside him. When the CHAPLAIN gets in the front seat, the driver/bodyguard steps out to let him speak with Emilia. On the wall behind "
+    },
+    {
+      "number": 53,
+      "heading": "INT. CENTRAL PRISON/CONFESSIONAL - DAY",
+      "characters": [
+        "EL FLACO",
+        "PRIEST"
+      ],
+      "dialogues": [
+        {
+          "character": "EL FLACO",
+          "parenthetical": "",
+          "text": "…no, ni madres, no reconozco su cara… Chance y fue la vez que les chingamos unos rehenes a los"
+        },
+        {
+          "character": "PRIEST",
+          "parenthetical": "",
+          "text": "¿En dónde?"
+        },
+        {
+          "character": "EL FLACO",
+          "parenthetical": "",
+          "text": "En la antigua refinería de Ciudad"
+        }
+      ],
+      "actionPreview": "A few religious symbols suggest a kind of parlor-confessional. Lurid neon lighting. The din of a televised soccer game echoes deep inside the prison. 64. 65. The chaplain sits and waits, staring at his hands. After a beat, a guard armed like Pancho Villa brings in a prisoner. A skinny sicario, EL FL"
+    },
+    {
+      "number": 54,
+      "heading": "EXT. PRISON, PARKING LOT - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The priest leaves the prison and heads for the waiting limousine. When he gets in the back seat, the driver steps out to leave them alone. We see them speak through the window."
+    },
+    {
+      "number": 55,
+      "heading": "EXT. ABANDONED REFINERY, CIUDAD JUAREZ - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "An abandoned refinery in Ciudad Juarez. Ten men dig. Shovel after shovel. The repetitive sounds of scraping shovels and laborers speaking. Hands with rubber gloves. Remnants appear, tangled in the earth and roots. Clothes, limbs, and then something that looks like a skull. CUT TO: 65. 66."
+    },
+    {
+      "number": 56,
+      "heading": "INT. HANGAR - DAY",
+      "characters": [
+        "EMILIA",
+        "RITA"
+      ],
+      "dialogues": [
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Rita, Rita, oye Rita, cuando la mujer de negro me besó las manos, sentí sus lágrimas, y por primera vez me amé a mí misma."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "¿Emilia qué quieres decir?"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Rita, Rita, dime, Rita, ¿Quién ahora va a ayudarlos?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "No será la policía, ni los politicos"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Corruptos hasta el cuello."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Emilia, Emilia, ¡ay Dios!"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Para Rita"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "A la gente que mataron?"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "¡Sí, con sus propias manos!"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Emilia ¿es en serio Emilia?"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "¡Tú!"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "¡No! 67."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Rita, Rita, dime Rita, eres abogada, ¿no?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "No, no, no. ¿ah sí?, ¿de verdad?, ¿en serio?"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Te ganarás su confianza"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "¡¿Cómo se llama tu chingada cosa esa?!"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Lucecita, La Lucecita (x2)"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "(CONT’D) ¿Qué pasa?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "¿Y qué digo en la oficina de"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Yo qué sé… ¿Que te quedas un poco más?"
+        }
+      ],
+      "actionPreview": "In a lateral tracking shot: a black plastic body bag, then another… ten body bags. We pull back onto the surroundings: a vast open hangar. One side dazzlingly bright, the other dark. Off to one side, Rita watches. Standing in front of a body bag, against the light, Emilia embraces the woman from the"
+    },
+    {
+      "number": 57,
+      "heading": "EXT. STREET - DAY",
+      "characters": [
+        "RITA",
+        "EMILIA",
+        "LA LUCECITA",
+        "INT."
+      ],
+      "dialogues": [
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "En el nombre se encuentra el objetivo: dar un poco de esperanza a quienes ya no la tienen."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Con el mío, pero la gente generosa que quiera participar es bienvenida."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Sí…"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "La señora Pérez no tiene porque rendirle cuentas a nadie. Pero no se preocupen pues daremos toda la información cuando entreguemos los estatutos de la asociación."
+        },
+        {
+          "character": "LA LUCECITA",
+          "parenthetical": "",
+          "text": "Investigations in Family Interests"
+        },
+        {
+          "character": "INT.",
+          "parenthetical": "",
+          "text": "LUCECITA HEADQUARTERS - DAY"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "¡Ahí está, ya empezó el desmadre… para qué te hago caso!"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "No te preocupes, yo sé cómo son, les encanta pasarse de listos pero hasta ahí."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Ajá, claro. ¿Y qué tal que sí pase de ahí? No, tú no los conoces, yo sí… van a hacer su trabajo."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Sí… como todos: pues los compramos."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "¿Y nada más?"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "¿Cómo que “y nada más”?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Yo voy a darles qué comer, veremos si tu leyenda resiste… I’ll feed them. We’ll see if your legend holds up…"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "¿Una leyenda? ¿Ya tan rápido?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "No los subestimes Emilia, hay que ser aguerrido para ser periodista en este país."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "“Somos una ONG y actuamos legalmente. No reemplazamos a los poderes públicos ni nos interponemos a sus labores, no los juzgamos… estamos simplemente al lado, somos libres de prestarle servicio a quienes lo necesitan."
+        }
+      ],
+      "actionPreview": "Behind them, reporters, sound engineers and cameras. REPORTER 1 ¿Por qué La Lucecita? Why the Lucecita? Our aim is in the name: a ray of hope to those who’ve lost hope. REPORTER 2 ¿Con qué dinero se va a financiar la asociación? What money will be financing this NGO? Mine, but the generals are more "
+    },
+    {
+      "number": 58,
+      "heading": "INT. LUCECITA HEADQUARTERS - DAY",
+      "characters": [
+        "CHILD",
+        "PERSON",
+        "A REPENTANT HITMAN",
+        "CHOIR OF CHILDREN",
+        "WOMEN AND HITMEN"
+      ],
+      "dialogues": [
+        {
+          "character": "CHILD",
+          "parenthetical": "",
+          "text": "Para saber donde los malos,¡ay!,la escondieron."
+        },
+        {
+          "character": "PERSON",
+          "parenthetical": "",
+          "text": "Para grabar ya una fecha"
+        },
+        {
+          "character": "A REPENTANT HITMAN",
+          "parenthetical": "",
+          "text": "Para aguantarme la mirada en el espejo"
+        },
+        {
+          "character": "A REPENTANT HITMAN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "CHOIR OF CHILDREN",
+          "parenthetical": "",
+          "text": "Aquí estoy"
+        },
+        {
+          "character": "WOMEN AND HITMEN",
+          "parenthetical": "",
+          "text": "Para hacer reaparecer los desaparecidos"
+        },
+        {
+          "character": "WOMEN AND HITMEN",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "Start 3M23, PARA, male/female chorus In a lateral tracking shot: women of every age, some with children in their arms. They are sitting in what looks like a waiting room. A DESAPARECIDO’S MOTHER, WIFE OR SISTER Para saber dónde, cuándo, quién y cómo pasó Para poder contar el fin a los que él amó Par"
+    },
+    {
+      "number": 59,
+      "heading": "EXT. EMILIA’S VILLA - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The lights of Mexico City, then Emilia’s villa. Through the bay windows, we see Emilia’s silhouette dancing alone."
+    },
+    {
+      "number": 60,
+      "heading": "EXT. VILLA EMILIA -",
+      "characters": [
+        "NUIT"
+      ],
+      "dialogues": [
+        {
+          "character": "NUIT",
+          "parenthetical": "",
+          "text": "Headlights at the gate. A car door opens. Jessi steps out."
+        }
+      ],
+      "actionPreview": "Before shutting the door, she leans in to wish the driver good night. We can tell that they are kissing. A long kiss. She walks up the white gravel path, almost phosphorescent in the night. Her shoes crunch on the gravel. The headlights sweep over her legs. She turns around and smiles. Then she take"
+    },
+    {
+      "number": 61,
+      "heading": "INT. EMILIA'S VILLA - NIGHT",
+      "characters": [
+        "EMILIA",
+        "JESSI"
+      ],
+      "dialogues": [
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "¿Quieres tomar algo?"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "Bueno."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "¿Te divertiste?"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "Sí"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "¿Te puedo preguntar algo, bonita? 74."
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "Mmm."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "¿Cómo estabas con tu marido?"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "No sé. I don't know."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "¿Cómo no vas a saber? ¿Lo querías?"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "Claro que lo quería… estaba bien morra, fue el primero… estaba loca por él…"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Y él… te quería a ti?"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "Psss no sé… Después tuve a los niños y ya no fue igual."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "¿Para ti o para él?"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "Para él."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Y eso te puso triste."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "Quieres decir: ¿entre nosotros?"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Sí."
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "No sé. Él habría hecho como los demás: se habría encontrado otra más joven, tenido hijos con ella y a mí me habría mandado al diablo. I don't know. He'd have done like other guys: found a younger girl, had kids with her and dumped me."
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "(CONT’D) O tal vez habría sido yo la que encontrara a otro tipo..."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "¿Y entonces?"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "¿Tú qué crees?"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "¿Lo engañaste?"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "Mmm."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "¿Con quién?"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "¿Por qué me preguntas eso? 76."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "No, por nada, así nada más."
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "¿Quieres saber \"así nada más\" si anduve cogiendo con otro güey?"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "¿Duró mucho tiempo?"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "(CONT’D) ¿Por qué?"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "Era demasiado intenso… Ya no podía pensar en nada más… nunca me había pasado algo así."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "¿Y qué pasó?"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "Pues, nada. Ahí le paré. Ya no quise volverlo a ver."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "¿Y no pensaron fugarse juntos?"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "¿Conocías un poquito a tu primo o para nada? ¿Veías las noticias de vez en cuando?"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "¿Y volviste a ver al tipo ese?"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "Mmm."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "… buenas noches."
+        }
+      ],
+      "actionPreview": "Emilia continues to dance. Suddenly she sees Jessi, who enters the room with her shoes in the hand. Emilia startles a moment, stops, smiles and continues to dance amused. Would you like a drink? Emilia pours herself a drink. Sure. Did you enjoy yourself? Yes. Jessi plops on the couch. She is high. E"
+    },
+    {
+      "number": 62,
+      "heading": "INT. FUNDRAISER GALA - NIGHT",
+      "characters": [
+        "REPORTER",
+        "EMILIA",
+        "RITA",
+        "BERLINGER"
+      ],
+      "dialogues": [
+        {
+          "character": "REPORTER",
+          "parenthetical": "",
+          "text": "¿Qué espera de esta velada?"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Simpatía y apoyo."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Ajá, una lana pues, si prefiere, un buen varote."
+        },
+        {
+          "character": "REPORTER",
+          "parenthetical": "",
+          "text": "¿Es cierto que encuentra desaparecidos con la ayuda de sicarios?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Así es, La Lucecita además de acompañar a las familias de las víctimas, da la oportunidad a los arrepentidos, no de enmendar sus actos porque nada podrá enmendarlos, sino de hacer un poco de bien a quienes hicieron daño."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Puros hampones, narcos, corruptos… ¿Te molesta?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Que La Lucecita vaya a buscar dinero sucio, sí, me molesta."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Mientras no conozca a nadie de la corona inglesa, voy a seguir invitando a los ricos que conozco."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "¿Por qué me dices eso?"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "No denunciemos a nadie. ¡Cabrón, a veces me parece que eres peor que yo!"
+        },
+        {
+          "character": "BERLINGER",
+          "parenthetical": "(OFF)",
+          "text": "¡Rita!"
+        },
+        {
+          "character": "BERLINGER",
+          "parenthetical": "(O.S.)",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "A crowd has gathered around the red carpet and the paparazzi. Journalists brandish recorders. What do you expect from this gala? Sympathy and support. REPORTER 2 ¿Apoyo? ¿Quiere decir dinero? Support? You mean money? Dough, if you prefer. Good old greenbacks! 78. 79. Laughter. Is it true that sicair"
+    },
+    {
+      "number": 63,
+      "heading": "INT. FUNDRAISING GALA - NIGHT",
+      "characters": [
+        "EMILIA",
+        "O E",
+        "RITA",
+        "THE ASSEMBLY"
+      ],
+      "dialogues": [
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Estimados ministros, estimados diputados, estimados representantes de la Cámara de Comercio, señor"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "(CONT’D) …se los aseguro… o muy poco. 80."
+        },
+        {
+          "character": "O E",
+          "parenthetical": "",
+          "text": "81. I mean it… Or very little."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Miren al químico, químico que lo nombraron Ministro de algo, el químico, él hace poco mandó a matar a su socio y familia, ¡a chingar!, y"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Ustedes me sacan ventaja, todo mundo los conoce. ¡A mí nadie!"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "(CONT’D)",
+          "text": "82. ¡Una mujer mexicana! ¡Una mujer como las demás! I assure you! Or so little! I am Emilia Pérez!"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Miren al secretario de Educación dizque Pública"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "… pero gracias a dios, tengo a mi lado a una mujer excepcional: Rita"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "(CONT’D)",
+          "text": "82."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Miren al Cojo"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Perder a un ser amado es una tragedia, perder sus restos ¡Es una condena! ¡Es una condena! ¡Es una condena!"
+        },
+        {
+          "character": "THE ASSEMBLY",
+          "parenthetical": "",
+          "text": "¡Salud!"
+        }
+      ],
+      "actionPreview": "Emilia asks for silence and begins her speech. Gobernador del Estado, Señoras y Señores…(recorre la asamblea con la mirada)¡Qué asamblea!¡Pero qué asamblea! Ministers, senators, representatives of the Chamber of Commerce, Governor of the Province, ladies and gentlemen… (looking around) What a crowd!"
+    },
+    {
+      "number": 64,
+      "heading": "INT. LA LUCECITA BUILDING - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Morning. Emilia arrives at her office floor. She responds distractedly to the greetings of those she runs into."
+    },
+    {
+      "number": 65,
+      "heading": "INT. LA",
+      "characters": [
+        "INT."
+      ],
+      "dialogues": [
+        {
+          "character": "INT.",
+          "parenthetical": "",
+          "text": "LUCECITA WAITING ROOM - DAY"
+        }
+      ],
+      "actionPreview": "LUCECITA TOILETS - DAY A beautiful woman in her forties, simply but tastefully dressed. She opens her bag and takes out a sheathed knife. She takes the knife out of its sheath and replaces everything in the bag. The woman returns to her seat in the waiting room."
+    },
+    {
+      "number": 66,
+      "heading": "INT. LUCECITA EMILIA’S OFFICE - DAY",
+      "characters": [
+        "SECRETARY",
+        "EMILIA"
+      ],
+      "dialogues": [
+        {
+          "character": "SECRETARY",
+          "parenthetical": "",
+          "text": "La señora Epifanía Flores."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Siéntese por favor."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "(CONT’D) ¿Qué puedo hacer por usted?"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Ah sí."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Por ahora, en la morgue."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "(algo sorprendida) Está muerto. (a little surprised) He's dead. EPIFANÍA ¡¿No?! ¿Está segura de que es él?"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Sí, al 99.9%. Lo siento mucho…"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Sí."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Ya me está haciendo dudar, pero sí, totalmente segura."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Shhhhh."
+        }
+      ],
+      "actionPreview": "Emilia is sitting at her desk. A secretary enters and announces. Señora Epifanía Flores. Emilia looks up to see the woman we saw in the bathroom. Please, have a seat. Suspicious, EPIFANÍA looks over her shoulder before sitting down. What can I do for you? EPIFANÍA Usted encontró a mi marido. You fou"
+    },
+    {
+      "number": 67,
+      "heading": "INT. LA LUCECITA CORRIDORS - DAY",
+      "characters": [
+        "EMILIA"
+      ],
+      "dialogues": [
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Hasta luego."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "¡Señora Flores!"
+        }
+      ],
+      "actionPreview": "Emilia and Epifanía silently walk up a hallway. They part on the stairs. Goodbye. EPIFANÍA Hasta luego señora. Goodbye, ma’am. Emilia heads back to her office, but can’t help turning back around. Just before Epifanía disappears: Señora Flores! 86. 87."
+    },
+    {
+      "number": 68,
+      "heading": "INT. LUCECITA CORRIDORS - DAY",
+      "characters": [
+        "EMILIA"
+      ],
+      "dialogues": [
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Hay algo que no me dijo,"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "(murmurando fuerte) ¿De verdad traía un cuchillo? (whispering) Did you really have a knife?"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "(CONT’D) ¿Podemos volver a vernos?"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Para nada en especial, así nada más… para vernos."
+        }
+      ],
+      "actionPreview": "Epifanía looks up. ¿qué hacemos con el cuerpo de su marido? You didn’t tell me: what do we do with your husband’s corpse? EPIFANÍA Tírelo Throw it away. They laugh. Epifanía nods and surreptitiously takes the knife out of her bag. Emilia appreciates and surreptitiously takes out her Glock of her bag"
+    },
+    {
+      "number": 69,
+      "heading": "INT. EPIFANÍA’S HOUSE - DAY",
+      "characters": [
+        "EMILIA"
+      ],
+      "dialogues": [
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Mm"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Tengo que estar en la casa antes de que los niños se despierten. I have to be back home before the kids wake up. EPIFANÍA ¿Tienes hijos?"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Sí, o más bien no… pero es lo mismo."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Su padre murió, yo soy su tía."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "¿Quieres? (como sorprendida) ¿De veras?"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "(CONT’D) Ámame, protégeme. Siempre quiero eso …"
+        }
+      ],
+      "actionPreview": "Early morning. Emilia is dressed. She finishes making coffee in the kitchen-living room-bathroom in Epifanía’s tiny house. She looks at the walls with their peeling blue paint and religious imagery. StrÁNGELy ordered disorder, it is a cozy kind of cave. 87. 88. Emilia is happy. She feels at home. An"
+    },
+    {
+      "number": 70,
+      "heading": "INT. EPIFANÍA’S HOUSE - DAY",
+      "characters": [
+        "EMILIA"
+      ],
+      "dialogues": [
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Medio él, medio ella"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "(CONT’D)",
+          "text": "(MORE) 90."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Epifanía EPIFANÍA"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Epifanía"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "(CONT’D)",
+          "text": "(MORE) 90."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "(CONT’D)",
+          "text": "91."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Epifanía EPIFANÍA"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "¡Estoy enamorada! I'm in love!"
+        }
+      ],
+      "actionPreview": "Emilia begins to sing. Epifanía does not seem to see her although they are in the same frame. She begins her day: washing up, dressing, housekeeping. All her gestures are weighed down by love. Start of EL AMOR Medio papá, medio tía Medio rica, medio pobre, Medio jefe, medio reina Medio aquí, medio a"
+    },
+    {
+      "number": 71,
+      "heading": "INT. LA LUCECITA OFFICES - DAY",
+      "characters": [
+        "EMILIA",
+        "RITA"
+      ],
+      "dialogues": [
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "¿Qué?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Te admiro… I admire you..."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Ah mira, qué chingón."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "¿Dónde aprendiste eso?"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "¿…? …?"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "(CONT’D)",
+          "text": "91."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Estás cambiando la vida de la gente"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Rita ¿estás bien?"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "(CONT’D) ¿Qué te puedo decir?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Nada."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "¿Qué esto no existiría sin ti?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Gracias."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Es cierto. Está es tu vida profesional. Puedes estar orgullosa… ¿A poco no?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Vamos a incomodar a muchas personas. ¿No te da miedo"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Creo que me vale madres. I don’t think I give a shit now."
+        }
+      ],
+      "actionPreview": "The two women are in Emilia’s office. Emilia looks out the window. La Lucecita is in full swing. Hustle and bustle in the corridors. Women in waiting rooms. ÁNGEL and Diego are having snacks in the cafeteria, etc... Emilia surprises Rita looking at her. What is it? Oh shit. Where did you learn all t"
+    },
+    {
+      "number": 72,
+      "heading": "EXT. STREET - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Rita walks alone in a busy street. She seems to know where she goes and knows the door she pushes. It is the one of a night bar."
+    },
+    {
+      "number": 73,
+      "heading": "INT. NIGHTCLUB - NIGHT",
+      "characters": [
+        "RITA",
+        "JESSI"
+      ],
+      "dialogues": [
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Espera aqu í, ahora vuelvo."
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "¡Ey, Rita!"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Buenas noches... buenas noches “los otros”."
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "(presentándola) Santa Rita, mi ángel de la guardia. (a Rita)"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "... tengo un amigo esperándome abajo. ... I have a friend waiting for me downstairs."
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "¿Estás en una misión o sólo divirtiéndote?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Sólo me divierto."
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "¡¿Tú?! ¿divirtiéndote?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "... Yo sé, hasta me suena raro decirlo. ... I know, I hesitated before saying it."
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "Pensé que te devolvías a Londres. I thought you were going back to London."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Me estoy dando un tiempo. ¿Y tú? ¿qué tal el regreso a México? I'm taking some time off. How about you? How is the return to Mexico?"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "De poca madre."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "¿Y qué haces?"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "¿Esta noche? Aún no sabemos."
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "(CONT’D) ¿Qué hicimos ayer?"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "(CONT’D)",
+          "text": "(MORE) 96."
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "(CONT’D)",
+          "text": "(MORE) 96."
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "(CONT’D)",
+          "text": "97."
+        }
+      ],
+      "actionPreview": "Dark atmosphere, other music, another ambience. Six men turn towards us, undressing us with their eyes. Rita bellies up to the bar, next to a hot guy. She orders a drink. When it arrives, she feels the guy’s hand run over her body. She likes what she feels. And she doesn’t mind him whispering in her"
+    },
+    {
+      "number": 74,
+      "heading": "INT. EMILIA’S VILLA - DAY",
+      "characters": [
+        "JESSI"
+      ],
+      "dialogues": [
+        {
+          "character": "JESSI",
+          "parenthetical": "(CONT’D)",
+          "text": "97."
+        }
+      ],
+      "actionPreview": "Emilia finishes having breakfast with the children, who are playing Fortnite. A cheerful atmosphere. Emilia looks fulfilled. Out the window, she suddenly sees a silhouette in the garden: Jessi coming home from an interminable night out. The two women’s eyes meet through window glass. Emilia discreet"
+    },
+    {
+      "number": 75,
+      "heading": "EXT. EMILIA’S VILLA - DAY",
+      "characters": [
+        "EMILIA"
+      ],
+      "dialogues": [
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Hasta la tarde amores, vengo a buscarlos a la salida."
+        }
+      ],
+      "actionPreview": "Emilia accompanies the children out to the porch, where their driver-bodyguard is waiting. She hands them their school bags. See you this afternoon, my little darlings. I’ll pick you up after school. She gives them a kiss. She goes upstairs. The corridor that leads to Jessi’s room seems inordinately"
+    },
+    {
+      "number": 76,
+      "heading": "INT. VILLA JESSI’S BEDROOM - DAY",
+      "characters": [
+        "EMILIA",
+        "JESSI"
+      ],
+      "dialogues": [
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Jessi…"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "¡Ay güey! ¡Me espantaste!"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Toqué. Solo quería decirte: tú eres libre de hacer lo que quieras, pero… I knocked. I wanted to tell you: you’re free to do as you please, but…"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "Sí, sí, ya sé, los niños…"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Sólo tener algo de cuidado…"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "¡Ya te dije que ya sé! I already told you I know!"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "¿Qué? ¿Con quién?"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "Con Gustavo."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "El tipo del que…"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "Sí."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "¿Estás segura? ¿No crees que te estás precipitando?"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "Hace cinco años que estoy esperando. I’ve waited for 5 years."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Bueno, adelante entonces. Si tú eres feliz, yo también."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "(CONT’D) Y, ¿ya sabes dónde van a vivir?"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "Estamos buscando una mansión en"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Ah, sí… ¿Y los niños?"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "¿Los niños qué?"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Se quedan aquí."
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "Ah, no, ¿por qué? Van a vivir con nosotros."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "¿Y dónde está esa mansión de"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "Sí, tiene todo lo necesario."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "¿Y hay buenas escuelas en Polanco?"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "Todavía no vemos."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Cuando dices “los niños van a vivir con nosotros” ¿quieres decir: vivir contigo y con tu padrote?"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "¿Qué?"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Que tú vas a donde se te dé la gana con tu pinche padrote, pero los niños se quedan aquí."
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "¡¿!Mi padrote!?! ¿Y tú quién chingados te crees para decirme eso pinche vieja lencha? ¿Quieres que yo también te diga algo de tu putita?"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "¡Tú no tocas a mis hijos y punto!"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "¿!¿Tus hijos!?! ¿!¿TUS HIJOS!?! ¿¡¿TE VOLVISTE LOCA O QUÉ?!? ¡SON MIS HIJOS!"
+        }
+      ],
+      "actionPreview": "The room is dark. We hear Jessi through the bathroom door. Jessi comes out in her bathrobe, drying her hair. She does not notice Emilia watching her from the shadows. A beat: Jessi… Jessi jumps. Fuck, you scared me! Yes, I know, the children… 98. 99. Just be a little careful… After a while, in a sud"
+    },
+    {
+      "number": 77,
+      "heading": "EXT. STREET - NIGHT",
+      "characters": [
+        "HENCHMAN"
+      ],
+      "dialogues": [
+        {
+          "character": "HENCHMAN",
+          "parenthetical": "(O.S.)",
+          "text": "Tienes 100 mil dólares en la bolsa del pantalón. Te largas de la ciudad y no te vuelves a acercar a menos de 80 kilómetros. Si desobede ces, te corto los brazos y se los doy de comer a los perros. ¿Entendiste?"
+        }
+      ],
+      "actionPreview": "Two guys are beating up a third, who slips under a car to escape the beatings. The camera passes under the car: we recognize Gustavo Brun. Once he stops moving, one of his assailants slips a fat wad of money into his pocket and whispers into his ear. There’s a hundred thousand dollars in your pocket"
+    },
+    {
+      "number": 78,
+      "heading": "INT. EMILIA’S VILLA - DAY",
+      "characters": [
+        "EMILIA",
+        "MAID",
+        "RITA",
+        "JESSI"
+      ],
+      "dialogues": [
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "¿A qué hora se fueron?"
+        },
+        {
+          "character": "MAID",
+          "parenthetical": "",
+          "text": "No sé señora, todo mundo estaba durmiendo… I don't know, ma'am. Everyone was asleep…"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "¿No dejó una nota?"
+        },
+        {
+          "character": "MAID",
+          "parenthetical": "",
+          "text": "No encontré ninguna, señora. I didn't find one, ma'am."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "(al teléfono) Soy yo Jessi… no entiendo… no entiendo por qué hiciste eso… tenemos"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Cálmate"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "(CONT’D)",
+          "text": "103."
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "Me cortó los víveres"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Cálmate"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Calma"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "¿Cómo pude casarme con esa perra? ¡¿Cómo pude casarme con esa ingrata?!"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Lo hubieras pensado antes. ¡¿Qué crees?¡ ¿Que puedes manipular a la gente a tu antojo? ¡Eso era en otra vida! ¡Ahora ya no es lo mismo!"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "(CONT’D)",
+          "text": "103."
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "¿Cómo pude vivir con esa cabrona ? ¿Cómo pude confiar en esa pendeja?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Calma"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "Es la lana de Manitas ¡Mi marido! ¡La lana que me dejó cuando murió!"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Calma"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "¡Mi lana!"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "No puede hacerme eso"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "¿Cómo pudiste hacer eso? ¡Chingá! ¿ No pudiste habérmelo dicho antes?"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "¿Cómo tiene acceso a mis cuentas?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Cálmate"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "¡Quiero a mis hijos! I want my children!"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Si quieres recuperar a tus hijos"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "¡Quiero a mis hijos! I want my children back!"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Hay que apagar el fuego"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Se va a morir."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Las oficinas abren de las 9 de la mañana a las 5 de la tarde, ya estamos por cerrar. ¿Tenía cita?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "¿Le puedo ayudar?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "¿Su nombre es…?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "¿Tú eres Epifanía?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Sí, buenas noches."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Bueno, ya está."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Al fin nos conocemos. Ya era hora ¿Habían quedado de verse?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Sube. (señala la escalera)"
+        }
+      ],
+      "actionPreview": "Early morning. Followed by the maids, Emilia hurries from room to room: the closets and drawers in both the children’s room and Jessi’s have been emptied. 101. (MORE) 102. At what time did they leave? She didn't leave a note? Emilia calls Jessi. Straight to voicemail. She leaves a message: que habla"
+    },
+    {
+      "number": 79,
+      "heading": "INT. LUCECITA OFFICES - EVENING",
+      "characters": [
+        "RITA"
+      ],
+      "dialogues": [
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Soy yo, márcame cuando oigas el mensaje. (tapa el auricular) ¿Le digo que estás aquí?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Tenía una cita antes, y nadie la vio… quién sabe qué chingados andará haciendo."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "No te preocupes. Cosas de mujeres enamoradas. Desde que se conocieron, parece que tuviera quince años. Una quinceañera, efusiva."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "¿Ah sí?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "(CONT’D) ¡Ya dime pues!"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "¿Qué vida?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "¿Cuándo cambié su vida yo?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "¿Te habló de ella? ¿De su vida? ¿Qué te contó?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "No, no, para nada. Perdón, estoy muerta del cansancio. Es un poco exagerado pero me conmueve, sí, me conmueve. Creo que tú y yo somos sus únicas amigas."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "(CONT’D) ¿Sí…? Soy yo."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "(CONT’D) ¿Usted dónde está? 109."
+        }
+      ],
+      "actionPreview": "Epifanía has joined Rita, who is on the phone. It’s me. Call me when you get this message. (covering the phone) Can I tell her you’re here? Epifanía nods. Aquí está Epifanía, te espera conmigo. Llama pronto. Epifanía is here. We’re waiting together. Call back. She hangs up. EPIFANÍA Ya le marqué cua"
+    },
+    {
+      "number": 80,
+      "heading": "EXT. MEXICO CITY STREETS - DAY",
+      "characters": [
+        "INT.",
+        "KID",
+        "RITA"
+      ],
+      "dialogues": [
+        {
+          "character": "INT.",
+          "parenthetical": "",
+          "text": "LUCECITA BUILDING - DAY"
+        },
+        {
+          "character": "KID",
+          "parenthetical": "",
+          "text": "¿Señora Mora Castro?"
+        },
+        {
+          "character": "KID",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "¿Qué es?"
+        },
+        {
+          "character": "KID",
+          "parenthetical": "",
+          "text": "Me dijeron que se lo diera. I was told to give it to you."
+        }
+      ],
+      "actionPreview": "Feet in sandals pressing pedals. The pedals spin. The bike zigzags through traffic. A package on a string swings left and right, depending on the bike’s tilt. Upright on the pedals of a bike too big for him, a poorly dressed 12, 13 year old kid zigzags between cars and pedestrians. He goes upstairs,"
+    },
+    {
+      "number": 81,
+      "heading": "INT. RITA’S OFFICE - DAY",
+      "characters": [
+        "EMILIA.",
+        "RITA",
+        "GUSTAVO",
+        "EMILIA",
+        "BINGO"
+      ],
+      "dialogues": [
+        {
+          "character": "EMILIA.",
+          "parenthetical": "",
+          "text": "Rita answers."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "¿Emilia?"
+        },
+        {
+          "character": "GUSTAVO",
+          "parenthetical": "(O.S.)",
+          "text": "No, no"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Sí"
+        },
+        {
+          "character": "GUSTAVO",
+          "parenthetical": "",
+          "text": "¿Puedes contar con los dedos?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "¿Tres millones?"
+        },
+        {
+          "character": "GUSTAVO",
+          "parenthetical": "",
+          "text": "Bueno"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Quiero oírla"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "¿Rita?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Sí, Emilia…"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Haz lo que te dicen, ¿ ok?"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Sí,"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "No estoy aquí por casualidad I am not here by chance"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "El tiempo pasó..."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Pasó muy rápido"
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Bingo"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Eso lo digo yo, pendeja"
+        }
+      ],
+      "actionPreview": "Shut up in her office, Rita slowly unwraps the package. The newspaper is soaked in blood. Inside: 5 fingers with Emilia Pérez’s nail polish. She retches. Vomits into a trash bin. She is interrupted by her vibrating telephone. On the screen: Start music 5M29a Beatification Emilia/Rita/Gustavo On the "
+    },
+    {
+      "number": 82,
+      "heading": "INT. LUCECITA - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Start 5M29b BEATIFICATION/DESEO 2 (At first just the music) The building looks empty. Only one office on the second floor is lit. We approach. We discover a dozen men. EL PONCHIS is apparently their boss. Rita speaks with him. We only see their lips move, their hands gesture and their heads nod. Wea"
+    },
+    {
+      "number": 83,
+      "heading": "INT. RITA’S CAR - EVENING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Rita drives, expressionless. On the passenger seat: two full bags. On the dashboard, a crackling walkie-talkie. 112. 113."
+    },
+    {
+      "number": 84,
+      "heading": "EXT. RITA’S CAR + COUNTRY ROAD - EVENING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "While Rita's car continues a straight trajectory on the deserted road, two hundred meters behind three pickups follow. On the platforms, armed men of La Lucecita; within the cab of the lead pickup La Ponchis, a walkie-talkie in hand. The convoy suddenly bifurcates: Rita to the left, the rest to the "
+    },
+    {
+      "number": 85,
+      "heading": "INT. GUSTAVO’S CABIN, KITCHEN - NIGHT",
+      "characters": [
+        "EMILIA",
+        "JESSI",
+        "GUSTAVO"
+      ],
+      "dialogues": [
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Jessi…"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "¿Qué?"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Dame agua."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "(CONT’D) ¿Qué van a hacer conmigo?"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "Recuperar la lana que me robaste, culera."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "¿Y luego?"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "¡Nos vales madre!"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "¿Me van a matar?"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "¡Cállate!"
+        },
+        {
+          "character": "GUSTAVO",
+          "parenthetical": "",
+          "text": "¡Ahí viene!"
+        }
+      ],
+      "actionPreview": "First, a half darkness, then, appearing in a dull light, the silhouette of Emilia under a dirty and bloody sheet. Exceeding the sheet, we discover her bruised hands packed in rough cloths. Jessi! What? Give me some water. Jessi goes to get a water bottle. What’re you gonna do with me? Get back the m"
+    },
+    {
+      "number": 86,
+      "heading": "EXT. LANDSCAPE - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The face of La Ponchis appears in the frame. Followed by her men, she slides behind the white rocks of the quarry. She signals them to stop: a hundred meters below, Rita's pickup arrives on the road to the cabin. A panning shot leaves the faces of La Ponchis in combat position and then sweeps the la"
+    },
+    {
+      "number": 87,
+      "heading": "INT. GUSTAVO’S CABIN BAR - NIGHT",
+      "characters": [
+        "GUSTAVO"
+      ],
+      "dialogues": [
+        {
+          "character": "GUSTAVO",
+          "parenthetical": "",
+          "text": "(gritando)¡Apaga la luz! (shouting) Turn off the light!"
+        },
+        {
+          "character": "GUSTAVO",
+          "parenthetical": "",
+          "text": "(CONT’D) (a Rita) ¡Apaga tus faros! (to Rita) Turn off your headlights! 114."
+        }
+      ],
+      "actionPreview": "Gustavo puts on a pair of night vision goggles. The light is turned off. Gustavo’s POV through his goggles: the car arrives… blinding headlights… Rita’s white silhouette, suitcases… a tracking shot over the countryside… and back to Rita… blinding headlights… 115."
+    },
+    {
+      "number": 88,
+      "heading": "EXT. LANDSCAPE - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Two shots are fired. Rita throws herself to the ground. The headlights are off. Rita sees La Ponchis, who addresses a series of strategic signs, mysterious but reassuring. Rita pretends to understand."
+    },
+    {
+      "number": 89,
+      "heading": "EXT. GUSTAVO’S CABIN + LANDSCAPE - NIGHT",
+      "characters": [
+        "GUSTAVO"
+      ],
+      "dialogues": [
+        {
+          "character": "GUSTAVO",
+          "parenthetical": "",
+          "text": "Párate y avanza."
+        },
+        {
+          "character": "GUSTAVO",
+          "parenthetical": "",
+          "text": "(CONT’D) ¡Quiero ver tu mano izquierda! I want to see your left hand!"
+        },
+        {
+          "character": "GUSTAVO",
+          "parenthetical": "",
+          "text": "(CONT’D) ¡Llévala!"
+        },
+        {
+          "character": "GUSTAVO",
+          "parenthetical": "",
+          "text": "(CONT’D) Tú y tú vienen conmigo. (a los demás) Ustedes nos cubren. (a Rita)¡Hasta ahí, no te muevas!"
+        },
+        {
+          "character": "GUSTAVO",
+          "parenthetical": "",
+          "text": "(CONT’D) ¡Pinche puta!"
+        }
+      ],
+      "actionPreview": "Gustavo’s \"night view\" POV: the view examines the landscape from left to right, returns to the shape of Rita on the ground. Get up and move forward. The white shape gets up, picks up the bag. A white hand rises. Rita moves forward. Gustavo turns to Jessi: Take her! Pointing to two of his men: You an"
+    },
+    {
+      "number": 90,
+      "heading": "EXT. LANDSCAPE - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Rita has taken shelter behind the pickup. She grabs her gun, checks the weaponry. What Rita sees: - La Ponchis waiting for her orders. - The traces of the bullets above her. - The cabin drowned in the thick smoke of the weapons. Rita's eyes are attracted by the cloud of smoke that grows above the ca"
+    },
+    {
+      "number": 91,
+      "heading": "INT. HACIENDA, KITCHEN - NIGHT",
+      "characters": [
+        "EMILIA",
+        "JESSI",
+        "GUSTAVO"
+      ],
+      "dialogues": [
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "(unintelligible)Te conocí cuando tenías catorce años. I met you when you were fourteen years old."
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "¿Ah?"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Te conocí cuando tenías catorce años."
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "¿Qué dices?"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Mi vida… Cuando andaba con Juanita era a ti a quien miraba… entonces un día en la"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "Tú… ¿tú me besaste?"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "… fuimos a hacer lo demás arriba… ...and we went to do the rest upstairs..."
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "¿Quién te contó esto?"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "Cuando nos casamos te regalé dos collares."
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "¡Cállate, cállate!"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "... que un día tú perdiste uno. Yo sé que se lo diste a Juanita para hacerte perdonar."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "¿Quién eres? ¿Quién eres? 117."
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "… Emilia"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "Manitas"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "… …"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "No, ¡ay no dios!, ¿qué nos pasó?!"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "¡Jessica!"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "¡No!"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "¡Perdóname! ¡Perdóname!,"
+        },
+        {
+          "character": "GUSTAVO",
+          "parenthetical": "",
+          "text": "¡Párate, nos largamos!"
+        },
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "No..."
+        }
+      ],
+      "actionPreview": "A tongue of smoke slides on the ground, passes between the feet of the men, on the shells which roll... crosses the room... finds Jessi and Emilia lying on the ground... and slips into the mouth of Emilia, who opens her eyes. Emilia looks at Jessi, who protects herself as she can with her arms on he"
+    },
+    {
+      "number": 92,
+      "heading": "INT/EXT. GUSTAVO’S CABIN - NIGHT",
+      "characters": [
+        "EMILIA",
+        "JESSI",
+        "GUSTAVO"
+      ],
+      "dialogues": [
+        {
+          "character": "EMILIA",
+          "parenthetical": "",
+          "text": "(inaudible)¡Jessica! (inaudible) Jessica!"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "¡No!"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "(CONT’D) (balbuceando, confundida) ¡Dios mío!, qué hemos hecho… (mumbling, confused) My God, what have we done?..."
+        },
+        {
+          "character": "GUSTAVO",
+          "parenthetical": "",
+          "text": "(a Jessi) ¡Anda, muévete! (to Jessi) Come on, move!"
+        }
+      ],
+      "actionPreview": "...Emilia is dragged in the trunk of the car of Gustavo. When the trunk of the car is going to be closed on her, Emilia's eyes meet Jessi's. No! The trunk is slammed shut."
+    },
+    {
+      "number": 93,
+      "heading": "INT. GUSTAVO BRUN’S CAR - NIGHT",
+      "characters": [
+        "GUSTAVO",
+        "JESSI",
+        "GUSTAVO BRUN"
+      ],
+      "dialogues": [
+        {
+          "character": "GUSTAVO",
+          "parenthetical": "",
+          "text": "¡Perros hijos de su puta madre!"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "En la cajuela…"
+        },
+        {
+          "character": "GUSTAVO BRUN",
+          "parenthetical": "",
+          "text": "¿En la cajuela qué?"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "En la cajuela, está Manitas."
+        },
+        {
+          "character": "GUSTAVO BRUN",
+          "parenthetical": "",
+          "text": "¡¿Eh?!"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "Mi marido… ¡es Manitas está en la cajuela, es mi marido! ¡Frena! ¡Para! 119."
+        },
+        {
+          "character": "GUSTAVO",
+          "parenthetical": "",
+          "text": "… ¡Eh!"
+        },
+        {
+          "character": "GUSTAVO",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "JESSI",
+          "parenthetical": "",
+          "text": "¡Detente! STOP!"
+        }
+      ],
+      "actionPreview": "Gustavo Brun turns on the headlights and the turbo. Those fucking motherfuckers! On his side, Jessi is lost. In the trunk... What? In the trunk? In the trunk, it's Manitas. What? 120. In the trunk, it's Manitas, my husband. Stop! Stop! She grabs the wheel to force Gustavo to stop. Hey! He yanks it b"
+    },
+    {
+      "number": 94,
+      "heading": "EXT. GUSTAVO",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "BRUN’S CAR - NIGHT The car arrives towards us zigzagging. Its race is punctuated by the detonations and the shots flashing the interior. Suddenly the car swerves and flies down the embankment. The camera closes in on the edge of the ravine."
+    },
+    {
+      "number": 95,
+      "heading": "EXT. GUSTAVO",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "BRUN’S CAR - NIGHT The car has crashed a hundred meters below."
+    },
+    {
+      "number": 96,
+      "heading": "EXT. GUSTAVO BRUN’S CAR - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The camera slowly moves in on the trunk of the car. We hear twisting metal, the radiator whistling, other unpleasant noises, like creaks and groans. Then suddenly, the car explodes in flames. 120. 121."
+    },
+    {
+      "number": 97,
+      "heading": "EXT. MOUNTAIN - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Down in the ravine, the car is a blazing inferno. Pulling back, we see Rita watching the car burn. Powerless. The red flames reflected on her face."
+    },
+    {
+      "number": 98,
+      "heading": "INT. EMILIA’S HOUSE - DAY",
+      "characters": [
+        "HOUSEMAID",
+        "RITA",
+        "CHORUS"
+      ],
+      "dialogues": [
+        {
+          "character": "HOUSEMAID",
+          "parenthetical": "(OFF)",
+          "text": "Ahí vienen señora Rita."
+        },
+        {
+          "character": "RITA",
+          "parenthetical": "",
+          "text": "Mis hijos, mi familia."
+        },
+        {
+          "character": "CHORUS",
+          "parenthetical": "",
+          "text": "A quien en un segundo"
+        }
+      ],
+      "actionPreview": "Start 5M30 Las Damas A window framed from the outside, it's an empty frame. Then a voice: Here they come, Mrs. Rita. Rita appears behind the window. She is dressed in black, her face defeated. In the reflection of the glass appear the small silhouettes of Diego and ÁNGEL. They are escorted by two po"
+    },
+    {
+      "number": 99,
+      "heading": "EXT. MEXICO CITY SUBURBS - DAY",
+      "characters": [
+        "THE END."
+      ],
+      "dialogues": [
+        {
+          "character": "THE END.",
+          "parenthetical": "",
+          "text": "123."
+        }
+      ],
+      "actionPreview": "Epifanía in mourning walks and sings. EPIFANÍA A quien hizó el milagro De cambiar el plomo en oro Volviendo a soñar este mundo To the one who accomplished the miracle Of changing lead into gold And enchanted the world again EPIFANÍA (CONT’D) A quien izo a nuestro lado Al lado de los condenados La ba"
+    }
+  ]
+}

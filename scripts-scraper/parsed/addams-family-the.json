@@ -1,0 +1,22 @@
+{
+  "slug": "addams-family-the",
+  "title": "Addams Family, The",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 9770,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                    THE ADDAMS FAMILY </b> by <b> </b>           Larry Wilson and Caroline Thompson Rewrite by <b> </b>                      Paul Rudnick based on the characters of Charles Addams <b>                                  SHOOTING SCRIPT </b> April 11, 1991 <b> </b> <b>     THE ADDAMS FAMILY - 11/6/90 </b> <b>     FADE IN: </b> <b>A1   EXT. ADDAMS MANSION FRONT STEPS - CHRISTMAS EVE            A1 </b> A GROUP OF CAROLERS, their eager faces upturned, SINGS an endless and cloying rou",
+      "dialogue_count": 0,
+      "word_count": 9770
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "slug": "airplane",
+  "title": "Airplane",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 23270,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                   AIRPLANE </b><b> </b> Written by <b> </b>                  Jim Abrahams, David Zucker & Jerry Zucker <b> </b><b> </b><b> </b><b> </b><b> </b><b>                                                       SHOOTING SCRIPT </b>                                                       June 11, 1979 Revised 6/15/79 <b> </b><b> </b><b> </b><b> </b><b>          FADE IN: </b><b> </b><b>          EXT. SKY - JUST ABOVE CLOUDS - NIGHT </b><b> </b>          OMINOUS, THREATENING",
+      "dialogue_count": 0,
+      "word_count": 23270
+    }
+  ]
+}

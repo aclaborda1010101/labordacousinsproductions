@@ -1,0 +1,22 @@
+{
+  "slug": "10-things-i-hate-about-you",
+  "title": "10 Things I Hate About You",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 23286,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<html> <head> <script> <b><!-- </b>if (window!= top) top.location.href=location.href <b>// --> </b></script> <title>Ten Things I Hate About You - by Karen McCullah Lutz & Kirsten Smith</title> </head> <pre> <b>                               TEN THINGS I HATE ABOUT YOU </b><b> </b>                written by Karen McCullah Lutz & Kirsten Smith <b> </b>              based on 'Taming of the Shrew\" by William Shakespeare <b> </b>          Revision November 12, 1997 <b> </b><b> </b><b>          PADUA",
+      "dialogue_count": 0,
+      "word_count": 23286
+    }
+  ]
+}

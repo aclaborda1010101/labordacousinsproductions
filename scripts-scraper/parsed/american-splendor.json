@@ -1,0 +1,22 @@
+{
+  "slug": "american-splendor",
+  "title": "American Splendor",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 21454,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "\"AMERICAN SPLENDOR\" by Robert Pulcini and Shari Springer Berman <b>                                     PRODUCTION DRAFT </b> <b> </b> <b>               FADE IN: </b> <b>               INT. HARVEY�S BEDROOM - NIGHT </b> <b>               A BEDROOM MIRROR. </b> The room is dark. A perfectly square mirror hangs crooked on a wall. Suddenly, out of the darkness, the reflection of a man's face comes into focus. He stares straight ahead, perhaps studying his own unrecognizable reflection. It's quite c",
+      "dialogue_count": 0,
+      "word_count": 21454
+    }
+  ]
+}

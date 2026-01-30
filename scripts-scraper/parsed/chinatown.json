@@ -1,0 +1,22 @@
+{
+  "slug": "chinatown",
+  "title": "Chinatown",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 27779,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                        CHINATOWN </b> Written by Robert Towne <b> </b> FULL SCREEN PHOTOGRAPH Grainy but unmistakably a man and woman making love. Photograph shakes. SOUND of a man MOANING in anguish. The photograph is dropped, REVEALING ANOTHER, MORE compromising one. Then another, and another. More moans. <b>                                     CURLY'S VOICE </b>                              (crying out) Oh, no. <b>               INT. GITTES' OFFICE </b> CURLY drops the pho",
+      "dialogue_count": 0,
+      "word_count": 27779
+    }
+  ]
+}

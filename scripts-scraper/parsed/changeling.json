@@ -1,0 +1,26 @@
+{
+  "slug": "changeling",
+  "title": "Changeling",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 1,
+  "characters": [
+    "POLICE DISPATCHER"
+  ],
+  "total_words": 37947,
+  "total_dialogue": 1,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "POLICE DISPATCHER"
+      ],
+      "action_text": "<b>                                CHANGELING </b>                               A True Story <b> </b><b> </b><b> </b>                                Written by <b> </b>                          J. Michael Straczynski <b>          FADE IN: </b><b> </b><b>          BLACK SCREEN </b><b> </b>          On which appears: <b> </b><b>                     EVERYTHING YOU ARE ABOUT TO SEE, HAPPENED </b><b> </b>          The words slowly FADE OUT, taking us hard into <b> </b><b>          EXT. COLLINS HOME",
+      "dialogue_count": 1,
+      "word_count": 37947
+    }
+  ]
+}

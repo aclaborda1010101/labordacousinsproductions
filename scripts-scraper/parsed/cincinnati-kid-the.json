@@ -1,0 +1,22 @@
+{
+  "slug": "cincinnati-kid-the",
+  "title": "Cincinnati Kid, The",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 27982,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                    THE CINCINNATI KID </b> Written by Ring Lardner Jr. and Terry Southern Based on a novel by Richard Jessup <b>                                                   SHOOTING DRAFT - 1965 </b> <b> </b> <b>               FADE IN: SERIES OF ESTABLISHING SHOTS - DAY </b> Exterior scenes of St. Louis, particularly the riverside industrial district. Even more important to establish than the place is the time: end of summer, 1936. Election posters would help, with the",
+      "dialogue_count": 0,
+      "word_count": 27982
+    }
+  ]
+}

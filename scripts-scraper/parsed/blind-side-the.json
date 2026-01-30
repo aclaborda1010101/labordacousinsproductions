@@ -1,0 +1,22 @@
+{
+  "slug": "blind-side-the",
+  "title": "Blind Side, The",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 29274,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                               THE BLIND SIDE </b> Written by John Lee Hancock Based on the book The Blind Side: Evolution of a Game By Michael Lewis <b>                                                            04/28/09 </b> <b>          1 OVER BLACK... 1 </b>          A distinctly SOUTHERN VOICE... <b>          LEIGH ANNE'S VOICE </b>          There's a moment of orderly silence before a football play begins. Players are in position, linemen are frozen, and anything's possible. Then, like",
+      "dialogue_count": 0,
+      "word_count": 29274
+    }
+  ]
+}

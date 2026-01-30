@@ -1,0 +1,42 @@
+{
+  "slug": "avengers-endgame",
+  "title": "Avengers: Endgame",
+  "genre": "Action",
+  "genres": [
+    "Action",
+    "Adventure",
+    "Animation",
+    "Comedy",
+    "Crime",
+    "Drama",
+    "Family",
+    "Fantasy",
+    "Film-Noir",
+    "Horror",
+    "Musical",
+    "Mystery",
+    "Romance",
+    "Sci-Fi",
+    "Short",
+    "Thriller",
+    "War",
+    "Western"
+  ],
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 29277,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>               AVENGERS: ENDGAME </b> Christopher Markus & Stephen McFeely Adapted Screenplay <b>EXT. BARTON HOME - DAY </b> <b>CLOSE ON: A HOUSE-ARREST ANKLE BRACELET. </b> <b>                    CLINT BARTON (O.S.) </b>          Okay, you see where you're going? Let's work on how to get there. Pan up to find...CLINT BARTON, with his daughter, LILA, coaching her as she notches an arrow in her bow. <b>                    CLINT BARTON (CONT'D) </b>          Okay, good...tip down...bow arm out.",
+      "dialogue_count": 0,
+      "word_count": 29277
+    }
+  ]
+}

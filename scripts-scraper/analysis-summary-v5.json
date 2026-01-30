@@ -1,0 +1,2109 @@
+{
+  "total": 525,
+  "success": 525,
+  "errors": 0,
+  "genresChanged": 86,
+  "totalCharsRemoved": 2918,
+  "protagonists": [
+    {
+      "title": "12 Strong",
+      "protagonist": "NELSON"
+    },
+    {
+      "title": "12 Years A Slave",
+      "protagonist": "SOLOMON"
+    },
+    {
+      "title": "13 Reasons Why 101 Tape 1 Side A",
+      "protagonist": "CLAY"
+    },
+    {
+      "title": "20th Century Women",
+      "protagonist": "DOROTHEA"
+    },
+    {
+      "title": "22 July",
+      "protagonist": "VILJAR"
+    },
+    {
+      "title": "22 Jump Street",
+      "protagonist": "SCHMIDT"
+    },
+    {
+      "title": "A Fantastic Woman",
+      "protagonist": "MARINA"
+    },
+    {
+      "title": "A Hidden Life",
+      "protagonist": "FRANZ"
+    },
+    {
+      "title": "A Knock At The Cabin",
+      "protagonist": "ANDREW"
+    },
+    {
+      "title": "A Monster Calls",
+      "protagonist": "CONOR"
+    },
+    {
+      "title": "A Most Violent Year",
+      "protagonist": "ABEL"
+    },
+    {
+      "title": "A Quiet Place",
+      "protagonist": "JOHN"
+    },
+    {
+      "title": "A Simple Favor",
+      "protagonist": "STEPHANIE"
+    },
+    {
+      "title": "A Star Is Born",
+      "protagonist": "ALLY"
+    },
+    {
+      "title": "A Very English Scandal 101 Episode 1 1",
+      "protagonist": "JEREMY"
+    },
+    {
+      "title": "A Very English Scandal 102 Episode 1 2",
+      "protagonist": "NORMAN"
+    },
+    {
+      "title": "A Very English Scandal 103 Episode 1 3",
+      "protagonist": "JEREMY"
+    },
+    {
+      "title": "About Alex",
+      "protagonist": "ALEX"
+    },
+    {
+      "title": "Abraham Lincoln Vampire Hunter",
+      "protagonist": "HENRY"
+    },
+    {
+      "title": "Ad Astra",
+      "protagonist": "MCBRIDE"
+    },
+    {
+      "title": "After The Wedding",
+      "protagonist": "THERESA"
+    },
+    {
+      "title": "Alex Cross",
+      "protagonist": "ALEX"
+    },
+    {
+      "title": "Alien Covenant",
+      "protagonist": "DAVID"
+    },
+    {
+      "title": "All Is Lost",
+      "protagonist": "OUR MAN"
+    },
+    {
+      "title": "All Quiet On The Western Front",
+      "protagonist": "PAUL"
+    },
+    {
+      "title": "American Animals",
+      "protagonist": "SPENCER"
+    },
+    {
+      "title": "American Horror Story 101 Pilot",
+      "protagonist": "VIVIEN"
+    },
+    {
+      "title": "American Hustle",
+      "protagonist": "ROSENFELD"
+    },
+    {
+      "title": "American Sniper",
+      "protagonist": "CHRIS"
+    },
+    {
+      "title": "American Ultra",
+      "protagonist": "MIKE"
+    },
+    {
+      "title": "American Vandal 108 Clean Up",
+      "protagonist": "DYLAN"
+    },
+    {
+      "title": "Annihilation",
+      "protagonist": "LENA"
+    },
+    {
+      "title": "Anthropoid",
+      "protagonist": "JOSEF"
+    },
+    {
+      "title": "Argo",
+      "protagonist": "MENDEZ"
+    },
+    {
+      "title": "Assassination Nation",
+      "protagonist": "SARAH"
+    },
+    {
+      "title": "Atlanta 101 The Big Bang",
+      "protagonist": "EARN"
+    },
+    {
+      "title": "Atlanta 2x01 Alligator Man",
+      "protagonist": "EARN"
+    },
+    {
+      "title": "Atomic Blonde",
+      "protagonist": "BROUGHTON"
+    },
+    {
+      "title": "August Osage County",
+      "protagonist": "VIOLET"
+    },
+    {
+      "title": "Awake 101 Pilot",
+      "protagonist": "BRITTEN"
+    },
+    {
+      "title": "Awkward 101 Pilot",
+      "protagonist": "JENNA"
+    },
+    {
+      "title": "Baby Driver",
+      "protagonist": "BABY"
+    },
+    {
+      "title": "Babylon",
+      "protagonist": "MANNY"
+    },
+    {
+      "title": "Bad Boys For Life",
+      "protagonist": "MIKE"
+    },
+    {
+      "title": "Bad Moms",
+      "protagonist": "CARLA"
+    },
+    {
+      "title": "Bad Times At The El Royale",
+      "protagonist": "DARLENE"
+    },
+    {
+      "title": "Ballers 101 Pilot",
+      "protagonist": "SPENCER"
+    },
+    {
+      "title": "Battlestar Galactica 101 33",
+      "protagonist": "ADAMA"
+    },
+    {
+      "title": "Baywatch",
+      "protagonist": "MITCH"
+    },
+    {
+      "title": "Beau Is Afraid",
+      "protagonist": "BEAU"
+    },
+    {
+      "title": "Beautiful Boy",
+      "protagonist": "DAVID"
+    },
+    {
+      "title": "Beauty And The Beast",
+      "protagonist": "BELLE"
+    },
+    {
+      "title": "Belle",
+      "protagonist": "MANSFIELD"
+    },
+    {
+      "title": "Big Little Lies 101 Somebodys Dead",
+      "protagonist": "JANE"
+    },
+    {
+      "title": "Big Little Lies 102 Serious Mothering",
+      "protagonist": "CELESTE"
+    },
+    {
+      "title": "Big Little Lies 103 Living The Dream",
+      "protagonist": "MADELINE"
+    },
+    {
+      "title": "Big Little Lies 104 Push Comes To Shove",
+      "protagonist": "MADELINE"
+    },
+    {
+      "title": "Big Little Lies 105 Once Bitten",
+      "protagonist": "MADELINE"
+    },
+    {
+      "title": "Big Little Lies 106 Burning Love",
+      "protagonist": "MADELINE"
+    },
+    {
+      "title": "Big Little Lies 107 You Get What You Need",
+      "protagonist": "MADELINE"
+    },
+    {
+      "title": "Big Time Adolescence",
+      "protagonist": "ZEKE"
+    },
+    {
+      "title": "Bill And Ted Face The Music",
+      "protagonist": "BILL"
+    },
+    {
+      "title": "Billions 101 Pilot",
+      "protagonist": "CHUCK"
+    },
+    {
+      "title": "Bird Box",
+      "protagonist": "MALORIE"
+    },
+    {
+      "title": "Birdman",
+      "protagonist": "RIGGAN"
+    },
+    {
+      "title": "Black Lightning 101 The Resurrection",
+      "protagonist": "JEFFERSON"
+    },
+    {
+      "title": "Black Mirror 101 The National Anthem",
+      "protagonist": "MICHAEL"
+    },
+    {
+      "title": "Black Mirror 102 Fifteen Million Merits",
+      "protagonist": "BING"
+    },
+    {
+      "title": "Black Mirror 401 Uss Callister",
+      "protagonist": "NANETTE"
+    },
+    {
+      "title": "Black Sails 101 I",
+      "protagonist": "FLINT"
+    },
+    {
+      "title": "Blackberry",
+      "protagonist": "MIKE"
+    },
+    {
+      "title": "Blindspotting",
+      "protagonist": "MILES"
+    },
+    {
+      "title": "Bloodshot",
+      "protagonist": "BLOODSHOT"
+    },
+    {
+      "title": "Blue Ruin",
+      "protagonist": "DWIGHT"
+    },
+    {
+      "title": "Bohemian Rhapsody",
+      "protagonist": "FREDDIE"
+    },
+    {
+      "title": "Borat Subsequent Moviefilm",
+      "protagonist": "BORAT"
+    },
+    {
+      "title": "Boy Erased",
+      "protagonist": "JARED"
+    },
+    {
+      "title": "Brads Status",
+      "protagonist": "NARRATOR"
+    },
+    {
+      "title": "Breaking Bad 101 Pilot",
+      "protagonist": "WALT"
+    },
+    {
+      "title": "Breaking Bad 301 No Mas",
+      "protagonist": "BREAKING BAD"
+    },
+    {
+      "title": "Breaking Bad 305 Mas",
+      "protagonist": "SAUL"
+    },
+    {
+      "title": "Breaking Bad 307 One Minute",
+      "protagonist": "HANK"
+    },
+    {
+      "title": "Breaking Bad 309 Kafkaesque",
+      "protagonist": "WALT"
+    },
+    {
+      "title": "Breaking Bad 311 Abiquiu",
+      "protagonist": "SAUL"
+    },
+    {
+      "title": "Breaking Bad 312 Half Measures",
+      "protagonist": "JESSE"
+    },
+    {
+      "title": "Breathe",
+      "protagonist": "ROBIN"
+    },
+    {
+      "title": "Bright",
+      "protagonist": "WARD"
+    },
+    {
+      "title": "Brightburn",
+      "protagonist": "TORI"
+    },
+    {
+      "title": "Brooklyn Nine Nine 111 Christmas",
+      "protagonist": "CHARLES"
+    },
+    {
+      "title": "Brooklyn Nine Nine 113 The Bet",
+      "protagonist": "JAKE"
+    },
+    {
+      "title": "Californication 102 Hell A Woman",
+      "protagonist": "HANK"
+    },
+    {
+      "title": "Californication 305 Slow Happy Boys",
+      "protagonist": "COLLINI"
+    },
+    {
+      "title": "Californication 308 The Apartment",
+      "protagonist": "HANK"
+    },
+    {
+      "title": "Call Me By Your Name",
+      "protagonist": "ELIO"
+    },
+    {
+      "title": "Can You Ever Forgive Me",
+      "protagonist": "JACK"
+    },
+    {
+      "title": "Cassandro",
+      "protagonist": "SABRINA"
+    },
+    {
+      "title": "Catch 22 101 Episode 1 1",
+      "protagonist": "YOSSARIAN"
+    },
+    {
+      "title": "Channel Zero 101 You Have To Go Inside",
+      "protagonist": "MIKE"
+    },
+    {
+      "title": "Chef",
+      "protagonist": "CARL"
+    },
+    {
+      "title": "Chernobyl 102 Please Remain Calm",
+      "protagonist": "LEGASOV"
+    },
+    {
+      "title": "Chernobyl 104 The Happiness Of All Mankind",
+      "protagonist": "TARAKANOV"
+    },
+    {
+      "title": "Cloud Atlas",
+      "protagonist": "FROBISHER"
+    },
+    {
+      "title": "Cobra Kai 105 Counterbalance",
+      "protagonist": "JOHNNY"
+    },
+    {
+      "title": "Cobra Kai 107 All Valley",
+      "protagonist": "JOHNNY"
+    },
+    {
+      "title": "Coco",
+      "protagonist": "MIGUEL"
+    },
+    {
+      "title": "Colette",
+      "protagonist": "WILLY"
+    },
+    {
+      "title": "Community 107 Introduction To Statistics",
+      "protagonist": "CHANG"
+    },
+    {
+      "title": "Conclave",
+      "protagonist": "CASA"
+    },
+    {
+      "title": "Constantine 101 Non Est Asylum",
+      "protagonist": "CONSTANTINE"
+    },
+    {
+      "title": "Constantine 102 The Darkness Beneath",
+      "protagonist": "CONSTANTINE"
+    },
+    {
+      "title": "Crazy Rich Asians",
+      "protagonist": "RACHEL"
+    },
+    {
+      "title": "Creed",
+      "protagonist": "ADONIS"
+    },
+    {
+      "title": "Creed Ii",
+      "protagonist": "ADONIS"
+    },
+    {
+      "title": "Da 5 Bloods",
+      "protagonist": "PAUL"
+    },
+    {
+      "title": "Dallas Buyers Club",
+      "protagonist": "DALLAS"
+    },
+    {
+      "title": "Darkest Hour",
+      "protagonist": "WINSTON"
+    },
+    {
+      "title": "Dave 101 The Gander",
+      "protagonist": "DAVE"
+    },
+    {
+      "title": "Deadpool",
+      "protagonist": "DEADPOOL"
+    },
+    {
+      "title": "Deadwood 104 Here Was A Man",
+      "protagonist": "TOLLIVER"
+    },
+    {
+      "title": "Dear White People",
+      "protagonist": "TROY"
+    },
+    {
+      "title": "Death Note",
+      "protagonist": "LUKE"
+    },
+    {
+      "title": "Den Of Thieves",
+      "protagonist": "MERRIMEN"
+    },
+    {
+      "title": "Destroyer",
+      "protagonist": "BELL"
+    },
+    {
+      "title": "Dickinson 101 Because I Could Not Stop",
+      "protagonist": "EMILY"
+    },
+    {
+      "title": "Doctor Sleep",
+      "protagonist": "ABRA"
+    },
+    {
+      "title": "Dollface 101 Guys Girl",
+      "protagonist": "JANE"
+    },
+    {
+      "title": "Dope",
+      "protagonist": "MALCOLM"
+    },
+    {
+      "title": "Downhill",
+      "protagonist": "BILLIE"
+    },
+    {
+      "title": "Downsizing",
+      "protagonist": "PAUL"
+    },
+    {
+      "title": "Dr Ken 101 Pilot",
+      "protagonist": "ALLISON"
+    },
+    {
+      "title": "Dunkirk",
+      "protagonist": "ALEX"
+    },
+    {
+      "title": "Eddie The Eagle",
+      "protagonist": "EDDIE"
+    },
+    {
+      "title": "Edge Of Tomorrow",
+      "protagonist": "RITA"
+    },
+    {
+      "title": "Electric Dreams 107 The Father Thing",
+      "protagonist": "CHARLIE"
+    },
+    {
+      "title": "Emma",
+      "protagonist": "EMMA"
+    },
+    {
+      "title": "Enough Said",
+      "protagonist": "ALBERT"
+    },
+    {
+      "title": "Euphoria 101 Pilot",
+      "protagonist": "MADISON"
+    },
+    {
+      "title": "Evil Dead",
+      "protagonist": "ERIC"
+    },
+    {
+      "title": "Ex Machina",
+      "protagonist": "CALEB"
+    },
+    {
+      "title": "Extremely Wicked Shockingly Evil And Vile",
+      "protagonist": "JERRY"
+    },
+    {
+      "title": "Eye In The Sky",
+      "protagonist": "POWELL"
+    },
+    {
+      "title": "Family Guy 103 Chitty Chitty Death Bang",
+      "protagonist": "PETER"
+    },
+    {
+      "title": "Fargo 101 The Crocodiles Dilemma",
+      "protagonist": "NYGAARD"
+    },
+    {
+      "title": "Fargo 201 Waiting For Dutch",
+      "protagonist": "SOLVERSON"
+    },
+    {
+      "title": "Fargo 301 The Law Of Vacant Places",
+      "protagonist": "NIKKI"
+    },
+    {
+      "title": "Fast Color",
+      "protagonist": "RUTH"
+    },
+    {
+      "title": "Faults",
+      "protagonist": "ANSEL"
+    },
+    {
+      "title": "Fighting With My Family",
+      "protagonist": "RAYA"
+    },
+    {
+      "title": "Film Stars Dont Die In Liverpool",
+      "protagonist": "PETER"
+    },
+    {
+      "title": "First Cow",
+      "protagonist": "COOKIE"
+    },
+    {
+      "title": "First Man",
+      "protagonist": "NEIL"
+    },
+    {
+      "title": "First Reformed",
+      "protagonist": "TOLLER"
+    },
+    {
+      "title": "First They Killed My Father",
+      "protagonist": "LOUNG"
+    },
+    {
+      "title": "Flatliners",
+      "protagonist": "PRIYA"
+    },
+    {
+      "title": "Fleabag 201 Episode 2 1",
+      "protagonist": "FLEABAG"
+    },
+    {
+      "title": "Focus",
+      "protagonist": "NICKY"
+    },
+    {
+      "title": "Foxcatcher",
+      "protagonist": "DAVE"
+    },
+    {
+      "title": "Frank",
+      "protagonist": "FRANK"
+    },
+    {
+      "title": "Frankie",
+      "protagonist": "SYLVIA"
+    },
+    {
+      "title": "Free Guy",
+      "protagonist": "MILLIE"
+    },
+    {
+      "title": "Fresh",
+      "protagonist": "STEVE"
+    },
+    {
+      "title": "Freuds Last Session",
+      "protagonist": "FREUD"
+    },
+    {
+      "title": "Friday Night Lights 110 Its Different For Girls",
+      "protagonist": "TAYLOR"
+    },
+    {
+      "title": "Frozen",
+      "protagonist": "ANNA"
+    },
+    {
+      "title": "Fruitvale Station",
+      "protagonist": "OSCAR"
+    },
+    {
+      "title": "Fury",
+      "protagonist": "WARDADDY"
+    },
+    {
+      "title": "Futurama 101 Space Pilot 3000",
+      "protagonist": "LEELA"
+    },
+    {
+      "title": "Game Night",
+      "protagonist": "ANNIE"
+    },
+    {
+      "title": "Game Of Thrones 510 Mothers Mercy",
+      "protagonist": "SPARROW"
+    },
+    {
+      "title": "Game Of Thrones 609 Battle Of The Bastards",
+      "protagonist": "MOMENT"
+    },
+    {
+      "title": "Game Of Thrones 707 The Dragon And The Wolf",
+      "protagonist": "OF THRONES"
+    },
+    {
+      "title": "Gemini Man",
+      "protagonist": "HENRY"
+    },
+    {
+      "title": "Geostorm",
+      "protagonist": "JAKE"
+    },
+    {
+      "title": "Ghosted 101 Pilot",
+      "protagonist": "LEROY"
+    },
+    {
+      "title": "Gilmore Girls 101 Pilot",
+      "protagonist": "LORELAI"
+    },
+    {
+      "title": "Girls Trip",
+      "protagonist": "RYAN"
+    },
+    {
+      "title": "Glow 101 Pilot",
+      "protagonist": "RUTH"
+    },
+    {
+      "title": "Godzilla",
+      "protagonist": "FORD"
+    },
+    {
+      "title": "Gold",
+      "protagonist": "WELLS"
+    },
+    {
+      "title": "Good Omens 101 In The Beginning",
+      "protagonist": "CROWLEY"
+    },
+    {
+      "title": "Green Book",
+      "protagonist": "SHIRLEY"
+    },
+    {
+      "title": "Green Room",
+      "protagonist": "DARCY"
+    },
+    {
+      "title": "Guardians Of The Galaxy Vol 2",
+      "protagonist": "QUILL"
+    },
+    {
+      "title": "Gunpowder Milkshake",
+      "protagonist": "SCARLET"
+    },
+    {
+      "title": "Gypsy 101 The Rabbit Hole",
+      "protagonist": "JEAN"
+    },
+    {
+      "title": "Hacksaw Ridge",
+      "protagonist": "DESMOND"
+    },
+    {
+      "title": "Hail Caesar",
+      "protagonist": "EDDIE"
+    },
+    {
+      "title": "Halt And Catch Fire 101 Breaking Big Blue",
+      "protagonist": "MACMILLAN"
+    },
+    {
+      "title": "Hannibal 312 The Number Of The Beast Is 666",
+      "protagonist": "CHILTON"
+    },
+    {
+      "title": "Happy 101 Saint Nick",
+      "protagonist": "HAPPY"
+    },
+    {
+      "title": "Happy Death Day",
+      "protagonist": "TREE"
+    },
+    {
+      "title": "Harriet",
+      "protagonist": "HARRIET"
+    },
+    {
+      "title": "Helix 101 Pilot",
+      "protagonist": "FARRAGUT"
+    },
+    {
+      "title": "Hell Or High Water",
+      "protagonist": "TANNER"
+    },
+    {
+      "title": "Hellboy",
+      "protagonist": "HELLBOY"
+    },
+    {
+      "title": "Her",
+      "protagonist": "THEODORE"
+    },
+    {
+      "title": "Here And Now 101 Eleven Eleven",
+      "protagonist": "AUDREY"
+    },
+    {
+      "title": "Hidden Figures",
+      "protagonist": "KATHERINE"
+    },
+    {
+      "title": "His Dark Materials 101 Lyras Jordan",
+      "protagonist": "LYRA"
+    },
+    {
+      "title": "Hold The Dark",
+      "protagonist": "CORE"
+    },
+    {
+      "title": "Home Economics 101 Pilot",
+      "protagonist": "CONNOR"
+    },
+    {
+      "title": "Horrible Bosses 2",
+      "protagonist": "DALE"
+    },
+    {
+      "title": "How To Build A Girl",
+      "protagonist": "JOHANNA"
+    },
+    {
+      "title": "How To Train Your Dragon 2",
+      "protagonist": "HICCUP"
+    },
+    {
+      "title": "How To Train Your Dragon The Hidden World",
+      "protagonist": "HICCUP"
+    },
+    {
+      "title": "I Dont Feel At Home In This World Anymore",
+      "protagonist": "RUTH"
+    },
+    {
+      "title": "I Saw The Light",
+      "protagonist": "HANK"
+    },
+    {
+      "title": "I Think Were Alone Now",
+      "protagonist": "GRACE"
+    },
+    {
+      "title": "I Tonya",
+      "protagonist": "TONYA"
+    },
+    {
+      "title": "Im Dying Up Here 101 Pilot",
+      "protagonist": "CASSIE"
+    },
+    {
+      "title": "Ingrid Goes West",
+      "protagonist": "INGRID"
+    },
+    {
+      "title": "Inherent Vice",
+      "protagonist": "THREEPLY"
+    },
+    {
+      "title": "Initiation",
+      "protagonist": "MAROK"
+    },
+    {
+      "title": "Insecure 101 Insecure As Fuck",
+      "protagonist": "ISSA"
+    },
+    {
+      "title": "Inside Out",
+      "protagonist": "HEADQUARTERS"
+    },
+    {
+      "title": "Insidious Chapter 2",
+      "protagonist": "LORRAINE"
+    },
+    {
+      "title": "Intelligence 101 Pilot",
+      "protagonist": "GABRIEL"
+    },
+    {
+      "title": "Into The Woods",
+      "protagonist": "BAKER"
+    },
+    {
+      "title": "It",
+      "protagonist": "BILL"
+    },
+    {
+      "title": "It Follows",
+      "protagonist": "PAUL"
+    },
+    {
+      "title": "Its Always Sunny In Philadelphia 201 Charlie Gets Crippled",
+      "protagonist": "FRANK"
+    },
+    {
+      "title": "Izombie 101 Pilot",
+      "protagonist": "CLIVE"
+    },
+    {
+      "title": "Jack Reacher",
+      "protagonist": "REACHER"
+    },
+    {
+      "title": "Jackie",
+      "protagonist": "JACKIE"
+    },
+    {
+      "title": "John Wick",
+      "protagonist": "JOHN"
+    },
+    {
+      "title": "Jojo Rabbit",
+      "protagonist": "JOJO"
+    },
+    {
+      "title": "Joker",
+      "protagonist": "JOKER"
+    },
+    {
+      "title": "Judas And The Black Messiah",
+      "protagonist": "FRED"
+    },
+    {
+      "title": "Just Mercy",
+      "protagonist": "BRYAN"
+    },
+    {
+      "title": "Kevin Can F K Himself 101 Living The Dream",
+      "protagonist": "ALLISON"
+    },
+    {
+      "title": "Kill The Messenger",
+      "protagonist": "WEBB"
+    },
+    {
+      "title": "Kill Your Darlings",
+      "protagonist": "ALLEN"
+    },
+    {
+      "title": "Killing Eve 101 Nice Face",
+      "protagonist": "CREAM PARLOUR"
+    },
+    {
+      "title": "Kin",
+      "protagonist": "JIMMY"
+    },
+    {
+      "title": "King Richard",
+      "protagonist": "RICHARD"
+    },
+    {
+      "title": "Kings Of Summer",
+      "protagonist": "PATRICK"
+    },
+    {
+      "title": "Knives Out",
+      "protagonist": "BLANC"
+    },
+    {
+      "title": "Krampus",
+      "protagonist": "HOWARD"
+    },
+    {
+      "title": "Krypton 101 Pilot",
+      "protagonist": "CHARYS"
+    },
+    {
+      "title": "Kubo And The Two Strings",
+      "protagonist": "KUBO"
+    },
+    {
+      "title": "La La Land",
+      "protagonist": "SEBASTIAN"
+    },
+    {
+      "title": "Labor Day",
+      "protagonist": "HENRY"
+    },
+    {
+      "title": "Leave No Trace",
+      "protagonist": "WILL"
+    },
+    {
+      "title": "Lee Daniels The Butler",
+      "protagonist": "CECIL"
+    },
+    {
+      "title": "Legend",
+      "protagonist": "REGGIE"
+    },
+    {
+      "title": "Life Itself",
+      "protagonist": "WILL"
+    },
+    {
+      "title": "Lights Out",
+      "protagonist": "REBECCA"
+    },
+    {
+      "title": "Lion",
+      "protagonist": "SAROO"
+    },
+    {
+      "title": "Live By Night",
+      "protagonist": "MASO"
+    },
+    {
+      "title": "Lodge 49 101 As Above So Below",
+      "protagonist": "ERNIE"
+    },
+    {
+      "title": "Logan",
+      "protagonist": "LOGAN"
+    },
+    {
+      "title": "Love 101 It Begins",
+      "protagonist": "MICKEY"
+    },
+    {
+      "title": "Love And Friendship",
+      "protagonist": "SUSAN"
+    },
+    {
+      "title": "Love Is Strange",
+      "protagonist": "GEORGE"
+    },
+    {
+      "title": "Loving",
+      "protagonist": "RICHARD"
+    },
+    {
+      "title": "Lucy In The Sky",
+      "protagonist": "LAURA"
+    },
+    {
+      "title": "Maggies Plan",
+      "protagonist": "MAGGIE"
+    },
+    {
+      "title": "Man On A Ledge",
+      "protagonist": "LYDIA"
+    },
+    {
+      "title": "Mandy",
+      "protagonist": "SAND"
+    },
+    {
+      "title": "Maniac 101 The Chosen One",
+      "protagonist": "OWEN"
+    },
+    {
+      "title": "Mary Queen Of Scots",
+      "protagonist": "MARY"
+    },
+    {
+      "title": "Mass",
+      "protagonist": "JUDY"
+    },
+    {
+      "title": "Master Of None 101 Plan B",
+      "protagonist": "KYLE"
+    },
+    {
+      "title": "Master Of None 102 Parents",
+      "protagonist": "BRIAN"
+    },
+    {
+      "title": "Master Of None 208 Thanksgiving",
+      "protagonist": "DENISE"
+    },
+    {
+      "title": "Mayor Of Kingstown 101 Episode 1 1",
+      "protagonist": "MIKE"
+    },
+    {
+      "title": "Me Him Her",
+      "protagonist": "CORY"
+    },
+    {
+      "title": "Mid90s",
+      "protagonist": "FUCKSHIT"
+    },
+    {
+      "title": "Midsommar",
+      "protagonist": "CHRISTIAN"
+    },
+    {
+      "title": "Miles Ahead",
+      "protagonist": "MILES"
+    },
+    {
+      "title": "Millers Girl",
+      "protagonist": "CAIRO"
+    },
+    {
+      "title": "Mindhunter 101 Episode 1 1",
+      "protagonist": "GARAGE BAND"
+    },
+    {
+      "title": "Miss Sloane",
+      "protagonist": "ELIZABETH"
+    },
+    {
+      "title": "Mission Impossible Fallout",
+      "protagonist": "ETHAN"
+    },
+    {
+      "title": "Modern Family 103 Come Fly With Me",
+      "protagonist": "MODERN FAMILY"
+    },
+    {
+      "title": "Monsters University",
+      "protagonist": "MIKE"
+    },
+    {
+      "title": "Moonlight",
+      "protagonist": "KEVIN"
+    },
+    {
+      "title": "Motherless Brooklyn",
+      "protagonist": "LIONEL"
+    },
+    {
+      "title": "Mozart In The Jungle 101 Pilot",
+      "protagonist": "HAILEY"
+    },
+    {
+      "title": "Mr Right",
+      "protagonist": "RIGHT"
+    },
+    {
+      "title": "Mr Robot 101 Eps1 0 Hellofriend Mov",
+      "protagonist": "ELLIOT"
+    },
+    {
+      "title": "Mudbound",
+      "protagonist": "LAURA"
+    },
+    {
+      "title": "My Big Fat Greek Wedding 2",
+      "protagonist": "TOULA"
+    },
+    {
+      "title": "My Friend Dahmer",
+      "protagonist": "JEFF"
+    },
+    {
+      "title": "Ncis Los Angeles 418 Red Part One",
+      "protagonist": "DEEKS"
+    },
+    {
+      "title": "Nebraska",
+      "protagonist": "DAVID"
+    },
+    {
+      "title": "No Activity 101 Night 35",
+      "protagonist": "TOLBECK"
+    },
+    {
+      "title": "Nocturnal Animals",
+      "protagonist": "ANDES"
+    },
+    {
+      "title": "Oceans 8",
+      "protagonist": "DEBBIE"
+    },
+    {
+      "title": "Oculus",
+      "protagonist": "KAYLIE"
+    },
+    {
+      "title": "Okja",
+      "protagonist": "MIJA"
+    },
+    {
+      "title": "On The Basis Of Sex",
+      "protagonist": "RUTH"
+    },
+    {
+      "title": "Only Lovers Left Alive",
+      "protagonist": "ADAM"
+    },
+    {
+      "title": "Only The Brave",
+      "protagonist": "MARSH"
+    },
+    {
+      "title": "Origin",
+      "protagonist": "ISABEL"
+    },
+    {
+      "title": "Ouija",
+      "protagonist": "LAINE"
+    },
+    {
+      "title": "Outlaw King",
+      "protagonist": "ROBERT"
+    },
+    {
+      "title": "Over The Moon",
+      "protagonist": "FEI FEI"
+    },
+    {
+      "title": "Overboard",
+      "protagonist": "LEONARDO"
+    },
+    {
+      "title": "Overlord",
+      "protagonist": "BOYCE"
+    },
+    {
+      "title": "Ozark 101 Pilot",
+      "protagonist": "MARTY"
+    },
+    {
+      "title": "Pacific Rim",
+      "protagonist": "RALEIGH"
+    },
+    {
+      "title": "Paddington 2",
+      "protagonist": "PADDINGTON"
+    },
+    {
+      "title": "Palm Springs",
+      "protagonist": "NYLES"
+    },
+    {
+      "title": "Papillon",
+      "protagonist": "PAPILLON"
+    },
+    {
+      "title": "Paradise",
+      "protagonist": "LAMB"
+    },
+    {
+      "title": "Paranorman",
+      "protagonist": "NORMAN"
+    },
+    {
+      "title": "Parks And Recreation 102 Canvassing",
+      "protagonist": "LESLIE"
+    },
+    {
+      "title": "Parks And Recreation 202 The Stakeout",
+      "protagonist": "LESLIE"
+    },
+    {
+      "title": "Parks And Recreation 206 Kaboom",
+      "protagonist": "LESLIE"
+    },
+    {
+      "title": "Parks And Recreation 207 Greg Pikitis",
+      "protagonist": "LESLIE"
+    },
+    {
+      "title": "Pen15 203 Vendy Wiccany",
+      "protagonist": "MAYA"
+    },
+    {
+      "title": "Pet Sematary",
+      "protagonist": "LOUIS"
+    },
+    {
+      "title": "Phantom Thread",
+      "protagonist": "ALMA"
+    },
+    {
+      "title": "Pirates Of The Caribbean Dead Men Tell No Tales",
+      "protagonist": "SPARROW"
+    },
+    {
+      "title": "Pitch Perfect 2",
+      "protagonist": "BECA"
+    },
+    {
+      "title": "Pitch Perfect",
+      "protagonist": "CHLOE"
+    },
+    {
+      "title": "Pixels",
+      "protagonist": "BRENNER"
+    },
+    {
+      "title": "Poker Face 101 Dead Mans Hand",
+      "protagonist": "CHARLIE"
+    },
+    {
+      "title": "Power 101 Not Exactly How We Planned",
+      "protagonist": "GHOST"
+    },
+    {
+      "title": "Pretty Little Liars 101 Pilot",
+      "protagonist": "HANNA"
+    },
+    {
+      "title": "Prey",
+      "protagonist": "NARU"
+    },
+    {
+      "title": "Priscilla",
+      "protagonist": "ELVIS"
+    },
+    {
+      "title": "Prisoners",
+      "protagonist": "LOKI"
+    },
+    {
+      "title": "Private Life",
+      "protagonist": "RACHEL"
+    },
+    {
+      "title": "Project Blue Book 101 The Fuller Dogfight",
+      "protagonist": "HYNEK"
+    },
+    {
+      "title": "Promising Young Woman",
+      "protagonist": "CASSANDRA"
+    },
+    {
+      "title": "Puzzle",
+      "protagonist": "AGNES"
+    },
+    {
+      "title": "Queen Sugar 101 First Things First",
+      "protagonist": "NOVA"
+    },
+    {
+      "title": "Raised By Wolves 101 Raised By Wolves",
+      "protagonist": "FATHER"
+    },
+    {
+      "title": "Ready Player One",
+      "protagonist": "PARZIVAL"
+    },
+    {
+      "title": "Recovery Road 101 Blackout",
+      "protagonist": "MADDIE"
+    },
+    {
+      "title": "Richard Jewell",
+      "protagonist": "JEWELL"
+    },
+    {
+      "title": "Rick And Morty 105 Meeseeks And Destroy",
+      "protagonist": "RICK"
+    },
+    {
+      "title": "Rick And Morty 108 Rixty Minutes",
+      "protagonist": "INTERDIMENSIONAL"
+    },
+    {
+      "title": "Rick And Morty 109 Something Ricked This Way Comes",
+      "protagonist": "RECORD DRAFT"
+    },
+    {
+      "title": "Rick And Morty 110 Ricksy Business",
+      "protagonist": "RICK"
+    },
+    {
+      "title": "Rick And Morty 202 Mortynight Run",
+      "protagonist": "ANIMATIC DRAFT"
+    },
+    {
+      "title": "Ricky Stanicky",
+      "protagonist": "ERIN"
+    },
+    {
+      "title": "Roma",
+      "protagonist": "BENITA"
+    },
+    {
+      "title": "Room",
+      "protagonist": "JACK"
+    },
+    {
+      "title": "Roswell New Mexico 101 Pilot",
+      "protagonist": "ISOBEL"
+    },
+    {
+      "title": "Run",
+      "protagonist": "MOTHER"
+    },
+    {
+      "title": "Rush",
+      "protagonist": "NIKI"
+    },
+    {
+      "title": "Russian Doll 101 Nothing In This World Is Easy",
+      "protagonist": "NADIA"
+    },
+    {
+      "title": "Salem 101 The Vow",
+      "protagonist": "ALDEN"
+    },
+    {
+      "title": "Saving Mr Banks",
+      "protagonist": "PAMELA"
+    },
+    {
+      "title": "Scary Stories To Tell In The Dark",
+      "protagonist": "STELLA"
+    },
+    {
+      "title": "Searching",
+      "protagonist": "DAVID"
+    },
+    {
+      "title": "Selma",
+      "protagonist": "KING"
+    },
+    {
+      "title": "Serenity",
+      "protagonist": "DILL"
+    },
+    {
+      "title": "Sex Education 101 Episode 1 1",
+      "protagonist": "OTIS"
+    },
+    {
+      "title": "Sharp Objects 101 Vanish",
+      "protagonist": "CAMILLE"
+    },
+    {
+      "title": "Sherlock 401 The Abominable Bride",
+      "protagonist": "JOHN"
+    },
+    {
+      "title": "Shortcomings",
+      "protagonist": "ALICE"
+    },
+    {
+      "title": "Sicario",
+      "protagonist": "MACY"
+    },
+    {
+      "title": "Silicon Valley 401 Success Failure",
+      "protagonist": "RICHARD"
+    },
+    {
+      "title": "Silicon Valley 508 Fifty One Percent",
+      "protagonist": "RICHARD"
+    },
+    {
+      "title": "Sing",
+      "protagonist": "BUSTER"
+    },
+    {
+      "title": "Sing Street",
+      "protagonist": "CONOR"
+    },
+    {
+      "title": "Skyfall",
+      "protagonist": "BOND"
+    },
+    {
+      "title": "Skyscraper",
+      "protagonist": "SARAH"
+    },
+    {
+      "title": "Slender Man",
+      "protagonist": "HALLIE"
+    },
+    {
+      "title": "Smilf 101 A Box Of Dunkies And Two Squirts Of Maple Syrup",
+      "protagonist": "BRIDGE"
+    },
+    {
+      "title": "Snowpiercer 101 First The Weather Changed",
+      "protagonist": "SAME"
+    },
+    {
+      "title": "Sons Of Anarchy 101 Pilot",
+      "protagonist": "GEMMA"
+    },
+    {
+      "title": "Spartacus 102 Sacramentum Gladiatorum",
+      "protagonist": "BATIATUS"
+    },
+    {
+      "title": "Spartacus 103 Legends",
+      "protagonist": "ILITHYIA"
+    },
+    {
+      "title": "Spartacus 108 Mark Of The Brotherhood",
+      "protagonist": "LUCRETIA"
+    },
+    {
+      "title": "Spartacus 201 Past Transgressions",
+      "protagonist": "BATIATUS"
+    },
+    {
+      "title": "Spider Man Into The Spider Verse",
+      "protagonist": "MILES"
+    },
+    {
+      "title": "Spotlight",
+      "protagonist": "MIKE"
+    },
+    {
+      "title": "Stan And Ollie",
+      "protagonist": "HARDY"
+    },
+    {
+      "title": "Star Wars Episode Vii The Force Awakens",
+      "protagonist": "FINN"
+    },
+    {
+      "title": "Steve Jobs",
+      "protagonist": "STEVE"
+    },
+    {
+      "title": "Stranger Things 101 Chapter One The Vanishing Of Will Byers",
+      "protagonist": "JOYCE"
+    },
+    {
+      "title": "Strawberry Mansion",
+      "protagonist": "PREBLE"
+    },
+    {
+      "title": "Stuber",
+      "protagonist": "NICOLE"
+    },
+    {
+      "title": "Suicide Squad",
+      "protagonist": "WALLER"
+    },
+    {
+      "title": "Sully",
+      "protagonist": "SULLY"
+    },
+    {
+      "title": "Super Dark Times",
+      "protagonist": "ZACH"
+    },
+    {
+      "title": "Supernatural 101 Pilot",
+      "protagonist": "DEAN"
+    },
+    {
+      "title": "Suspiria",
+      "protagonist": "SARA"
+    },
+    {
+      "title": "Swan Song",
+      "protagonist": "CAMERON"
+    },
+    {
+      "title": "Ted Lasso 101 Pilot",
+      "protagonist": "REBECCA"
+    },
+    {
+      "title": "Tell Me A Story 101 Chapter 1 Hope",
+      "protagonist": "KAYLA"
+    },
+    {
+      "title": "Tenet",
+      "protagonist": "PROTAGONIST"
+    },
+    {
+      "title": "The 100 101 Pilot",
+      "protagonist": "ABBY"
+    },
+    {
+      "title": "The Accountant",
+      "protagonist": "CHRIS"
+    },
+    {
+      "title": "The Babysitter",
+      "protagonist": "COLE"
+    },
+    {
+      "title": "The Beach Bum",
+      "protagonist": "MOONDOG"
+    },
+    {
+      "title": "The Bear 101 System",
+      "protagonist": "CARMY"
+    },
+    {
+      "title": "The Beguiled",
+      "protagonist": "MCBURNEY"
+    },
+    {
+      "title": "The Bfg",
+      "protagonist": "SOPHIE"
+    },
+    {
+      "title": "The Big Short",
+      "protagonist": "MARK"
+    },
+    {
+      "title": "The Big Sick",
+      "protagonist": "KUMAIL"
+    },
+    {
+      "title": "The Birth Of A Nation",
+      "protagonist": "TURNER"
+    },
+    {
+      "title": "The Boxtrolls",
+      "protagonist": "EGGS"
+    },
+    {
+      "title": "The Boy",
+      "protagonist": "GERTI"
+    },
+    {
+      "title": "The Boys 101 The Name Of The Game",
+      "protagonist": "HUGHIE"
+    },
+    {
+      "title": "The Comey Rule 101 Night One",
+      "protagonist": "COMEY"
+    },
+    {
+      "title": "The Comey Rule 102 Night Two",
+      "protagonist": "COMEY"
+    },
+    {
+      "title": "The Conjuring",
+      "protagonist": "LORRAINE"
+    },
+    {
+      "title": "The Edge Of Seventeen",
+      "protagonist": "NADINE"
+    },
+    {
+      "title": "The Farewell",
+      "protagonist": "BILLI"
+    },
+    {
+      "title": "The Fault In Our Stars",
+      "protagonist": "HAZEL"
+    },
+    {
+      "title": "The First 101 Separation",
+      "protagonist": "HAGERTY"
+    },
+    {
+      "title": "The Flash 101 Pilot",
+      "protagonist": "BARRY"
+    },
+    {
+      "title": "The Florida Project",
+      "protagonist": "BOBBY"
+    },
+    {
+      "title": "The Founder",
+      "protagonist": "KROC"
+    },
+    {
+      "title": "The Front Runner",
+      "protagonist": "HART"
+    },
+    {
+      "title": "The Girl On The Train",
+      "protagonist": "RACHEL"
+    },
+    {
+      "title": "The Goldbergs 101 The Circle Of Driving",
+      "protagonist": "ADAM"
+    },
+    {
+      "title": "The Good Cop 101 Who Framed The Good Cop",
+      "protagonist": "TONY"
+    },
+    {
+      "title": "The Good Dinosaur",
+      "protagonist": "ARLO"
+    },
+    {
+      "title": "The Good Place 101 Everything Is Great",
+      "protagonist": "ELEANOR"
+    },
+    {
+      "title": "The Good Wife 101 Pilot",
+      "protagonist": "ALICIA"
+    },
+    {
+      "title": "The Greatest Showman",
+      "protagonist": "BARNUM"
+    },
+    {
+      "title": "The Guest",
+      "protagonist": "DAVID"
+    },
+    {
+      "title": "The Handmaids Tale 201 June",
+      "protagonist": "JUNE"
+    },
+    {
+      "title": "The Handmaids Tale 211 Holly",
+      "protagonist": "OFFRED"
+    },
+    {
+      "title": "The Haunting Of Hill House 101 Steven Sees A Ghost",
+      "protagonist": "STEVEN"
+    },
+    {
+      "title": "The Hitmans Bodyguard",
+      "protagonist": "BRYCE"
+    },
+    {
+      "title": "The Hummingbird Project",
+      "protagonist": "VINCENT"
+    },
+    {
+      "title": "The Hunger Games Catching Fire",
+      "protagonist": "KATNISS"
+    },
+    {
+      "title": "The Imitation Game",
+      "protagonist": "TURING"
+    },
+    {
+      "title": "The Incredible Burt Wonderstone",
+      "protagonist": "BURT"
+    },
+    {
+      "title": "The Internship",
+      "protagonist": "OLLIE"
+    },
+    {
+      "title": "The Interview",
+      "protagonist": "DAVE"
+    },
+    {
+      "title": "The Invitation",
+      "protagonist": "KIRA"
+    },
+    {
+      "title": "The Killing Of A Sacred Deer",
+      "protagonist": "STEVEN"
+    },
+    {
+      "title": "The King",
+      "protagonist": "WILLIAM"
+    },
+    {
+      "title": "The Last Of Us 103 Long Long Time",
+      "protagonist": "BILL"
+    },
+    {
+      "title": "The Lego Movie",
+      "protagonist": "EMMET"
+    },
+    {
+      "title": "The Lighthouse",
+      "protagonist": "YOUNG"
+    },
+    {
+      "title": "The Lobster",
+      "protagonist": "DAVID"
+    },
+    {
+      "title": "The Lone Ranger",
+      "protagonist": "REID"
+    },
+    {
+      "title": "The Lost City Of Z",
+      "protagonist": "FAWCETT"
+    },
+    {
+      "title": "The Lunchbox",
+      "protagonist": "SAAJAN"
+    },
+    {
+      "title": "The Magicians 101 Unauthorized Magic",
+      "protagonist": "QUENTIN"
+    },
+    {
+      "title": "The Man From Uncle",
+      "protagonist": "SOLO"
+    },
+    {
+      "title": "The Man In The High Castle 101 The New World",
+      "protagonist": "JULIANA"
+    },
+    {
+      "title": "The Man Who Fell To Earth 101 Hallo Spaceboy",
+      "protagonist": "FARADAY"
+    },
+    {
+      "title": "The Man Who Invented Christmas",
+      "protagonist": "DICKENS"
+    },
+    {
+      "title": "The Martian",
+      "protagonist": "MARK"
+    },
+    {
+      "title": "The Marvelous Mrs Maisel 101 Pilot",
+      "protagonist": "MIDGE"
+    },
+    {
+      "title": "The Maze Runner",
+      "protagonist": "MINHO"
+    },
+    {
+      "title": "The Meddler",
+      "protagonist": "MARNIE"
+    },
+    {
+      "title": "The Mick 101 Pilot",
+      "protagonist": "MICKEY"
+    },
+    {
+      "title": "The Midnight Sky",
+      "protagonist": "AUGUSTINE"
+    },
+    {
+      "title": "The Mummy",
+      "protagonist": "TYLER"
+    },
+    {
+      "title": "The Neon Demon",
+      "protagonist": "JESSE"
+    },
+    {
+      "title": "The Newsroom 101 We Just Decided To",
+      "protagonist": "SLOAN"
+    },
+    {
+      "title": "The Night Of 101 The Beach",
+      "protagonist": "KLEIN"
+    },
+    {
+      "title": "The Nun",
+      "protagonist": "BURKE"
+    },
+    {
+      "title": "The Old Man And The Gun",
+      "protagonist": "FORREST"
+    },
+    {
+      "title": "The Outsider 101 Fish In A Barrel",
+      "protagonist": "RALPH"
+    },
+    {
+      "title": "The Peanut Butter Falcon",
+      "protagonist": "TYLER"
+    },
+    {
+      "title": "The Post",
+      "protagonist": "BRADLEE"
+    },
+    {
+      "title": "The Purge",
+      "protagonist": "JAMES"
+    },
+    {
+      "title": "The Queens Gambit 101 Openings",
+      "protagonist": "BETH"
+    },
+    {
+      "title": "The Revenant",
+      "protagonist": "GLASS"
+    },
+    {
+      "title": "The Rider",
+      "protagonist": "BRADY"
+    },
+    {
+      "title": "The Rookie 101 Pilot",
+      "protagonist": "NOLAN"
+    },
+    {
+      "title": "The Rover",
+      "protagonist": "ERIC"
+    },
+    {
+      "title": "The Secret Life Of Pets",
+      "protagonist": "GIDGET"
+    },
+    {
+      "title": "The Secret Life Of Walter Mitty",
+      "protagonist": "WALTER"
+    },
+    {
+      "title": "The Shape Of Water",
+      "protagonist": "STRICKLAND"
+    },
+    {
+      "title": "The Simpsons 924 Lost Our Lisa",
+      "protagonist": "LISA"
+    },
+    {
+      "title": "The Spy Who Dumped Me",
+      "protagonist": "MORGAN"
+    },
+    {
+      "title": "The Sun Is Also A Star",
+      "protagonist": "NATASHA"
+    },
+    {
+      "title": "The Theory Of Everything",
+      "protagonist": "JANE"
+    },
+    {
+      "title": "The Tomorrow War",
+      "protagonist": "MURI"
+    },
+    {
+      "title": "The Way Back",
+      "protagonist": "JACK"
+    },
+    {
+      "title": "The Whale",
+      "protagonist": "CHARLIE"
+    },
+    {
+      "title": "The White Lotus 101 Arrivals",
+      "protagonist": "OLIVIA"
+    },
+    {
+      "title": "The Wife",
+      "protagonist": "JOAN"
+    },
+    {
+      "title": "The Witch",
+      "protagonist": "CALEB"
+    },
+    {
+      "title": "The Wolf Of Wall Street",
+      "protagonist": "JORDAN"
+    },
+    {
+      "title": "The Wolverine",
+      "protagonist": "LOGAN"
+    },
+    {
+      "title": "The Worlds End",
+      "protagonist": "GARY"
+    },
+    {
+      "title": "This Is Us 101 Pilot",
+      "protagonist": "RANDALL"
+    },
+    {
+      "title": "Three Billboards Outside Ebbing Missouri",
+      "protagonist": "DIXON"
+    },
+    {
+      "title": "To All The Boys Ive Loved Before",
+      "protagonist": "LARA JEAN"
+    },
+    {
+      "title": "To Catch A Killer",
+      "protagonist": "LAMMARK"
+    },
+    {
+      "title": "Tom Clancys Jack Ryan 101 Pilot",
+      "protagonist": "JACK"
+    },
+    {
+      "title": "Top Gun Maverick",
+      "protagonist": "MAVERICK"
+    },
+    {
+      "title": "Totem",
+      "protagonist": "KELLIE"
+    },
+    {
+      "title": "Tower Block",
+      "protagonist": "BECKY"
+    },
+    {
+      "title": "Toy Story 4",
+      "protagonist": "WOODY"
+    },
+    {
+      "title": "Trainwreck",
+      "protagonist": "AARON"
+    },
+    {
+      "title": "True Detective 101 The Long Bright Dark",
+      "protagonist": "HART"
+    },
+    {
+      "title": "True Detective 102 Seeing Things",
+      "protagonist": "HART"
+    },
+    {
+      "title": "True Detective 105 The Secret Fate Of All Life",
+      "protagonist": "HART"
+    },
+    {
+      "title": "Trumbo",
+      "protagonist": "TRUMBO"
+    },
+    {
+      "title": "Tully",
+      "protagonist": "MARLO"
+    },
+    {
+      "title": "Twin Peaks 101 Pilot",
+      "protagonist": "COOPER"
+    },
+    {
+      "title": "Twin Peaks 102 Episode 1 2",
+      "protagonist": "COOPER"
+    },
+    {
+      "title": "Twin Peaks 103 Episode 1 3",
+      "protagonist": "BRIGGS"
+    },
+    {
+      "title": "Under The Silver Lake",
+      "protagonist": "SAM I"
+    },
+    {
+      "title": "Upgrade",
+      "protagonist": "GREY"
+    },
+    {
+      "title": "Upload 101 Welcome To Upload",
+      "protagonist": "NATHAN"
+    },
+    {
+      "title": "Us",
+      "protagonist": "UNDERPASS"
+    },
+    {
+      "title": "Vacation",
+      "protagonist": "RUSTY"
+    },
+    {
+      "title": "Vengeance",
+      "protagonist": "ELOISE"
+    },
+    {
+      "title": "Vice",
+      "protagonist": "DICK"
+    },
+    {
+      "title": "Victor Frankenstein",
+      "protagonist": "VICTOR"
+    },
+    {
+      "title": "Vikings 101 Rites Of Passage",
+      "protagonist": "RAGNAR"
+    },
+    {
+      "title": "Vox Lux",
+      "protagonist": "CELESTE"
+    },
+    {
+      "title": "Weird City 101 The One",
+      "protagonist": "BURT"
+    },
+    {
+      "title": "What They Had",
+      "protagonist": "BRIDGET"
+    },
+    {
+      "title": "Whiplash",
+      "protagonist": "FLETCHER"
+    },
+    {
+      "title": "Whiskey Cavalier 101 Pilot",
+      "protagonist": "WILL"
+    },
+    {
+      "title": "Wicked",
+      "protagonist": "ELPHABA"
+    },
+    {
+      "title": "Wilfred 101 Happiness",
+      "protagonist": "JENNA"
+    },
+    {
+      "title": "Wind River",
+      "protagonist": "JANE"
+    },
+    {
+      "title": "Winters Tale",
+      "protagonist": "WILLA"
+    },
+    {
+      "title": "Wonder Woman",
+      "protagonist": "STEVE"
+    },
+    {
+      "title": "Work It",
+      "protagonist": "QUINN"
+    },
+    {
+      "title": "X Men Days Of Future Past",
+      "protagonist": "ERIK"
+    },
+    {
+      "title": "Yellowstone 101 Daybreak",
+      "protagonist": "DUTTON"
+    },
+    {
+      "title": "You 101 Pilot",
+      "protagonist": "THOUGHTS"
+    },
+    {
+      "title": "You Were Never Really Here",
+      "protagonist": "MOTHER"
+    },
+    {
+      "title": "Zombieland Double Tap",
+      "protagonist": "TALLAHASSEE"
+    },
+    {
+      "title": "Zootopia",
+      "protagonist": "HOPPS"
+    }
+  ]
+}

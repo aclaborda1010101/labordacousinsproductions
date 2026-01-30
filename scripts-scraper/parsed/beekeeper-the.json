@@ -1,0 +1,22 @@
+{
+  "slug": "beekeeper-the",
+  "title": "Beekeeper, The",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 24077,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                        THE BEE KEEPER </b> Written by Kurt Wimmer VAN MORRISON'S TUPELO HONEY plays as ... THE Rolling Countryside of North Mississippi - unchanged since it was created by God all those years ago, floats past. <b>                       VAN MORRISON </b>             She's as sweet as Tupelo Honey She's an angel of the first degree She's as sweet as Tupelo Honey Just like honey baby, from the bee. Fields and forests cultivated and uncultivated that glisten in that perfect South",
+      "dialogue_count": 0,
+      "word_count": 24077
+    }
+  ]
+}

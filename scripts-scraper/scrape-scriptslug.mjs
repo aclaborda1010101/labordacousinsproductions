@@ -17,10 +17,15 @@ if (!fs.existsSync(OUTPUT_DIR)) {
   fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 }
 
-const DELAY_MS = 1000; // Delay entre requests para no saturar el servidor
+const DELAY_MS_MIN = 500;
+const DELAY_MS_MAX = 800;
 
 async function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function randomDelay() {
+  return DELAY_MS_MIN + Math.random() * (DELAY_MS_MAX - DELAY_MS_MIN);
 }
 
 async function fetchWithRetry(url, retries = 3) {
@@ -116,7 +121,7 @@ async function getAllScriptsFromCategory(category, baseUrl) {
     console.log(`  ${category} page ${page}: found ${newSlugs.length} scripts (total: ${allSlugs.length})`);
     
     page++;
-    await sleep(DELAY_MS);
+    await sleep(randomDelay());
     
     // Safety limit
     if (page > 100) break;
@@ -195,7 +200,12 @@ async function main() {
         fs.writeFileSync(METADATA_FILE, JSON.stringify(metadata, null, 2));
       }
       
-      await sleep(DELAY_MS);
+      // Reportar progreso cada 50 descargas
+      if (downloaded % 50 === 0 && downloaded > 0) {
+        console.log(`\n📊 PROGRESO: ${downloaded} guiones descargados hasta ahora`);
+      }
+      
+      await sleep(randomDelay());
       
     } catch (error) {
       console.log(`  Error: ${error.message}`);

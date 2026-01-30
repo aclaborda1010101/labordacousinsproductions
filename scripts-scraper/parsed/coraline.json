@@ -1,0 +1,22 @@
+{
+  "slug": "coraline",
+  "title": "Coraline",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 30198,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b> </b><b>                                  CORALINE </b> Written by Henry Selick Based on the novel by Neil Gaiman <b> </b> <b>          HEAD CREDIT SEQUENCE MYSTERIOUS SEWING ROOM - NIGHT, </b> <b> </b>          A HAUNTING LULLABY plays against a black, star-pricked sky when something appears in the distance. A BUTTON-EYED DOLL floats towards CAMERA, through the open window of a small sewing room where it lands in a pair of WAITING HANDS, hands that are made of SEWING NEEDLES. <b> </b>",
+      "dialogue_count": 0,
+      "word_count": 30198
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "slug": "bad-dreams",
+  "title": "Bad Dreams",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 25533,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                               BAD DREAMS </b> Written by Andrew Fleming & Steven E. de Souza <b>    FADE IN: </b> <b>1   EXT. COUNTRYSIDE - SUNSET                                         1 </b>    A serene landscape, mist collecting as the red ball of a sun dips behind the mountains. In the middle of a field stands a bare-chested man facing the sunset. He is HARRIS, forty-ish, greying but handsome, and very fit. His hands are outstretched as if embracing an invisible entity. He seems filled",
+      "dialogue_count": 0,
+      "word_count": 25533
+    }
+  ]
+}

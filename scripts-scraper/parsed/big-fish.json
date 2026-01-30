@@ -1,0 +1,22 @@
+{
+  "slug": "big-fish",
+  "title": "Big Fish",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 28021,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "\"BIG FISH\" Written by John August Based on the novel by Daniel Wallace Final Production Draft <b> </b> This is a Southern story, full of lies and fabrications, but truer for their inclusion. <b>               FADE IN: </b> <b>               A RIVER. </b> We're underwater, watching a fat catfish swim along. This is The Beast. <b>                                     EDWARD (V.O.) </b>                         There are some fish that cannot be caught. It's not that they're faster or stronger than o",
+      "dialogue_count": 0,
+      "word_count": 28021
+    }
+  ]
+}

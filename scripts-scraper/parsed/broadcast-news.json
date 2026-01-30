@@ -1,0 +1,38 @@
+{
+  "slug": "broadcast-news",
+  "title": "Broadcast News",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 7,
+  "characters": [
+    "JANE",
+    "AARON",
+    "BILL",
+    "ERNIE",
+    "BUDDY",
+    "TOM",
+    "PAUL"
+  ],
+  "total_words": 31280,
+  "total_dialogue": 15,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "JANE",
+        "AARON",
+        "BILL",
+        "ERNIE",
+        "BUDDY",
+        "TOM",
+        "PAUL"
+      ],
+      "action_text": "<b><HTML> </b><HEAD><script> <b><!-- </b> <b>/* </b>Break-out-of-frames script By Website Abstraction (http://wsabstract.com) Over 400+ free scripts here! Above notice MUST stay entact for use <b>*/ </b> if (window!= top) top.location.href=location.href <b>// --> </b></script><TITLE>Broadcast News</TITLE> <!--MadeBy Happywel&WZ--> <b></HEAD> </b><b><BODY> </b><h4><div align=center>Broadcast  News by James L. Brooks.</div></h4> <b><BR><BR><BR> </b> <pre> <b>\tFADE IN </b> <b>\tEXT. CITY STREET - DA",
+      "dialogue_count": 15,
+      "word_count": 31280
+    }
+  ]
+}

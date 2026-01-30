@@ -1,0 +1,22 @@
+{
+  "slug": "box-the",
+  "title": "Box, The",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 24884,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                     THE BOX </b> Written by Richard Kelly Based on the short story <b>                                  \"BUTTON, BUTTON\" </b> By Richard Matheson Sep 30th, 2006 <b>          OVER A BLACI: SCREEN: </b>          Crickets chirp in the night. A DOORBELL rings. Sheets rustle... A BEDSIDE LAMP is turned on. <b>          INT. LEWIS HOUSE -- MASTER BEDROOM -- NIGHT </b> NORMA LEWIS ( 31) sits up in bed. The soft glow of the lamp casts her in silhouette. Her husband, A",
+      "dialogue_count": 0,
+      "word_count": 24884
+    }
+  ]
+}

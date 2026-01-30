@@ -1,0 +1,42 @@
+{
+  "slug": "day-of-the-dead",
+  "title": "Day of the Dead",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 9,
+  "characters": [
+    "DAY",
+    "MIGUEL",
+    "SARAH",
+    "CHICO",
+    "VOICE",
+    "FISHER",
+    "JOHN",
+    "TOBY",
+    "TRICKS"
+  ],
+  "total_words": 27621,
+  "total_dialogue": 18,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "DAY",
+        "MIGUEL",
+        "SARAH",
+        "CHICO",
+        "VOICE",
+        "FISHER",
+        "JOHN",
+        "TOBY",
+        "TRICKS"
+      ],
+      "action_text": "DAY <b>OF </b><b>THE </b><b>DEAD </b>(The original script) by George A. Romero <b>\tFADE IN: </b> <b>1\tEXT. THE EMPTY STREET OF A CITY - DAY </b> No people. A FEW CARS AND TRUCKS are parked at odd angles, abandoned. A TITLE FADES IN, one phrase at a time. <b>FIVE YEARS... </b><b>SINCE THE DEAD FIRST WALKED. </b> <b>2\tEXT. THE CITY - DAY </b> We hear THE SOUND OF A STRONG WIND. DEBRIS flutters through the streets. A LARGE ALLIGATOR slithers into frame, stops and looks around. MONTAGE: as MORE GATO",
+      "dialogue_count": 18,
+      "word_count": 27621
+    }
+  ]
+}

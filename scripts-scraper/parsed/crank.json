@@ -1,0 +1,22 @@
+{
+  "slug": "crank",
+  "title": "Crank",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 27819,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                         CRANK </b><b> </b><b> </b>                                       Written by Mark Neveldine & Brian Taylor <b> </b><b> </b><b> </b><b> </b>                                                           February 20, 2005 <b> </b><b> </b><b> </b><b> </b><b>                                                                    FADE IN: </b><b>              VIDEO SCREEN </b><b>                                                                 1 </b>              EXT",
+      "dialogue_count": 0,
+      "word_count": 27819
+    }
+  ]
+}

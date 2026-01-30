@@ -1,0 +1,22 @@
+{
+  "slug": "big-eyes",
+  "title": "Big Eyes",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 25378,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                    BIG EYES </b> Written by Scott Alexander & Larry Karaszewski <b>                         FADE IN: </b> <b>                         TITLE SEQUENCE: </b> TIGHT on TWO PAINTED EYES. The pupils are impossibly wide. Imploring. The watery rims spill a single tear. We PULL OUT... revealing the eyes belong to a child. A young girl, fingers clasped pitifully. She's forlorn, alone in a dirty gray alley. We feel shame. Compassion. Sorrow... Then -- an IDENTICAL girl S",
+      "dialogue_count": 0,
+      "word_count": 25378
+    }
+  ]
+}

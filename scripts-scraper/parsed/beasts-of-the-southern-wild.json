@@ -1,0 +1,22 @@
+{
+  "slug": "beasts-of-the-southern-wild",
+  "title": "Beasts of the Southern Wild",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 17018,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                           BEASTS OF THE SOUTHERN WILD </b> Written by Lucy Alibar & Benh Zeitlin <b>                                                           FINAL DRAFT </b> Based on the stage play \"Juicy and Delicious\" by Lucy Alibar <b>          EXT. HUSHPUPPY'S HOUSE - DAWN </b> An abandoned looking trailer sits on top of two 15-foot-tall oil drums. Distant thunder trembles through the peeling metal panels. The structure is in such disrepair, that surely no one lives here. But then, a l",
+      "dialogue_count": 0,
+      "word_count": 17018
+    }
+  ]
+}

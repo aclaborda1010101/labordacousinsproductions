@@ -1,0 +1,36 @@
+{
+  "slug": "catch-me-if-you-can",
+  "title": "Catch Me If You Can",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 6,
+  "characters": [
+    "BUD COLLY",
+    "JOE SHAYE",
+    "FRANK SR.",
+    "JUDGE LARKIN",
+    "POLAROID SALESMAN",
+    "PAULA"
+  ],
+  "total_words": 33070,
+  "total_dialogue": 34,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "BUD COLLY",
+        "JOE SHAYE",
+        "FRANK SR.",
+        "JUDGE LARKIN",
+        "POLAROID SALESMAN",
+        "PAULA"
+      ],
+      "action_text": "<b> </b><b>                                CATCH ME IF YOU CAN </b> Written by Jeff Nathanson <b> </b> <b>          1 INT. - GAME SHOW SET. - DAY 1 </b> <b>           BLACK AND WHITE FOOTAGE FROM 1978 </b> <b>                         MUSIC UP: </b>          A simple GAME SHOW SET -- one long desk-that houses four \"CELEBRITY PANELISTS,\" a small pulpit with attached microphone for the host, BUD COLLYER, who walks through the curtain to the delight of the audience. Bud bows and waves to the celebri",
+      "dialogue_count": 34,
+      "word_count": 33070
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "slug": "2012",
+  "title": "2012",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 31997,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b> </b><b> </b><b> </b><b>                                        2012 </b><b> </b><b> </b><b> </b>                                      Written by <b> </b>                           Roland Emmerich & Harald Kloser <b> </b><b> </b><b> </b><b> </b><b> </b><b> </b>                                                           Second Draft February 19th, 2008 <b> </b><b> </b><b> </b><b> </b><b>          OVER BLACK </b><b> </b>          We listen to the immortal music of Mozart's Adagio of the Clarinet",
+      "dialogue_count": 0,
+      "word_count": 31997
+    }
+  ]
+}

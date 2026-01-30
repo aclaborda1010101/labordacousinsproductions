@@ -1,0 +1,26 @@
+{
+  "slug": "angel-eyes",
+  "title": "Angel Eyes",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 1,
+  "characters": [
+    "ANGEL EYES"
+  ],
+  "total_words": 30298,
+  "total_dialogue": 1,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "ANGEL EYES"
+      ],
+      "action_text": "ANGEL EYES by Gerald DiPego October 1999 Seventh Draft/Polish <b>FOR EDUCATIONAL </b><b> PURPOSES ONLY </b><b> </b><b>FADE IN: </b> <b>EXT. CITY STREETS (LOS ANGELES) - NIGHT </b> <b>CREDIT SEQUENCE. </b> As OPENING CREDITS play, we study the city's nighttime pulse, ribbons of headlights moving and cross-connecting like blood through the veins of a body -- impressionistic, even beautiful, but what we're hearing is soulful trumpet-based MUSIC, mellow and haunting, the modern classic -- JAZZ sound",
+      "dialogue_count": 1,
+      "word_count": 30298
+    }
+  ]
+}

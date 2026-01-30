@@ -1,0 +1,4380 @@
+{
+  "slug": "maria-2024",
+  "title": "Maria",
+  "parsedWith": "v2",
+  "parsedAt": "2026-01-29T22:09:11.015Z",
+  "stats": {
+    "scenes": 112,
+    "dialogues": 630,
+    "characters": 35
+  },
+  "characters": [
+    {
+      "name": "MARIA",
+      "dialogueLines": 292,
+      "totalWords": 2082
+    },
+    {
+      "name": "FERRUCCIO",
+      "dialogueLines": 67,
+      "totalWords": 376
+    },
+    {
+      "name": "ONASSIS",
+      "dialogueLines": 60,
+      "totalWords": 432
+    },
+    {
+      "name": "MANDRAX",
+      "dialogueLines": 45,
+      "totalWords": 254
+    },
+    {
+      "name": "JEFFREY",
+      "dialogueLines": 36,
+      "totalWords": 186
+    },
+    {
+      "name": "BRUNA",
+      "dialogueLines": 33,
+      "totalWords": 188
+    },
+    {
+      "name": "DOCTOR FONTAINEBLEAU",
+      "dialogueLines": 23,
+      "totalWords": 147
+    },
+    {
+      "name": "YAKINTHI",
+      "dialogueLines": 16,
+      "totalWords": 164
+    },
+    {
+      "name": "RONALD",
+      "dialogueLines": 10,
+      "totalWords": 70
+    },
+    {
+      "name": "BATTISTA MENEGHINI",
+      "dialogueLines": 8,
+      "totalWords": 45
+    },
+    {
+      "name": "PARTYGOER",
+      "dialogueLines": 6,
+      "totalWords": 46
+    },
+    {
+      "name": "AMERICAN MAN",
+      "dialogueLines": 5,
+      "totalWords": 32
+    },
+    {
+      "name": "LITSA",
+      "dialogueLines": 4,
+      "totalWords": 19
+    },
+    {
+      "name": "WAITER",
+      "dialogueLines": 2,
+      "totalWords": 2
+    },
+    {
+      "name": "A VOICE",
+      "dialogueLines": 2,
+      "totalWords": 13
+    },
+    {
+      "name": "GERMAN SOLDIER",
+      "dialogueLines": 2,
+      "totalWords": 2
+    },
+    {
+      "name": "CAMERAMAN",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "J EFFREY",
+      "dialogueLines": 1,
+      "totalWords": 2
+    },
+    {
+      "name": "JEF FREY",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "MEMBER OF PUBLIC",
+      "dialogueLines": 1,
+      "totalWords": 2
+    },
+    {
+      "name": "AMERICAN MAN.",
+      "dialogueLines": 1,
+      "totalWords": 16
+    },
+    {
+      "name": "TUXEDO MAN",
+      "dialogueLines": 1,
+      "totalWords": 7
+    },
+    {
+      "name": "YOUNG MAN",
+      "dialogueLines": 1,
+      "totalWords": 4
+    },
+    {
+      "name": "FERR UCCIO",
+      "dialogueLines": 1,
+      "totalWords": 7
+    },
+    {
+      "name": "SEVENTEEN.",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "PIERRE",
+      "dialogueLines": 1,
+      "totalWords": 2
+    },
+    {
+      "name": "OSNASSIS",
+      "dialogueLines": 1,
+      "totalWords": 7
+    },
+    {
+      "name": "OLD MAN",
+      "dialogueLines": 1,
+      "totalWords": 11
+    },
+    {
+      "name": "VOICES",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "PARTYGOE R",
+      "dialogueLines": 1,
+      "totalWords": 8
+    },
+    {
+      "name": "DOCTOR",
+      "dialogueLines": 1,
+      "totalWords": 2
+    },
+    {
+      "name": "DOCTOR FONTAIN EBLEAU",
+      "dialogueLines": 1,
+      "totalWords": 6
+    },
+    {
+      "name": "GUARD",
+      "dialogueLines": 1,
+      "totalWords": 6
+    },
+    {
+      "name": "F ERRUCCIO",
+      "dialogueLines": 1,
+      "totalWords": 20
+    },
+    {
+      "name": "ARCHIVE FOOTAGE",
+      "dialogueLines": 1,
+      "totalWords": 24
+    }
+  ],
+  "scenes": [
+    {
+      "number": 1,
+      "heading": "INT. MARIA’S APARTMENT, 36 AVENUE GEORGES MANDEL",
+      "characters": [
+        "OPENING SEQUENCE."
+      ],
+      "dialogues": [],
+      "actionPreview": "We find Ferruccio the DOCTOR and three policemen greeting paramedics carrying a stretcher. As we move closer we see a body lying dead on the floor. The apartment is beautiful, exquisitely made. The body lying dead on the floor is MARIA CALLAS. Caption: September 16, 1977 1 1 We hear the introduction"
+    },
+    {
+      "number": 2,
+      "heading": "INT. EMPTY SPACE",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "2 2 We see MARIA CALLAS staring into camera and singing. There is no background for context. The screen is purely the face of Maria singing... The VOICE should be the thing. An entity of its own. We stay with the image and the song for thirty seconds. Then we begin to intercut flickering images, hig"
+    },
+    {
+      "number": 3,
+      "heading": "INT. L A SCALA OPERA STAGE, MILAN - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "3 3 Maria performs La Traviata. The music from the stage is mute, but we feel the power of Maria’s performance."
+    },
+    {
+      "number": 4,
+      "heading": "INT. EMPTY SPACE",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "4 4 We cut back to Maria singing into camera, inviting us into her head as she sings. This image becomes a kind of visual chorus. We stay with her. Then..."
+    },
+    {
+      "number": 5,
+      "heading": "EXT. ROYAL OPERA HOUSE, COVENT GARDEN, LONDON - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "5 5 We see Maria, first on stage sin ging Norma, then, leaving the Opera house where flowers are being thrown, camera bulbs pop and fizz and an adoring crowd reach out to her as she ducks into a waiting car. 2."
+    },
+    {
+      "number": 6,
+      "heading": "INT. EMPTY SPACE",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "6 6 We cut back to Maria singing. We stay with her for a few moments..."
+    },
+    {
+      "number": 7,
+      "heading": "INT. METROPOLITAN OPERA STAGE, NEW YORK - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "7 7 We see Maria taking a rapturous ovation after a performance. There is a packed house of elegantly dressed opera lovers who are beguiled by her singing. A theatre manager enters stage and hands Maria a bouquet of flowers..."
+    },
+    {
+      "number": 8,
+      "heading": "INT. EMPTY SPACE",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "8 8 Maria continues to sing, b ut as we join, she closes her eyes. We stay with her..."
+    },
+    {
+      "number": 9,
+      "heading": "INT. LA FENICE THEATRE, VENICE - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "9 9 Again, we see Maria performing, this time from high up in the auditorium and across the heads of an adoring audience... She now sings Tosca. A montage of quick, muted images: We see intercuts that feature moments of glory from Maria’s illustrious career in opera. Some will be of Maria on stage p"
+    },
+    {
+      "number": 10,
+      "heading": "INT. EMPTY SPACE",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "10 10 ...We rejoin Maria as the song ends and there is a rapturous ovation here too. We wait for the orchestra which plays out the Aria. Then there is silence. Maria looks i nto camera and walks, leaving an empty frame. Cut to black."
+    },
+    {
+      "number": 11,
+      "heading": "EXT. COURTYARD - DAWN",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "11 11 (What follows is an actual event but we should realize it in a surreal setting.) 2. 3. We are in an unidentified brick courtyard of an Italianate villa in Milan. The sun is rising. The courtyard door opens and a shaft of morning light enters and is then shut out. Through the wooden courtyard d"
+    },
+    {
+      "number": 12,
+      "heading": "EXT. 36 AVE. GEORGES MANDEL, MARIA'S APARTMENT - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "12 12 We are face on to Maria’s Paris apartment at dawn. A blackbird is singing in a Plane tree near to the apartment. Caption. One week earlier. Fade out and up..."
+    },
+    {
+      "number": 13,
+      "heading": "INT. BEDROOM, MARIA'S APARTMENT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "13 13 Maria is sleeping in her bed in an elegantly decorated and furnished bedroom. The window is open but the curtain is closed so the curtain billows in the breeze. The breeze also brings with it the sound of the blackbird in full voice, singing its dawn chorus. Maria wakes and hears the song. Dow"
+    },
+    {
+      "number": 14,
+      "heading": "INT. MARIA’S APARTMENT, PARIS - DAY",
+      "characters": [
+        "MARIA",
+        "FERRUCCIO"
+      ],
+      "dialogues": [
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Ninety nine percent of your devotion is about food."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "As fragile as a twig, the doctor said."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "So be careful. And when I ask you to do something, you should occasionally tell me ‘no’."
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "I am"
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "(CONT’D) (amused) ...that’s why I don’t dare to tell you no."
+        }
+      ],
+      "actionPreview": "14 14 Maria emerges from the bedroom and two small dogs yap and come to greet her. A black and white TV plays an old French movie ( Le Cercle Rouge) ... She smiles and walks imperiously between her two adoring pets... One percent is about lov e. The room has beautiful views over Paris and is exquisi"
+    },
+    {
+      "number": 15,
+      "heading": "INT. KITCHEN, MARIA’S APARTMENT, PARIS - DAY",
+      "characters": [
+        "MARIA",
+        "BRUNA"
+      ],
+      "dialogues": [
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "I slept until two."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D) I said in a clear voice, ‘I know you are dead ’..."
+        },
+        {
+          "character": "BRUNA",
+          "parenthetical": "",
+          "text": "And he went away? 5."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "And he went away. Which is unlike him."
+        },
+        {
+          "character": "BRUNA",
+          "parenthetical": "",
+          "text": "Perhaps when men are dead they become, more manageable."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Perhaps..."
+        },
+        {
+          "character": "BRUNA",
+          "parenthetical": "",
+          "text": "Anyway, madam, a doctor is coming today. At eleven. Ferruccio made the appointment for you."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "I cannot see the doctor today. I will be"
+        },
+        {
+          "character": "BRUNA",
+          "parenthetical": "",
+          "text": "You can tell him about the visions you are having and no doubt he will change your medication."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "I am perfectly happy with my medication and its effects."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D) I am happy with the theatre behind my eyes. Doctors are prone to label revelation as"
+        },
+        {
+          "character": "BRUNA",
+          "parenthetical": "",
+          "text": "Madam, if I may ask, you will be busy doing what? 6."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Bruna. I want you to listen."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "15 15 Maria enters and finds her housemaid BRUNA, cooking a large omelette for breakfast. Bruna has worked for Maria for twenty three year s and they have an amused formality born of years spent together. Maria sets about the task of feeding the dogs. She has a clear bag of loose meat in the fridge "
+    },
+    {
+      "number": 16,
+      "heading": "INT. LIVING ROOM, MARIA’S APARTMENT, PARIS - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "16 16 Ferruccio is pushing the piano into position near the fireplace. As the singing issues from the kitchen he reacts, with just a flicker among the exertion..."
+    },
+    {
+      "number": 17,
+      "heading": "INT. KITCHEN, MARIA’S APARTMENT, PARIS - DAY",
+      "characters": [
+        "MARIA",
+        "BRUNA"
+      ],
+      "dialogues": [
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "So?"
+        },
+        {
+          "character": "BRUNA",
+          "parenthetical": "",
+          "text": "(flatly)"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Thank you."
+        }
+      ],
+      "actionPreview": "17 17 Maria sings and her voice fills the kitchen. Bruna listens without expression, shaking the pan with the omelette gently to stop it burn ing. The two dogs eat. The neighbor down below bangs on the ceiling to complain. Maria completes the sequence and her voice echoes. Silence. Maria folds her a"
+    },
+    {
+      "number": 18,
+      "heading": "INT. LIVING ROOM, MARIA’S APARTMENT, PARIS - DAY",
+      "characters": [
+        "FERRUCCIO",
+        "MARIA"
+      ],
+      "dialogues": [
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "How is that"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "It’s still not right, but I’m nice."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "18 18 Maria walks back out of the kitchen into the living room. Ferruccio gestures at the piano... for a position for the piano, Madam? Maria peers at the piano as she walks... So leave it... As she walks by... Oh, there is a television camera crew coming to interview me in about an hour. Perhaps hi"
+    },
+    {
+      "number": 19,
+      "heading": "INT. BE DROOM, MARIA’S APARTMENT, PARIS - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "19 19 Maria returns to the bedroom. On our return we might notice a large Greek Orthodox icon of the Black Madonna hanging on the wall. Maria pays it no attention as she walks toward the door of a large dressing room."
+    },
+    {
+      "number": 20,
+      "heading": "INT. LARGE DRESSING ROOM WITH WALK IN WARDROBES - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "20 20 The space is filled with beauty and elegance. Clothes from all the finest French designers h ang beside treasured costumes from various operas. The walls are lined with photos which she displays only in this private space. We don’t dwell on any of them but we incidentally see images of Maria w"
+    },
+    {
+      "number": 21,
+      "heading": "INT. BEDROOM, MARIA’S APARTMENT, PARIS - DAY",
+      "characters": [
+        "FERRUCCIO",
+        "MARIA"
+      ],
+      "dialogues": [
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "May I come in, madam?"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Only if you must."
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "What did you take?"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(busy) I took liberties. All my life."
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "You know wha t I mean, madam. 9."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "This morning I took only Mandrax."
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "How many?"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Two."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D) I need to go somewhere and I want"
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "Mandrax"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "I will walk and I won’t tell you where I’m going because you’ll laugh."
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "What did Bruna say about your singing?"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(defensive, busy with her eyes)"
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "She is a housemaid."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "And housemaids of course cannot know ab out opera?"
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "They are not qualified to judge it."
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "(CONT’D) I know where you’re going."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "She said ‘magnificent’. Before it was just ‘excellent’. So..."
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "And so ‘magnificent’ means you have decided to try..."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "On the word of a housemaid, yes."
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "Madam, this television film crew."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "I’d like you to move the piano closer to the window."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "Yes, Madam..."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Oh! And I won’t be here for the doctor’s appointment you made without my permission..."
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "(concerned)"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Don’t cancel him."
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "Yes, madam."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "In case the film crew are real."
+        }
+      ],
+      "actionPreview": "21 21 Maria sits down at the dressing table mirror and flicks a switch. Lightbulbs fringe the mirror as in a theatre dressing room. She looks at herself and the array of cosmetics spread before her. From a drawer, Maria takes a pair of seriously powerful glasses. The lenses are noticeably thick. She"
+    },
+    {
+      "number": 22,
+      "heading": "INT. BEDROOM, MARIA'S APARTMENT, PARIS - DAY",
+      "characters": [
+        "MANDRAX",
+        "MARIA",
+        "CAMERAMAN"
+      ],
+      "dialogues": [
+        {
+          "character": "MANDRAX",
+          "parenthetical": "",
+          "text": "Madam Callas, my name is Mandrax. I would like to w alk with you through your life."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "A"
+        },
+        {
+          "character": "MANDRAX",
+          "parenthetical": "",
+          "text": "Should I call you Maria or La"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Either is perfectly fine."
+        },
+        {
+          "character": "MANDRAX",
+          "parenthetical": "",
+          "text": "I prefer La Callas..."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Then that is perfectly fine..."
+        },
+        {
+          "character": "MANDRAX",
+          "parenthetical": "",
+          "text": "Unless, of course, you feel you are a victim of that identity? 12."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "A lot has been written about me, a lot of unfair things. Stories that are pure fabrication..."
+        },
+        {
+          "character": "MANDRAX",
+          "parenthetical": "",
+          "text": "Shall we sit?"
+        },
+        {
+          "character": "MANDRAX",
+          "parenthetical": "",
+          "text": "(CONT’D) (urgently) OK, roll..."
+        },
+        {
+          "character": "CAMERAMAN",
+          "parenthetical": "",
+          "text": "Rolling."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "You see, I am quite rebellious by nature..."
+        },
+        {
+          "character": "MANDRAX",
+          "parenthetical": "",
+          "text": "I heard a story once that you burned all your dresses..."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "What dresses?"
+        },
+        {
+          "character": "MANDRAX",
+          "parenthetical": "",
+          "text": "Your old theatre costumes..."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "That is true. Bravo. This will be worthwhile."
+        },
+        {
+          "character": "MANDRAX",
+          "parenthetical": "",
+          "text": "May I ask why?"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "No. You may not."
+        },
+        {
+          "character": "MANDRAX",
+          "parenthetical": "",
+          "text": "When did you last perform on stage?..."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Why don’t you be more persistent with your questions. I burnt my dresses because they belong to the past. And in answer to your less interesting question, I last performed four and a half years ago."
+        },
+        {
+          "character": "MANDRAX",
+          "parenthetical": "",
+          "text": "You will never perform again?"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "MANDRAX",
+          "parenthetical": "",
+          "text": "Tell me how it felt to be on stage?"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "An exaltation, an intoxication."
+        },
+        {
+          "character": "MANDRAX",
+          "parenthetical": "",
+          "text": "And on bad days?"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Well, there are two sides. One says ‘you must fight’, and the other says ‘you are awful and you should be ashamed’."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MANDRAX",
+          "parenthetical": "",
+          "text": "Perhaps we could speak a little about your life away"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "There is no life away from the stage. The stage is in my mind... 14."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MANDRAX",
+          "parenthetical": "",
+          "text": "Go?"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "MANDRAX",
+          "parenthetical": "",
+          "text": "We were promised three hours..."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Then come with me..."
+        },
+        {
+          "character": "MANDRAX",
+          "parenthetical": "",
+          "text": "Come with you where?"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "‘Come with me ’ said the Diva and there was really no need to as k where."
+        },
+        {
+          "character": "MANDRAX",
+          "parenthetical": "",
+          "text": "Then I will come with you, wherever you’re going..."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Walk with me across Paris. My butler says Mandrax is a very unreliable companion, but I think we are a perfect combination."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "23 23 We guess what follows is hallucination as Maria kisses a smartly dressed man in a dark suit on both cheeks in the French style. We will learn that this man is MANDRAX... (THE IDENTITY OF MANDRAX COULD CHANGE THROUGH THE STORY BUT FOR NOW I WILL SIMPLY IDENTIFY HIM AS A HANDSOME FRENCHMAN IN A "
+    },
+    {
+      "number": 23,
+      "heading": "EXT. LIBRAIRIE LAMARTINE, RUE DE LONGCHAMP, PARIS - DAY",
+      "characters": [
+        "MARIA"
+      ],
+      "dialogues": [
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "You see, when I am with you and your camera, Mandrax, I"
+        }
+      ],
+      "actionPreview": "25 25 We are on the corner of the street where a pedestrian crossing stretches like a piano keyboard to the beautiful canopied frontage of Librairie Lamartine. The sun is shining, the music is glorious and Maria and Mandrax walk side by side across the crossing with the fizz of life and the narcotic"
+    },
+    {
+      "number": 24,
+      "heading": "EXT. THEATRE DES CHAMPS ELYSEES",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Through autumn leaves Maria walks alone toward t he grand entrance of the theater. We might sense she is heading for an ordeal or a moment of truth. The autumn leaves reflect her time of life..."
+    },
+    {
+      "number": 25,
+      "heading": "INT. BARE STAGE, THÉÂTRE DES CHAMPS-ELYSÉES, PARIS - DAY",
+      "characters": [
+        "MARIA",
+        "JEFFREY",
+        "J EFFREY",
+        "JEF FREY"
+      ],
+      "dialogues": [
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "I’m late."
+        },
+        {
+          "character": "JEFFREY",
+          "parenthetical": "",
+          "text": "(as if it excuses)"
+        },
+        {
+          "character": "J EFFREY",
+          "parenthetical": "",
+          "text": "(CONT’D) (quickly)"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "You are casting breadcrumbs out for me as if I were a blackbird and this stage a bird table."
+        },
+        {
+          "character": "JEF FREY",
+          "parenthetical": "",
+          "text": "Hmm?"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "It won’t work, of course."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "JEFFREY",
+          "parenthetical": "",
+          "text": "Who is Bruna?"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Bruna is my housekeeper. She was making an omelette. She makes magnificent omelettes."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D) ...to always be complimentary. So. I am here on th e word of an obedient housemaid..."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D) I would like to sing it before I stop."
+        },
+        {
+          "character": "JEFFREY",
+          "parenthetical": "",
+          "text": "(softly)"
+        },
+        {
+          "character": "JEFFREY",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "JEFFREY",
+          "parenthetical": "",
+          "text": "(CONT’D) I am not a répétiteur. I’m not here to teach you and I couldn’t teach you anyway."
+        },
+        {
+          "character": "JEFFREY",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "JEFFREY",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Puccini is dead and he may be glad that he is."
+        },
+        {
+          "character": "JEFFREY",
+          "parenthetical": "",
+          "text": "Why don’t we just sit on the proscenium as if it was the edge of the future?"
+        },
+        {
+          "character": "JEFFREY",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "A love song. 19."
+        },
+        {
+          "character": "JEFFREY",
+          "parenthetical": "",
+          "text": "And who are you in love with?"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Guess. Ugly and dead."
+        },
+        {
+          "character": "JEFFREY",
+          "parenthetical": "",
+          "text": "Mr. Onassis, still?"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "He comes to my bed every night."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "JEFFREY",
+          "parenthetical": "",
+          "text": "When did you last perform?"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Long time ago. It made me sick. I got a hernia. I got purple legs..."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D) I was in Japan. And all these"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "JEFFREY",
+          "parenthetical": "",
+          "text": "I have my car. I’ll drive you back to your prison cell on Avenue"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Bruna is my mother and my sister and my daughter and my maid."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "JEFFREY",
+          "parenthetical": "",
+          "text": "OK, so I have an idea."
+        },
+        {
+          "character": "JEFFREY",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "JEFFREY",
+          "parenthetical": "",
+          "text": "(CONT’D) ...shout. Shout so loud even"
+        },
+        {
+          "character": "JEFFREY",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "JEFFREY",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "JEFFREY",
+          "parenthetical": "",
+          "text": "(CONT’D) I want to hear La Callas ."
+        },
+        {
+          "character": "JEFFREY",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "28 28 There is a single grand piano on the stage and a man sitting at the keyboard. We will learn that this is JEFFREY TATE. He is in his early thirties, a conductor and pianist with a diffident, almo st shy manner. He sits on the stage and we sense he has been here all alone for a long time. He che"
+    },
+    {
+      "number": 26,
+      "heading": "EXT. TREE LINED AVENUE WITH COLUMNS",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Again, Maria walks alone through autumn leaves, between lines of trees among the bone-white glory of Paris, the buildings the color of gravestones. We catch Maria up and find she is resolved to continue... 22. 23."
+    },
+    {
+      "number": 27,
+      "heading": "INT. LIVING ROOM, MARIA’S APARTMENT, PARIS - DAY",
+      "characters": [
+        "FERRUCCIO",
+        "DOCTOR FONTAINEBLEAU",
+        "MARIA"
+      ],
+      "dialogues": [
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "Madam. I asked the doctor to wait for you."
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DOCTOR FONTAINEBLEAU",
+          "parenthetical": "",
+          "text": "I am a huge admirer of your work."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "How is my Butler’s back?"
+        },
+        {
+          "character": "DOCTOR FONTAINEBLEAU",
+          "parenthetical": "",
+          "text": "There is no cure for it other than ‘stop moving pianos’."
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "Madam, I showed him the diary."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(prim) I have a strange feeling that sharing intimate medical information is against the law."
+        },
+        {
+          "character": "DOCTOR FONTAINEBLEAU",
+          "parenthetical": "",
+          "text": "Madam Callas..."
+        },
+        {
+          "character": "DOCTOR FONTAINEBLEAU",
+          "parenthetical": "",
+          "text": "(CONT’D) I need to have a conversation with you about life and death."
+        },
+        {
+          "character": "DOCTOR FONTAINEBLEAU",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "The piano is in the perfect place, thank you."
+        },
+        {
+          "character": "DOCTOR FONTAINEBLEAU",
+          "parenthetical": "",
+          "text": "Madame, please."
+        }
+      ],
+      "actionPreview": "33 33 Ferruccio is waiting and someone else is sitting in a chair near to the piano (we will learn this man is DOCTOR FONTAINEBLEAU). After a moment, Maria enters inside. Ferruccio speaks dispassionately... Maria gathers herself and looks to the doctor with horror. He turns and looks grave as he pee"
+    },
+    {
+      "number": 28,
+      "heading": "INT. KITCHEN,",
+      "characters": [
+        "BRUNA",
+        "FERRUCCIO"
+      ],
+      "dialogues": [
+        {
+          "character": "BRUNA",
+          "parenthetical": "",
+          "text": "I’m going to cook and she will be better."
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "She hasn’t eaten for three days."
+        },
+        {
+          "character": "BRUNA",
+          "parenthetical": "",
+          "text": "Last time, she didn’t"
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "Yeah, but then you’re going to prepare it, and she’ll give it to the dogs, as usual."
+        }
+      ],
+      "actionPreview": "MARIA’S APARTMENT, PARIS - DAY 34 34 Bruna is waiting in the kitchen as Ferruccio enters. The two dogs are sleeping in a basket. As Ferruccio enters, we see his true emotion and he is suddenly overcome. He wipes his eyes as he looks out of the window. Bruna puts her hand on his shoulder... eat for f"
+    },
+    {
+      "number": 29,
+      "heading": "INT. HALF-LIT DRESSING ROOM, MARIA’S APARTMENT, PARIS",
+      "characters": [
+        "FERRUCCIO",
+        "MARIA"
+      ],
+      "dialogues": [
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "(OOV)",
+          "text": "Madam."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Leave"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "35 35 We spend some time surveying the photographs of Maria with a dazzling array of world leaders and celebrities. There are shots of Maria on Onassis’s yacht and on the beach at the Lido in Venice. We dwell mostly on Onassis and Maria. The door opens and Maria enters. She is trembling a little and"
+    },
+    {
+      "number": 30,
+      "heading": "INT. BEDROOM, MARIA’S APARTMENT, PARIS",
+      "characters": [
+        "FERRUCCIO"
+      ],
+      "dialogues": [
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "Madam, I have made coffee..."
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "36 36 Ferruccio is standing outside the dressing room door, head bowed, lips pursed. He speaks softly... We hear Maria banging her fist on the wall... Madam, also there is a message for you. From the pianist... 25. 26."
+    },
+    {
+      "number": 31,
+      "heading": "INT. DRESSING ROOM, MARIA’S APARTMENT, PARIS",
+      "characters": [
+        "FERRUCCIO"
+      ],
+      "dialogues": [
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "(OOV)",
+          "text": "He said no matter what else happens, you must go to see him again tomorrow. He said he heard hope in your voice."
+        }
+      ],
+      "actionPreview": "37 37 Maria is holding the white shirt in her hands as she listens."
+    },
+    {
+      "number": 32,
+      "heading": "INT. BEDROOM, MARIA’S APARTMENT, PARIS",
+      "characters": [
+        "FERRUCCIO",
+        "MARIA"
+      ],
+      "dialogues": [
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "I thought that might be a good thing."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "The medicine cabinet is unlocked."
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "That isn’t what the doctor said we should do..."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Was he even a doctor?"
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "He is a specialist, madam."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "And what does he specialize in?"
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "Blood, Madam. That is why he took a sample of your blood."
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "It is"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "And what day was that, Madam?"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Every day."
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "Yes, madam."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Book me a table at the cafe where the waiters know who I am. I am in the mood for adulation."
+        }
+      ],
+      "actionPreview": "38 38 Ferruccio addresses the door, smothering emotion. I thought that might make you happy. At last, the door opens and Maria has composed herself a little. She has her broken glasses in her hand. You can throw it all away... Ma ria pushes past Ferruccio to the dressing table. But he said even befo"
+    },
+    {
+      "number": 33,
+      "heading": "INT. MARIA’S BEDROOM/DRESSING T ABLE",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "As Maria sits almost still as a statue, Bruna brushes and untangles her hair. After a while Maria slowly turns to look at her reflection in the mirror. She is honest in her assessment..."
+    },
+    {
+      "number": 34,
+      "heading": "EXT. RESTAURANT, LA MAISON DU CADRE, PARIS - EVENING",
+      "characters": [
+        "MEMBER OF PUBLIC",
+        "AMERICAN MAN",
+        "MARIA",
+        "AMERICAN MAN.",
+        "WAITER"
+      ],
+      "dialogues": [
+        {
+          "character": "MEMBER OF PUBLIC",
+          "parenthetical": "",
+          "text": "Madam Callas?"
+        },
+        {
+          "character": "AMERICAN MAN",
+          "parenthetical": "",
+          "text": "I just wanted to say that once in"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Which Aria?"
+        },
+        {
+          "character": "AMERICAN MAN.",
+          "parenthetical": "",
+          "text": "No, no, you broke my heart because I bought two tickets and you failed to appear."
+        },
+        {
+          "character": "AMERICAN MAN",
+          "parenthetical": "",
+          "text": "They"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Then I was unwell..."
+        },
+        {
+          "character": "AMERICAN MAN",
+          "parenthetical": "",
+          "text": "It’s OK, no hard feelings..."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "I was unwell..."
+        },
+        {
+          "character": "AMERICAN MAN",
+          "parenthetical": "",
+          "text": "Madam, it’s OK, I forgot about it until I just saw you..."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "People always said I was faking, but I was never faking!..."
+        },
+        {
+          "character": "AMERICAN MAN",
+          "parenthetical": "",
+          "text": "Madam, it’s OK. I didn’t mean..."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "You have no idea of the pain to pull music through your belly, out your poor mouth... No idea!"
+        },
+        {
+          "character": "WAITER",
+          "parenthetical": "",
+          "text": "Madam..."
+        },
+        {
+          "character": "WAITER",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(mocking herself) I am not hungry. I come to restaurants to be adored."
+        }
+      ],
+      "actionPreview": "41 41 There are tables outside on the pavement, and in wide, Maria arrives and is greeted by the Maître d' (who we will meet later). She takes a seat alone. 27. 28. We come to her table as a waiter arrives with a glass of champagne and a menu. Maria scans the menu even though she is unable to read i"
+    },
+    {
+      "number": 35,
+      "heading": "EXT. DORCHESTER HOTEL, LONDON - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "42 42 As Maria hurries toward the lobby, we see that the hotel is now transformed into the Dorchester and the doormen wear the uniforms of the grand London hotel. S he enters through a revolving door... 29. 30."
+    },
+    {
+      "number": 36,
+      "heading": "INT. ELEGANT, LAVISH BALLROOM, DORCHESTER HOTEL - NIGHT",
+      "characters": [
+        "BATTISTA MENEGHINI",
+        "MARIA",
+        "TUXEDO MAN",
+        "YOUNG MAN",
+        "ONASSIS"
+      ],
+      "dialogues": [
+        {
+          "character": "BATTISTA MENEGHINI",
+          "parenthetical": "",
+          "text": "Maria, where have y ou been?"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "I think you know."
+        },
+        {
+          "character": "BATTISTA MENEGHINI",
+          "parenthetical": "",
+          "text": "Tonight, everyone wants to worship you..."
+        },
+        {
+          "character": "TUXEDO MAN",
+          "parenthetical": "",
+          "text": "May I say that tonight you defined"
+        },
+        {
+          "character": "YOUNG MAN",
+          "parenthetical": "",
+          "text": "My English no good."
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "Excuse me. Madam Callas. There is someone who is just dying"
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BATTISTA MENEGHINI",
+          "parenthetical": "",
+          "text": "I think there is a queue..."
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "I don’t queue..."
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "43 43 A jazz band plays and smoke swirls in the ultra smart hotel ballroom. The ballroom is occupied by smartly dressed society people who have gathered post-theatre to drink and take cocaine and be seen doing it. The music is fast and the dance floor is jiving. The ballroom has been decorated with "
+    },
+    {
+      "number": 37,
+      "heading": "INT. DANCE FLOOR, BALLROOM, DORCHESTER HOTEL - NIGHT",
+      "characters": [
+        "A VOICE",
+        "MARIA",
+        "ONASSIS"
+      ],
+      "dialogues": [
+        {
+          "character": "A VOICE",
+          "parenthetical": "",
+          "text": "Madam Callas, y ou were magnificent tonight. 31."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Who are you?"
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "Aristotle Onassis. This is my party. Thrown in your honor. If you want to count them, I got a thousand pink roses just for you..."
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "(CONT’D) I was told it was a smart thing to do, to associate myself with the"
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "With opera?"
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "(CONT’D) I fell in love with you."
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "(CONT’D) I’m ugly, but I’m rich. I’m Greek but I’m from Argentina. I’m married but it’s 1959. So..."
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "(CONT’D) I watched you through these..."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "You love me and yet you have never set eyes on me before tonight..."
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "Now I am offended. We met. In"
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "I should get back to my husband."
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "You will never go back to your husband."
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "And what"
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "A decision is made. Not by anyone."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "I’m sorry Mr. Onassis, am I meant to be feeling something?"
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "Yes. For the first time in your life."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Well. There is a point where self confidence becomes a kind of insanity..."
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "Oh, I crossed that border long, long ago..."
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "I think I ca n confidently say you are being abrupt. ‘Abrupt’ might not even be a strong enough word."
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "But there is a ship."
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "(CONT’D) I got it. There’s a lot of people want a piece of her. My time is up. I got it."
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "I said ‘yes, why not?’"
+        }
+      ],
+      "actionPreview": "44 44 Maria is led across the ballroom by Onassis. Heads turn and people offer up small fast applause for Maria as she passes. People call out ‘Brava’... 32. Instantly, Maria and Onassis begin a dialogue which will last for years... Maria looks around at the roses displayed all around the room. Onas"
+    },
+    {
+      "number": 38,
+      "heading": "INT. CAFÉ, PLACE DU TROCADÉRO",
+      "characters": [
+        "MARIA",
+        "FERRUCCIO"
+      ],
+      "dialogues": [
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(repeats) I said ‘yes, why not?’"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D) ...And my husband agreed."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Could I have another glass of champagne?"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D) I know you might think my behavior is unusual but I am actually working. I am writing something..."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "An autobiography. An Aria. A Third"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Neither did I..."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D) I don’t use a pen. I use myself. It seems the part of me that dreams is taking the wheel of the ship and taking the ship to a safe harbor."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "I never listen to my own records."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "You are not alone."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D) I cannot"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Because they are perfect."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "Whenever you are ready, Madam."
+        }
+      ],
+      "actionPreview": "45 45 ...We are inside the café where Maria ordered champagne earlier. She is sitting at a candlelit table. Mandrax is sitting opposite her and there is a microphone on the table between them. It is as if we have joined her in the middle of an interview (even though we guess this is hallucination). "
+    },
+    {
+      "number": 39,
+      "heading": "INT. FERRUCCIO’S CAR, PARIS - NIGHT",
+      "characters": [
+        "FERRUCCIO",
+        "MARIA",
+        "FERR UCCIO"
+      ],
+      "dialogues": [
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "Doctor Fontainebleau called."
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "He said I ‘ must ’ call him? 38."
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "I think. Yes. He may have said you"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Or perhaps he said I"
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "He just wants you to call him,"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "You don’t remember the word he used, which would decide whether I sleep tonight or not. You are getting old. And more and more crooked."
+        },
+        {
+          "character": "FERR UCCIO",
+          "parenthetical": "",
+          "text": "But you will call him, Madam. Yes?"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "(SOFTLY)",
+          "text": "Please..."
+        }
+      ],
+      "actionPreview": "46 46 “Ebben! Ne Andro Lontana” continues from the previous scene and then ends. Ferruccio is in the driver’s seat and Maria is in the back but Ferruccio doesn’t yet drive. Ferruccio dares... He said the results of your blood tests have arrived. Maria stares out of the window... He said you must cal"
+    },
+    {
+      "number": 40,
+      "heading": "INT. BEDROOM, MARIA’S APARTMENT, PARIS - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "47 47 The TV is playing an American Western in the darkened room. We see Maria walk past the TV, a sleepless silhouette. She disappears and then crosses in front of the screen again, eating ice cream."
+    },
+    {
+      "number": 41,
+      "heading": "INT. LIVING ROOM, MARIA’S APARTMENT, PARIS - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "48 48 We see a record spinning on a record player. It’s from Il Trovatore- \"D'amor sull'ali Ali rosee” by Verdi. (5) Maria sits beside the record player, imagining herself singing. Briefly we glimpse Maria on stage and the score changes..."
+    },
+    {
+      "number": 42,
+      "heading": "INT. DRESSING ROOM, MARIA’S APARTMENT, PARIS - NIGHT",
+      "characters": [
+        "MARIA"
+      ],
+      "dialogues": [
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Bruna!"
+        }
+      ],
+      "actionPreview": "49 49 A purer and earlier version of \"D'amor sull'ali Ali rosee” takes over as score. 39. 40. The dressing room door opens and Maria enters. She begins to search through the pockets of her hanging clothes to find pills. \"D'amor sull'ali Ali rosee” stops abruptly. She finds her pockets have been empt"
+    },
+    {
+      "number": 43,
+      "heading": "EXT. NARROW CRAMPED STREET IN BRIGHT SUN AND DARK SHADE -",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "50 50 DAY Suddenly we are viewing Maria’s memory in black and white. We are in a narrow side street which has brightly colored washing hanging to dry on lines strung across the street. The shadows of the buildings a re divided by brilliant sunlight coming through the open alleyways. We hear the Prel"
+    },
+    {
+      "number": 44,
+      "heading": "INT. APARTMENT BLOCK, ATHENS - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "51 51 The stairs are narrow and dark and winding but brilliant light enters through small windows. Litsa leads the giggling, out of breath, fat soldiers upstairs and they complain in German about how many flights they are walking up. ( The way they move, their large gestures, should remind us of ope"
+    },
+    {
+      "number": 45,
+      "heading": "INT. LIVING ROOM, SMALL APARTMENT, ATHENS - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "52 52 The place is untidy and cramped as Litsa leads the soldiers inside. They comment in German on the smell. Then Litsa leads them into a tiny kitchen..."
+    },
+    {
+      "number": 46,
+      "heading": "INT. KITCHEN, SMALL APARTMENT, ATHENS - DAY",
+      "characters": [
+        "SEVENTEEN.",
+        "LITSA"
+      ],
+      "dialogues": [
+        {
+          "character": "SEVENTEEN.",
+          "parenthetical": "",
+          "text": "("
+        },
+        {
+          "character": "LITSA",
+          "parenthetical": "",
+          "text": "My daughters. They sing..."
+        },
+        {
+          "character": "LITSA",
+          "parenthetical": "",
+          "text": "(CONT’D) (broken english)"
+        },
+        {
+          "character": "LITSA",
+          "parenthetical": "",
+          "text": "(CONT’D) (Sing the song for the men)."
+        }
+      ],
+      "actionPreview": "53 53 The small kitchen is functional with cured meats hanging and a large painting of the Madonna on the wall, along with many rosaries. There are also a young woman and a girl in the kitchen. They are looking out of the window at lines of washing. One is tall and slim and we should realize this is"
+    },
+    {
+      "number": 47,
+      "heading": "INT. LIVING ROOM, SMALL APARTMENT, ATHENS - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "54 54 The door to the living room opens and MARIA AS A WOMAN enters from the stairs. She hears the singing through the wall. ( We will realize that Maria is witnessing a memory from her life as if she were present in it. She is listening to it through the thin walls of the apartment wh ere she grew "
+    },
+    {
+      "number": 48,
+      "heading": "INT. KITCHEN, SMALL APARTMENT, ATHENS - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "55 55 As the girls sing, they also dance and twirl with tired choreography. They mimic smoking as they dance cutely. The German soldiers stare as they share the Schnapps. Yakinthi sings well. Maria sings beautifully..."
+    },
+    {
+      "number": 49,
+      "heading": "INT. LIVING ROOM, SMALL APARTMENT, ATHENS - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "56 56 Maria listens to the song through the wall and reacts. The song is funn y and bright but Maria raises her face to the ceiling to listen with an air of despair..."
+    },
+    {
+      "number": 50,
+      "heading": "INT. KITCHEN, SMALL APARTMENT, ATHENS - DAY",
+      "characters": [
+        "LITSA"
+      ],
+      "dialogues": [
+        {
+          "character": "LITSA",
+          "parenthetical": "",
+          "text": "That will be ten drachma."
+        }
+      ],
+      "actionPreview": "57 57 Maria and Yakinthi stop singing and the two soldiers applaud and laugh loudly and one of them whistles. Another shouts ‘Brava!’ Yakinthi curtseys but Maria doesn’t. 42. 43. Maria stares at her mother as the applause dies. Litsa curtseys too and looks to the soldiers... The older of the soldier"
+    },
+    {
+      "number": 51,
+      "heading": "INT. LIVING ROOM, SMALL APARTMENT, ATHENS - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "58 58 Maria is listening, looking up at the ceiling as a muffled negotiation begins next door. Maria takes a breath and breathes heavily as if enduring pain or exhaustion... We hear the overture of ‘Norma’ begin to play again..."
+    },
+    {
+      "number": 52,
+      "heading": "INT. LIVING ROOM/SET, SMALL APARTMENT, ATHENS - DAY",
+      "characters": [
+        "GERMAN SOLDIER"
+      ],
+      "dialogues": [
+        {
+          "character": "GERMAN SOLDIER",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "GERMAN SOLDIER",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "60 60 We are with Maria as a woman as she sits motionless with her head now bowed. The kitchen door opens and the two soldiers emerge, one holding the hand of Yakinthi and the other holding the hand of Maria. Maria as an adult looks up to see young Maria pass and young Maria looks at her. Their eyes"
+    },
+    {
+      "number": 53,
+      "heading": "INT. LIVING ROOM, SMALL APARTMENT, ATHENS - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "62 62 We find Maria Now standing with her forehead leant against the door as she listens to her younger self singing . A tear drops. Impossibly, Bruna enters the room and pulls open a curtain..."
+    },
+    {
+      "number": 54,
+      "heading": "INT. BEDROOM, MARIA’S APARTMENT, PARIS - MORNING",
+      "characters": [
+        "BRUNA",
+        "MARIA"
+      ],
+      "dialogues": [
+        {
+          "character": "BRUNA",
+          "parenthetical": "",
+          "text": "Did you sleep, madam?"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "One hour. Just now. I spent it with my sister. Which was part of the plan..."
+        },
+        {
+          "character": "BRUNA",
+          "parenthetical": "",
+          "text": "What plan?"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "...Until you woke me up."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "BRUNA",
+          "parenthetical": "",
+          "text": "Ferruccio has gone for coffee and croissants."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Where is my medication?"
+        },
+        {
+          "character": "BRUNA",
+          "parenthetical": "",
+          "text": "Doctor Fontainebleau said we should keep them in the kitchen."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Even the ones I hid? You went through my pockets..."
+        },
+        {
+          "character": "BRUNA",
+          "parenthetical": "",
+          "text": "(busy)"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "No. Today, I have an appointment."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D) ...With Bellini."
+        },
+        {
+          "character": "BRUNA",
+          "parenthetical": "",
+          "text": "You can still call the doctor."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Has a package arrived for me?"
+        },
+        {
+          "character": "BRUNA",
+          "parenthetical": "",
+          "text": "Yes. A parcel from Athens. From your sister, Yakinthi..."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Good. 45."
+        }
+      ],
+      "actionPreview": "63 63 Curtains are pulled back by Bruna and brilliant light floods in. Maria blinks awake as the light hits her face. Bruna fin ds some clothes strewn on the floor, the dressing room door is open. There is a grey jacket which Bruna picks up (it looks a little like the German uniform jacket). She tak"
+    },
+    {
+      "number": 55,
+      "heading": "INT. LIVING ROOM, MARIA’S APARTMENT, PARIS - MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "64 64 Maria is tearing open a padded envelope. She quickly sees that the parcel contains a good supply of Mandrax and some other tablets. Bruna emerges from the bedroom and Maria hides the contents away... Maria takes the package toward the bedroom..."
+    },
+    {
+      "number": 56,
+      "heading": "EXT. BRI GHT BLEACHED SUNLIGHT, PALAIS DE TOKYO - DAY",
+      "characters": [
+        "MANDRAX",
+        "MARIA"
+      ],
+      "dialogues": [
+        {
+          "character": "MANDRAX",
+          "parenthetical": "",
+          "text": "OK, here is great. It looks great."
+        },
+        {
+          "character": "MANDRAX",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Today, Maria."
+        },
+        {
+          "character": "MANDRAX",
+          "parenthetical": "",
+          "text": "(to cameraman) OK, OK, roll. (to Maria)"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Not really, no. I have no intention of performing on stage."
+        },
+        {
+          "character": "MANDRAX",
+          "parenthetical": "",
+          "text": "I understood you were seeking to find your voice again..."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "I am seeking something I lost. 46."
+        },
+        {
+          "character": "MANDRAX",
+          "parenthetical": "",
+          "text": "And why do you want to sing again?"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Because music is so enormous it envelops you in a state of torture..."
+        },
+        {
+          "character": "MANDRAX",
+          "parenthetical": "",
+          "text": "That is a reason?"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Music is born of misery. Of suffering. Happiness never produced a beautiful melody. It seems, music is born of distress. And poverty."
+        },
+        {
+          "character": "MANDRAX",
+          "parenthetical": "",
+          "text": "And you were born very poor."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Yes. I"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D) I just realized last night, that is where it all began..."
+        }
+      ],
+      "actionPreview": "65 65 Maria and Mandrax walk in front of the bone-white columns of the Palais. Again, there is a lone cameraman who doesn’t speak. It looks La Callas. Greek. Grand. Sad. Framed by the past. Maria stands in a spot and the cameraman puts his camera to his shoulder... Now, am I calling you Maria or La "
+    },
+    {
+      "number": 57,
+      "heading": "EXT. BRASSERIE DU MEXIQUE, PLACE DE MEXICO, PARIS - DAY",
+      "characters": [
+        "MANDRAX",
+        "MARIA"
+      ],
+      "dialogues": [
+        {
+          "character": "MANDRAX",
+          "parenthetical": "",
+          "text": "Do you want coffee? 47."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "No. I want courage. I want courage to be able to go into this Mexican restaurant and order a plate of fajitas with cream and salsa."
+        },
+        {
+          "character": "MANDRAX",
+          "parenthetical": "",
+          "text": "Why courage?..."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Because the smell when I walk by here each morning with my dogs reminds me of the day I finally told my mother to fuck off..."
+        },
+        {
+          "character": "MANDRAX",
+          "parenthetical": "",
+          "text": "You shou ld write a whole chapter about it in your autobiography."
+        },
+        {
+          "character": "MANDRAX",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "It wasn’t a restaurant in Mexico. I asked Bruna to cook for her because"
+        }
+      ],
+      "actionPreview": "27 27 Maria and Mandrax walk toward the restaurant, where shutters are being raised and awnings are being unfurled. They approach a large window. We should notice that in the reflection in the window, Maria is alone. Maria peers i nside... (MORE) 48. Mandrax looks away and peers down the street... M"
+    },
+    {
+      "number": 58,
+      "heading": "EXT. CATHEDRAL IN THE RAIN",
+      "characters": [
+        "MANDRAX",
+        "MARIA"
+      ],
+      "dialogues": [
+        {
+          "character": "MANDRAX",
+          "parenthetical": "",
+          "text": "This is the part of"
+        },
+        {
+          "character": "MANDRAX",
+          "parenthetical": "(CONT’D)",
+          "text": "49."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "I will sing when I am ready to sing."
+        }
+      ],
+      "actionPreview": "Maria is walking in heavy rain with an umbrella raised. She hears \"Coro a bocca chiusa\" from Madame Butterfly, by Puccini. Then she sees that A FULL ORCHESTRA is assembled on the stone steps of the Cathedral, playing the score in the rain. Then Mandrax approaches her quickly under his umbrella, and "
+    },
+    {
+      "number": 59,
+      "heading": "INT. BARE STAGE, THÉÂTRE DES CHAMPS-ELYSÉES, PARIS - DAY",
+      "characters": [
+        "JEFFREY",
+        "MARIA",
+        "MANDRAX",
+        "PIERRE"
+      ],
+      "dialogues": [
+        {
+          "character": "JEFFREY",
+          "parenthetical": "",
+          "text": "OK, I had some thoughts overnight..."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "So did I..."
+        },
+        {
+          "character": "JEFFREY",
+          "parenthetical": "",
+          "text": "La Callas needs a spotlight."
+        },
+        {
+          "character": "JEFFREY",
+          "parenthetical": "",
+          "text": "(CONT’D) I asked one of the"
+        },
+        {
+          "character": "MANDRAX",
+          "parenthetical": "(CONT’D)",
+          "text": "49."
+        },
+        {
+          "character": "JEFFREY",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "PIERRE",
+          "parenthetical": "",
+          "text": "Bonjour, madame."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Bonjour. ("
+        },
+        {
+          "character": "JEFFREY",
+          "parenthetical": "",
+          "text": "Only La Callas would make a French theatre technician miss lunch."
+        },
+        {
+          "character": "JEFFREY",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "And sweet Pierr e..."
+        },
+        {
+          "character": "JEFFREY",
+          "parenthetical": "",
+          "text": "No, I asked Pierre to give us the light and then go away. This is private."
+        },
+        {
+          "character": "JEFFREY",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Venice."
+        },
+        {
+          "character": "JEFFREY",
+          "parenthetical": "",
+          "text": "You were never fat..."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "I was. I arrived by Gondola and thought I would sink it. 50."
+        },
+        {
+          "character": "JEFFREY",
+          "parenthetical": "",
+          "text": "Venice ‘49, you were Elvira."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "So it began. Yes. You know ‘I puritani?’"
+        },
+        {
+          "character": "JEFFREY",
+          "parenthetical": "",
+          "text": "Do I know ‘I puritani’?"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Toi, toi, toi ... (This is the magic spell Opera singers utter before curtain up to dispel bad luck.)"
+        }
+      ],
+      "actionPreview": "66 66 Jeffrey Tate closes the lid of the piano, pulls on his coat and prepares to lea ve. He turns and walks toward the wings but then hears a clatter of footsteps and Maria runs toward him... Maria snatches off her coat and prepares. Jeffrey walks back to the piano. He is invigorated too. There is "
+    },
+    {
+      "number": 60,
+      "heading": "INT. VENICE OPERA HOUSE-",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Maria looks up and suddenly we are inside the Venice Opera House with every seat filled. Maria around and we see that the stage is now set for a full performance of ‘ I puritani ’. The orchestra pit has a full orchestra. The conductor prepares and then begins. Maria stands and prepares. Again she is"
+    },
+    {
+      "number": 61,
+      "heading": "INT. BARE STAGE, THÉÂTRE DES CHAMPS-ELYSÉES, PARIS - DAY",
+      "characters": [
+        "JEFFREY",
+        "MARIA"
+      ],
+      "dialogues": [
+        {
+          "character": "JEFFREY",
+          "parenthetical": "",
+          "text": "I just felt La Callas in"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Not today."
+        }
+      ],
+      "actionPreview": "67 67 Maria is still breathing heavily and has her eyes closed, absorbing the imagined applause. In truth, there is only Jeffrey applauding and his applause is meaningfully restrained. Maria opens her eyes. She waits a moment then dares to turn. Jeffrey is on his feet. After a moment.. this room. We"
+    },
+    {
+      "number": 62,
+      "heading": "EXT. PONT DE L’ALMA, PARIS - DAY",
+      "characters": [
+        "MARIA",
+        "MANDRAX"
+      ],
+      "dialogues": [
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "You never really explained, what is the name of the film you are making?"
+        },
+        {
+          "character": "MANDRAX",
+          "parenthetical": "",
+          "text": "It’s called, ‘"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "In that case, roll camera."
+        },
+        {
+          "character": "MANDRAX",
+          "parenthetical": "",
+          "text": "Your child would have been that age by now."
+        },
+        {
+          "character": "MANDRAX",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Just now, I was in Venice."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "68 68 The bridge is busy and boats of all kinds glide beneath on the Seine. Maria finds a place in the middle of the arch of the bridge and looks down into the water. She watches the boats drift beneath. On one particular boat, a little girl of seven looks up at Maria and waves. Maria comes out of h"
+    },
+    {
+      "number": 63,
+      "heading": "EXT. MEDITERRANEAN OCEAN - SUNSET",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "69 69 In a vast wide, we see the sun bleeding into the dark ocean and see Onassis’s yacht ‘Christina’ cruising elegantly through the calm water. Over the idyllic ocean scene, we hear someone violently throwing up..."
+    },
+    {
+      "number": 64,
+      "heading": "EXT. DECK, CHRISTINA - SUNSET",
+      "characters": [
+        "MARIA",
+        "BATTISTA MENEGHINI"
+      ],
+      "dialogues": [
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "I won at roulette..."
+        },
+        {
+          "character": "BATTISTA MENEGHINI",
+          "parenthetical": "",
+          "text": "Perhaps he let you win..."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "You"
+        },
+        {
+          "character": "BATTISTA MENEGHINI",
+          "parenthetical": "",
+          "text": "Everyone can cheat at everything."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "What ‘people’?"
+        },
+        {
+          "character": "BATTISTA MENEGHINI",
+          "parenthetical": "",
+          "text": "He doesn’t even try to hide his desire for you..."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "I spoke to Winston Churchill..."
+        },
+        {
+          "character": "BATTISTA MENEGHINI",
+          "parenthetical": "",
+          "text": "The girl from Athens..."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "For a Prima Donna, pleasure is unavoidable."
+        },
+        {
+          "character": "BATTISTA MENEGHINI",
+          "parenthetical": "",
+          "text": "Are you quoting"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "No. I am saying out loud my own thoughts. It is a new thing."
+        }
+      ],
+      "actionPreview": "70 70 The opulent dark wood and gold deck fu rniture is bathed in soft sunset light. We hear music and laughter and voices coming from below deck. There is a lone figure on the deck and he is throwing up. 53. 54. As he wipes his mouth, we see it is Battista Meneghini. He looks almost green as the bo"
+    },
+    {
+      "number": 65,
+      "heading": "INT. BELOW DECK, CHRISTINA - SUNSET",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "71 71 A four-piece band plays swing. Illustrious guests play roulette and blackjack in clouds of smoke. At the far end of the space, there is a large coffee table flanked by sofas, and in a cloud of cigar smoke, we see the figure of Winston Churchill. Onassis is spinning the roulette wheel, playing "
+    },
+    {
+      "number": 66,
+      "heading": "INT. CORRIDOR, BELOW DECK, CHRISTINA - SUNSET",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "72 72 Every space aboard is intimate and heightened. The dark wood and brass still glow rose-colored in the sunset coming in throug h port holes, where seawater splashes. Onassis leads Maria by the hand. The interior makes people whisper..."
+    },
+    {
+      "number": 67,
+      "heading": "INT. ONASSIS’S MASTER BEDROOM, BELOW DECK, CHRISTINA - SUNSET",
+      "characters": [
+        "OSNASSIS",
+        "ONASSIS",
+        "MARIA"
+      ],
+      "dialogues": [
+        {
+          "character": "OSNASSIS",
+          "parenthetical": "",
+          "text": "Here, look, the herald of the Gods."
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "It dates from the second century BC..."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "A rare beauty..."
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "I have no consideration for beauty. I myself am ugly and I am loyal to my tribe..."
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "I am not a long-time member of the tr ibe. I used to be in your tribe..."
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "I would have loved you then..."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "No. I was unlovable. Ask my mother."
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "Hermes is a busy God. He is the protector of travelers, merchants, orators, and thieves."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "And you are all of those things... 56."
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "I am a merchant."
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "(CONT’D) I had it stolen to order from a mus eum in Athens."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "So, your wife..."
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "If I want something, I steal it."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "And you think this"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "73 73 A palace of secrets and desire. The bedroom is large and lit by low lights. A candle burns. We should sense that Onassis prepared this room as a spider would weave a web. There is an El Greco on the wall and a lapis lazuli firep lace where a fire burns. Onassis enters and ushers Maria inside. "
+    },
+    {
+      "number": 68,
+      "heading": "EXT. PONT DE L’ALMA, PARIS - SUNSET",
+      "characters": [
+        "MANDRAX",
+        "MARIA"
+      ],
+      "dialogues": [
+        {
+          "character": "MANDRAX",
+          "parenthetical": "",
+          "text": "Why do you think Aristotle Onassis didn’t marry you?"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Because he knew he could not control me."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MANDRAX",
+          "parenthetical": "",
+          "text": "Wait. Important truth."
+        },
+        {
+          "character": "MANDRAX",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "I did not marry Aristotle Onassis because he wanted someone he could control. I didn’t have a baby because my body declined the invitation to make another self."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "74 74 We return to Maria and Mandrax on the bridge. 57. 58. Instantly... She looks down the length of the river... And it wasn’t that he wouldn’t allow me to have a baby... Mark it... From the point of view of the camera in the cameraman’s hand, we see a clapper board with the words ‘ Act 2. Importa"
+    },
+    {
+      "number": 69,
+      "heading": "INT. STAIRCASE, MARIA'S APARTMENT, PARIS - EVENING",
+      "characters": [
+        "OLD MAN"
+      ],
+      "dialogues": [
+        {
+          "character": "OLD MAN",
+          "parenthetical": "",
+          "text": "Mr. Ferruccio even my wife has complained and she is deaf."
+        }
+      ],
+      "actionPreview": "76 76 Heavy breathing. Ferruccio is walking up the stairs to Maria’s apartment. He is carrying a rectangular box and he feels his years as he climbs. 58. 59. As he reaches a landing, he can hear a recording of Maria singing ‘ Sempre Libera ’, a Violetta aria from La Traviata. (10) Ferruccio is deepl"
+    },
+    {
+      "number": 70,
+      "heading": "INT. MARIA'S APARTMENT, PARIS - EVENING",
+      "characters": [
+        "MARIA",
+        "FERRUCCIO",
+        "BRUNA"
+      ],
+      "dialogues": [
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "What are you doing?..."
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "Preventing a visit from the"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Opera at this volume is bad luck."
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "Madam. You"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Today, on a bridge, I made a decision... 59."
+        },
+        {
+          "character": "BRUNA",
+          "parenthetical": "",
+          "text": "The dogs were afraid of the loud noise."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Did you buy what I asked for?"
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Unwrap it, please."
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "What decision, Madam?"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "If I am to become La Callas, I ne ed to listen to La Callas."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D) I must record myself and then compare"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "Madame, today you said you would call the doctor."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Bruna, I don’t know these machines... 60."
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "Madam, did you call Doctor"
+        },
+        {
+          "character": "BRUNA",
+          "parenthetical": "",
+          "text": "Now it is recording, Madam."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Tomorrow, Bruna, you will come with me and operate the machine."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "Better for"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Better for my purpose."
+        }
+      ],
+      "actionPreview": "77 77 The music is blaring at full volume from a record player. There are other recordings of Maria Callas waiting to be played near the record player. Maria herself stands motionless, lis tening intently. Ferruccio enters and Maria doesn’t hear. He goes to the record player and lowers the volume. M"
+    },
+    {
+      "number": 71,
+      "heading": "INT. VAST AND IMPOSSIBLY GLAMOROUS SPACE - EVENING",
+      "characters": [
+        "VOICES"
+      ],
+      "dialogues": [
+        {
+          "character": "VOICES",
+          "parenthetical": "",
+          "text": "Brava!"
+        }
+      ],
+      "actionPreview": "79 79 Noise, smoke, music, glamor. We are in a place that is an ama lgamation of the Ritz, the Dorchester, and any number of hotel banqueting suites from around the world. 61. 62. The space is filled with beautiful people and the single piano has been replaced by a string orchestra and a 50-person c"
+    },
+    {
+      "number": 72,
+      "heading": "INT. MARI A’S APARTMENT, 36 AVENUE GEORGES MANDEL",
+      "characters": [
+        "MANDRAX",
+        "MARIA"
+      ],
+      "dialogues": [
+        {
+          "character": "MANDRAX",
+          "parenthetical": "",
+          "text": "Why be with such a brute like"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Because with him I could be a girl again..."
+        }
+      ],
+      "actionPreview": "Maria and Mandrax are drinking Champagne and smoking. They are almost drunk, almost intimate. Mandrax dares to ask... Onasis?” We cut back to..."
+    },
+    {
+      "number": 73,
+      "heading": "INT. VAST AND IMPOSSIBLY GLAMOROUS SPACE - EVENING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "79 79 The music plays “Va, Pensiero” from Nabucco by Verdi. (11) A man whose face we ne ed not see (PRINCE RAINIER) approaches and takes Maria’s hand. Maria begins to dance through the glamor of her whole life. And as it begins, her dance partner whispers in her ear... As she spins, we spin with her"
+    },
+    {
+      "number": 74,
+      "heading": "INT. MARIA'S APARTMENT, PARIS - EVENING",
+      "characters": [
+        "FERRUCCIO",
+        "BRUNA",
+        "MARIA"
+      ],
+      "dialogues": [
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "Did you give her pills today."
+        },
+        {
+          "character": "BRUNA",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "So who did?"
+        },
+        {
+          "character": "BRUNA",
+          "parenthetical": "",
+          "text": "There was"
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "I find carrying out simple instructions a great comfort. As if things were normal again."
+        },
+        {
+          "character": "BRUNA",
+          "parenthetical": "",
+          "text": "(pushing)"
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "I think there was one day, once, in 1964..."
+        },
+        {
+          "character": "BRUNA",
+          "parenthetical": "",
+          "text": "It was a dull day, I imagine."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Good. The piano is much better there."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "77 77 Ferruccio and Bruna are moving the piano once again. After a moment of shifting... Bruna looks away... Ferruccio knows Maria well and looks to the bedroom where she headed. a package from Yakinthi. Ferruccio sighs. He silently suggests they begin the business of moving the piano. They begin to"
+    },
+    {
+      "number": 75,
+      "heading": "INT. GEORGE CINQ HOTEL, PARIS - EVENING",
+      "characters": [
+        "MARIA",
+        "FERRUCCIO"
+      ],
+      "dialogues": [
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "I believe I am expected... 64."
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "I don’t believe you are, Madam..."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Well, I believe I am and belief is all that matters..."
+        }
+      ],
+      "actionPreview": "78 78 The bar of the George Cinq is quiet and discreet with a pianist playing me llow music. A few people drink cocktails with people they should not be with. Ferruccio enters first and looks all around. He looks back to Maria and Bruna who are approaching the double doors. Maria walks quickly with "
+    },
+    {
+      "number": 76,
+      "heading": "INT. KING COLE BAR, ST. REGIS HOTEL, NEW YORK - NIGHT",
+      "characters": [
+        "ONASSIS",
+        "MARIA",
+        "A VOICE",
+        "PARTYGOER",
+        "PARTYGOE R"
+      ],
+      "dialogues": [
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "Look there, on the wall, that King, that’s me, right?"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Is President Kennedy here?"
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "He’s probably up in th e Gossamer suite fucking Marilyn Monroe, but his wife will be here, sure enough."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Why would you know that?"
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "How do you like the places I take you to?"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "I like the painting on the wall... 65."
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "How do you like it, little Athens girl..."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Please don’t drink too much..."
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "Oh baby, that bird has flown. You might even say thank you sometimes. I just took you to the birthday party for the President of the fucking..."
+        },
+        {
+          "character": "A VOICE",
+          "parenthetical": "",
+          "text": "Oh my God, it’s her..."
+        },
+        {
+          "character": "PARTYGOER",
+          "parenthetical": "",
+          "text": "Maria Callas."
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "She is a Goddess..."
+        },
+        {
+          "character": "PARTYGOER",
+          "parenthetical": "",
+          "text": "She had me in tears and my husband saying ‘OK, I get it’..."
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "She is a bird."
+        },
+        {
+          "character": "PARTYGOER",
+          "parenthetical": "",
+          "text": "Excuse me, who are you?"
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "Explain to this sweet lady that I am the richest man in the fucking room..."
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Why is he lucky?"
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "Have you seen"
+        },
+        {
+          "character": "PARTYGOER",
+          "parenthetical": "",
+          "text": "My dream is to see you perform in the amphitheater in Athens..."
+        },
+        {
+          "character": "PARTYGOER",
+          "parenthetical": "",
+          "text": "(CONT’D) I’m told the acoustics are better than anything in any modern theatre..."
+        },
+        {
+          "character": "PARTYGOER",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "No. I..."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D) ...I have had some issues with my voice lately..."
+        },
+        {
+          "character": "PARTYGOE R",
+          "parenthetical": "",
+          "text": "Maybe the songbird should leave the cage occasionally..."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "That is exactly what I intend to do."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "(applauding)"
+        }
+      ],
+      "actionPreview": "82 82 ( What follows is a fictional encounter that may have happened. The King Cole bar was Jackie Kennedy’s favorite bar in New York.) We are faced with the famous King Cole mural which dominates the cocktail bar. An image of a King on his throne with courtiers. The place is hi red for a private pa"
+    },
+    {
+      "number": 77,
+      "heading": "INT. BREAKFAST ROOM, ST. REGIS HOTEL - NEXT MORNING",
+      "characters": [
+        "MARIA"
+      ],
+      "dialogues": [
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Yes. JFK takes Maria’s hand and squeezes it... JFK"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "I was. New York. JFK (FAST)"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Thank you. JFK"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "I don’t think the White House would like my voice"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "(AMUSED)",
+          "text": "Yes, he is my whatever... 69."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "How do you know I never had a father?... JFK"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Thank you. You look tired. JFK"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "As you know, he is not"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Maybe he’s about to propose. Ari would look funny on one knee. JFK smiles. He likes her. JFK"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "In the bedroom, yes. JFK"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Last night, just before"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "(CONT’D)",
+          "text": "71."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Where is Jackie? JFK"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Well, I don’t have all those people with devices finding things out but I do know that you and I belong to a small, small group of lucky angels. We go wherever we want in the world but we can never, ever get away."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "83 83 Bright sunlight fills the room and reflects off glass and silver. The hotel is ornate to an undignified degree, but the sunlight makes it majestic. We find Maria sitting alone at a table by the window. New York City is visible through net curtains. She is sipping coffee, from a lavish and unto"
+    },
+    {
+      "number": 78,
+      "heading": "INT. CAR, PARIS - NIGHT",
+      "characters": [
+        "MARIA",
+        "BRUNA"
+      ],
+      "dialogues": [
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Where to now?"
+        },
+        {
+          "character": "BRUNA",
+          "parenthetical": "",
+          "text": "We are tired, Madam."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "(CONT’D)",
+          "text": "71."
+        },
+        {
+          "character": "BRUNA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "80 80 We are with Bruna, Ferruccio and Maria in Ferruccio’s car. He is driving. Maria and Bruna are in the back seats. Maria looks out at the wet streets of Paris. She tries to make small talk... A pause. Bruna looks out of the window and we see a tear in her eye. They drive on. .. Ferruccio looks i"
+    },
+    {
+      "number": 79,
+      "heading": "INT. LIVING ROOM, MARIA’S APARTMENT, PARIS - NIGHT",
+      "characters": [
+        "MARIA",
+        "FERRUCCIO",
+        "DOCTOR FONTAINEBLEAU",
+        "BRUNA",
+        "DOCTOR",
+        "DOCTOR FONTAIN EBLEAU"
+      ],
+      "dialogues": [
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "What is he doing here?"
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "I invited him. I left a key."
+        },
+        {
+          "character": "DOCTOR FONTAINEBLEAU",
+          "parenthetical": "",
+          "text": "I have news that can’t wait."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "No..."
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "Bruna and I will... we’ll take the dogs out."
+        },
+        {
+          "character": "BRUNA",
+          "parenthetical": "",
+          "text": "Yes. Yes, we will."
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "And then we will return."
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(laughing)"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DOCTOR FONTAINEBLEAU",
+          "parenthetical": "",
+          "text": "Please, Madam Callas, take a seat..."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "I just had a wonderful evening."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DOCTOR",
+          "parenthetical": "",
+          "text": "Of course..."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "In La Traviata, Violetta is diagnosed with tuberculosis."
+        },
+        {
+          "character": "DOCTOR FONTAINEBLEAU",
+          "parenthetical": "",
+          "text": "It is not tuberculosis..."
+        },
+        {
+          "character": "DOCTOR FONTAINEBLEAU",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DOCTOR FONTAINEBLEAU",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(half amused)"
+        },
+        {
+          "character": "DOCTOR FONTAINEBLEAU",
+          "parenthetical": "",
+          "text": "As well as the Mandrax and the various sedatives and stimulants, you are taking the steroid"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "To combat my body’s attempts to turn me into a frog... 73."
+        },
+        {
+          "character": "DOCTOR FONTAINEBLEAU",
+          "parenthetical": "",
+          "text": "...and now your liver is beginning to fail. It is no longer taking out all the trash."
+        },
+        {
+          "character": "DOCTOR FONTAINEBLEAU",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "My poor heart."
+        },
+        {
+          "character": "DOCTOR FONTAINEBLEAU",
+          "parenthetical": "",
+          "text": "Your system is very frail."
+        },
+        {
+          "character": "DOCTOR FONTAINEBLEAU",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "My wonderful Ferruccio is very free with all my secre ts..."
+        },
+        {
+          "character": "DOCTOR FONTAINEBLEAU",
+          "parenthetical": "",
+          "text": "In my opinion, the extra stress this will cause to your body, the medications you will probably need to get through each day, they will kill if you keep pushing yourself to sing."
+        },
+        {
+          "character": "DOCTOR FONTAINEBLEAU",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "But you see, Doctor, I am not intending to"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "DOCTOR FONTAINEBLEAU",
+          "parenthetical": "",
+          "text": "Then why are you rehearsing?..."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "My mother made me sing. Onassis forbade me from singing. Now, I will sing for myself."
+        },
+        {
+          "character": "DOCTOR FONTAINEBLEAU",
+          "parenthetical": "",
+          "text": "Your beautiful life, Maria..."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Played before my eyes."
+        },
+        {
+          "character": "DOCTOR FONTAINEBLEAU",
+          "parenthetical": "",
+          "text": "Meaning what?"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Meaning now, finally, I am in control of the end."
+        },
+        {
+          "character": "DOCTOR FONTAINEBLEAU",
+          "parenthetical": "",
+          "text": "Madam Callas, I am..."
+        },
+        {
+          "character": "DOCTOR FONTAIN EBLEAU",
+          "parenthetical": "",
+          "text": "(CONT’D) ...begging you. To see reason..."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "My life is opera. There is no reason in opera..."
+        },
+        {
+          "character": "DOCTOR FONTAINEBLEAU",
+          "parenthetical": "",
+          "text": "Your voice will"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Get out."
+        }
+      ],
+      "actionPreview": "81 81 The room is in half darkness. A gentle breeze blows the net curtains and we hear talking and laughter and footsteps approaching. Then we see Doctor Fontainebleau waiting in the half light. He prepares. The door is unlocked and Maria enters with Bruna and Ferruccio. She freezes when she sees th"
+    },
+    {
+      "number": 80,
+      "heading": "EXT. BRASSERIE DU MEXIQUE, PLACE DE MEXICO, PARIS - EVENING",
+      "characters": [
+        "MARIA",
+        "YAKINTHI",
+        "I."
+      ],
+      "dialogues": [
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "It took a great deal of effort for me to enter this restaurant. I had to say a magic spell."
+        },
+        {
+          "character": "YAKINTHI",
+          "parenthetical": "",
+          "text": "Since I sent you the medication, I have bee n regretting it."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "I have no regrets. How do I look?"
+        },
+        {
+          "character": "YAKINTHI",
+          "parenthetical": "",
+          "text": "Too thin."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Yes. A lot of me has been taken away..."
+        },
+        {
+          "character": "YAKINTHI",
+          "parenthetical": "",
+          "text": "Maria, I am in Paris and I love"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "I don’t need medication anymore. It has served its purpose. Thank you."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D) I suggested this restaurant because it reminds me of her."
+        },
+        {
+          "character": "YAKINTHI",
+          "parenthetical": "",
+          "text": "Of who?"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "The last time I saw Mama, she asked me for money. She said ‘I brought you into this world to take care of me’. She also told me I was fat and unlovable. Wonderful memories."
+        },
+        {
+          "character": "YAKINTHI",
+          "parenthetical": "",
+          "text": "The time has passed Maria. You just close the door..."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "I will end this with the beginning..."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "YAKINTHI",
+          "parenthetical": "",
+          "text": "You close the door."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "The German soldiers won’t leave me alone..."
+        },
+        {
+          "character": "YAKINTHI",
+          "parenthetical": "",
+          "text": "Sometimes, when you were crying, I let you rest and took your place so you could rest... I live my life looking this"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "And I live my life looking back, writing an autobiography. 77."
+        },
+        {
+          "character": "YAKINTHI",
+          "parenthetical": "",
+          "text": "If you want to write your autobiography then you will have to do it without my help."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "My story is writing itself before my eyes..."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D) I’m not even sure if you are real."
+        },
+        {
+          "character": "YAKINTHI",
+          "parenthetical": "",
+          "text": "You are hurting my arm, Maria. (in Greek)"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(in Greek) I have visions..."
+        },
+        {
+          "character": "YAKINTHI",
+          "parenthetical": "",
+          "text": "(in Greek)"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "I saw a doctor."
+        },
+        {
+          "character": "YAKINTHI",
+          "parenthetical": "",
+          "text": "OK, enough. You have a driver waiting for you. I have no debt I need to pay to you. My advice is do not write anything about your life..."
+        },
+        {
+          "character": "YAKINTHI",
+          "parenthetical": "",
+          "text": "(CONT’D) ...But if you do..."
+        },
+        {
+          "character": "YAKINTHI",
+          "parenthetical": "",
+          "text": "(CONT’D) ...be kind to yourself. Because I was there with you in Athens and I know that whatever your faults, whatever you have done wrong, you are"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Thank you."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "YAKINTHI",
+          "parenthetical": "",
+          "text": "Close those doors, little sister..."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "I can’t. It’s the only way the music gets in..."
+        },
+        {
+          "character": "YAKINTHI",
+          "parenthetical": "",
+          "text": "Fuck music! Baby, you are fifty three years old."
+        },
+        {
+          "character": "YAKINTHI",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "109 109 It is early and there is only one customer. It is Yakinthi. The waiter brings her a glass of champagne... Yakinthi looks out into the street... Maria approaches the restaurant. Yakinthi watches as she comes to the door and hesitates. She fights an urge to turn back and then enters. We walk w"
+    },
+    {
+      "number": 81,
+      "heading": "INT. BARE STAGE, THÉÂTRE DES CHAMPS-ELYSÉES, PARIS - DAY",
+      "characters": [
+        "JEFFREY",
+        "MARIA"
+      ],
+      "dialogues": [
+        {
+          "character": "JEFFREY",
+          "parenthetical": "",
+          "text": "My God. You are on time."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Of course. My audience awaits."
+        },
+        {
+          "character": "JEFFREY",
+          "parenthetical": "",
+          "text": "What hate?"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "I am going to sing the ‘ mad scene ’ from Anna Bolena."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D) I performed it at La Scala. The people of Milan hated me..."
+        }
+      ],
+      "actionPreview": "Jeffrey Tate is pacing back and forth on the stage. The curtain is already down and the stage is protected. He checks his watch. Maria arrives with Bruna, and Jeffrey is astonished... 79. 80. Filled with hate. Maria takes the cassette player and sets it on a small table away from the piano. Maria is"
+    },
+    {
+      "number": 82,
+      "heading": "EXT. LA SCALA - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "In a brief, furious flashback, we see a mob outside La Scala as a limousine containing Maria cruises toward the stage door. A bottle is thrown and smashes..."
+    },
+    {
+      "number": 83,
+      "heading": "INT. DES CHAMPS ELYSEE, THEATRE",
+      "characters": [
+        "MARIA"
+      ],
+      "dialogues": [
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "I had cancelled and cancelled and spilt my fury on poor innocents..."
+        }
+      ],
+      "actionPreview": "Maria is recalling and using the fury to fire her emotions as she patrols the stage. Bruna is finding a cassette and putting it i nto the tape recorder."
+    },
+    {
+      "number": 84,
+      "heading": "EXT. LA SCALA - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Maria emerges from the limousine and the mob begins to yell and boo. Flash bulbs pop. Maria pulls herself free of Ferruccio who has her arm and walks alone toward the stage door... 80. 81."
+    },
+    {
+      "number": 85,
+      "heading": "INT. DE CHAMPS ELYSEE, THEATRE",
+      "characters": [
+        "MARIA"
+      ],
+      "dialogues": [
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "There were armed police to protect me..."
+        }
+      ],
+      "actionPreview": "Maria paces, takes deep breaths, becoming Anna Bolena..."
+    },
+    {
+      "number": 86,
+      "heading": "EXT. LA SCALA - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "As Maria is bundled into the theatre, uniformed police use batons to keep an angry crowd at bay. Eggs and flour are thrown and the flour clouds in the spotlights and headlights..."
+    },
+    {
+      "number": 87,
+      "heading": "INT. THÉÂTRE DES CHAMPS-ELYSÉES, PARIS - DAY",
+      "characters": [
+        "JEFFREY",
+        "MARIA"
+      ],
+      "dialogues": [
+        {
+          "character": "JEFFREY",
+          "parenthetical": "",
+          "text": "But then you sang."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "My fury at being judged. My fury at the press."
+        }
+      ],
+      "actionPreview": "Maria takes deep breaths as she stares up at the darkness above. Jeffrey sits at the piano... Maria is pumping herself full of anger... My fury at my mother and at the world. Bruna. Quickly. Now. Begin... Bruna takes the cue and presses play and record. Maria turns to Jeffrey, a demon filled with so"
+    },
+    {
+      "number": 88,
+      "heading": "INT. THÉÂTRE DES CHAMPS-ELYSÉES, PARIS - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "We move up to the back of the auditorium where Pierre is a silhouette. We then see the shadow of RONALD hiding. Ronald is late twenties and smartly dressed. He is staring intently at the stage. We come close as he too presses ‘play and record’ on his own recording machine. The curtain continues to r"
+    },
+    {
+      "number": 89,
+      "heading": "INT. LA SCALA THEATRE , MILAN - NIGHT",
+      "characters": [
+        "MARIA"
+      ],
+      "dialogues": [
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "‘"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "The curtain rises on a bear pit. The home of Opera is filled with people but rather than applauding, they are booing and yelling and hissing. 81. 82. We come around and see Maria is ready for them, the ferocious tiger waiting to attack. The music is played by a full orchestra and Maria paces back an"
+    },
+    {
+      "number": 90,
+      "heading": "INT. THÉÂTRE DES CHAMPS-ELYSÉES, PARIS - DAY",
+      "characters": [
+        "BRUNA",
+        "MARIA"
+      ],
+      "dialogues": [
+        {
+          "character": "BRUNA",
+          "parenthetical": "(QUICKLY)",
+          "text": "Madam, you were magnificent..."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Oh, God."
+        },
+        {
+          "character": "BRUNA",
+          "parenthetical": "",
+          "text": "Let’s go home. Love is at home."
+        }
+      ],
+      "actionPreview": "Bruna press es stop on the tape machine. The ovation ends. The theatre is empty once more. We come around and the stage is once again bare. Jeffrey is at the piano and Bruna beside the tape recorder. We come to Maria and she lowers her head. Bruna looks to Jeffrey who looks a little upset . The perf"
+    },
+    {
+      "number": 91,
+      "heading": "EXT. THÉÂTRE DES CHAMPS-ELYSÉES, PARIS - DAY",
+      "characters": [
+        "RONALD",
+        "JEFFREY",
+        "FERRUCCIO"
+      ],
+      "dialogues": [
+        {
+          "character": "RONALD",
+          "parenthetical": "",
+          "text": "Madam Callas!"
+        },
+        {
+          "character": "RONALD",
+          "parenthetical": "",
+          "text": "(CONT’D) I write a music column for Le"
+        },
+        {
+          "character": "RONALD",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "RONALD",
+          "parenthetical": "",
+          "text": "(CONT’D) I heard you perform the mad scene from Anna Bolena."
+        },
+        {
+          "character": "RONALD",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "RONALD",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "JEFFREY",
+          "parenthetical": "",
+          "text": "Why the fuck would you print this?"
+        },
+        {
+          "character": "RONALD",
+          "parenthetical": "",
+          "text": "Because she is Maria Callas. She is who she is. Because people want to know..."
+        },
+        {
+          "character": "RONALD",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "You have to leave us alone."
+        },
+        {
+          "character": "RONALD",
+          "parenthetical": "",
+          "text": "Now, Madam Callas, why don’t you calm down and give me your side of the story?"
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "You have to leave us alone."
+        },
+        {
+          "character": "RONALD",
+          "parenthetical": "",
+          "text": "Our readers want to know. What the hell happened to you? What a tragedy..."
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "I cleaned the car as you instructed, Madam, and I am ready to take you home."
+        }
+      ],
+      "actionPreview": "Maria, Bruna and Jeffrey emerge from the theatre. Maria takes a big breath of air which appears to res tore her. They step out into sunlight. But as they appear, the journalist, Ronald approaches. He trots toward Maria and they all imagine he is just another fan or well-wisher. However, as he arrive"
+    },
+    {
+      "number": 92,
+      "heading": "EXT. TROCADÉRO / INT. CAR - DAY",
+      "characters": [
+        "MARIA",
+        "BRUNA"
+      ],
+      "dialogues": [
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Play it."
+        },
+        {
+          "character": "BRUNA",
+          "parenthetical": "",
+          "text": "Madam, please..."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Play it. I want to know."
+        }
+      ],
+      "actionPreview": "100 100 Ferruccio drives. Bruna is in the passenger seat. Maria is in the back. She looks out at the c olumns and butter-colored facades of the Trocadéro monument. She then takes the cassette from the tape recorder and hands it to Bruna. Bruna looks to Ferruccio who nods once. Bruna puts the cassett"
+    },
+    {
+      "number": 93,
+      "heading": "EXT. STREET, PARIS - DAY",
+      "characters": [
+        "MARIA",
+        "MANDRAX"
+      ],
+      "dialogues": [
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "I’m guessing the film you are making is almost over."
+        },
+        {
+          "character": "MANDRAX",
+          "parenthetical": "",
+          "text": "Did I tell you I’ve fallen in love with you?"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "That happens a"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MANDRAX",
+          "parenthetical": "",
+          "text": "I have no equipment."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Then remember this. Because no one else knows."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        }
+      ],
+      "actionPreview": "103 103 Maria is running and catches up with Mandrax in an alley. Mandrax is lighting a cigarette which he gives to Maria. They are both breathless, like fugitives... 85. 86. Maria smokes and sighs with relief on the nicotine. They look like delinquents as they share a cigarette... He nods and takes"
+    },
+    {
+      "number": 94,
+      "heading": "EXT. HOSPITAL, PARIS - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "104 104 In the small hours of the morning, we see Maria hurrying, hidden in a headscarf, toward the entrance of the hospital. Rain is pouring.. 86. 87. Fade out and up... Maria disappears inside. Thunder rumbles..."
+    },
+    {
+      "number": 95,
+      "heading": "INT. CORRIDOR, HOSPITAL, PARIS - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "105 105 We see Maria hurrying, consulting a handwritten message which is giving her directions around the hospital. The place is silent, everyone sleeping. Rain pours down the marbled windows. Lightning flashes. Maria turns a corner and sees two heavy-looking security guards in dark suits guarding a"
+    },
+    {
+      "number": 96,
+      "heading": "INT. ARISTOTLE ONASSIS’S PRIVATE WARD, HOSPITAL - DAY",
+      "characters": [
+        "ONASSIS",
+        "MARIA",
+        "GUARD"
+      ],
+      "dialogues": [
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "(softly) I love you."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Is that it? Should I go now?"
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "I have some things to say. Number one, I still hate Opera."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "You don’t need to talk too much because I know most things."
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "Oh, you know most things? OK. You never lacked confidence. Are you happy?"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Well, I just learned in the newspapers that Frank Sinatra earns ten times what I earn."
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "You’re poor..."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Always."
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "I wish you could sing right here, right now..."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "I’d wake the whole of Paris."
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "Oh, they’d forgive you."
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "And who will you be waiting for?"
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "I thought you knew most things."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "I only found out you married her from a newspaper."
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "Sometimes you get married because you have a free day."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Well, that morning that I found out, I checked my heart and it wasn’t"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "Well, I guess that’s something, right?"
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "I will have other business there, but yes."
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "So I will make sure I have two canvas chairs."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "I sho uld never have tried to stop you singing."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "That is correct."
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "I always loved you."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "That is also correct."
+        },
+        {
+          "character": "GUARD",
+          "parenthetical": "",
+          "text": "Mr. Onassis. Your wife is here."
+        },
+        {
+          "character": "ONASSIS",
+          "parenthetical": "",
+          "text": "Athens, Maria. You and me... only."
+        }
+      ],
+      "actionPreview": "106 106 Onassis is lying in an inclined bed attached to drips and monitors. The eerie beeps of intensive care punctuate the silence and red lights glow. Rain pours down the windows and lightning flashes and thunder rumbles. Onassis is weak but when he sees Maria, he tries to sit up. She comes to him"
+    },
+    {
+      "number": 97,
+      "heading": "EXT. STREET, PARIS IN THE RAIN - DAY",
+      "characters": [
+        "MANDRAX",
+        "MARIA"
+      ],
+      "dialogues": [
+        {
+          "character": "MANDRAX",
+          "parenthetical": "",
+          "text": "How was he?"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "We are Greek. Death is our familiar companion."
+        },
+        {
+          "character": "MANDRAX",
+          "parenthetical": "",
+          "text": "Why did you visit him?"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Because he asked me to."
+        },
+        {
+          "character": "MANDRAX",
+          "parenthetical": "",
+          "text": "Did you see Jackie?"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "I left through the back"
+        },
+        {
+          "character": "MANDRAX",
+          "parenthetical": "",
+          "text": "Yes, but the man"
+        }
+      ],
+      "actionPreview": "107 107 We’re back to the same place we meet Mandrax before the hospital. door. Even in death, I was the secret. Maria is about to cry. wanted you. Jackie was his wife. But you -- you were his life. Mandrax smiles, and Maria suddenly realizes he’s right. Then she keeps walking down the hallway, her "
+    },
+    {
+      "number": 98,
+      "heading": "INT. MARIA’S APARTMENT, 36 AVENUE GEORGES MANDEL",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Maria is sitting alone listening to a recording of her music but her voice is abs ent. 90. 91."
+    },
+    {
+      "number": 99,
+      "heading": "INT. MARIA'S APARTMENT, LIVING ROOM",
+      "characters": [
+        "FERRUCCIO",
+        "MARIA",
+        "BRUNA"
+      ],
+      "dialogues": [
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "Eight."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "Nine."
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "You always win."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "She cheats."
+        },
+        {
+          "character": "BRUNA",
+          "parenthetical": "",
+          "text": "No!"
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "Yes, you do."
+        },
+        {
+          "character": "BRUNA",
+          "parenthetical": "",
+          "text": "No, no, no."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "She is the sphinx, that one."
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "BRUNA",
+          "parenthetical": "",
+          "text": "(chuckles)"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "I hope you always stay together."
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "When I’m gone . I hope you always stay together. You’re very good together. Good people."
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "If she keeps winning, it’s going to be difficult. 91."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "",
+          "text": "I don’t know if I’m going to be... staying."
+        }
+      ],
+      "actionPreview": "Maria, Bruna and Ferruccio are playing cards. All formality is discarded. They play like a family and tease and joke... No. 92."
+    },
+    {
+      "number": 100,
+      "heading": "INT. LIVING ROOM, MARIA'S APARTMENT - DAY",
+      "characters": [
+        "BRUNA",
+        "FERRUCCIO",
+        "MARIA"
+      ],
+      "dialogues": [
+        {
+          "character": "BRUNA",
+          "parenthetical": "",
+          "text": "Madam. We have moved the piano again."
+        },
+        {
+          "character": "BRUNA",
+          "parenthetical": "",
+          "text": "(CONT’D)"
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "Madam, please."
+        },
+        {
+          "character": "BRUNA",
+          "parenthetical": "",
+          "text": "Madam, we will buy all of your favorite food. Oysters and salt beef and those silly chocolates..."
+        },
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "Tonight, we will sit down together and we will eat."
+        },
+        {
+          "character": "MARIA",
+          "parenthetical": "(O.S.)",
+          "text": "Leave me alone."
+        }
+      ],
+      "actionPreview": "108 108 Bruna and Ferruccio are once again moving the piano. This time back to the position under the first window. When it is in place, Bruna goes to the bedroom door and knocks. Come and see. There is no response. Bruna looks to Ferruccio... Madam. It is gone midday. Are you OK? Ferruccio and Brun"
+    },
+    {
+      "number": 101,
+      "heading": "INT. MARIA’S BEDROOM",
+      "characters": [
+        "F ERRUCCIO"
+      ],
+      "dialogues": [
+        {
+          "character": "F ERRUCCIO",
+          "parenthetical": "(O.S.)",
+          "text": "So, we are going to the grocery, madam, to take what we need and we will be back soon. 92."
+        }
+      ],
+      "actionPreview": "Maria is lying in bed almost consumed by despair. 93. A clapper board enters shot. It is marked ‘AN ENDING: ASCENT’"
+    },
+    {
+      "number": 102,
+      "heading": "INT. APARTMENT 36, AVENUE GEORGES MANDEL - EARLY EVENING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "117 117 Maria wakes and surveys her bedroom, where Greek sculpture and religious ocons remind her of her child hood and of the love of her life."
+    },
+    {
+      "number": 103,
+      "heading": "INT. ATHENS BEDROOM",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "In a brief black and white flashback Maria sits by a piano and touches the hand of her younger self, and we sense it is a goo dbye."
+    },
+    {
+      "number": 104,
+      "heading": "INT. MARIA'S APARTMENT, 36 AVENUE GEORGES MANDEL",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Maria sings and her singing is PERFECTION. La Callas has returned at last. Her living room is filled with a full orchestra which plays in two lines of hard backed chairs..."
+    },
+    {
+      "number": 105,
+      "heading": "INT. MARIA'S APARTMENT, DRESSING ROOM",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Onassis stands and sips Champagne as he listens to Maria singing..."
+    },
+    {
+      "number": 106,
+      "heading": "INT. MARIA’S APARTMENT, 36 AVENUE GEORGES MANDEL",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Maria continues to sin g, her voice soaring but the orchestra is now gone."
+    },
+    {
+      "number": 107,
+      "heading": "INT. MARIA’S APARTMENT, KITCHEN",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Mandrax stands at the window listening to Maria singing..."
+    },
+    {
+      "number": 108,
+      "heading": "INT. MARIA'S APARTMENT, 36 AVENUE GEORGES MANDEL",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "As her voice soars we approach the open doors that lead to a balcony..."
+    },
+    {
+      "number": 109,
+      "heading": "EXT. MARIA’S APARTMENT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "We c=now hear Maria’s voice from the street and see that a crowd of passers by and neighbors has begun to gather.... 93. 94."
+    },
+    {
+      "number": 110,
+      "heading": "INT. MARIA’S APARTMENT, 36 AVENUE GEORGES MANDEL",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The orchestra have returned and Maria’s voice has never been more exquisite. Maria feels the return of her soul and weeps..."
+    },
+    {
+      "number": 111,
+      "heading": "INT. MARIA'S APARTMENT, DRESSING ROOM",
+      "characters": [
+        "FERRUCCIO"
+      ],
+      "dialogues": [
+        {
+          "character": "FERRUCCIO",
+          "parenthetical": "",
+          "text": "Doctor Fontainbleu. Maria Callas has died."
+        }
+      ],
+      "actionPreview": "Onassis smokes a cigar and feels the beauty of Maria’s voice and his love for her. In the kitchen Mandrax listens too as the song reaches its climax. In the street Bruna and Ferruccio have re turned from the store and stop when they hear Maria singing. Back in the apartment, Maria completes the song"
+    },
+    {
+      "number": 112,
+      "heading": "INT. LIVING ROOM, MARIA'S APARTMENT, PARIS - EVENING",
+      "characters": [
+        "ARCHIVE FOOTAGE"
+      ],
+      "dialogues": [
+        {
+          "character": "ARCHIVE FOOTAGE",
+          "parenthetical": "",
+          "text": "We now see archive footage of Maria’s life, her glories, her personal times, her happy times with Onassis, the only man she ever loved."
+        }
+      ],
+      "actionPreview": "118 118 We are back at the scene that opened the movie with paramedics, police and the doctor around Maria’s body. Bruna and Ferruccio walk to the door. Ferruccio puts his arm around Bruna and they contemplate a future without Maria. We hear a reprise of 'Vissi d'Arte' as orchestral instrumental. 94"
+    }
+  ]
+}

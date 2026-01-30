@@ -1,0 +1,22 @@
+{
+  "slug": "a-few-good-men",
+  "title": "A Few Good Men",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 30693,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                                      A FEW GOOD MEN </b> Written by Aaron Sorkin Revised Third Draft July 15, 1991 <b> </b> <b>               FADE IN: </b> <b>               EXT. A SENTRY TOWER -- </b> -- in the middle of the night, in the middle of nowhere. Small beams of light coming from lamps attached to the tower cut through the ground mist. We HEAR all the unidentifiable sounds of night in the woods. We also HEAR, very, very faintly, a slow, deliberate drum cadence. And as this starts,",
+      "dialogue_count": 0,
+      "word_count": 30693
+    }
+  ]
+}

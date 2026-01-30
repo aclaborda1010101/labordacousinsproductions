@@ -1,0 +1,22 @@
+{
+  "slug": "american-madness",
+  "title": "American Madness",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 31928,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b> </b><b>                                        AMERICAN  MADNESS </b><b> </b>                                   Written by Robert Riskin <b> </b><b>                         FADE IN </b><b> </b><b>                         1. EXT. BUILDING - DAY - LONG SHOT </b><b> </b><b> </b>                         Of a large, impressive-looking building on the corner of a busy, New York business street. <b> </b><b>                         LAP DISSOLVE TO: </b><b> </b><b>                         2. EXT. BUI",
+      "dialogue_count": 0,
+      "word_count": 31928
+    }
+  ]
+}

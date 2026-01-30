@@ -1,0 +1,22 @@
+{
+  "slug": "12",
+  "title": "12",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 21639,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b><HTML> </b><b><HEAD> </b>  <META NAME=\"GENERATOR\" CONTENT=\"Adobe PageMill 2.0 Mac\"> <TITLE>12 - Script</TITLE> <b></HEAD> </b><BODY TEXT=\"#ffffff\" BGCOLOR=\"#000000\" ALINK=\"#4ff7ff\" VLINK=\"#f0fcff\" LINK=\"#20dfdc\"> <b><PRE><B><TT><FONT SIZE=-1></FONT></TT></B> </b><b><B><TT><FONT SIZE=-1>CUT FROM BLACK</FONT></TT></B> </b><b><FONT SIZE=-1></FONT> </b><b><B><TT><FONT SIZE=-1>TITLE:</FONT></TT></B><TT><FONT SIZE=-1> FIN</FONT></TT> </b><b><FONT SIZE=-1></FONT> </b><b><TT><FONT SIZE=-1>EXTERIOR -",
+      "dialogue_count": 0,
+      "word_count": 21639
+    }
+  ]
+}

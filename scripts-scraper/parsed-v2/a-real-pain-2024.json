@@ -1,0 +1,5740 @@
+{
+  "slug": "a-real-pain-2024",
+  "title": "A Real Pain",
+  "parsedWith": "v2",
+  "parsedAt": "2026-01-29T22:09:02.193Z",
+  "stats": {
+    "scenes": 127,
+    "dialogues": 883,
+    "characters": 27
+  },
+  "characters": [
+    {
+      "name": "BENJI",
+      "dialogueLines": 353,
+      "totalWords": 2011
+    },
+    {
+      "name": "DAVID",
+      "dialogueLines": 315,
+      "totalWords": 1547
+    },
+    {
+      "name": "JAMES",
+      "dialogueLines": 83,
+      "totalWords": 643
+    },
+    {
+      "name": "MARCIA",
+      "dialogueLines": 41,
+      "totalWords": 236
+    },
+    {
+      "name": "ELOGE",
+      "dialogueLines": 32,
+      "totalWords": 228
+    },
+    {
+      "name": "DIANE",
+      "dialogueLines": 16,
+      "totalWords": 103
+    },
+    {
+      "name": "MARK",
+      "dialogueLines": 12,
+      "totalWords": 74
+    },
+    {
+      "name": "SON",
+      "dialogueLines": 7,
+      "totalWords": 35
+    },
+    {
+      "name": "ABE",
+      "dialogueLines": 3,
+      "totalWords": 3
+    },
+    {
+      "name": "RECEPTIONIST",
+      "dialogueLines": 3,
+      "totalWords": 14
+    },
+    {
+      "name": "CONDUCTOR",
+      "dialogueLines": 2,
+      "totalWords": 5
+    },
+    {
+      "name": "FLIGHT ATTENDANT PA",
+      "dialogueLines": 1,
+      "totalWords": 10
+    },
+    {
+      "name": "BE NJI",
+      "dialogueLines": 1,
+      "totalWords": 2
+    },
+    {
+      "name": "DAVI D",
+      "dialogueLines": 1,
+      "totalWords": 5
+    },
+    {
+      "name": "TWENTY MINS LATER",
+      "dialogueLines": 1,
+      "totalWords": 8
+    },
+    {
+      "name": "TEN MINUTES LATER",
+      "dialogueLines": 1,
+      "totalWords": 12
+    },
+    {
+      "name": "EXT.",
+      "dialogueLines": 1,
+      "totalWords": 1
+    },
+    {
+      "name": "WI",
+      "dialogueLines": 1,
+      "totalWords": 5
+    },
+    {
+      "name": "BEN JI",
+      "dialogueLines": 1,
+      "totalWords": 11
+    },
+    {
+      "name": "JA MES",
+      "dialogueLines": 1,
+      "totalWords": 17
+    },
+    {
+      "name": "ELOG",
+      "dialogueLines": 1,
+      "totalWords": 6
+    },
+    {
+      "name": "ALL",
+      "dialogueLines": 1,
+      "totalWords": 3
+    },
+    {
+      "name": "OF THE NIGHT",
+      "dialogueLines": 1,
+      "totalWords": 11
+    },
+    {
+      "name": "LAT ER",
+      "dialogueLines": 1,
+      "totalWords": 7
+    },
+    {
+      "name": "MINUTES LATER",
+      "dialogueLines": 1,
+      "totalWords": 10
+    },
+    {
+      "name": "SMOKER",
+      "dialogueLines": 1,
+      "totalWords": 6
+    },
+    {
+      "name": "BENJ I",
+      "dialogueLines": 1,
+      "totalWords": 7
+    }
+  ],
+  "scenes": [
+    {
+      "number": 1,
+      "heading": "INT. JFK AIRPORT - MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "As the credits roll, we very slowly zoom in on a young man sitting alone on a bench at a busy airport. CUE: Chopin’s Nocturne Op. 9 No. 2 We get glimpses of the young man's face as morning travelers pass in front of him. This is BENJI KAPLAN. He has an absent look on his face that borders on melanch"
+    },
+    {
+      "number": 2,
+      "heading": "EXT. BROOKLYN STREET - DAY",
+      "characters": [
+        "DAVID"
+      ],
+      "dialogues": [
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Hey Benji, it's me."
+        }
+      ],
+      "actionPreview": "In a verdant Brooklyn Heights neighborhood, DAVID hustles down the street. He is on his phone, leaving a message for someone. I’m just leaving my apartment. Remember we gotta be there three hours early. Just ring me when you get this."
+    },
+    {
+      "number": 3,
+      "heading": "EXT. BQE - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Following David’s Uber from behind as it's stuck in traffic."
+    },
+    {
+      "number": 4,
+      "heading": "INT. UBER - DAY",
+      "characters": [
+        "DAVID"
+      ],
+      "dialogues": [
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Hey Benji, I hope you left already. I'm stuck in a little traffic on the BQE in case you can avoid it."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Benji, it's me."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Yo, Benji, it's me."
+        }
+      ],
+      "actionPreview": "David is in th e back seat, harried and leaving a series of messages: Just ring me when you get this. ANOTHER MESSAGE: Good news, traffic just cleared up, in case you were worried. Anyway, ring me when you get this. 2 AND ANOTHER: I'm sorry I'm leaving so many messages. You can disregard them cause "
+    },
+    {
+      "number": 5,
+      "heading": "INT. JFK AIRPORT - DAY",
+      "characters": [
+        "DAVID",
+        "BENJI"
+      ],
+      "dialogues": [
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Hey Benji, I just got to the airport."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Dude."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Benji!"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "What’s up cuz!"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "(hugging him)"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yo, step back!"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Turn around!"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Shit, man!"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Thank you, thank you. (back to business)"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Oh no, I’m good."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Did you?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Few hours ago."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Really?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yeah, but they open the airport super early. You can just hang out."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Oh."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "And you meet the craziest people here."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Wait, who?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Kelvin."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Oh, right. And did you eat anything?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yeah, a while ago."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Okay, I’m gonna wanna get something before we take off if that’s cool. 3"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Don’t worry."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Did you really get this for me?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Of course, dude."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Thank you, Benji."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "I also got some shit for us for when we get in."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "You're not taking weed into"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "They don't give a shit about that stuff, man."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "I think they very much do give a shit about that stuff."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Oh, like they’re gonna arrest two"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "All right, try to keep it down-"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "They can’t touch us, dude."
+        }
+      ],
+      "actionPreview": "David arrives at the airport, leaving another message as he heads toward a check-in kiosk— I really hope you left already or are on your way. Just ring me when you get this. He hangs up and approaches a kiosk and begins checking in— Benji approaches from behind. He’s carrying a huge purple hiking ba"
+    },
+    {
+      "number": 6,
+      "heading": "INT. JFK AIRPO RT HALLWAY - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "From behind, we see the two cousins walking toward security— 4 5 As they pass a garbage, David subtly tosses out the yogurt."
+    },
+    {
+      "number": 7,
+      "heading": "INT. JFK AIRPORT SECURITY — DAY",
+      "characters": [
+        "BENJI",
+        "DAVID"
+      ],
+      "dialogues": [
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Hey, what’s up."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Jasmine is so dope."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Who?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "The TSA girl."
+        }
+      ],
+      "actionPreview": "On the security line, the boys place their bags on the conveyor belt. David eyes Benji’s bag, nervously. Benji seems completely at ease -- he makes eyes with the cute TSA AGENT. David clears security and watches from a distance as: Benji charms the TSA agent. He's animated and funny. David i s in aw"
+    },
+    {
+      "number": 8,
+      "heading": "INT. JFK AIRPORT GATE - DAY",
+      "characters": [
+        "DAVID",
+        "BENJI"
+      ],
+      "dialogues": [
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Do you want some?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Oh, sure."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Yo, so, how you been,"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Honestly? I’ve been… (closes his eyes and takes a deep breath) ...great."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Oh."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yeah."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Really?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yeah, definitely."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Do you wanna talk about anything?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Like what?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Um... like... the last few months?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "What about 'em?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Do you wanna go over our tour itinerary or anything?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Oh, yeah, sure."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "You mind holdin this for a minute?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Sure."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Eat as much as you want."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Thanks. (beat)"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yeah, maybe. Maybe."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Well, she was really suffering. The last couple years."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yeah, I know."
+        }
+      ],
+      "actionPreview": "David and Benji wait at the gate. David is eating trail mix. Benji eyes it: Priya made it for me- Benji casually takes the bag and digs in. man? Like really great. 5 6 David wants to bring something up but can't. Benji stares at him, something unspoken passing between them. David takes out a pamphle"
+    },
+    {
+      "number": 9,
+      "heading": "INT. AIRPLANE - DAY",
+      "characters": [
+        "BENJI",
+        "DAVID"
+      ],
+      "dialogues": [
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "What seat do you have?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Uh, 24C."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "I’m B."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Right."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "You mind takin the middle?"
+        }
+      ],
+      "actionPreview": "The boys approach their seats. Benji’s still chomping on David’s trail mix. Loo ks like we got the middle and window."
+    },
+    {
+      "number": 10,
+      "heading": "INT. AIRPLANE - DAY",
+      "characters": [
+        "BENJI",
+        "DAVID",
+        "FLIGHT ATTENDANT PA"
+      ],
+      "dialogues": [
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "How you feelin in there dude?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "It’s a little tight."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "(stretching)"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "So are you still looking for a job?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Nah."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Nope - I was able to take off completely."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Cool cool."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Well, I don’t sell old jerseys on ebay,"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yeah, I hate that shit."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Hey, come on-"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "No, I mean, everybody hates that shit."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Um, maybe."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "No, that’s cool, that’s cool - you’re like making the world go round. It’s not your fault, you’re just part of a fucked up system."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Well without online ads, a lot of the sites you’re using for free wouldn’t be able to exist."
+        },
+        {
+          "character": "FLIGHT ATTENDANT PA",
+          "parenthetical": "",
+          "text": "Ladies and gentleman, if you could direct your attention to..."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "So it’s a bunch of really sharp kids who--"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yo, dude. I think they want us to pay attention."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Yeah, I just wanted to tell you about this—"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Eh, it’s kinda rude."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Seriously?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yeah, man, they’re just tryin to do their jobs."
+        }
+      ],
+      "actionPreview": "A few minutes later, David is squished in the middle seat. Benji is in the window and somehow comfortably spread out. Yeah... 7 8 Are you gonna have to like work the whole trip? I wanna be here. I wanna be present. And are you still selling shit online? I do digital ad sales. God, I don’t think we’v"
+    },
+    {
+      "number": 11,
+      "heading": "INT. AIRPLANE - NIGHT",
+      "characters": [
+        "DAVID",
+        "ABE"
+      ],
+      "dialogues": [
+        {
+          "character": "DAVID",
+          "parenthetical": "(ON VIDEO)",
+          "text": "How many floors is the Empire State"
+        },
+        {
+          "character": "ABE",
+          "parenthetical": "(ON VIDEO)",
+          "text": "103!"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "(ON VIDEO)",
+          "text": "Burj Khalifa?"
+        },
+        {
+          "character": "ABE",
+          "parenthetical": "(ON VIDEO)",
+          "text": "155!"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "(ON VIDEO)",
+          "text": "Hudson Yards?"
+        },
+        {
+          "character": "ABE",
+          "parenthetical": "(ON VIDEO)",
+          "text": "112."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Yo, Benji, Benji."
+        }
+      ],
+      "actionPreview": "Later on the plane, David is awake and exhausted. He looks over to Benji who is slumped against the window, in a deep comfortable sleep. Two small, empty bottles of wine sit on Benji's tray. LATER David is on hi s phone watching a video of his son. Building? 9 10 No, 156. 156. But the balcony is on "
+    },
+    {
+      "number": 12,
+      "heading": "INT. WARSAW AIRPORT - EARLY MORNING",
+      "characters": [
+        "DAVID"
+      ],
+      "dialogues": [
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "You wanna get some breakfast?"
+        }
+      ],
+      "actionPreview": "The boys walk through the airport, both exhausted from the flight. Benji just shakes his head. He has a dark look in his eyes."
+    },
+    {
+      "number": 13,
+      "heading": "INT. WARSAW AIRPORT CUSTOMS AREA - MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The boys walk through the “Nothing to Decla re” side of customs. 10 11 David is silently panicking as he watches Benji’s bag go through a sensor. David makes nervous eye contact with the serious Polish TSA Agent. Benji is unfazed as his bag emerges on the other side."
+    },
+    {
+      "number": 14,
+      "heading": "INT. WARSAW AIRPORT - MORNING",
+      "characters": [
+        "DAVID",
+        "BENJI"
+      ],
+      "dialogues": [
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Are you okay?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "(groggily)"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yo!"
+        }
+      ],
+      "actionPreview": "After they’ve cleared customs. Benji looks bleak. What? I don't know. (suddenly bright) Hey, there’s our guy-- Benji points to a Polish DRIVER holding a sign that says “Heritage Tours - KAPLAN.” Benji bounds over to him. What's up dude?"
+    },
+    {
+      "number": 15,
+      "heading": "INT. CAR - MORNING",
+      "characters": [
+        "BENJI",
+        "DAVID",
+        "BE NJI"
+      ],
+      "dialogues": [
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "What are you looking at?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Oh nothing, just this little video."
+        },
+        {
+          "character": "BE NJI",
+          "parenthetical": "",
+          "text": "Of what?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "(bashful)"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yo, lemme see it?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "The video?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yeah, can I see it?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Sure, yeah."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "He’s fuckin gorgeous, man."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Thanks."
+        }
+      ],
+      "actionPreview": "The boys are in the car, heading into town. Benji is staring out the window; David is staring at his phone, AirPods in his ears, watching the video of his son. Benji elbows David. David takes out an AirPod. Oh, it’s stupid. I think I’m already homesick. It’s just Abe. He’s obsessed with buildings no"
+    },
+    {
+      "number": 16,
+      "heading": "EXT. WARSAW - MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "They arrive at an upsca le chain - the Warsaw Central Hotel."
+    },
+    {
+      "number": 17,
+      "heading": "INT. WARSAW HOTEL - MORNING",
+      "characters": [
+        "RECEPTIONIST",
+        "DAVID",
+        "BENJI"
+      ],
+      "dialogues": [
+        {
+          "character": "RECEPTIONIST",
+          "parenthetical": "",
+          "text": "Dzien dobry, welcome to the Warsaw"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Hi, yes."
+        },
+        {
+          "character": "RECEPTIONIST",
+          "parenthetical": "",
+          "text": "Yes, of course."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yeah, that's for me, thanks man."
+        },
+        {
+          "character": "RECEPTIONIST",
+          "parenthetical": "",
+          "text": "You're on the fifth floor."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Thank you so much."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "What the hell is that?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "It's the weed. I told yo u, it's good stuff."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Wait- you mailed yourself weed?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "I mailed"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Oh!"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Really?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Yeah, really! Did you not see how nervous I was?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "I did. I just thought that was you."
+        }
+      ],
+      "actionPreview": "They approach the front desk. Central Hotel. We’re checking in — we’re with the Heritage Tour. Kaplan, Benjamin and David. I have our passports here. Welcome. You're the final ones to arrive. And I think I have a package for you. It's been sittin g here for many days- 12 13 The receptionist hands ov"
+    },
+    {
+      "number": 18,
+      "heading": "INT. WARSAW HOTEL HALLWAY - DAY",
+      "characters": [
+        "BENJI",
+        "DAVID"
+      ],
+      "dialogues": [
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "I’m so fuckin happy to be here with you."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Me too."
+        }
+      ],
+      "actionPreview": "The boys exit the elevator and begin walking toward their room. Benji suddenly swings his arm around David’s neck, lovingly rough. 13 14"
+    },
+    {
+      "number": 19,
+      "heading": "INT. WARSAW HOTEL ROOM - DAY",
+      "characters": [
+        "DAVID",
+        "BENJI",
+        "DAVI D",
+        "TWENTY MINS LATER"
+      ],
+      "dialogues": [
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "We got a half hour."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yes sir!"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yo, dude."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Do I?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yeah and they’ve aged"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Thanks, man."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "No weird feet knuckles or stray hairs."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Okay, thank you."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "You never evaluated your own feet?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "You remember grandma’s feet? 14"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Of course dude."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Huh. I never noticed."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yo, Davie, sometimes when I look at you, I see her."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "I look like an old Jewish woman?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "No, man."
+        },
+        {
+          "character": "DAVI D",
+          "parenthetical": "",
+          "text": "All right, I gotta shower."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Cool. You mind if I shower first?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Sure."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Copy that. Can I borrow your phone?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "For what?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "I like to listen to music in the shower."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Don’t you have a phone?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yeah, but it doesn’t play music."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Uh, okay —"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "You okay?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yup!"
+        },
+        {
+          "character": "TWENTY MINS LATER",
+          "parenthetical": "",
+          "text": "Another reggae song is playing from the bathroom."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "We should probably head down."
+        }
+      ],
+      "actionPreview": "The boys enter their room, begin unloading their gear, taking off their layers— I’m definitely gonna need a shower. Good idea. David takes his socks off and sniffs. Benji notices: I totally forgot. You have super nice feet. really, really well. Your toes are like mad straight. It’s nice. Very classy"
+    },
+    {
+      "number": 20,
+      "heading": "INT. WARSAW HOTEL HALLWAY - MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The two guys walk down the hallway. Benji is freshly showered and relaxed. David is sweaty and exhausted."
+    },
+    {
+      "number": 21,
+      "heading": "INT. WARSAW LOBBY - MORNIN G",
+      "characters": [
+        "JAMES",
+        "DAVID",
+        "BENJI"
+      ],
+      "dialogues": [
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "Dzi ę ki bardzo, Marta. (to the boys)"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Hi, yeah."
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "Yes!"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Oh, thanks."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yeah, we just wanted to shower before we came down."
+        }
+      ],
+      "actionPreview": "The guys walk through the hotel lobby. As they near the restaurant, they see JAMES, a young British tour guide, finishing a conversation with a hotel employee: Let me guess: David and Benjamin. You're James? 16 17 Hi! I didn't mean to accost you! I just wanted to intercept you in case you couldn't f"
+    },
+    {
+      "number": 22,
+      "heading": "INT. WARSAW HOTEL RESTAURANT - DAY",
+      "characters": [
+        "JAMES",
+        "DAVID",
+        "BENJI",
+        "MARCIA",
+        "DIANE",
+        "MARK",
+        "ELOGE"
+      ],
+      "dialogues": [
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "We’re a relatively small group, which will be nice and intimate."
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "Success!"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Hi."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yo, what’s up everybody."
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "Sit, sit, sit."
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "As I was saying, I'm James. I'll be your British tour guide through"
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "(CONT'D)",
+          "text": "18 I’m a scholar of Eastern European studies at Oxford."
+        },
+        {
+          "character": "MARCIA",
+          "parenthetical": "",
+          "text": "I’ll be brave."
+        },
+        {
+          "character": "MARCIA",
+          "parenthetical": "",
+          "text": "Uh, my mother was a survivor of the camps and literally never spoke about it."
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "Thank you for sharing that, Marcia."
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "(CONT'D)",
+          "text": "18"
+        },
+        {
+          "character": "DIANE",
+          "parenthetical": "",
+          "text": "Uh hi, Diane and Mark Binder."
+        },
+        {
+          "character": "MARK",
+          "parenthetical": "",
+          "text": "Hello."
+        },
+        {
+          "character": "DIANE",
+          "parenthetical": "",
+          "text": "We’re boring. Uh, Recently retired."
+        },
+        {
+          "character": "MARK",
+          "parenthetical": "",
+          "text": "We were Mayflower Jews, was always my little joke."
+        },
+        {
+          "character": "DIANE",
+          "parenthetical": "",
+          "text": "And we were always interested in seeing where they lived, what this place looked like."
+        },
+        {
+          "character": "MARK",
+          "parenthetical": "",
+          "text": "Yeah, not as glamorous, my side of the family. Sorry about that."
+        },
+        {
+          "character": "ELOGE",
+          "parenthetical": "",
+          "text": "Hi, I’m Eloge."
+        },
+        {
+          "character": "ELOGE",
+          "parenthetical": "",
+          "text": "I guess you won’t be the only one on this trip, James."
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "Happy for t he company, Eloge."
+        },
+        {
+          "character": "ELOGE",
+          "parenthetical": "",
+          "text": "But I did convert to Judaism, about ten years ago. I am actually"
+        },
+        {
+          "character": "ELOGE",
+          "parenthetical": "",
+          "text": "And to answer the inevitable question that you might be thinking, I am a survivor of the genocide."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Oh shit!"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "No, sorry. I mean it in a good way."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "I’m sorry about that—"
+        },
+        {
+          "character": "ELOGE",
+          "parenthetical": "",
+          "text": "No, please, it’s actually"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Benji."
+        },
+        {
+          "character": "ELOGE",
+          "parenthetical": "",
+          "text": "Benji, I am an open book."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Rad."
+        },
+        {
+          "character": "ELOGE",
+          "parenthetical": "",
+          "text": "Anyway, I do have a unique story."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Jesus, fuck. 20"
+        },
+        {
+          "character": "ELOGE",
+          "parenthetical": "",
+          "text": "And in Winnipeg, I was helped by the Faintuchs, a Jewish family—"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Naturally."
+        },
+        {
+          "character": "ELOGE",
+          "parenthetical": "",
+          "text": "Yes, naturally, Benji. And when I learned about Judaism and the story of the Jewish people, I felt at peace for the first time since the war."
+        },
+        {
+          "character": "MARCIA",
+          "parenthetical": "",
+          "text": "I didn’t think I would be crying before the tour even started."
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "Wow."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Who the hell wants to follow that? (off their laughter)"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Oh, Jesus man, don’t say that. 21"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Anyway, our Grandma Dory was from here, she survived the war in the craziest fuckin way. In basements, hidden amongst the uncircumcised-"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Yeah and everyone else died- her parents, her sisters, a brother."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "It was fucked, essentially, is what it was."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Yeah, that's why we’re leaving the tour a"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "She was the coolest - just this fierce, no bullshit, fuckin take charge chick."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "And I’ve been in kind of a funk since she died."
+        },
+        {
+          "character": "MARCIA",
+          "parenthetical": "",
+          "text": "I’m so sorry, Benji."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yo, thank you Marcia, you’re a sweetheart."
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "No, that’s okay, Benji."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Thanks James. 22"
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "Of course."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "So, just to keep things on track:"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "And Dave could never find the time cause he's got a high pressured job selling ad banners to the internet."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Yo, come on, man."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "But I've been in such a shit place recently, so Dave swooped in, took some time off and arranged for us to join this geriatric Polish tou r with you fine people."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "You know: She didn’t ask any of the other cousins to come here."
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "That’s really lovely."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yeah, she knew the two of us have a special connection, right"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Yeah, I'm not really sure what she knew."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "No, she knew. (squeezes Dave’s shoulder)"
+        }
+      ],
+      "actionPreview": "James leads the guys towards a corner of the restaurant: They arrive at a table o f four other tourists, who James addresses: I found them. Everyone, this is Benji and David. The group kind of nods toward the boys. So: I was just about to ramble on about myself. Hopefully you won’t be too sick of me"
+    },
+    {
+      "number": 23,
+      "heading": "EXT. WARSAW - MONTAGE",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "A flurry of buildings, streets, signs, daily life in this bustling city set to Chopin's racing Etude."
+    },
+    {
+      "number": 24,
+      "heading": "EXT. WARSAW GHETTO UPRISING MONUMENT - DAY",
+      "characters": [
+        "JAMES"
+      ],
+      "dialogues": [
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "If I can ga ther everyone over here?"
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "This is"
+        }
+      ],
+      "actionPreview": "Greco-Roman heroes stare at us from the iconic Warsaw Ghetto Uprising Monument. Close shots on the various faces of martyrdom. Benji and David look up at the faces. James gathers the group near the foot of the monument: Thank you. I always like to start our tour at the Ghetto Uprising Memorial. It’s"
+    },
+    {
+      "number": 25,
+      "heading": "EXT. WARSAW STREET - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The group walks along a street in front of a Soviet-era apartment block."
+    },
+    {
+      "number": 26,
+      "heading": "EXT. WARSAW STREET - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Through a window, we see Benji buying bottles of water in a little market kiosk. He exits the kiosk and distributes the waters to the group. They are thankful. 24 25 As he arrives at David, he explains that he wasn't able to pay for the waters because he doesn't have any money. David sighs, hands hi"
+    },
+    {
+      "number": 27,
+      "heading": "EXT. KRASINSKI GARDEN - DAY",
+      "characters": [
+        "BENJI",
+        "DAVID",
+        "MARCIA"
+      ],
+      "dialogues": [
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "(in awe)"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Yeah, I don’t know, maybe."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "No, seriously."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Yeah, it's funny, whenever I see a"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Oh, it's just like a dumb joke. 25"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "That's cool, man. (looking ahead)"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "What, who?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "That woman Marcia, she’s walkin alone."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "We just met her."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yeah, but she’s got this, like, deep sadness behind her eyes."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "She does?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "You didn’t notice that?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "During the introductions? I don't know."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "We should go check on her."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Benji, maybe she wants to be alone."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "No one w ants to be alone, Dave. I’m gonna go check it out."
+        },
+        {
+          "character": "MARCIA",
+          "parenthetical": "",
+          "text": "People will eat you alive if you give them a fuckin inch."
+        }
+      ],
+      "actionPreview": "The gang walks through this peaceful park. Mark and Diane are asking James questions and Eloge is cross referencing what he sees with a little Polish guide book. Marcia walks alone. Benji and D avid lag behind. David is sweaty, exhausted; Benji is amped: Look at this shit. We’d probably live here if"
+    },
+    {
+      "number": 28,
+      "heading": "EXT. WALICOW STREET - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The group walks through the ruins of Warsaw, which abut the height of Central European modernity. We see the mix of old and new, the bullet holes and the mid- century rebuild."
+    },
+    {
+      "number": 29,
+      "heading": "EXT. PLAC GRZYBOWSKI - D AY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Benji precariously skips along stones, which jut out of a pond. Jump back to reveal that the group is patiently waiting for him to finish his antics. No one seems to mind."
+    },
+    {
+      "number": 30,
+      "heading": "EXT. PLAC GRZYBOWSKI CAFE - DAY",
+      "characters": [
+        "BENJI",
+        "TEN MINUTES LATER",
+        "DAVID"
+      ],
+      "dialogues": [
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yo!"
+        },
+        {
+          "character": "TEN MINUTES LATER",
+          "parenthetical": "",
+          "text": "Benji and David sit across from each othe r, eating rye soup-"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "What was going on with that woman?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "What do you mean?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "The woman with the 'sadness in her eyes'."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Oh Marcia!"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "She told you that?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yeah, I guess she thinks I can relate since we've both lost people."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "You mean our grandma?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yeah."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Jesus—"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yeah, not fun."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "No. And she just told you all this?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yeah. And now she’s seeing this new guy, Darren, which you’d think she’d be"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Oh really, how?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "(hesitates)"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Oh, okay."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "No, I know."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Weird soup, right?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "I love it. 28"
+        }
+      ],
+      "actionPreview": "David exits a cafe with a tray of food. Feeling unsocial, he takes a seat alone. After a moment, Benji comes out and spots David: Is she all right? Yeah, she’s in a really weird place right now. 27 28 Anyway, she's super fuckin stressed right now because her husband left her last May, like completel"
+    },
+    {
+      "number": 31,
+      "heading": "EXT. KREDYTOWA STREET - DAY",
+      "characters": [
+        "EXT.",
+        "WI"
+      ],
+      "dialogues": [
+        {
+          "character": "EXT.",
+          "parenthetical": "",
+          "text": "Ś"
+        },
+        {
+          "character": "WI",
+          "parenthetical": "",
+          "text": "Ę TOJERSKA STREET - DAY"
+        }
+      ],
+      "actionPreview": "From high, we see the group walk through this bohemian drag. The group passes a fragment of the old Ghetto Wall."
+    },
+    {
+      "number": 32,
+      "heading": "EXT. WARSAW UPRISING MONUMENT - DAY",
+      "characters": [
+        "JAMES",
+        "BENJI",
+        "ELOGE",
+        "DAVID",
+        "MARK",
+        "MARCIA",
+        "BEN JI",
+        "DIANE"
+      ],
+      "dialogues": [
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "This monument truly speaks to the tragic complexity of"
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "These two supposed allies, brothers against a common enemy. But infighting and spite tore them apart."
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "You see, Stalin resented the resistance as they’d fought him for independence and so he stood back, l etting Germany crush the resistance in 63 short days. It’s harrowing."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yo, Eloge, when you’re done, could you take a picture of me and Dave posing with the guys?"
+        },
+        {
+          "character": "ELOGE",
+          "parenthetical": "",
+          "text": "Yes, of course."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "We should go pose with the guys, it’ll be hysterical."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Really?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "How the fuck is it disrespectful?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Yeah, I don’t know if we should-"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Okay, then just take a"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "You look great, Benji. I got some good shots."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yeah?? Does it look real?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Well they’re twice the size of you."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "I know! I need some back up!"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Benji, no."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Eloge, you gonna enlist?"
+        },
+        {
+          "character": "ELOGE",
+          "parenthetical": "",
+          "text": "I’m not a fighter, Benji, thank you."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Okay, well you can be a medic or something!"
+        },
+        {
+          "character": "ELOGE",
+          "parenthetical": "",
+          "text": "This is so silly."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Yeah, I know."
+        },
+        {
+          "character": "ELOGE",
+          "parenthetical": "",
+          "text": "(Handing David his phone)"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Oh."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Okay, so you're the"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Oh yeah!"
+        },
+        {
+          "character": "ELOGE",
+          "parenthetical": "",
+          "text": "(in character)"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Of course you have."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Yeah, I got it."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Is it funny?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "It’s funny, yeah."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "You sure you don’t wanna come up here?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Nah, I’m good."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Ha!"
+        },
+        {
+          "character": "MARK",
+          "parenthetical": "",
+          "text": "Men?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "You bet,"
+        },
+        {
+          "character": "MARK",
+          "parenthetical": "",
+          "text": "Diane?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Hey!"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Jesus, this is a real fuckin' sausage party. Marcia, come on up here!"
+        },
+        {
+          "character": "MARCIA",
+          "parenthetical": "",
+          "text": "I don’t know."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Marcia Marcia Marcia!"
+        },
+        {
+          "character": "MARCIA",
+          "parenthetical": "",
+          "text": "You’re very persuasive, Benji."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "I know!"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "You wanna work with Eloge on this dude’s leg?"
+        },
+        {
+          "character": "MARCIA",
+          "parenthetical": "",
+          "text": "No, I’m a fighter."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Ho ho ho!"
+        },
+        {
+          "character": "BEN JI",
+          "parenthetical": "",
+          "text": "Okay, we got these fuckin Nazis right where we want ‘em."
+        },
+        {
+          "character": "DIANE",
+          "parenthetical": "",
+          "text": "I can’t believe I’m doing this."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Sure."
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "You sure don’t want to go up?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Uh, yeah, I’m great."
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "Oh, I feel bad, this is your tour. 33"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "(a British accent)"
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "I’m coming! (to David:)"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "No, it’s fine."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Okay, everyone pick a pose and freeze in it so Dave could take a picture. Is that cool with you"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Yup."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "You almost done Dave? My arms are gettin tired."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Yeah, I got it."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Okay, men!"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "You were all incredibly brave."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Thank you so much, dude. That was so fuckin fun."
+        }
+      ],
+      "actionPreview": "The group approaches the dramatic Warsaw Uprising Monument-- massive bronze soldiers in battle positions. Polish history. The Warsaw Uprising was perhaps more tragic in the Russian response to the uprising than the German crushing of the rebellion. On Benji and David, listening— Back to James— Anywa"
+    },
+    {
+      "number": 33,
+      "heading": "EXT. WARSAW HOTEL - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The group enters the hotel, the nice energy from the day lingering in the air. David feels a bit left out."
+    },
+    {
+      "number": 34,
+      "heading": "INT. WARSAW HOTEL ELEVATOR — NIGHT",
+      "characters": [
+        "BENJI"
+      ],
+      "dialogues": [
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "This is us."
+        }
+      ],
+      "actionPreview": "David and Benji ride up in the elevator with Eloge, Diane and Mark. It stops on Benji and David's floor. Good night you freaks. Long day tomorrow. They ad lib goodni ghts to Benji."
+    },
+    {
+      "number": 35,
+      "heading": "EXT. WARSAW HOTEL HOTEL HALLWAY - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The boys walk down the hall towards the room."
+    },
+    {
+      "number": 36,
+      "heading": "INT. WARSAW HOTEL ROOM - NIGHT",
+      "characters": [
+        "BENJI",
+        "DAVID"
+      ],
+      "dialogues": [
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Hey Dave."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Yeah?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Come in the bathroom with me for a sec."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "What? Why?"
+        }
+      ],
+      "actionPreview": "David and Benji enter their room."
+    },
+    {
+      "number": 37,
+      "heading": "INT. WARSAW HOTEL BATHROOM - NIGHT",
+      "characters": [
+        "DAVID",
+        "BENJI"
+      ],
+      "dialogues": [
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Why are we in here? 35"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "(huddling up intensely) I just wanna thank you so much for doin this with me."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Well that’s great, man."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "--And I also wanted to say that I know you’re not the most comfortable person with groups and peopl e and social shit like that."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "I’m not?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "No. So it’s amazing that you’re here and puttin yourself out there so boldly for me."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Seriously?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yeah."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Thanks, man."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Good."
+        }
+      ],
+      "actionPreview": "David squeezes into the cramped bathroom. Benji closes the door. 36 I know it was tough for you to take off work, leave your little boy. But I didn’t realize I how much I needed this. I’m happy to... see you happy. I know it's been a tough few months- Now let’s go back out there and share a J."
+    },
+    {
+      "number": 38,
+      "heading": "INT. WARSAW HOTEL ROOM -",
+      "characters": [
+        "BENJI",
+        "DAVID"
+      ],
+      "dialogues": [
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yo, look at this fuckin infantilizing,"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "What do you mean? 36"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "We can’t smoke with this shit open two inches."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Yo, I think I might just wanna crash, man."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Don’t say you’re going to sleep on me, Davie."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "I don’t know."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yo, the weed will"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Is it the kind that helps you sleep?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "No, it’s the other kind. (D avid laughs)"
+        }
+      ],
+      "actionPreview": "NIGHT Benji exits the bathroom walks straight to the window and opens it. But it only opens a few inches. corporate bullshit. 37 We’ve been up for like 24 hours. This is our first night together in fuckin years. I’m exhausted and I haven’t showered. help you sleep. Listen: You take a shower — do wha"
+    },
+    {
+      "number": 39,
+      "heading": "INT. WARSAW HOTEL ELEVATOR - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "David, freshly dressed and Benji, fat ass blunt in his ear, ride the elevator. There’s a fun spirit in the air."
+    },
+    {
+      "number": 40,
+      "heading": "INT. WARSAW HOTEL HALLWAY OF TOP FLOOR — NIGHT",
+      "characters": [
+        "BENJI",
+        "DAVID"
+      ],
+      "dialogues": [
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "(like a dowser)"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Uh, maybe they don’t make their roof accessible for American assholes trying to smoke weed--"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "You think this is it?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "I think there’s a big fucking alarm that’s gonna go off."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "So if it does, we just say we don’t speak Polish. Which is true."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Benji, let’s just go back down."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Okay."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Benji!"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Apres vous..."
+        }
+      ],
+      "actionPreview": "The boys exit the elevator. Okay, okay, which w ay are you? But Benji is already walking down the hallway. 37 38 At the end of the hallway is a door with a sign in Polish and an alarm. David is backing away. I guess you’re right, Dave. Benji walks with David and then, suddenly, turns back and runs t"
+    },
+    {
+      "number": 41,
+      "heading": "INT. WARSAW HOTEL STAIRWELL - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The boys giggle as they race up the stairwell. Benji opens the door to the roof —"
+    },
+    {
+      "number": 42,
+      "heading": "EXT. WARSAW HOTEL ROOF — NIGHT",
+      "characters": [
+        "BENJI",
+        "DAVID"
+      ],
+      "dialogues": [
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "There’s my guy."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "(enjoying it) I’m okay."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "(Intensely)"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "I feel good."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "See?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Oh yeah?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yeah."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Thank you, I guess?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "When I think of"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "You always did."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "And you’d always fall asleep halfway through."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "I know."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "You were kind of a light weight."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "I’m sorry."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "I’d have to stay up and keep watch. 39"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Oh."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Make sure you weren’t pecked to death by pigeons."
+        }
+      ],
+      "actionPreview": "The boys are at the edge of the roof, which overlooks Warsaw. It’s gorgeous. Benji exhales a huge h it, passes it to David, who takes a hit. Passes it back. How you feeling, dude? 38 39 Yo. How you feeling dude? I feel good. You just needed a little drugs in your system. That’s all I was missing? Yo"
+    },
+    {
+      "number": 43,
+      "heading": "INT. WARSAW HOTEL ELEVATOR - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The boys ride back down the elevator in silence."
+    },
+    {
+      "number": 44,
+      "heading": "INT. WARSAW HOTEL ROOM - NIGHT",
+      "characters": [
+        "BENJI",
+        "DAVID"
+      ],
+      "dialogues": [
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Dave."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Yo."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "I’m sorry I called you a light weight."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "It’s okay."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "It’s okay."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Yeah, I guess."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "You’re not a light weight."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Thanks Benji. 40"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "You were the only person who even"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "I always wanted to hang out at night, when everyone else was gone - to have the city to ourselves."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "I didn’t care that you fell asleep. I was just happy you were there."
+        }
+      ],
+      "actionPreview": "The boys lie on their separate beds. They’re eating chips from the mini bar and Benji is nursing a little bottle of vodka. T he TV is playing the cheesy hotel menu on a loop. They stare at it, stoned and mesmerized. Pause. I’m sorry I would always fall asleep. You had like a job and a wife. You were"
+    },
+    {
+      "number": 45,
+      "heading": "INT. WARSAW HOTEL ROOM - MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "David wakes up. He looks over to the other bed: Benji is still sleeping. A few more mini vodka bottles lie around his head."
+    },
+    {
+      "number": 46,
+      "heading": "INT. WARSAW HOTEL BATHROOM - MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "David is in the bathroom, whispering on FaceTime with Priya. She’s telling him a story about Abe and he’s laughing. David is in the shower. Shaving. David swallows one of his pill s, drinking from the faucet."
+    },
+    {
+      "number": 47,
+      "heading": "INT. WARSAW HOTEL ROOM - MORNING",
+      "characters": [
+        "DAVID"
+      ],
+      "dialogues": [
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Benji. (Benji sleepily swats him)"
+        }
+      ],
+      "actionPreview": "David reenters the room, freshly showered. Benji is still sleeping. David stands over his cousin, looking at him. In his sleep, Benji has a pained look on his face. Benji, dude. We gotta go. Train’s in an hour. Everyone’s downstairs. 41 42 Benji groans."
+    },
+    {
+      "number": 48,
+      "heading": "INT. WARSAW HOTEL HALLWAY - MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Benji reluctantly trudging through the hall, following David."
+    },
+    {
+      "number": 49,
+      "heading": "EXT. WARSAW HOTEL - MORNING",
+      "characters": [
+        "DAVID",
+        "BENJI"
+      ],
+      "dialogues": [
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Hi, guys. Sorry we’re a little late."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Dave literally woke me up two minutes ago. Ha."
+        }
+      ],
+      "actionPreview": "The group is waiting outside for the boys. Benji perks up when he sees everyone, his erratic charisma suddenly alighting."
+    },
+    {
+      "number": 50,
+      "heading": "INT. WARSAW TRAIN STATION - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The group walks throu gh the train station. Benji takes it all in like a little kid."
+    },
+    {
+      "number": 51,
+      "heading": "INT. WARSAW TRAIN STATION PLATFORM - DAY",
+      "characters": [
+        "JAMES",
+        "MARCIA",
+        "DIANE"
+      ],
+      "dialogues": [
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "Luckily, included in your tour fee, we all get first class seats — not too bad, huh?"
+        },
+        {
+          "character": "MARCIA",
+          "parenthetical": "",
+          "text": "Ooh, fancy."
+        },
+        {
+          "character": "DIANE",
+          "parenthetical": "",
+          "text": "Love the exchange rate."
+        }
+      ],
+      "actionPreview": "The group approaches the train. James leads them to the front. As they board the train, David looks happy, Benji looks skeptical."
+    },
+    {
+      "number": 52,
+      "heading": "EXT. TRAIN - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Moving southeast t hrough Central Poland’s Countryside. 42 43"
+    },
+    {
+      "number": 53,
+      "heading": "INT. TRAIN - DAY",
+      "characters": [
+        "JAMES",
+        "BENJI",
+        "DAVID",
+        "MARCIA",
+        "MARK",
+        "DIANE"
+      ],
+      "dialogues": [
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "And if we have time, I think"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yo du de, I think we should move."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "I think we should move to a different train car."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "What do you mean?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Don’t you feel weird being in a first class car?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "No. We paid for it. It’s not hurting anybody."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Dude."
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "Benji, is everything okay?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Yes, it’s fine. We’re fine. Sorry about that."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yeah, sorry about"
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "Of course."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "I just feel like — is no one else feeling this?"
+        },
+        {
+          "character": "MARCIA",
+          "parenthetical": "",
+          "text": "Feeling what?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Just the creepy feeling of being, like,"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Benji, please -"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Like eating this fancy food?"
+        },
+        {
+          "character": "MARCIA",
+          "parenthetical": "",
+          "text": "Oh, come on, Benji, stop that—"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Yeah, I don’t think everyone wants to hear that—"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Well, why not—"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Because it’s depressing--"
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "No it’s okay."
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "There’s certainly feelings of discomfort and even a kind of guilt, of comparing their lives to those who--"
+        },
+        {
+          "character": "MARK",
+          "parenthetical": "",
+          "text": "I don’t feel guilt."
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "Nor should you."
+        },
+        {
+          "character": "MARK",
+          "parenthetical": "",
+          "text": "Why would I feel guilt?"
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "I’m not suggesting you should, Mark-"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Because our lives are so fuckin pampered and privileged!"
+        },
+        {
+          "character": "MARK",
+          "parenthetical": "",
+          "text": "So what are we supposed to do about that?"
+        },
+        {
+          "character": "DIANE",
+          "parenthetical": "",
+          "text": "Mark, please--"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Uh, I don’t know--"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Benji, why are you doing this?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "I’m just sayin how I feel, Dave."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "And why is that important now?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yo, Dave, you used to feel everything."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Benji, Jesus--"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "We went to Jewy sleep-away camp together and he cried the whole first week cause he was homesick."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Benji, what the fuck!"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "And I would have to hug him to sleep and talk about his sweet fuckin mom to calm him down."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Benji!"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "It’s all mad impressive."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "You’re all mad impressive."
+        },
+        {
+          "character": "MARK",
+          "parenthetical": "",
+          "text": "I don’t think you’ll find much suffering back there either."
+        },
+        {
+          "character": "DIANE",
+          "parenthetical": "",
+          "text": "-Mark, stop it."
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "I’m sorry if that"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Hey, James?"
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "Of course. Of course. You know where to get off?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Yeah, Lublin Glowny? I must be mispronouncing it."
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "Don’t worry – you’re very close."
+        }
+      ],
+      "actionPreview": "The group rides in a sparsely filled first class car. They each have a nice breakfast meal on trays in front of them and are eating their food as they listen to James. Underground Lublin is a fascinating, if overhyped, destination. But the real heart of the city is the Grodzka gate... As James conti"
+    },
+    {
+      "number": 54,
+      "heading": "INT. TRAIN CAR - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "David is walking through a more crowded part of the train , looking for Benji. He doesn’t see him."
+    },
+    {
+      "number": 55,
+      "heading": "INT. SECOND TRAIN CAR - DAY",
+      "characters": [
+        "DAVID",
+        "BENJI"
+      ],
+      "dialogues": [
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Hey man."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Thanks."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Are you okay?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "(sadly)"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "What do you mean? 47"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "People can’t just walk around the world being…"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "(gently)"
+        }
+      ],
+      "actionPreview": "David enters the next car. Halfway down, he sees Benji, sitting alone. David sits next to him. It’s a quiet and sweet moment. David undoes Benji's tray and sets his food down. Everyone just wants to have a fuckin joyride, you know? 48 happy all the time. It’s okay, man. Benji digs into his food. Dav"
+    },
+    {
+      "number": 56,
+      "heading": "EXT. POLAND COUNTRYSIDE - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The train speeds past us in various locations."
+    },
+    {
+      "number": 57,
+      "heading": "INT. TRAIN - DAY",
+      "characters": [
+        "BENJI",
+        "DAVID"
+      ],
+      "dialogues": [
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "(calmly)"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Did I fall asleep?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yeah, you did."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "All right, well let’s go. Come on."
+        }
+      ],
+      "actionPreview": "Moving down the aisle, we find David fast asleep in his seat, Benji just watching him. The train pulls into a station and David startles awake. Hey m an. David grabs his bag and heads for the exit. Benji follows, looking guilty."
+    },
+    {
+      "number": 58,
+      "heading": "EXT. KRASNIK PLATFORM - DAY",
+      "characters": [
+        "DAVID",
+        "BENJI"
+      ],
+      "dialogues": [
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "I guess everyone’s waiting outside for us."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Hey Dave. 48"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Yeah?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "We’re not at the right train station."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "What do you mean?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Oh shit."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yeah, you were out pretty fuckin cold."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "You mean, we"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "A while ago."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "And you didn’t wake me up?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "You were gettin such a good nap, dude."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "J esus!"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Dave, you were drooling and snoring and everything, I couldn’t bring myself to wake you up."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "You have like the most fucked up sense of priorities."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Dave, come on. Don’t be mad at me. 49"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "How could I not be mad at you?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Cause I was staring at you sleepin."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "All right, so what d o we do now?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Oh, I already worked all that shit out."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Did you?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yeah, while you were sleeping."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Great. What do you got?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Lublin was the last stop, right?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Huh."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "And we don’t even"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "What do you mean?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "I mean, we’re only tryin to go one stop, right? 50"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "(CONT'D)",
+          "text": "51"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "We should just buy tickets like normal people."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "No time."
+        }
+      ],
+      "actionPreview": "The boys emerge onto the platform and begin walking toward the exit. Behind them, the train pulls away. David looks around the platform. 49 David looks around. He sees the large station sign says, “Krasnik.” What the fuck is Krasnik? We’re supposed to get off at Lublin. passed Lublin already? David "
+    },
+    {
+      "number": 59,
+      "heading": "INT. TRAIN - DAY",
+      "characters": [
+        "BENJI",
+        "DAVID",
+        "CONDUCTOR"
+      ],
+      "dialogues": [
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "We stay moving, we stay light, we stay agile."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "We’re the stragglers?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "This is so fucking stupid."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "(CONT'D)",
+          "text": "51"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "No, what’s stupid is the corporatization of travel."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "That’s good - we can argue Marxism when they’re hauling us off to"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Siberia’s in Russia, Dave."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "This is ridiculous."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "It’s the principle of th e thing."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "No it’s not!"
+        },
+        {
+          "character": "CONDUCTOR",
+          "parenthetical": "",
+          "text": "(In Polish)"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "This is it, buddy."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Hi!"
+        },
+        {
+          "character": "CONDUCTOR",
+          "parenthetical": "",
+          "text": "(In perfect English)"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "With thanks."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Yes, thank you."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Jesus, my heart’s in my fucking throat!"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Feels good, doesn’t it?"
+        }
+      ],
+      "actionPreview": "The boys move through the train, heading towards the front. He’s gonna be coming through the train, takin tickets. We pass him — probably somewhere around the middle of the train- and we tell him we’re goin to the bathroom. Then he’s gonna get to the back of the train and start heading back up towar"
+    },
+    {
+      "number": 60,
+      "heading": "INT. FRONT CAR - DAY",
+      "characters": [
+        "DAVID",
+        "BENJI"
+      ],
+      "dialogues": [
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "We made it."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Don’t fall asleep on me again, brother."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "I won’t. (Looks around)"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yeah."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "We’re in first class."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yeah, but we fuckin earned it. 53"
+        }
+      ],
+      "actionPreview": "The boys enter the front car and find seats. They plop down, ecstatic. Hey Benji. Benji looks around, thinks about it. 54"
+    },
+    {
+      "number": 61,
+      "heading": "EXT. LUBLIN STATION — DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The train pulls into the Lublin Glowny Station. The boys walk along the platform, looking for the exit."
+    },
+    {
+      "number": 62,
+      "heading": "EXT. LUBLIN STATION - DAY",
+      "characters": [
+        "BENJI"
+      ],
+      "dialogues": [
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Hey everybody."
+        }
+      ],
+      "actionPreview": "The boys emerge to find James and the group, in various stages of irritation. I’m super sorry we’re late. Dave fell asleep."
+    },
+    {
+      "number": 63,
+      "heading": "EXT. STAIRS TO CASTLE - DAY",
+      "characters": [
+        "JAMES"
+      ],
+      "dialogues": [
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "I wan t today to be as vibrant as it is melancholic."
+        }
+      ],
+      "actionPreview": "The group ascends the massive staircase that leads to the castle. Lublin has such a rich Jewish history. It was actually called The Jewish Oxford. It was diverse, intellectually and culturally. It was progressive, open, welcoming. And it’s hard to say whether the Jewish community was attracted to Lu"
+    },
+    {
+      "number": 64,
+      "heading": "EXT. BRIDGE FROM ZAMKOWA STREET - DAY",
+      "characters": [
+        "DAVID",
+        "ELOGE",
+        "MARCIA",
+        "BENJI",
+        "JAMES"
+      ],
+      "dialogues": [
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "So, you’re like really religious? 54"
+        },
+        {
+          "character": "ELOGE",
+          "parenthetical": "",
+          "text": "Yes, I am David."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "That’s amazing to me."
+        },
+        {
+          "character": "ELOGE",
+          "parenthetical": "",
+          "text": "Is it?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Yeah."
+        },
+        {
+          "character": "ELOGE",
+          "parenthetical": "",
+          "text": "Not all, but I do keep Shabbat."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "No."
+        },
+        {
+          "character": "ELOGE",
+          "parenthetical": "",
+          "text": "None taken, but I think it would really benefit you."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "You mean like benefit everyo ne or, like, me specifically?"
+        },
+        {
+          "character": "ELOGE",
+          "parenthetical": "",
+          "text": "You specifically."
+        },
+        {
+          "character": "MARCIA",
+          "parenthetical": "",
+          "text": "Benji-"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yo."
+        },
+        {
+          "character": "MARCIA",
+          "parenthetical": "",
+          "text": "(chuckling) “Yo.\""
+        },
+        {
+          "character": "MARCIA",
+          "parenthetical": "",
+          "text": "I wanted to say that I’ve been thinking about what you said on the train."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yo, seriously Marcia?"
+        },
+        {
+          "character": "MARCIA",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Dope."
+        },
+        {
+          "character": "MARCIA",
+          "parenthetical": "",
+          "text": "You know, last year, my daughter married a very rich man-"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "-Oh fuck-"
+        },
+        {
+          "character": "MARCIA",
+          "parenthetical": "",
+          "text": "-And she can barely have a conversation with any depth anymore."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Of course she has! Money’s like fuckin heroin for boring people."
+        },
+        {
+          "character": "MARCIA",
+          "parenthetical": "",
+          "text": "Well, I don’t know what that means."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Exactly!"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "See, Benji?"
+        },
+        {
+          "character": "ELOGE",
+          "parenthetical": "",
+          "text": "Hi, yes, I’m eavesdropping, is that okay?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Of course, Eloge, come on in!"
+        },
+        {
+          "character": "ELOGE",
+          "parenthetical": "",
+          "text": "I want to echo what Marcia said, if that’s all right. 56"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Really?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Really?"
+        },
+        {
+          "character": "ELOGE",
+          "parenthetical": "",
+          "text": "Yes, of course."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yo, that’s what I’m"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "I don’t know."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Uh,"
+        },
+        {
+          "character": "MARCIA",
+          "parenthetical": "",
+          "text": "Exactly. David, we numb ourselves to avoid thinking about the impact we have-"
+        },
+        {
+          "character": "ELOGE",
+          "parenthetical": "",
+          "text": "Ignoring the proverbial slaughter house to enjoy the steak, as it were-"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yes, Eloge!"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "And I get all that."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Dave, we’re on a fuckin Holocaust tour."
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "If I can get everyone’s attention."
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "Try to imagine what could have been, the promise, the hope—"
+        }
+      ],
+      "actionPreview": "The group walks along the gorgeous bridge to the gate. David approaches Eloge: 55 You do all the customs? It’s mediative, it gives me a chance to unwind, to refocus. And you? The whole thing always seemed like a little archaic and arbitrary and mechanical to me. No offense. Up ahead, Marcia approach"
+    },
+    {
+      "number": 65,
+      "heading": "EXT. LUBLIN - MONTAGE",
+      "characters": [
+        "JA MES",
+        "JAMES"
+      ],
+      "dialogues": [
+        {
+          "character": "JA MES",
+          "parenthetical": "(VO)",
+          "text": "The memories of Jewish life are here, but they’re hidden around this city, moments trapped in amber."
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "(VO)",
+          "text": "A former Yiddish theater. -A medical academy building, the site of a former Yeshiva 58"
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "(VO)",
+          "text": "A former Yeshiva. -Hebrew letters in relief on the side of a building"
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "(VO)",
+          "text": "A former Hebrew printing house."
+        }
+      ],
+      "actionPreview": "Nocturne Op. 9 No. 2 plays over the following: There aren’t monuments or statues. The only synagogue is a now-defunct second floor office building. But there are little moments of history frozen in time, peeking out, waiting for us. Emblems of a people, of stories, of contributions. As he speaks, we"
+    },
+    {
+      "number": 66,
+      "heading": "EXT. GRAVEL STREET - AFTERNOON",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "In a wide tableau, the group ambles along this uneven path at the edge of town. Benji throws his arm around David and pinches his cheek."
+    },
+    {
+      "number": 67,
+      "heading": "EXT. CEMETERY – DUSK",
+      "characters": [
+        "JAMES",
+        "ELOGE",
+        "BENJI",
+        "DAVID",
+        "MARCIA"
+      ],
+      "dialogues": [
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "So there’s a bit of a discrepancy about the founding of the cemetery but most have it pegged at 1541."
+        },
+        {
+          "character": "ELOGE",
+          "parenthetical": "",
+          "text": "Ah, yes, Kopleman, right?"
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "D ing ding ding."
+        },
+        {
+          "character": "ELOGE",
+          "parenthetical": "",
+          "text": "I read about it this morning."
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "He’s actually buried right back here."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Hey James, Eloge—"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Oh shit—"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yo, James."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Benji--"
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "Y es, Benji."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "You’re like completely knowledgeable about all this shit and it’s mad impressive and we all know that now but like –"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Benji- stop it."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "But like these are real people."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Benji, calm down."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Hold up, Davie."
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "I’m sorry, Benji, did I say something to upset you? 60"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "I mean, you know your shit, don’t get me wrong."
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "(trying for levity) I’m sorry."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "And, like, part of the problem, if we’re bein honest right now, with the"
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "Excuse me?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Benji- what the hell-"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Don’t take this the wrong way or anything, but we’ve just been going from one touristy thing to another, not meeting anyone who’s"
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "Benji, I’m sorry to say this, but that’s kind of what these tours are."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Dave signed up for the tour."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "And it’s a mostly amazing tour,"
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "(regaining his composure)"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "That sounds like a great idea."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yeah, dude, that’s what I’m talking about."
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "Of course."
+        },
+        {
+          "character": "ELOGE",
+          "parenthetical": "",
+          "text": "Yes."
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "Um, if I can get everyone to j oin me over here."
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "And Benji had a wonderful idea of taking a moment of silence and placing a rock on Mr. Kopleman’s grave."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "That was great James."
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "Thank you, Benji."
+        },
+        {
+          "character": "MARCIA",
+          "parenthetical": "",
+          "text": "I think that’s a lovely idea."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Thanks Marcia."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "You want this one?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "(dismissive)"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Okay."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "But you can totally use it."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yo, did you find one Marcia?"
+        },
+        {
+          "character": "MARCIA",
+          "parenthetical": "",
+          "text": "I did not, Benji."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Take one of mine."
+        },
+        {
+          "character": "MARCIA",
+          "parenthetical": "",
+          "text": "That’s very kind, than k you."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "You’re gonna put it there?"
+        },
+        {
+          "character": "MARCIA",
+          "parenthetical": "",
+          "text": "Is there something wrong with where I’m putting it?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Everyone knows it’s sacrilege to put a rock on the north side of a grave."
+        },
+        {
+          "character": "MARCIA",
+          "parenthetical": "",
+          "text": "Well, that’s fine because I’m an atheist."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Oooh, damn girl!"
+        }
+      ],
+      "actionPreview": "At the top of the hill is the Jewish cemetery, a rough patch of land with scattered tombsto nes. The group naturally fans out, taking it all in. Eloge lingers around James-- Think about that. Before the founding of the United States, before Shakespeare, before the locomotive. And, if I may, the olde"
+    },
+    {
+      "number": 68,
+      "heading": "EXT. RESTAURANT - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Establish a lively restaurant in old town Lublin."
+    },
+    {
+      "number": 69,
+      "heading": "INT. RESTAURANT - NIGHT",
+      "characters": [
+        "MARCIA",
+        "JAMES",
+        "BENJI",
+        "ELOGE",
+        "DIANE",
+        "MARK",
+        "DAVID",
+        "ELOG",
+        "ALL"
+      ],
+      "dialogues": [
+        {
+          "character": "MARCIA",
+          "parenthetical": "",
+          "text": "And my father’s brother was the real brains of the family."
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "Yes, we stop here on every tour, the food is wonderful, but the music can be a little kitschy-"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Antisemitic pricks."
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "(Annoyed by Benji but being polite)"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yeah, it’s totally authentic to essentialize a 5000 year old history with a jappy Bar Mitzvah song. Pl ease continue, Marcia."
+        },
+        {
+          "character": "MARCIA",
+          "parenthetical": "",
+          "text": "I’ll try."
+        },
+        {
+          "character": "MARCIA",
+          "parenthetical": "",
+          "text": "Ah, now the song’s over. Just as I’m done, my usual good timing."
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "That story is amazing Marcia. The ingenuity to create a pharmacy because he was barred from medical school speaks volumes about the immigrant experience."
+        },
+        {
+          "character": "ELOGE",
+          "parenthetical": "",
+          "text": "I can attest to that, absolutely. 65"
+        },
+        {
+          "character": "DIANE",
+          "parenthetical": "",
+          "text": "Oh yes, my great uncle came off the boat from Poland, landed in"
+        },
+        {
+          "character": "DIANE",
+          "parenthetical": "",
+          "text": "And made money by taking the furniture that rich people threw out on the street, refurbishing it and reselling."
+        },
+        {
+          "character": "MARK",
+          "parenthetical": "",
+          "text": "And apparently he ended up selling some of it"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Rich people are fuckin idiots."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Well, our grandmother—"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Grandma Dory—"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Yeah, Grandma Dory, who’s house we’re seeing on Thursday, was just amazing too."
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "Please regale us!"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Yeah, she was just one of these bygone, realist types you don’t see anymore. Blunt and tough— I was scared shitless of her my whole childhood."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "I was"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "That’s true!"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "No choice."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "And a similar kind of story to you"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yeah, but she was like “fuck this.”"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "You’re making it sound like she led a junta"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "I used to speak to her every"
+        },
+        {
+          "character": "MARCIA",
+          "parenthetical": "",
+          "text": "That’s nice, Benji."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Oh, Marcia, I’m sorry, fuck them. I wouldn’t miss a week. She was tough on me."
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "She sounds really special."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "But grandma never pitied herself — she said she was grateful for her struggle. 67"
+        },
+        {
+          "character": "MARCIA",
+          "parenthetical": "",
+          "text": "Well, that’s just it."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Exactly."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "She said that?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Um… she was just speaking generally."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "She really said that?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "I think she was just talking about the immigrant experience."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "I lived in my mom’s basement."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Yo, Benji, sh e was talking about immigrants, that’s all."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Huh."
+        },
+        {
+          "character": "ELOG",
+          "parenthetical": "",
+          "text": "She sounds like a fascinating person."
+        },
+        {
+          "character": "MARCIA",
+          "parenthetical": "",
+          "text": "I think we should toast to her."
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "Ah, yes, na zdrowie."
+        },
+        {
+          "character": "MARCIA",
+          "parenthetical": "",
+          "text": "To Grandma Dory—"
+        },
+        {
+          "character": "ALL",
+          "parenthetical": "",
+          "text": "To Grandma Dory."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Well , I gotsta pee."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "I’m sorry about him."
+        },
+        {
+          "character": "DIANE",
+          "parenthetical": "",
+          "text": "What a troubled young man."
+        },
+        {
+          "character": "ELOGE",
+          "parenthetical": "",
+          "text": "He wants to be good – you can see the spark, do you know what I mean?"
+        },
+        {
+          "character": "MARCIA",
+          "parenthetical": "",
+          "text": "Absolutely, Eloge."
+        },
+        {
+          "character": "MARK",
+          "parenthetical": "",
+          "text": "Forgive me if I don’t see this magical spark."
+        },
+        {
+          "character": "DIANE",
+          "parenthetical": "",
+          "text": "Mark, stop it."
+        },
+        {
+          "character": "MARCIA",
+          "parenthetical": "",
+          "text": "Exactly."
+        },
+        {
+          "character": "DIANE",
+          "parenthetical": "",
+          "text": "I feel bad for him."
+        },
+        {
+          "character": "MARCIA",
+          "parenthetical": "",
+          "text": "Was he always like this?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Yes! He’s always been like, up and down. Like he’s sensitive and he sees people so clearly but then you say the wrong thing and something switches."
+        },
+        {
+          "character": "DIANE",
+          "parenthetical": "",
+          "text": "What’s not appropriate?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "I know, but isn’t"
+        },
+        {
+          "character": "MARK",
+          "parenthetical": "",
+          "text": "Well, you seem okay."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "I’m not. That’s the thing!"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "I’m sorry I’m ranting."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "(CONT'D)",
+          "text": "71"
+        },
+        {
+          "character": "MARCIA",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "DIANE",
+          "parenthetical": "",
+          "text": "What did you say?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Yeah."
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "No, it's okay. David, I'm sorry."
+        },
+        {
+          "character": "ELOGE",
+          "parenthetical": "",
+          "text": "How horrible."
+        },
+        {
+          "character": "MARCIA",
+          "parenthetical": "",
+          "text": "My god."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Like six months ago. My aunt Leah --"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "(CONT'D)",
+          "text": "71"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "(wryly)"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Jesus Christ, they’re back again—"
+        },
+        {
+          "character": "MARCIA",
+          "parenthetical": "",
+          "text": "It’s him."
+        },
+        {
+          "character": "MARCIA",
+          "parenthetical": "",
+          "text": "Did you know he plays piano?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "(somberly)"
+        }
+      ],
+      "actionPreview": "A pianist plays the familiar Hava Nagila . We move off of the pianist to find our group sitting in this cozy, old style restaurant. They are through dinner, sipping drinks. The mood feels light, except Benji who is stewing. He was rejected from medical school because of quotas, you know, on Jewish d"
+    },
+    {
+      "number": 70,
+      "heading": "EXT. RESTAURANT - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "David emerges from the restaurant, alone. He can faintly hear Benji's music from inside the restaurant. As David begins walking back to the hotel, Benji's music 65B 65B becomes more insistent and grating, needling it's way into David's subconscious."
+    },
+    {
+      "number": 71,
+      "heading": "INT. LUBLIN HOTEL ENTRANCE - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "A bastardized version of Benji's music continues. From inside the lobby, we see David enter the Lubli n hotel."
+    },
+    {
+      "number": 72,
+      "heading": "INT. LUBLIN HOTEL ROOM - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "David enters the room and the music in his head abruptly stops. He stands there in frustration for a minute. He walks to his bag and fishes out one of his pills. He dry swallows it. It gets caught in his throat and makes him choke a bit. He hits at his throat, pissed and miserable- LATER It’s dark. "
+    },
+    {
+      "number": 73,
+      "heading": "INT. LUBLIN HOTEL ROOM - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "It's the middle of the night. David is sleeping. He hears Benji enter the room and he stirs awake. Not wanting to engage with Benji, David lies very still. He hears Benji rifle through some stuff and then leave the room. David is confused. He sits up — Benji is gone. David looks at the clock — it’s "
+    },
+    {
+      "number": 74,
+      "heading": "INT. LUBLIN HALLWAY - DAY",
+      "characters": [
+        "DAVID"
+      ],
+      "dialogues": [
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Fuck..."
+        }
+      ],
+      "actionPreview": "David peeks his head out the room and looks down the empty hallway."
+    },
+    {
+      "number": 75,
+      "heading": "INT. LUBLIN HOTEL ROOM - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "David is throwing on clothes, irritated."
+    },
+    {
+      "number": 76,
+      "heading": "INT. LUBLIN HALLWAY - MIDDLE OF THE NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "David is walking through the hallway, looking for Benji."
+    },
+    {
+      "number": 77,
+      "heading": "INT. LUBLIN LOBBY - MIDDLE OF THE NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "David is talking to the front desk, who haven’t seen Benji."
+    },
+    {
+      "number": 78,
+      "heading": "INT. LUBLIN HOTEL ROOM - MIDDLE",
+      "characters": [
+        "OF THE NIGHT"
+      ],
+      "dialogues": [
+        {
+          "character": "OF THE NIGHT",
+          "parenthetical": "",
+          "text": "David is stewing in his bed, pissed and worried about Benji."
+        }
+      ],
+      "actionPreview": ""
+    },
+    {
+      "number": 79,
+      "heading": "INT. LUBLIN HOTEL ROOM - MORNING",
+      "characters": [
+        "DAVID",
+        "BENJI"
+      ],
+      "dialogues": [
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Hello."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "(on the phone)"
+        }
+      ],
+      "actionPreview": "David is sleeping, sitting up in bed. He had a rough night. Suddenly, the room phone rings. He startles awake. Dude, we’re all downstairs waitin on you."
+    },
+    {
+      "number": 80,
+      "heading": "INT. LUBLIN HOTEL ELEVATOR – MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "David, now dressed, rides the elevator down. He’s pissed."
+    },
+    {
+      "number": 81,
+      "heading": "INT. LUBLIN LOBBY",
+      "characters": [
+        "BENJI",
+        "DAVID",
+        "JAMES"
+      ],
+      "dialogues": [
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Mornin Davers."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "(bitter)"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Dude, I’m sorry. You were fast asleep when I left."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Well you scared the shit outta me,"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Oh, man, I’m sorry."
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "Mo rning, gang."
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "Everybody’s down so early, I love that."
+        }
+      ],
+      "actionPreview": "— MORNING David exits the elevator and walks to the lobby: Benji is there, sitting with the group. 74 75 Your alarm clock didn’t go off? No, my phone died because I didn’t plug it in because I spent the night looking for you. Where the fuck were you? Benji. I was just hangin with Marcia. I didn’t wa"
+    },
+    {
+      "number": 82,
+      "heading": "INT. VAN - DAY",
+      "characters": [
+        "JAMES"
+      ],
+      "dialogues": [
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "So, this is going to be a taxing day."
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "(CONT'D)",
+          "text": "76"
+        }
+      ],
+      "actionPreview": "The van drives on the outskirts of Lublin. James is facing back to address the group. David sits up front, Benji sits in the back. If you’ve never been to a concentration camp, it can obviously be pretty overwhelming. 75 But reactions fall along a broad spectrum from numbing to complete distress and"
+    },
+    {
+      "number": 83,
+      "heading": "EXT. MAJDANEK - DAY",
+      "characters": [
+        "JAMES"
+      ],
+      "dialogues": [
+        {
+          "character": "JAMES",
+          "parenthetical": "(VO)",
+          "text": "Well, it's weird to say it, but we're here."
+        }
+      ],
+      "actionPreview": "The bus pulls in to the camp parking lot. It’s eerily sparse. Majdanek is essentially a preserved camp, unadorned with the museum style of other Holocaust sites."
+    },
+    {
+      "number": 84,
+      "heading": "EXT. PARKING LOT - DAY",
+      "characters": [
+        "JAMES"
+      ],
+      "dialogues": [
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "Majdanek is literally only two miles from the Lublin town square."
+        }
+      ],
+      "actionPreview": "The group files off the van. Can you imagine? Life was continuing, a bustling city, two miles from these grounds. The group takes this in. The group walks towards the entrance and we get a full sense of the scope of this unnerving place. Push past them to see the massive town just beyond the barbed "
+    },
+    {
+      "number": 85,
+      "heading": "EXT. ENTRANCE AREA - DAY",
+      "characters": [
+        "JAMES"
+      ],
+      "dialogues": [
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "Before the Red Army entered"
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "(CONT'D)",
+          "text": "76"
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "(CONT'D)",
+          "text": "77"
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "I might be a little sparser with my information overload today."
+        }
+      ],
+      "actionPreview": "The group walks toward the barracks. Majdanek, the Nazis had taken nearly all of the prisoners to camps in the West. In their haste, the SS didn't destroy the evidence. So, unlike other camps, Majdanek is... well preserved , for lack of a better phrase. Benji and David look around, cowed by the enor"
+    },
+    {
+      "number": 86,
+      "heading": "INT. BARRACKS - DAY",
+      "characters": [
+        "JAMES",
+        "LAT ER"
+      ],
+      "dialogues": [
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "The barracks."
+        },
+        {
+          "character": "LAT ER",
+          "parenthetical": "",
+          "text": "James reads a passage from a survivor."
+        }
+      ],
+      "actionPreview": "The group approaches the exhibition barrack. Built to fit 250 people. Often housed 500 and sometimes even beyond 1000."
+    },
+    {
+      "number": 87,
+      "heading": "INT. UNDRESSING ROOM - DAY",
+      "characters": [
+        "JAMES"
+      ],
+      "dialogues": [
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "The undressing room."
+        }
+      ],
+      "actionPreview": "The group stands in the bare windowless room."
+    },
+    {
+      "number": 88,
+      "heading": "INT. SHOWER ROOM - DAY",
+      "characters": [
+        "JAMES"
+      ],
+      "dialogues": [
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "The shower room."
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "(CONT'D)",
+          "text": "77"
+        }
+      ],
+      "actionPreview": "The group enters this dank, low ceiling room. 78 LATER James reads another harrowing personal recount."
+    },
+    {
+      "number": 89,
+      "heading": "INT. GAS CHAMBER - DAY",
+      "characters": [
+        "JAMES"
+      ],
+      "dialogues": [
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "The gas chamber."
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "The blue stains on the walls are residue from Zyklon B."
+        }
+      ],
+      "actionPreview": "The group inside this considerably darker room. The group looks around silently, in various stages of nausea. Benji unconsciously puts his hand on David’s shoulder."
+    },
+    {
+      "number": 90,
+      "heading": "INT. CREMATORIUM – DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The group looks at the crematorium, body sized ovens, compl etely preserved. James doesn’t say anything."
+    },
+    {
+      "number": 91,
+      "heading": "INT. SHOE DISPLAY BARRACK - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "In this barrack, there are a display of discarded victims’ shoes. Benji and David are now standing next to each other. They stare at the mound of shoes together. It’s overwhelming."
+    },
+    {
+      "number": 92,
+      "heading": "EXT. MAUSOLEUM - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The group arrives at the enormous spaceship-like Mausoleum. They stand under it, dwarfed by the structure. We see them fro m behind in a wide."
+    },
+    {
+      "number": 93,
+      "heading": "INT. VAN - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The group rides back to the hotel. They are all in various stages of shell-shock. As we move down the van, we see David sitting next to Benji. Benji is staring out the window and openly crying. David is heartbroken. 78 79"
+    },
+    {
+      "number": 94,
+      "heading": "EXT. LUBLIN HOTEL - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The group walks towards the entrance."
+    },
+    {
+      "number": 95,
+      "heading": "INT. LUBLIN HOTEL - DAY",
+      "characters": [
+        "JAMES",
+        "MARCIA",
+        "DIANE",
+        "ELOGE",
+        "BENJI",
+        "DAVID"
+      ],
+      "dialogues": [
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "If we can gather up here for a minute?"
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "How are we all feeling?"
+        },
+        {
+          "character": "MARCIA",
+          "parenthetical": "",
+          "text": "I feel nauseous."
+        },
+        {
+          "character": "DIANE",
+          "parenthetical": "",
+          "text": "Yeah, that sounds about right."
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "Eloge, how are you doing?"
+        },
+        {
+          "character": "ELOGE",
+          "parenthetical": "",
+          "text": "I’m okay."
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "Well, I’m comforted that we all shared that with each other."
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "That’s right — Benji and David are staying here for the night and finishing their pilgrimage to their grandmother’s house tomorrow."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yeah man, shit, I’m gonna miss all you guys."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "(rote)"
+        },
+        {
+          "character": "MARCIA",
+          "parenthetical": "",
+          "text": "Y ou’re a very special person."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Shit, you too Marcia."
+        },
+        {
+          "character": "MARCIA",
+          "parenthetical": "",
+          "text": "Oh, god, no I’m not."
+        },
+        {
+          "character": "DIANE",
+          "parenthetical": "",
+          "text": "Take care of yourself, honey."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Thanks D."
+        },
+        {
+          "character": "ELOGE",
+          "parenthetical": "",
+          "text": "You’re like me, Benji."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "You really think so?"
+        },
+        {
+          "character": "ELOGE",
+          "parenthetical": "",
+          "text": "Yes, I do. 80"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yo, that means so much to me, man. I feel like you were some kind of brilliant sage in another life."
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "Benji, I wanna say, I’ve been doing these tours for five years and you’re the first person that’s given me any actionable feedback."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "You serious, man?"
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "What do you mean?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "(no recollection of it)"
+        },
+        {
+          "character": "JAMES",
+          "parenthetical": "",
+          "text": "And I resisted in the moment but I haven’t been able put it out of my mind."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Shut up, come here."
+        }
+      ],
+      "actionPreview": "The group enters the lobby. The group gathers around James in the lobby. No one wants to respond. The group nods, understanding. James notices Eloge: I know you don’t have the same advantage of distance. I’m just glad I’m not completely inured to this kind of thing. I think that would be worse. Marc"
+    },
+    {
+      "number": 96,
+      "heading": "EXT. LUBLIN - AFTERNOON",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The boys amble around Lublin. There’s a nice thawing between them. They walk above the Czechówka River mural, a parallel black hole universe of the figures below. 81 82"
+    },
+    {
+      "number": 97,
+      "heading": "EXT. OUTDOOR MARKET - AFTERNOON",
+      "characters": [
+        "MINUTES LATER"
+      ],
+      "dialogues": [
+        {
+          "character": "MINUTES LATER",
+          "parenthetical": "",
+          "text": "The boys leave the bazaar, Benji is wearing the hat."
+        }
+      ],
+      "actionPreview": "At a makeshift bazaar, Benji tries on a funny Polish folk hat. David snaps a picture of it. Benji explains that’s he’s gonna buy the hat. David says, “Why would you buy the hat? I just took the picture. Do you really need to own that hat?”"
+    },
+    {
+      "number": 98,
+      "heading": "EXT. HILL OVERLOOKING CITY - DUSK",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The boys eat greasy shawarma and trudge up the hill. The sun is setting behind them."
+    },
+    {
+      "number": 99,
+      "heading": "EXT. BREWERY STREET - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The boys walk under illuminated flowers and butterflies. Benji jumps to try to swat a butterfly - he doesn't even come close as David laughs."
+    },
+    {
+      "number": 100,
+      "heading": "EXT. LUBLIN STREET OFFICE BUILDING - NIGHT",
+      "characters": [
+        "BENJI",
+        "DAVID"
+      ],
+      "dialogues": [
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Check out this building."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Yeah?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "It’s pretty f uckin tall."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "So?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "I got one last joint."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "How we gonna get up?"
+        }
+      ],
+      "actionPreview": "The boys are on the outskirts of town, surrounded by some taller buildings. Benji nods over to the building as a SMOKER walks out and lights up a cigarette. 82 83"
+    },
+    {
+      "number": 101,
+      "heading": "INT. LUBLIN BUILDING LOBBY - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "A SECURITY GUARD leans against a desk. Pan off him to see our smoker enter the building and, in tow, Benji and David, like idiots trying to act casual. They nod at the security guard who couldn't care less and follow the smoker to the elevator bank."
+    },
+    {
+      "number": 102,
+      "heading": "INT. ELEVATOR - NIGHT",
+      "characters": [
+        "SMOKER",
+        "BENJI"
+      ],
+      "dialogues": [
+        {
+          "character": "SMOKER",
+          "parenthetical": "",
+          "text": "Cholera. Jutro ma pada ć ."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Cool."
+        }
+      ],
+      "actionPreview": "Benji and David enter the elevator with the smoker and press the top floor. They all wait in the elevator in an awkward silence. Benji looks like an idiot in his hat. The smoker casually starts a chat:"
+    },
+    {
+      "number": 103,
+      "heading": "EXT. ROOF - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "A quiet rooftop overlooking Lublin. We slowly pan to see a rusty, industrial door. We now push steadily toward the door, which begins jiggling. Suddenly, it pops open and the boys emerge-"
+    },
+    {
+      "number": 104,
+      "heading": "EXT. ROOF – NIGHT",
+      "characters": [
+        "BENJI",
+        "DAVID",
+        "BENJ I"
+      ],
+      "dialogues": [
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yo, how you feeling, dude?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "I feel good, man."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "No, broheim, you’re connecting to real shit."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Shit, you know what I think that is?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Way down there: can you see it?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "(squinting)"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Yeah. It’s the camp."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "It really is so close."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Fuckin creepy."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Fuckin creepy ."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "So what are you thinking about doing when you get back to"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "What do you mean?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "I mean, like, what's your plan?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yo, dude, gimme that if you’re just gonna stare at it."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Oh, sorry. 84"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "It’s my last one."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Sorry about that."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yeah, so, like, when I get back, it’s gonna be pretty busy."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Oh yeah?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yeah, my buddy Tim is reroofing his house and I’m probably gonna help out with that."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "(laughing)"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yeah, but it’s gonna be sweet when it’s finished, you kn ow?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "That’s awesome, man."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yeah."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "But that’s like, Tim’s house?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "I mean, you’re working on"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "So? 85"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "So, I mean, what are"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "I don’t know man."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Oh, sorry."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "That’s all right."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "So what are"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Uh, go back to my job?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Cool, so I’ll look forward to speaking to you in six months."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "What does that mean?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "You know what it means, man."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Do I?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yo, I don’t wanna start anything."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Cool."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "You used to be like,"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Yeah, I know. It was awful. Who the fuck wants to cry about everything?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Dave! You’re not listening to me."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Benji, I have a son and a wife and a job. I can’t just, like, hang out with you all night, every night."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "I don’t want that."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Yes you do."
+        },
+        {
+          "character": "BENJ I",
+          "parenthetical": "",
+          "text": "But you, like, literally never visit me."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "You mean in Binghamton?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yeah, that’s where I live."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Well, I’m busy."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "It’s the same fuckin distance,"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Yeah, but it’s New York City, it’s the more logical place to visit than fucking Binghamton, all due respect."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "What’s wrong with Binghamton? 87"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Nothing’s wrong with Binghamton."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "(Under his breath)"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Yo, you fuck off."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Why don’t you care about me anymore?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "What does that mean? I do fucking care about you!"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "I never hear from you anymore."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "I’m standing three inches from you!"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yeah, bu t you only came here with me because I tried to kill myself."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "No I didn’t."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yes you did."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Benji. Don’t say that."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "You did, Dave!"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Yeah, well it scared the shit out of me! I walk around with this terrible image of you in my head and, yeah, I don’t want to fucking lose you, okay!?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "(CONT'D)",
+          "text": "89"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yo, dude--"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Don’t call me fucking “dude”!"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "I don’t understand why you would ever do anything so fucking stupi d to yourself... (chokes back tears)"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "If I had your mind, I’d be fucking president."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Dave..."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Do you see how people love you?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "(CONT'D)",
+          "text": "89"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "I would give anything to know what that feels like."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "But you light up a room and then you shit on everything inside of it. CUE: Chopin’s Nocturne Op. 55 No. 1"
+        }
+      ],
+      "actionPreview": "At the edge of the roof, the g uys pass a joint back and forth. Benji’s still in his Polish hat. I’m glad we went there today. Is that weird to say? It’s living. You need to do more of that. David nods and takes another hit. He notices something in the distance. 83 84 Oh, shit— Now we see it too. Ov"
+    },
+    {
+      "number": 105,
+      "heading": "INT. LUBLIN HOTEL HALLWAY - NIGHT",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "In slow motion, following the boys as they make their way back to their room."
+    },
+    {
+      "number": 106,
+      "heading": "INT. LUBLIN HOTEL ROOM - NIGHT",
+      "characters": [
+        "BENJI",
+        "DAVID"
+      ],
+      "dialogues": [
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "You can go."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Thanks."
+        }
+      ],
+      "actionPreview": "The boys enter their hotel room silently. LATER David is lying on his bed, reading on his phone. Benji emerges from the bathroom, having showered. The mood is bleak. David grabs his shit and walks into the bathroom. The shower turns on. LATER The boys are asleep in their separate beds."
+    },
+    {
+      "number": 107,
+      "heading": "INT. LUBLIN HOTEL ROOM – MORNING",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The next morning, David and Benji are packing up their stuff. They don’t speak to each other. 90 91"
+    },
+    {
+      "number": 108,
+      "heading": "INT. LOBBY DINING AREA - DAY",
+      "characters": [
+        "DAVID"
+      ],
+      "dialogues": [
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Taxi’s here."
+        }
+      ],
+      "actionPreview": "The boys silently eat their complimentary breakfast in the hotel dining area. David’s phone buzzes. He checks it."
+    },
+    {
+      "number": 109,
+      "heading": "INT. LUBLIN HOTEL - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Through the window of the lobby, we see David and Benji load their bags into the trunk of an old, colorful taxi."
+    },
+    {
+      "number": 110,
+      "heading": "EXT. COUNTRYSIDE - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The taxi passes through the countryside, passing a little road marker for Krasnystaw."
+    },
+    {
+      "number": 111,
+      "heading": "INT. TAXI - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The boys are in the back of the taxi on the way to their grandma’s town."
+    },
+    {
+      "number": 112,
+      "heading": "EXT. KRASNYSTAW TOWN SQUARE - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The taxi pulls up to the town square. It’s got a quiet mid- day feeling. Shops line the square along with simple, three story apartment buildings. The guys step out of the taxi and get their bags from the trunk."
+    },
+    {
+      "number": 113,
+      "heading": "EXT. TOWN SQUARE – DAY",
+      "characters": [
+        "BENJI",
+        "DAVID"
+      ],
+      "dialogues": [
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Do you see a 25 anywhere?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "I don’t see any numbers anywhere. (off his phone) I think it might be around this way: 91"
+        }
+      ],
+      "actionPreview": "The boys, holding their luggage, traverse the town square. 92"
+    },
+    {
+      "number": 114,
+      "heading": "EXT. SIDE STREET NEAR CHURCH - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "David leads Benji around the corner, passing the St. Francis Xavier Church, which has a massive wooden cross erected in the parking lot. David directs them toward an alley."
+    },
+    {
+      "number": 115,
+      "heading": "EXT. ALLEY IN FRONT OF HOUSE - DAY",
+      "characters": [
+        "DAVID",
+        "BENJI",
+        "SON"
+      ],
+      "dialogues": [
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "I guess that's it-"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Is that possible?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "It’s so... unremarkable."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Yeah. I don't know what I pictured."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Me neither."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "You know, she slapped me once."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yeah, grandma slapped me."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Shit, really?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yeah, I was late to meet her for dinner."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Right, I know it."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yeah."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Wow."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "But it was the best thing that ever happened to me."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Why?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "I don’t know."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "I got an idea."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "What?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Let’s put a stone on the stoop."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "What do you mean?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "I mean let’s get a little stone and put it on her stoop. To say we were here."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "She’s not buried here. 93"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "So what?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "I found two."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Thanks."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yo, I think he’s yelling at us."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Hi."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "What the fuck was that about?"
+        },
+        {
+          "character": "SON",
+          "parenthetical": "",
+          "text": "Hi, you speak English?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Yeah, what’s the problem? 94"
+        },
+        {
+          "character": "SON",
+          "parenthetical": "",
+          "text": "Oh, yes, hello."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yeah, we did."
+        },
+        {
+          "character": "SON",
+          "parenthetical": "",
+          "text": "Oh."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Thanks, man."
+        },
+        {
+          "character": "SON",
+          "parenthetical": "",
+          "text": "So why did you put the rocks in front of the door?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Oh - it’s a Jewish tradition. When you visit someone’s grave, you’re supposed to place a stone on it. To signify that you were ther e."
+        },
+        {
+          "character": "SON",
+          "parenthetical": "",
+          "text": "Yes, but she is not buried under the door."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "No she’s not."
+        },
+        {
+          "character": "SON",
+          "parenthetical": "",
+          "text": "Oh, I see."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Thanks."
+        },
+        {
+          "character": "SON",
+          "parenthetical": "",
+          "text": "Yes, I’m sorry."
+        }
+      ],
+      "actionPreview": "They approach a little alley that looks like it hasn't changed in a hundred years. David points to a little address above a door - 25. They are trying to have a feeling about the place but it’s not coming. Just like 15 minutes. And also I was pretty high. It was at the Hudson restaurant. On third Av"
+    },
+    {
+      "number": 116,
+      "heading": "EXT. KRASNYTAW TOWN SQUARE - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The boys walk through the town square with their bags. They exit frame and the town continues on without them..."
+    },
+    {
+      "number": 117,
+      "heading": "I/E. TAXI",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "- NEAR KRASNYSTAW - DAY The boys in a taxi on their way back to Warsaw Airport."
+    },
+    {
+      "number": 118,
+      "heading": "I/E. TAXI - WARSAW",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "We see the sign for Warsaw Chopin Airport. The taxi turns off the exit."
+    },
+    {
+      "number": 119,
+      "heading": "INT. WARSAW AIRPORT - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The boys walk through the airport. They are not speaking but seem comfortable in each other’s presence."
+    },
+    {
+      "number": 120,
+      "heading": "INT. AIRPLANE - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The boys are awake on the plane. Each lost in his own thoughts."
+    },
+    {
+      "number": 121,
+      "heading": "INT. JFK GATE – DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "The boys exit the gate with the other passengers. They walk through the airport."
+    },
+    {
+      "number": 122,
+      "heading": "INT. JFK BAGGAGE AREA - DAY",
+      "characters": [
+        "DAVID",
+        "BENJI"
+      ],
+      "dialogues": [
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Hey, I was thinking: why don’t we grab a cab back to the city and you could come over for dinner?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yeah?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Yeah, definitely."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "That’s tempting."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Come on."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Eh, that’s okay, man."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Really?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yeah."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Okay."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "You know, Dave?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "At the airport?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yeah."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Are you serious?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yeah."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Ow!"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Oh!"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Why the fuck did you do that?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Cause grandma!"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "That was different!"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Oh- Sorry, Benji!"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Jesus! I can’t feel my"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "I’m so sorry, man."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "She really loved you."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "She loved you too, Dave."
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "Really?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "Yeah, man. You’re Golden, Ponyboy. 98"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "I am?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "You know that."
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "I’m gonna be fine, man. Okay?"
+        },
+        {
+          "character": "DAVID",
+          "parenthetical": "",
+          "text": "You sure?"
+        },
+        {
+          "character": "BENJI",
+          "parenthetical": "",
+          "text": "I’ll see you around cuz."
+        }
+      ],
+      "actionPreview": "The boys are near the exit of the airport. 96 97 I know Priya would want to see you and Abe would love to tell you every fact about the Empire State building. Benji laughs. Benji looks around, considering. Well let’s at le ast split a cab back to the city and I could drop you at Penn Station for you"
+    },
+    {
+      "number": 123,
+      "heading": "INT. CAB - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "David is in a cab going back home. He is looking out the window."
+    },
+    {
+      "number": 124,
+      "heading": "INT. CAB - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "David passes LeFrak City and the massive Machpelah cemetery. All this Jewish history right next door- upward mobility and death, the cycle. David takes it all in, a part of it all."
+    },
+    {
+      "number": 125,
+      "heading": "EXT. BROOKLYN STREET - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "David walks down his street, towards his apartment. He stops in front of his building, takes out the stone and places it on his stoop."
+    },
+    {
+      "number": 126,
+      "heading": "INT. APARTMENT - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "David enters his apartment and drops his bags. He calls out to his family that he has come home. 99 100 Priya and Abe run in and embrace him. He lifts his son into the air. He kisses his wife. His life seems so nice."
+    },
+    {
+      "number": 127,
+      "heading": "INT. JFK AIRPORT - DAY",
+      "characters": [],
+      "dialogues": [],
+      "actionPreview": "Back at the airport, in a repeat of our opening shot, we are slowly zooming in on a crowd of travelers as the music rises. As we zoom in, we notice that Benji is sitting alone on the airport bench where we first met him. He’s looking around, watching the strangers go by. Anyone can be a friend. We z"
+    }
+  ]
+}

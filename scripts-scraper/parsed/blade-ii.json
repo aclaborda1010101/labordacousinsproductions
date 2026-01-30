@@ -1,0 +1,22 @@
+{
+  "slug": "blade-ii",
+  "title": "Blade II",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 26244,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<HTML><HEAD><script> <b><!-- </b>if (window!= top) top.location.href=location.href <b>// --> </b></script><TITLE>\"BLADE II\" -- by David Goyer</TITLE> <b></HEAD> </b><body> <b><PRE> </b>\t    BLADE II -- By David Goyer <b>            EXT. COMMUNITY BLOOD BANK - NIGHT </b> PULL BACK from a neon red cross ablaze in the cold December night to REVEAL an inner-city, store-front clinic.  Trash and leaves blow over wet, snowy pavement. ANGLE ON a PALE FIGURE standing across the street.  He looks feverish",
+      "dialogue_count": 0,
+      "word_count": 26244
+    }
+  ]
+}

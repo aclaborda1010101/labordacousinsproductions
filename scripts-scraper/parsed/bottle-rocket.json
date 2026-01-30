@@ -1,0 +1,22 @@
+{
+  "slug": "bottle-rocket",
+  "title": "Bottle Rocket",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 22346,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b><HTML> </b><b><HEAD> </b><script> <b><!-- </b>if (window!= top) top.location.href=location.href <b>// --> </b></script> <TITLE>Bottle Rocket by Wes Anderson and Owen Wilson</TITLE> <b></HEAD> </b><b><BODY BGCOLOR=\"#FFFFFF\"> </b><b><PRE> </b> <b>                     BOTTLE ROCKET </b> screenplay by Wes Anderson and Owen Wilson <b> </b> <b>EXT. ALLEY. DAY </b> ANTHONY and DIGNAN walk down an alley behind a convenience store. Anthony's nineteen. He's got on a red jacket with an Enco patch. Digna",
+      "dialogue_count": 0,
+      "word_count": 22346
+    }
+  ]
+}

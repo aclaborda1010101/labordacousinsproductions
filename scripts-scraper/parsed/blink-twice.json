@@ -1,0 +1,22 @@
+{
+  "slug": "blink-twice",
+  "title": "Blink Twice",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 20999,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                          BLINK TWICE </b> Written by Zo� Kravitz & E.T. Feigenbaum <b>                                                    4/12/23 </b> <b>OVER BLACK WE HEAR: DRIP. </b> <b>EXT. JUNGLE - DAY </b> (Existing shot) <b>LIZARD SITS ON A ROCK WATCHING... SOMETHING </b> <b>DRIP. DRIP. DRIP. </b> <b>INT. BATHROOM - DAY </b> <b>CLOSE ON A GRIMY LEAKY SINK. DRIP. DRIP. DRIP. </b> SPARK! Close on: A YELLOW LIGHTER with a lil smilie face on it LIGHTING a stick of incense. FRIDA blows out",
+      "dialogue_count": 0,
+      "word_count": 20999
+    }
+  ]
+}

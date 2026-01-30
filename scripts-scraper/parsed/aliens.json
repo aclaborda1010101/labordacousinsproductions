@@ -1,0 +1,30 @@
+{
+  "slug": "aliens",
+  "title": "Aliens",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 2,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 29599,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<html> <head> <script> <b><!-- </b>if (window!= top) top.location.href=location.href <b>// --> </b></script> <title>Aliens - by James Cameron</title> </head> <pre> <b>                               \"ALIENS\" </b> by James Cameron <b>                                                   FIRST DRAFT </b>                                                   May 28, 1985 <b>----------------------------------------------------------------------------- </b> <b>                                ALIENS </b> <b>",
+      "dialogue_count": 0,
+      "word_count": 20080
+    },
+    {
+      "scene_number": 2,
+      "slugline": "EXT. Up-LINK TOWER - VIEW OF AP STATION                 139",
+      "characters": [],
+      "action_text": "A VIEW OF the processing station from the colony landing platform.  A rising wind is clearing out the low fog and the silhouette of the station grows sharper.  Several systems of high pressure conduits at the base of the conical tower are actually glowing dull red with heat in the darkness.  High voltage discharges arc around the upper latticework, lighting the blighted landscape with irregular glaring flashes. PAN ONTO BISHOP, F.G.  hunched against the wind at the base of the telemetry tower.",
+      "dialogue_count": 0,
+      "word_count": 9519
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "slug": "darkman",
+  "title": "Darkman",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 32309,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b> </b><b>                                      DARKMAN </b> Written by Joshua & Daniel Goldin, Sam & Ivan Raimi and Chuck Pfarrer February 1989 <b> </b> <b>          INT. PIER BUILDING - DAY </b> <b>          BANG!! </b>          A shock chord as we cut from black to a harshly toplit <b>                         CLOSE SHOT: </b>          A man is talking into a cellular phone. He is a paunchy but powerful looking black man, bald with a gray fringe. His baldness makes his head look muscular; he",
+      "dialogue_count": 0,
+      "word_count": 32309
+    }
+  ]
+}

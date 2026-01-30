@@ -1276,3 +1276,123 @@ export function runLiteraryScriptQC(scriptText: string): NarrativeMaturityResult
     metrics: maturity.metrics
   };
 }
+
+// =============================================================================
+// OSCAR STANDARDS VALIDATION (V11.5)
+// Validates scripts against metrics from Oscar-winning screenplays
+// =============================================================================
+
+import { 
+  OSCAR_DIALOGUE_METRICS, 
+  OSCAR_STRUCTURE, 
+  OSCAR_SETUP_PAYOFF,
+  validateDialogueWPM,
+  validateStructure 
+} from "./oscar-standards.ts";
+
+export interface OscarQCResult {
+  score: number;
+  tier: 'oscar_worthy' | 'professional' | 'amateur' | 'needs_work';
+  feedback: string[];
+  metrics: {
+    estimatedWPM: number;
+    estimatedPages: number;
+    sceneCount: number;
+    dialogueRatio: number;
+    intExtRatio: number;
+  };
+}
+
+/**
+ * Validate a script against Oscar-winning screenplay standards.
+ * This is a high-level quality check that compares structural metrics.
+ */
+export function runOscarStandardsQC(
+  scriptText: string, 
+  targetDurationMinutes: number = 100
+): OscarQCResult {
+  const feedback: string[] = [];
+  let score = 100;
+  
+  // Count words
+  const words = scriptText.split(/\s+/).length;
+  
+  // Count scenes
+  const sceneMatches = scriptText.match(/\n(INT\.|EXT\.|INT\/EXT\.)/gi) || [];
+  const sceneCount = sceneMatches.length;
+  
+  // Count INT vs EXT
+  const intScenes = (scriptText.match(/\nINT\./gi) || []).length;
+  const extScenes = (scriptText.match(/\nEXT\./gi) || []).length;
+  const intExtRatio = extScenes > 0 ? intScenes / (intScenes + extScenes) : 1;
+  
+  // Estimate dialogue vs action
+  const dialogueLines = scriptText.match(/^[A-Z][A-Z\s]+\n/gm) || [];
+  const dialogueRatio = dialogueLines.length / Math.max(1, scriptText.split('\n').length);
+  
+  // Estimate pages (180 words per page standard)
+  const estimatedPages = words / 180;
+  
+  // Estimate WPM (assuming target duration)
+  const estimatedWPM = words / targetDurationMinutes;
+  
+  // ─────────────────────────────────────────────
+  // VALIDATION CHECKS
+  // ─────────────────────────────────────────────
+  
+  // Page count validation
+  const structureResult = validateStructure(estimatedPages, sceneCount);
+  if (!structureResult.valid) {
+    feedback.push(...structureResult.feedback);
+    score -= 15;
+  }
+  
+  // Scene count validation
+  if (sceneCount < OSCAR_STRUCTURE.minScenes) {
+    feedback.push(`Pocas escenas: ${sceneCount} (mínimo Oscar: ${OSCAR_STRUCTURE.minScenes})`);
+    score -= 10;
+  }
+  if (sceneCount > OSCAR_STRUCTURE.maxScenes) {
+    feedback.push(`Muchas escenas: ${sceneCount} (máximo Oscar: ${OSCAR_STRUCTURE.maxScenes})`);
+    score -= 5;
+  }
+  
+  // Dialogue pace validation
+  const wpmResult = validateDialogueWPM(words, targetDurationMinutes);
+  if (!wpmResult.valid) {
+    feedback.push(wpmResult.feedback);
+    score -= 10;
+  }
+  
+  // INT/EXT ratio validation (for drama)
+  if (intExtRatio < 0.5) {
+    feedback.push(`Demasiadas escenas EXT (${Math.round((1-intExtRatio)*100)}%). Dramas suelen ser 70% INT`);
+    score -= 5;
+  }
+  
+  // Dialogue ratio validation
+  if (dialogueRatio < 0.5) {
+    feedback.push(`Poco diálogo detectado (${Math.round(dialogueRatio*100)}%). Oscar dramas: ~74%`);
+    score -= 10;
+  }
+  
+  // Determine tier
+  let tier: OscarQCResult['tier'];
+  if (score >= 90) tier = 'oscar_worthy';
+  else if (score >= 70) tier = 'professional';
+  else if (score >= 50) tier = 'amateur';
+  else tier = 'needs_work';
+  
+  return {
+    score: Math.max(0, score),
+    tier,
+    feedback: feedback.length > 0 ? feedback : ['Estructura dentro de parámetros Oscar ✓'],
+    metrics: {
+      estimatedWPM,
+      estimatedPages,
+      sceneCount,
+      dialogueRatio,
+      intExtRatio
+    }
+  };
+}

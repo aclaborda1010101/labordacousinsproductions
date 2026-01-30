@@ -1,0 +1,26 @@
+{
+  "slug": "brazil",
+  "title": "Brazil",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 1,
+  "characters": [
+    "JILL"
+  ],
+  "total_words": 38114,
+  "total_dialogue": 1,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "JILL"
+      ],
+      "action_text": "<html> <head> <TITLE>Brazil - the screenplay</TITLE> <b></HEAD> </b><b><BODY> </b><b><PRE> </b> <STRONG>Brazil Screenplay (Draft)</STRONG> <b> </b> <b>1   EXT.   CITYSCAPE                         SUNSET           1 </b> A beautiful golden sun is setting. The sky is on fire. The CAMERA starts to move downwards. A large neon sign rises into shot. It rests on top of a skyscraper and fills the frame. The building is neither past nor future in design but a bit of both. <b> </b>    Slowly we pan downw",
+      "dialogue_count": 1,
+      "word_count": 38114
+    }
+  ]
+}

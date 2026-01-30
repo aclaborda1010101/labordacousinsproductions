@@ -1,0 +1,50 @@
+{
+  "slug": "breaking-away",
+  "title": "Breaking Away",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 4,
+  "characters_count": 1,
+  "characters": [
+    "DOCTOR"
+  ],
+  "total_words": 25508,
+  "total_dialogue": 1,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                            \"BAMBINO\" </b> <b>                  [ PRODUCED AS \"BREAKING AWAY\" ] </b> Written by Steve Tesich June 9, 1978 <b>                         FADE IN </b> <b>          EXT. QUARRY OUTSKIRTS - DAY 1 </b> A narrow dirt road totally surrounded by thick vegetation. Here and there we see a huge block of stone blocking the road. The sun is shining but it has a hard time making it through the foliage. In the distance we see four guys walking TOWARD the CAMERA. There is a swag",
+      "dialogue_count": 0,
+      "word_count": 6870
+    },
+    {
+      "scene_number": 2,
+      "slugline": "INT. CAMPUS STREET CAR WASH - DAY 39 x",
+      "characters": [
+        "DOCTOR"
+      ],
+      "action_text": "A bunch of College Kids are washing cars. The OWNER, a very hefty, tall man, is talking to Moocher. <b>                         OWNER </b>          You're a little late, but I guess you won't let it happen again. Here's your sponge and here's your rag and there's your place. Cont. <b>                         567 </b> <b>          REVISED - \"BAMBINO\" - 6 16 78 27 </b>          39 Cont. Moocher takes the sponge and the rag and heads for the car wash. He goes past the punch clock. - <b>",
+      "dialogue_count": 1,
+      "word_count": 13898
+    },
+    {
+      "scene_number": 3,
+      "slugline": "EXT. DAVE' s HOUSE - DAY 155",
+      "characters": [],
+      "action_text": "Mike is holding the Little 500 bike. It's heavy and ungainly in comparison to Dave's Italian racer. Dave looks at the bike. Mike, Cyril and Moocher look at him. <b>                         DAVE </b>          Can't I even add some toe-clips? <b>                         MIKE </b>          No, it's official issue. They said you can't add or change a thing. <b>                         DAVE </b>          It's a piece of junkl <b>                         CYRIL </b>          But it's got a nice persona",
+      "dialogue_count": 0,
+      "word_count": 1670
+    },
+    {
+      "scene_number": 4,
+      "slugline": "INT. Int. BLASE' S CAR",
+      "characters": [],
+      "action_text": "Mr. Blase has a huge NOBLE ROMAN bag stuffed with French X fries and pizza.. He's stuffing himself and listening. <b>                         ANNOUNCER </b>          (o.s.; on radio) And so after twenty-five laps, the perennial favorites are up front. Sigma Nu, Phi Kappa Psi, Sigma Alpha Epsilon ...and here comes...It's'the Cutters. Mr. Blase hits the car horn. <b>                         CUT TO: </b> <b>                         567 </b> <b>          REVISED - \"BAMBINO\" - 8/12 8 87 </b> <b>",
+      "dialogue_count": 0,
+      "word_count": 3070
+    }
+  ]
+}

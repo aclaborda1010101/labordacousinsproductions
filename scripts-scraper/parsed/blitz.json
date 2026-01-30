@@ -1,0 +1,22 @@
+{
+  "slug": "blitz",
+  "title": "Blitz",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 0,
+  "characters": [],
+  "total_words": 25646,
+  "total_dialogue": 0,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [],
+      "action_text": "<b>                             BLITZ </b> Written by Steve McQueen 9th July, 2022 PRE-LAP: The distant sound of humming begins, gradually getting louder. <b>    TITLE CARD: </b> For eight months between September 1940 and May 1941, Nazi Germany undertook an intense bombing campaign against the United Kingdom. Dubbed `The Blitz,' the term originated from the German `blitzkrieg' meaning lightning war. In response, the British government initiated the evacuation of more than 1.5 million people fro",
+      "dialogue_count": 0,
+      "word_count": 25646
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "slug": "dawn-of-the-dead",
+  "title": "Dawn of the Dead",
+  "genre": "unknown",
+  "format": "film",
+  "source": "imsdb",
+  "scenes_count": 1,
+  "characters_count": 1,
+  "characters": [
+    "DAWN OF"
+  ],
+  "total_words": 40914,
+  "total_dialogue": 1,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "slugline": "OPENING",
+      "characters": [
+        "DAWN OF"
+      ],
+      "action_text": "DAWN OF <b>THE DEAD </b>(The working draft 1977) by George A. Romero 1\tWe see the face of a young woman. She is asleep. It is very quiet at first, as credits appear. The woman's face begins to twitch, as though she is having a bad dream. She moans slightly and her expression grows more desperate. A mix of subtle sounds begin to fade in. As they get louder, we can discern what sounds like a busy office area. It is actually a frantic television studio with the hum of panic in a national emergency.",
+      "dialogue_count": 1,
+      "word_count": 40914
+    }
+  ]
+}
