@@ -1460,6 +1460,8 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
             }
             
             toast.success('¡Análisis completado!');
+            // Navigate to unified script analysis view
+            setTimeout(() => navigate(`/projects/${projectId}/script-analysis`), 1500);
             return;
           }
 
@@ -1536,6 +1538,8 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
             }
             
             toast.success('¡Análisis completado!');
+            // Navigate to unified script analysis view
+            setTimeout(() => navigate(`/projects/${projectId}/script-analysis`), 1500);
             return;
           }
 
@@ -2423,8 +2427,8 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
           </Alert>
         )}
         
-        {/* Warning banner if 0 scenes detected */}
-        {needsReanalysis && !lastAnalysisError && (
+        {/* Warning banner if 0 scenes detected - Hidden for cleaner UX */}
+        {false && needsReanalysis && !lastAnalysisError && (
           <Alert className="border-destructive/50 bg-destructive/10">
             <AlertTriangle className="h-4 w-4 text-destructive" />
             <AlertTitle className="text-destructive">Análisis incompleto</AlertTitle>
@@ -2466,7 +2470,8 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
             </p>
           </div>
           <div className="flex gap-2">
-            <Button
+            {/* Re-analyze button hidden for cleaner UX */}
+            {false && <Button
               variant={needsReanalysis ? "default" : "outline"}
               size="sm"
               onClick={() => handleAnalyzeScript(existingScriptText)}
@@ -2485,7 +2490,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
                   Re-analizar (GPT-5)
                 </>
               )}
-            </Button>
+            </Button>}
             <Button variant="outline" size="sm" onClick={handleChangeScript}>
               <RefreshCw className="h-4 w-4 mr-2" />
               Cambiar guión

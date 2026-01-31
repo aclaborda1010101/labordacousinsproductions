@@ -917,7 +917,7 @@ export function ScriptSummaryPanelAssisted({
       />
 
       {/* Screenplay Generation Card - Shows when dialogues are missing */}
-      {needsDialogueGeneration && (
+      {false && needsDialogueGeneration && (
         <Card className="border-amber-500/30 bg-amber-500/5">
           <CardContent className="pt-4">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
