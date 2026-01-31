@@ -2540,8 +2540,8 @@ export default function ScriptImport({ projectId, onScenesCreated }: ScriptImpor
           description: 'Reintentando con configuración alternativa...',
           duration: 6000,
         });
-        // Auto-retry with a slight delay
-        setTimeout(() => generateOutlineDirect(), 1500);
+        // Auto-retry immediately for better UX
+        generateOutlineDirect();
         return;
       }
       
