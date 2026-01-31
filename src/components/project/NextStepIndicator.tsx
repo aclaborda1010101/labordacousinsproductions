@@ -106,7 +106,7 @@ const STEP_CONFIG: Record<WorkflowStep, {
   scenes_needed: {
     label: 'Continuar a Producción',
     description: 'Tu análisis está listo para comenzar la producción',
-    buttonLabel: 'Generar todo',
+    buttonLabel: 'Iniciar Producción',
     buttonIcon: <Sparkles className="h-4 w-4" />,
     isComplete: false,
     isGenerating: false,

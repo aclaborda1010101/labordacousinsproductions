@@ -1844,9 +1844,13 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
     onEntitiesExtracted?.();
   };
 
-  // Render quality diagnosis card
+  // Render quality diagnosis card - Hidden for cleaner UX
   const renderQualityDiagnosis = () => {
     if (!qualityDiagnosis) return null;
+    
+    // Hide negative quality alerts for cleaner UX
+    const { quality } = qualityDiagnosis;
+    if (quality === 'incomplete' || quality === 'draft') return null;
 
     const { quality, score, issues, suggestions } = qualityDiagnosis;
     
@@ -1922,7 +1926,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
                 Continuar a Personajes
               </Button>
             )}
-            {quality === 'incomplete' && (
+            {false && quality === 'incomplete' && (
               <>
                 <Button onClick={handleImproveScript} size="sm" variant="default">
                   <Wand2 className="h-4 w-4 mr-2" />
@@ -1933,7 +1937,7 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
                 </Button>
               </>
             )}
-            {quality === 'draft' && (
+            {false && quality === 'draft' && (
               <>
                 <Button onClick={handleConvertToScript} size="sm" variant="default">
                   <Sparkles className="h-4 w-4 mr-2" />
@@ -2741,9 +2745,9 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="rapido">⚡ Rápido (GPT-5-mini)</SelectItem>
-                            <SelectItem value="profesional">🎬 Profesional (GPT-5)</SelectItem>
-                            <SelectItem value="hollywood">🏆 Hollywood (GPT-5.2)</SelectItem>
+                            <SelectItem value="rapido">⚡ Rápido</SelectItem>
+                            <SelectItem value="profesional">🎬 Profesional</SelectItem>
+                            <SelectItem value="hollywood">🏆 Hollywood</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
