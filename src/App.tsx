@@ -195,23 +195,30 @@ function AppRoutes() {
   );
 }
 
+// App Content that uses Auth
+function AppContent() {
+  return (
+    <UserProfileProvider>
+      <DeveloperModeProvider>
+        <BackgroundTasksProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <AppRoutes />
+          </BrowserRouter>
+        </BackgroundTasksProvider>
+      </DeveloperModeProvider>
+    </UserProfileProvider>
+  );
+}
+
 const App = () => (
   <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <LanguageProvider>
           <AuthProvider>
-            <UserProfileProvider>
-              <DeveloperModeProvider>
-                <BackgroundTasksProvider>
-                  <Toaster />
-                  <Sonner />
-                  <BrowserRouter>
-                    <AppRoutes />
-                  </BrowserRouter>
-                </BackgroundTasksProvider>
-              </DeveloperModeProvider>
-            </UserProfileProvider>
+            <AppContent />
           </AuthProvider>
         </LanguageProvider>
       </TooltipProvider>

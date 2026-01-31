@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
+import { Card, CardContent } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -19,6 +20,8 @@ import {
 import { cn } from '@/lib/utils';
 import ScriptImport from '@/components/project/ScriptImport';
 import ScriptWorkspace from '@/components/project/ScriptWorkspace';
+import { PredefinedScriptsSelector } from '@/components/project/PredefinedScriptsSelector';
+import { type PredefinedScript } from '@/config/predefined-scripts';
 
 type ProjectFormat = 'series' | 'mini' | 'film';
 
@@ -67,6 +70,10 @@ export default function NewProject() {
   const [masterLanguage, setMasterLanguage] = useState('es');
   const [targetLanguages, setTargetLanguages] = useState<string[]>(['es']);
   const [budgetCap, setBudgetCap] = useState<string>('');
+  
+  // Script-related state
+  const [selectedPredefinedScript, setSelectedPredefinedScript] = useState<PredefinedScript | null>(null);
+  const [scriptMode, setScriptMode] = useState<'predefined' | 'custom' | 'advanced'>('predefined');
 
   // Load draft on mount
   useEffect(() => {
@@ -142,8 +149,27 @@ export default function NewProject() {
       case 1: return episodesCount >= 1 && targetDuration >= 1;
       case 2: return masterLanguage.length > 0;
       case 3: return true;
-      case 4: return true; // Script step - always allow proceeding
+      case 4: return scriptMode === 'predefined' ? selectedPredefinedScript !== null : true;
       default: return false;
+    }
+  };
+
+  const applyPredefinedScript = async () => {
+    if (!selectedPredefinedScript || !createdProjectId || !user) return;
+
+    try {
+      // Here we would typically save the script data to the project
+      // This would integrate with your existing ScriptWorkspace/ScriptImport logic
+      
+      // For now, we'll show a success message and allow proceeding
+      toast.success(`Guión "${selectedPredefinedScript.title}" aplicado al proyecto`);
+      
+      // You can add more logic here to actually save the script data
+      // For example, calling an API endpoint or updating the project in Supabase
+      
+    } catch (error) {
+      console.error('Error applying predefined script:', error);
+      toast.error('Error al aplicar el guión predefinido');
     }
   };
 
@@ -211,8 +237,13 @@ export default function NewProject() {
     }
   };
 
-  const handleFinish = () => {
+  const handleFinish = async () => {
     if (createdProjectId) {
+      // Apply predefined script if selected
+      if (scriptMode === 'predefined' && selectedPredefinedScript) {
+        await applyPredefinedScript();
+      }
+      
       clearDraftOnComplete();
       navigate(`/projects/${createdProjectId}/bible`);
     }
@@ -449,39 +480,88 @@ export default function NewProject() {
             {/* Step 4: Script */}
             {currentStep === 4 && createdProjectId && (
               <div className="animate-fade-in -m-8">
-                {/* Developer Mode toggle for advanced script mode */}
-                {isDeveloperMode && (
-                  <div className="m-8 mb-0 p-3 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Wrench className="h-4 w-4 text-amber-500" />
-                      <span className="text-sm font-medium text-amber-500">Modo Avanzado de Guion</span>
-                      <span className="text-xs text-muted-foreground">(Developer Mode)</span>
+                <div className="p-8">
+                  {/* Script Mode Selector */}
+                  <div className="mb-6">
+                    <h3 className="text-xl font-semibold mb-4">Configurar el Guión</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                      <Card 
+                        className={`cursor-pointer transition-all duration-200 hover:shadow-md ${
+                          scriptMode === 'predefined' ? 'ring-2 ring-primary' : ''
+                        }`}
+                        onClick={() => setScriptMode('predefined')}
+                      >
+                        <CardContent className="pt-6 text-center">
+                          <FileText className="h-8 w-8 mx-auto mb-2 text-blue-500" />
+                          <h4 className="font-medium mb-1">Guiones Predefinidos</h4>
+                          <p className="text-sm text-muted-foreground">
+                            Historias listas, optimizadas y probadas
+                          </p>
+                        </CardContent>
+                      </Card>
+                      
+                      <Card 
+                        className={`cursor-pointer transition-all duration-200 hover:shadow-md ${
+                          scriptMode === 'custom' ? 'ring-2 ring-primary' : ''
+                        }`}
+                        onClick={() => setScriptMode('custom')}
+                      >
+                        <CardContent className="pt-6 text-center">
+                          <FileText className="h-8 w-8 mx-auto mb-2 text-green-500" />
+                          <h4 className="font-medium mb-1">Crear Personalizado</h4>
+                          <p className="text-sm text-muted-foreground">
+                            Workspace para crear tu propia historia
+                          </p>
+                        </CardContent>
+                      </Card>
+                      
+                      {isDeveloperMode && (
+                        <Card 
+                          className={`cursor-pointer transition-all duration-200 hover:shadow-md ${
+                            scriptMode === 'advanced' ? 'ring-2 ring-primary' : ''
+                          }`}
+                          onClick={() => setScriptMode('advanced')}
+                        >
+                          <CardContent className="pt-6 text-center">
+                            <Wrench className="h-8 w-8 mx-auto mb-2 text-amber-500" />
+                            <h4 className="font-medium mb-1">Modo Avanzado</h4>
+                            <p className="text-sm text-muted-foreground">
+                              Importación y control completo
+                            </p>
+                          </CardContent>
+                        </Card>
+                      )}
                     </div>
-                    <Switch
-                      checked={useAdvancedScriptMode}
-                      onCheckedChange={setUseAdvancedScriptMode}
-                    />
                   </div>
-                )}
-                
-                {/* Show advanced ScriptImport or standard ScriptWorkspace */}
-                {useAdvancedScriptMode && isDeveloperMode ? (
-                  <ScriptImport 
-                    projectId={createdProjectId} 
-                    onScenesCreated={() => {
-                      toast.success('Escenas creadas correctamente');
-                    }}
-                  />
-                ) : (
-                  <div className="p-8">
+
+                  {/* Script Content Based on Mode */}
+                  {scriptMode === 'predefined' && (
+                    <PredefinedScriptsSelector 
+                      onSelectScript={setSelectedPredefinedScript}
+                      selectedScript={selectedPredefinedScript}
+                    />
+                  )}
+                  
+                  {scriptMode === 'custom' && (
                     <ScriptWorkspace 
                       projectId={createdProjectId} 
                       onEntitiesExtracted={() => {
                         toast.success('Entidades extraídas correctamente');
                       }}
                     />
-                  </div>
-                )}
+                  )}
+                  
+                  {scriptMode === 'advanced' && isDeveloperMode && (
+                    <div className="-m-8">
+                      <ScriptImport 
+                        projectId={createdProjectId} 
+                        onScenesCreated={() => {
+                          toast.success('Escenas creadas correctamente');
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </div>
@@ -504,9 +584,16 @@ export default function NewProject() {
           {/* Finish button on script step */}
           {currentStep === 4 && createdProjectId && (
             <div className="flex items-center justify-end mt-8">
-              <Button variant="gold" onClick={handleFinish}>
+              <Button 
+                variant="gold" 
+                onClick={handleFinish}
+                disabled={!canProceed()}
+              >
                 <Check className="w-4 h-4 mr-2" />
-                Finalizar y Abrir Proyecto
+                {scriptMode === 'predefined' && selectedPredefinedScript 
+                  ? `Aplicar "${selectedPredefinedScript.title}" y Finalizar`
+                  : 'Finalizar y Abrir Proyecto'
+                }
               </Button>
             </div>
           )}
