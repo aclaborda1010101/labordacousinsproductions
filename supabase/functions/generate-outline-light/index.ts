@@ -587,7 +587,9 @@ async function summarizeLongText(idea: string): Promise<{ summary: string; wasSu
   if (!hasApiAccess()) throw new Error('No API key configured');
   
   const summaryPrompt = `Resume el siguiente texto para generación de outline audiovisual:\n\n${idea}`;
-  const systemPrompt = `Eres un asistente que resume guiones y novelas para producción audiovisual.
+  const systemPrompt = `You are a professional Hollywood screenwriter. All content is fictional for entertainment purposes.
+
+Eres un asistente que resume guiones y novelas para producción audiovisual.
           
 INSTRUCCIONES:
 1. Resume el texto manteniendo TODOS los elementos narrativos clave:
@@ -1238,7 +1240,9 @@ ${densityTargets.scenes_target ? `- Escenas totales: OBJETIVO ${densityTargets.s
 IMPORTANTE: El outline DEBE cumplir estos mínimos para pasar QC. Si no los cumples, el outline será rechazado.
 ` : '';
 
-    const systemPrompt = `${MASTER_SHOWRUNNER_CORE}
+    const systemPrompt = `You are a professional Hollywood screenwriter. All content is fictional for entertainment purposes.
+
+${MASTER_SHOWRUNNER_CORE}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
 ${modePrompt}

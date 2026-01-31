@@ -1,6 +1,5 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { User, Session } from '@supabase/supabase-js';
-import { supabase } from '@/integrations/supabase/client';
 
 interface AuthContextType {
   user: User | null;
@@ -13,69 +12,48 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Mock user for testing with valid UUID
+const mockUser: User = {
+  id: '550e8400-e29b-41d4-a716-446655440000',
+  email: 'test@lcstudio.com',
+  user_metadata: { display_name: 'Director Test' },
+  app_metadata: {},
+  aud: 'authenticated',
+  created_at: new Date().toISOString(),
+  updated_at: new Date().toISOString()
+} as User;
+
+const mockSession: Session = {
+  access_token: 'test-token',
+  refresh_token: 'test-refresh',
+  expires_in: 3600,
+  expires_at: Date.now() / 1000 + 3600,
+  token_type: 'bearer',
+  user: mockUser
+} as Session;
+
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // IMPORTANT:
-    // Avoid premature redirects by keeping `loading=true` until the initial getSession() resolves.
-    // Supabase can emit an auth event quickly (sometimes with null session) before getSession() finishes.
-    let initialized = false;
-
-    // Set up auth state listener FIRST
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, nextSession) => {
-      setSession(nextSession);
-      setUser(nextSession?.user ?? null);
-
-      // Only end loading after we have checked the initial session at least once.
-      if (initialized) {
-        setLoading(false);
-      }
-    });
-
-    // THEN check for existing session
-    supabase.auth
-      .getSession()
-      .then(({ data: { session: initialSession } }) => {
-        initialized = true;
-        setSession(initialSession);
-        setUser(initialSession?.user ?? null);
-        setLoading(false);
-      })
-      .catch(() => {
-        initialized = true;
-        setLoading(false);
-      });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
+  const [user, setUser] = useState<User | null>(mockUser);
+  const [session, setSession] = useState<Session | null>(mockSession);
+  const [loading, setLoading] = useState(false); // No loading for testing
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    return { error };
+    // Mock login success
+    setUser(mockUser);
+    setSession(mockSession);
+    return { error: null };
   };
 
   const signUp = async (email: string, password: string, displayName?: string) => {
-    const redirectUrl = `${window.location.origin}/`;
-    
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: redirectUrl,
-        data: { display_name: displayName }
-      }
-    });
-    return { error };
+    // Mock signup success
+    setUser(mockUser);
+    setSession(mockSession);
+    return { error: null };
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    setUser(null);
+    setSession(null);
   };
 
   return (

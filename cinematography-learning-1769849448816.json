@@ -1,0 +1,594 @@
+{
+  "timestamp": "2026-01-31T08:50:48.816Z",
+  "summary": {
+    "totalContent": 2026,
+    "totalScripts": 18,
+    "totalCorrelations": 7,
+    "totalTechniques": 13,
+    "totalLessons": 10
+  },
+  "libraries": [
+    {
+      "id": 1,
+      "name": "Películas",
+      "type": "movie",
+      "count": 1246,
+      "sampleTitles": [
+        "@buelos",
+        "#SexPact",
+        "5 das de guerra",
+        "6 das",
+        "6 en la sombra"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Estrenos",
+      "type": "movie",
+      "count": 531,
+      "sampleTitles": [
+        "6:3, avagy jtszd jra Tutti",
+        "9 Balas",
+        "10 das de un mal hombre",
+        "10 Sniper. E.I.R.G.  Equipo de inteligencia y respuesta global",
+        "28 aos despus"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Dibujos",
+      "type": "movie",
+      "count": 151,
+      "sampleTitles": [
+        "#Vivo",
+        "22 contra la Tierra",
+        "101 dlmatas",
+        "Abominable",
+        "Alvin y las ardillas: Fiesta sobre ruedas"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Series",
+      "type": "show",
+      "count": 98
+    }
+  ],
+  "scripts": [
+    {
+      "filename": "requiem-for-a-dream-2000.pdf",
+      "path": "/Users/jarvismini/Downloads/requiem-for-a-dream-2000.pdf",
+      "size": 157408,
+      "extension": ".pdf",
+      "directory": "/Users/jarvismini/Downloads",
+      "type": "General"
+    },
+    {
+      "filename": "GUION_LA_NOCHE_DE_REYES_2026-01-28.txt",
+      "path": "GUION_LA_NOCHE_DE_REYES_2026-01-28.txt",
+      "size": 12739,
+      "extension": ".txt",
+      "directory": ".",
+      "type": "Navideño/Familiar"
+    },
+    {
+      "filename": "GUION_REYES_V3_1769587349300.txt",
+      "path": "GUION_REYES_V3_1769587349300.txt",
+      "size": 10445,
+      "extension": ".txt",
+      "directory": ".",
+      "type": "Navideño/Familiar"
+    },
+    {
+      "filename": "LA_NOCHE_DE_REYES.fountain",
+      "path": "LA_NOCHE_DE_REYES.fountain",
+      "size": 6459,
+      "extension": ".fountain",
+      "directory": ".",
+      "type": "Navideño/Familiar"
+    },
+    {
+      "filename": "LA_NOCHE_DE_REYES.pdf",
+      "path": "LA_NOCHE_DE_REYES.pdf",
+      "size": 90189,
+      "extension": ".pdf",
+      "directory": ".",
+      "type": "Navideño/Familiar"
+    },
+    {
+      "filename": "LA_NOCHE_DE_REYES_ESTRUCTURA_100.md",
+      "path": "LA_NOCHE_DE_REYES_ESTRUCTURA_100.md",
+      "size": 10186,
+      "extension": ".md",
+      "directory": ".",
+      "type": "Navideño/Familiar"
+    },
+    {
+      "filename": "MEJORAS_IMPLEMENTADAS.md",
+      "path": "MEJORAS_IMPLEMENTADAS.md",
+      "size": 3874,
+      "extension": ".md",
+      "directory": ".",
+      "type": "General"
+    },
+    {
+      "filename": "OPTIMIZATION_REPORT.md",
+      "path": "OPTIMIZATION_REPORT.md",
+      "size": 5248,
+      "extension": ".md",
+      "directory": ".",
+      "type": "General"
+    },
+    {
+      "filename": "PROMPT_V7_STRUCTURE_DETECTOR.md",
+      "path": "PROMPT_V7_STRUCTURE_DETECTOR.md",
+      "size": 4081,
+      "extension": ".md",
+      "directory": ".",
+      "type": "General"
+    },
+    {
+      "filename": "README.md",
+      "path": "README.md",
+      "size": 2102,
+      "extension": ".md",
+      "directory": ".",
+      "type": "General"
+    },
+    {
+      "filename": "UPGRADE_PLAN.md",
+      "path": "UPGRADE_PLAN.md",
+      "size": 2247,
+      "extension": ".md",
+      "directory": ".",
+      "type": "General"
+    },
+    {
+      "filename": "analyze-script-quality.ts",
+      "path": "analyze-script-quality.ts",
+      "size": 6837,
+      "extension": ".ts",
+      "directory": ".",
+      "type": "General"
+    },
+    {
+      "filename": "guion-reyes-magos-act1-1769586312675.txt",
+      "path": "guion-reyes-magos-act1-1769586312675.txt",
+      "size": 8575,
+      "extension": ".txt",
+      "directory": ".",
+      "type": "Navideño/Familiar"
+    },
+    {
+      "filename": "guion-reyes-v15-act1-1769586848252.txt",
+      "path": "guion-reyes-v15-act1-1769586848252.txt",
+      "size": 3742,
+      "extension": ".txt",
+      "directory": ".",
+      "type": "Navideño/Familiar"
+    },
+    {
+      "filename": "test-full-script-complete.ts",
+      "path": "test-full-script-complete.ts",
+      "size": 8526,
+      "extension": ".ts",
+      "directory": ".",
+      "type": "General"
+    },
+    {
+      "filename": "test-full-script-v2.ts",
+      "path": "test-full-script-v2.ts",
+      "size": 6585,
+      "extension": ".ts",
+      "directory": ".",
+      "type": "General"
+    },
+    {
+      "filename": "test-full-script-v3.ts",
+      "path": "test-full-script-v3.ts",
+      "size": 6471,
+      "extension": ".ts",
+      "directory": ".",
+      "type": "General"
+    },
+    {
+      "filename": "test-full-script.ts",
+      "path": "test-full-script.ts",
+      "size": 10759,
+      "extension": ".ts",
+      "directory": ".",
+      "type": "General"
+    }
+  ],
+  "learningAnalysis": [
+    {
+      "script": {
+        "filename": "GUION_LA_NOCHE_DE_REYES_2026-01-28.txt",
+        "type": "Navideño/Familiar",
+        "path": "GUION_LA_NOCHE_DE_REYES_2026-01-28.txt",
+        "analysis": {
+          "content": "\n══════════════════════════════════════════════════════════════════════\nLA NOCHE DE REYES\nGuión Cinematográfico\n══════════════════════════════════════════════════════════════════════\n\nFADE IN:\n\n```\n**ACTO 1 - PRESENTACIÓN**\n\n1. INT. URGENCIAS HOSPITAL - NOCHE\n\nBALTASAR, con la mascarilla colgando, firma papeles. Agotado. Un BORRACHO se le acerca, tambaleándose.\n\nBORRACHO\n¿Tú eres el Rey Mago Baltasar? ¡Que me traigas una moto!\n\nBaltasar lo ignora. El borracho insiste, torpe.\n\nBORRACHO (CONT.)\n¡Eh, negro! ¡Que te estoy hablando!\n\nBaltasar levanta la vista. Cansado.\n\nBALTASAR\nVáyase a casa, señor.\n\n2. INT. OFICINA CONSULTORA - NOCHE\n\nGASPAR, encorvado sobre su ordenador, teclea furiosamente. RICARDO, su jefe, entra con una sonrisa falsa.\n\nRICARDO\n¿Qué tal, Gaspar? ¿Avanzando?\n\nGaspar asiente, sin mirarlo. Ricardo conecta un USB al ordenador de Gaspar.\n\nRICARDO (CONT.)\nNecesito una copia de ese código. Ya sabes, para \"seguridad\".\n\nRicardo descarga el archivo y se va. Gaspar aprieta los pu...",
+          "lines": 1,
+          "techniques": [
+            {
+              "type": "Transición",
+              "technique": "Fade In",
+              "description": "Aparición gradual"
+            },
+            {
+              "type": "Transición",
+              "technique": "Fade Out",
+              "description": "Desaparición gradual"
+            }
+          ],
+          "characters": [
+            "LA NOCHE DE REYES",
+            "\nBORRACHO",
+            "\nBALTASAR",
+            "\nRICARDO",
+            "\nMELCHOR",
+            "\nCARMEN",
+            "\nGASPAR",
+            "\nFÉLIX",
+            "\nENFERMERA",
+            "\nANCIANO"
+          ],
+          "scenes": 0
+        }
+      },
+      "potentialMovies": [
+        {
+          "title": "Películas navideñas de la biblioteca",
+          "matchReason": "Temática similar",
+          "confidence": 85
+        }
+      ],
+      "learningObjectives": [
+        "Analizar cómo el guión escrito se traduce a imagen en pantalla",
+        "Identificar decisiones de dirección de fotografía",
+        "Estudiar la interpretación visual de las indicaciones del guión",
+        "Comparar el ritmo narrativo escrito vs visual",
+        "Estudiar la implementación de técnicas cinematográficas específicas"
+      ],
+      "cinematographyLessons": [
+        {
+          "category": "Montaje",
+          "lesson": "Estudio de transiciones",
+          "details": "Analizar cómo se implementan las transiciones escritas en la edición final"
+        }
+      ]
+    },
+    {
+      "script": {
+        "filename": "GUION_REYES_V3_1769587349300.txt",
+        "type": "Navideño/Familiar",
+        "path": "GUION_REYES_V3_1769587349300.txt",
+        "analysis": {
+          "content": "---\n\n1. INT. URGENCIAS HOSPITAL - NOCHE\n\nLuz blanca e implacable. BALTASAR (45, negro, bata blanca manchada de sangre) teclea furioso en el ordenador. Un BORRACHO (60s, demacrado, vía intravenosa colgando) le mira con ojos vidriosos desde una camilla cercana.\n\nBORRACHO\n(arrastrando las palabras)\n¡Eh, negrito! ¿Tú eres el rey mago ese? ¿El que trae la pasta?\n\nBaltasar ignora el comentario, pero sus dedos golpean el teclado con más fuerza.\n\nBORRACHO\n(alzando la voz)\n¡Que si me vas a traer algo, Baltasar! ¡Mi nieto quiere la Play! ¡Y mi hija un novio decente!\n\nBaltasar se gira, la paciencia agotada.\n\nBALTASAR\nMire, señor, yo soy médico. Y usted necesita descansar. Y dejar de insultar a la gente.\n\nBORRACHO\n(escupiendo)\n¡Racista de mierda! ¡Vete a tu país!\n\nBaltasar respira hondo. Cierra los ojos un segundo.\n\nBALTASAR\n(con calma forzada)\nYa, ya. Tranquilo, hombre. Ahora viene la enfermera.\n\nSe da la vuelta y se aleja, apretando la mandíbula. La noche no ha hecho más que empezar.\n\n---\n\n2. IN...",
+          "lines": 1,
+          "techniques": [
+            {
+              "type": "Movimiento Cámara",
+              "technique": "Panorámica",
+              "description": "Movimiento horizontal"
+            }
+          ],
+          "characters": [
+            "\nBORRACHO",
+            "\nBALTASAR",
+            "\nRICARDO",
+            "\nGASPAR",
+            "\nMELCHOR",
+            "\nLIMPIADORA",
+            "\nCARMEN",
+            "\nCONDUCTOR"
+          ],
+          "scenes": 0
+        }
+      },
+      "potentialMovies": [
+        {
+          "title": "Películas navideñas de la biblioteca",
+          "matchReason": "Temática similar",
+          "confidence": 85
+        }
+      ],
+      "learningObjectives": [
+        "Analizar cómo el guión escrito se traduce a imagen en pantalla",
+        "Identificar decisiones de dirección de fotografía",
+        "Estudiar la interpretación visual de las indicaciones del guión",
+        "Comparar el ritmo narrativo escrito vs visual",
+        "Estudiar la implementación de técnicas cinematográficas específicas"
+      ],
+      "cinematographyLessons": [
+        {
+          "category": "Cámara",
+          "lesson": "Estudio de movimientos de cámara",
+          "details": "Analizar cómo los movimientos descritos en el guión se ejecutan visualmente"
+        }
+      ]
+    },
+    {
+      "script": {
+        "filename": "LA_NOCHE_DE_REYES.fountain",
+        "type": "Navideño/Familiar",
+        "path": "LA_NOCHE_DE_REYES.fountain",
+        "analysis": {
+          "content": "Title: LA NOCHE DE REYES\nCredit: Guión de\nAuthor: [Tu nombre]\nDraft date: 28/01/2026\nContact: [Email]\n\n====\n\nFADE IN:\n\nINT. URGENCIAS HOSPITAL - NOCHE\n\nLuz blanca e implacable. BALTASAR (45, negro, bata blanca manchada de sangre) teclea furioso en el ordenador. Un BORRACHO (60s, demacrado, vía intravenosa colgando) le mira con ojos vidriosos desde una camilla cercana.\n\nBORRACHO\n(arrastrando las palabras)\n¡Eh, negrito! ¿Tú eres el rey mago ese? ¿El que trae la pasta?\n\nBaltasar ignora el comentario, pero sus dedos golpean el teclado con más fuerza.\n\nBORRACHO\n(alzando la voz)\n¡Que si me vas a traer algo, Baltasar! ¡Mi nieto quiere la Play! ¡Y mi hija un novio decente!\n\nBaltasar se gira, la paciencia agotada.\n\nBALTASAR\nMire, señor, yo soy médico. Y usted necesita descansar. Y dejar de insultar a la gente.\n\nBORRACHO\n(escupiendo)\n¡Racista de mierda! ¡Vete a tu país!\n\nBaltasar respira hondo. Cierra los ojos un segundo.\n\nBALTASAR\n(con calma forzada)\nYa, ya. Tranquilo, hombre. Ahora viene la en...",
+          "lines": 1,
+          "techniques": [
+            {
+              "type": "Movimiento Cámara",
+              "technique": "Panorámica",
+              "description": "Movimiento horizontal"
+            },
+            {
+              "type": "Transición",
+              "technique": "Fade In",
+              "description": "Aparición gradual"
+            },
+            {
+              "type": "Transición",
+              "technique": "Fade Out",
+              "description": "Desaparición gradual"
+            }
+          ],
+          "characters": [
+            "\nBORRACHO",
+            "\nBALTASAR",
+            "\nRICARDO",
+            "\nGASPAR",
+            "\nMELCHOR",
+            "\nLIMPIADORA",
+            "\nCARMEN",
+            "\nBORRACHO DEL BAR"
+          ],
+          "scenes": 14
+        }
+      },
+      "potentialMovies": [
+        {
+          "title": "Películas navideñas de la biblioteca",
+          "matchReason": "Temática similar",
+          "confidence": 85
+        }
+      ],
+      "learningObjectives": [
+        "Analizar cómo el guión escrito se traduce a imagen en pantalla",
+        "Identificar decisiones de dirección de fotografía",
+        "Estudiar la interpretación visual de las indicaciones del guión",
+        "Comparar el ritmo narrativo escrito vs visual",
+        "Estudiar la implementación de técnicas cinematográficas específicas"
+      ],
+      "cinematographyLessons": [
+        {
+          "category": "Cámara",
+          "lesson": "Estudio de movimientos de cámara",
+          "details": "Analizar cómo los movimientos descritos en el guión se ejecutan visualmente"
+        },
+        {
+          "category": "Montaje",
+          "lesson": "Estudio de transiciones",
+          "details": "Analizar cómo se implementan las transiciones escritas en la edición final"
+        }
+      ]
+    },
+    {
+      "script": {
+        "filename": "LA_NOCHE_DE_REYES.pdf",
+        "type": "Navideño/Familiar",
+        "path": "LA_NOCHE_DE_REYES.pdf",
+        "analysis": {
+          "content": "LA NOCHE DE REYES\n\n\n    Guión de\n\n   [Tu nombre]\n\n\n\n\n                 28/01/2026\n                 [Email]\n\nFADE IN:\n\nINT. URGENCIAS HOSPITAL - NOCHE\n\nLuz blanca e implacable. BALTASAR (45, negro, bata blanca\nmanchada de sangre) teclea furioso en el ordenador. Un\nBORRACHO (60s, demacrado, vía intravenosa colgando) le mira\ncon ojos vidriosos desde una camilla cercana.\n\n                     BORRACHO\n                (arrastrando las palabras)\n           ¡Eh, negrito! ¿Tú eres el rey mago\n           ese? ¿El que trae la pasta?\n\nBaltasar ignora el comentario, pero sus dedos golpean el\nteclado con más fuerza.\n\n                     BORRACHO\n                (alzando la voz)\n           ¡Que si me vas a traer algo,\n           Baltasar! ¡Mi nieto quiere la Play!\n           ¡Y mi hija un novio decente!\n\nBaltasar se gira, la paciencia agotada.\n\n                     BALTASAR\n           Mire, señor, yo soy médico. Y usted\n           necesita descansar. Y dejar de\n           insultar a la gente.\n\n     ...",
+          "lines": 1,
+          "techniques": [
+            {
+              "type": "Movimiento Cámara",
+              "technique": "Panorámica",
+              "description": "Movimiento horizontal"
+            },
+            {
+              "type": "Transición",
+              "technique": "Fade In",
+              "description": "Aparición gradual"
+            },
+            {
+              "type": "Transición",
+              "technique": "Fade Out",
+              "description": "Desaparición gradual"
+            }
+          ],
+          "characters": [
+            "LA NOCHE DE REYES\n\n",
+            "\n\n\n",
+            "\n                     BORRACHO",
+            "\n                     BALTASAR",
+            "\n                     RICARDO",
+            "\n                    GASPAR",
+            "\n                    RICARDO",
+            "\n                    MELCHOR",
+            "                    LIMPIADORA",
+            "\n                    BALTASAR"
+          ],
+          "source": "PDF",
+          "fullText": "LA NOCHE DE REYES\n\n\n    Guión de\n\n   [Tu nombre]\n\n\n\n\n                 28/01/2026\n                 [Email]\n\nFADE IN:\n\nINT. URGENCIAS HOSPITAL - NOCHE\n\nLuz blanca e implacable. BALTASAR (45, negro, bata blanca\nmanchada de sangre) teclea furioso en el ordenador. Un\nBORRACHO (60s, demacrado, vía intravenosa colgando) le mira\ncon ojos vidriosos desde una camilla cercana.\n\n                     BORRACHO\n                (arrastrando las palabras)\n           ¡Eh, negrito! ¿Tú eres el rey mago\n           ese? ¿El que trae la pasta?\n\nBaltasar ignora el comentario, pero sus dedos golpean el\nteclado con más fuerza.\n\n                     BORRACHO\n                (alzando la voz)\n           ¡Que si me vas a traer algo,\n           Baltasar! ¡Mi nieto quiere la Play!\n           ¡Y mi hija un novio decente!\n\nBaltasar se gira, la paciencia agotada.\n\n                     BALTASAR\n           Mire, señor, yo soy médico. Y usted\n           necesita descansar. Y dejar de\n           insultar a la gente.\n\n                     BORRACHO\n                (escupiendo)\n           ¡Racista de mierda! ¡Vete a tu país!\n\nBaltasar respira hondo. Cierra los ojos un segundo.\n\n                     BALTASAR\n                (con calma forzada)\n           Ya, ya. Tranquilo, hombre. Ahora\n           viene la enfermera.\n\nSe da la vuelta y se aleja, apretando la mandíbula. La noche\nno ha hecho más que empezar.\n\n\nINT. OFICINA CONSULTORA - NOCHE\n\nOrdenadores iluminan la estancia vacía. GASPAR (38,\npelirrojo, complexión delgada) está encorvado sobre una\npantalla llena de código. RICARDO (40s, traje caro, sonrisa\nde tiburón) entra sin hacer ruido.\n\n                     RICARDO\n                (palmada en el hombro)\n           ¿Qué tal, Gasparín? ¿A tope, eh?\n\n                                                            2.\n\n\nGaspar se sobresalta.\n\n                    GASPAR\n               (con un hilo de voz)\n          Sí, Ricardo. Casi terminado.\n\nRicardo mira el código con aire de suficiencia, aunque no\nentiende una línea.\n\n                    RICARDO\n          Fantástico, fantástico. Eres un\n          crack. Este proyecto es crucial para\n          la empresa.\n\nRicardo se acerca, observa la pantalla con una sonrisa.\n\n                     RICARDO\n               (con voz melosa)\n          Sabes, Gaspar, estaba pensando. Este\n          código... tiene mi sello. Mi visión.\n          ¿No crees?\n\nGaspar aprieta los puños bajo la mesa.\n\n                    GASPAR\n               (con dificultad)\n          Es... bueno, he estado trabajando en\n          él durante meses.\n\n                     RICARDO\n               (interrumpiendo)\n          ¡Exacto! Meses de tu trabajo, guiado\n          por mi experiencia. Es un esfuerzo\n          de equipo.\n\nRicardo le da otra palmada en el hombro. Se guarda un\npendrive en el bolsillo.\n\n                    RICARDO\n               (sonriendo)\n          Mañana lo presento a los inversores.\n          ¡Vamos a triunfar!\n\n\nINT. BAÑO HACIENDA - NOCHE\n\nAzulejos blancos, luz fluorescente que hace resaltar las\nimperfecciones. MELCHOR (52, funcionario, traje gris\ndesaliñado) desliza el dedo nervioso por la pantalla del\nmóvil, abriendo Grindr. Ve un perfil: \"Oso maduro busca\ndiversión\". LOURDES (50s) llama a la puerta.\n\n                    LOURDES (O.S.)\n          ¡Melchor, cariño! ¿Estás bien?\n          Llevas media hora ahí dentro.\n\n                                                              3.\n\n\nMelchor salta, cierra la app de golpe. La culpa se dibuja en\nsu rostro.\n\n                    MELCHOR\n               (voz temblorosa)\n          Sí, sí, Lourdes. Ya salgo. Tenía...\n          retortijones. Ya sabes, el gazpacho.\n\n                    LOURDES (O.S.)\n          Pues date prisa, que Félix está\n          contando chistes machistas y me está\n          dando la noche.\n\nMelchor guarda el móvil temblando. Se lava las manos con\njabón barato. Se mira al espejo. Ojos de hombre atrapado.\n\n\nEXT. HOSPITAL PARKING - NOCHE\n\nBaltasar sale del hospital. El frío de enero le golpea la\ncara. Enciende un cigarrillo. La luna llena ilumina el\naparcamiento vacío.\n\nSe apoya en su Seat León desvencijado. Aspira el humo. Lo\nsuelta despacio, viendo cómo se mezcla con el vaho de su\naliento.\n\nA lo lejos, villancicos de una cabalgata. Niños gritando.\nIlusión.\n\nBaltasar no sonríe.\n\n\nEXT. CALLE OFICINAS - NOCHE\n\nGaspar sale del edificio de cristal. La LIMPIADORA (60s,\nchaleco reflectante) empuja su carrito hacia él.\n\n                    LIMPIADORA\n          Buenas noches, hijo.\n\nGaspar la mira un segundo. No responde. Sigue caminando,\nauriculares puestos, mundo aparte.\n\nLa limpiadora suspira. Sigue con su trabajo.\n\n\nEXT. HACIENDA - NOCHE\n\nMelchor sale del edificio de Hacienda. Se abrocha el abrigo\nhasta arriba.\n\nUna PAREJA GAY (30s) pasa a su lado, cogidos de la mano,\nriendo.\n\n                                                              4.\n\n\nMelchor aparta la mirada como si le quemara. Acelera el paso\nhacia su coche.\n\n\nINT. BAR EL TROPEZÓN - NOCHE\n\nBar de barrio. Mesas de formica, jamones colgando, futbolín\ndesvencijado. CARMEN (30s, camarera, expresión de hartazgo\ncrónico) limpia vasos.\n\nBaltasar entra. Se sienta en la barra.\n\n                    BALTASAR\n          Una caña, Carmen.\n\n                    CARMEN\n          ¿Qué tal el turno?\n\n                    BALTASAR\n          Para no recordarlo.\n\nCarmen le sirve la cerveza. Baltasar bebe en silencio.\n\n\nINT. BAR EL TROPEZÓN - CONTINUO\n\nGaspar entra. Busca la mesa más apartada. Se sienta de\nespaldas a la puerta. Abre el portátil.\n\n\nINT. BAR EL TROPEZÓN - CONTINUO\n\nMelchor entra. Mira alrededor, nervioso. Se sienta en otra\nmesa. Pide un café solo.\n\nLos tres están en el mismo bar. No se conocen. Todavía.\n\n\nINT. BAR EL TROPEZÓN - MÁS TARDE\n\nUn BORRACHO DEL BAR (50s, vozarrón de camionero) se acerca a\nCarmen. La agarra del brazo.\n\n                    BORRACHO DEL BAR\n          ¡Venga, guapa! Dame otra ronda. Y\n          una sonrisita, ¿no?\n\n                    CARMEN\n               (intentando soltarse)\n          Suélteme, por favor.\n\n                    BORRACHO DEL BAR\n               (apretando más)\n          ¿Qué pasa, estás en esos días?\n          Venga, no seas borde...\n\n                                                              5.\n\n\nINT. BAR EL TROPEZÓN - CONTINUO\n\nBaltasar observa la escena. Deja la cerveza. Se levanta.\n\n                    BALTASAR\n               (voz firme)\n          Déjala en paz.\n\nEl borracho se gira. Ve a Baltasar. La sonrisa se le congela.\n\n                    BORRACHO DEL BAR\n               (de repente sumiso)\n          Sí... sí, señor. Perdone. Ya me iba.\n\nEl borracho suelta a Carmen y se aleja, casi corriendo.\nCarmen mira a Baltasar, asombrada. Gaspar y Melchor también\nlo han visto.\n\n\nINT. BAR EL TROPEZÓN - CONTINUO\n\nLos tres se miran. Algo acaba de pasar. Ninguno sabe qué.\n\nSilencio incómodo.\n\nCarmen vuelve a la barra, todavía temblando.\n\n                    CARMEN\n          Gracias. No sé qué le has dicho,\n          pero...\n\n                    BALTASAR\n               (confundido)\n          Yo tampoco.\n\n\nEXT. CALLE - NOCHE\n\nLos tres salen juntos del bar. Se miran, extrañados de estar\njuntos.\n\n                    GASPAR\n               (rompiendo el silencio)\n          ¿Qué ha sido eso?\n\n                     MELCHOR\n               (nervioso)\n          No lo sé. Pero... ¿habéis notado\n          algo raro?\n\n                    BALTASAR\n          Ha obedecido. Sin más. Como si no\n          tuviera elección.\n\n                                                             6.\n\n\n                    GASPAR\n               (ojos brillantes)\n          ¿Y si lo probamos otra vez?\n\n\nEXT. PASO DE CEBRA - NOCHE\n\nLos tres están en un paso de cebra. Un coche se aproxima a\ntoda velocidad, sin intención de frenar.\n\n                    GASPAR\n               (a Melchor)\n          Dile que pare.\n\n                    MELCHOR\n               (temblando)\n          ¿Qué? No puedo...\n\n                    GASPAR\n          ¡Hazlo!\n\nMelchor levanta la mano hacia el coche.\n\n                    MELCHOR\n               (gritando)\n          ¡PARA!\n\nEl coche FRENA EN SECO. Los neumáticos chirrían. El conductor\nse queda paralizado, mirándolos.\n\nLos tres se miran. Algo ha cambiado. La noche de Reyes acaba\nde empezar.\n\n                                                    FADE OUT.\n\n                                                   FIN ACTO 1\n\n7.\n"
+        }
+      },
+      "potentialMovies": [
+        {
+          "title": "Películas navideñas de la biblioteca",
+          "matchReason": "Temática similar",
+          "confidence": 85
+        }
+      ],
+      "learningObjectives": [
+        "Analizar cómo el guión escrito se traduce a imagen en pantalla",
+        "Identificar decisiones de dirección de fotografía",
+        "Estudiar la interpretación visual de las indicaciones del guión",
+        "Comparar el ritmo narrativo escrito vs visual",
+        "Estudiar la implementación de técnicas cinematográficas específicas"
+      ],
+      "cinematographyLessons": [
+        {
+          "category": "Cámara",
+          "lesson": "Estudio de movimientos de cámara",
+          "details": "Analizar cómo los movimientos descritos en el guión se ejecutan visualmente"
+        },
+        {
+          "category": "Montaje",
+          "lesson": "Estudio de transiciones",
+          "details": "Analizar cómo se implementan las transiciones escritas en la edición final"
+        }
+      ]
+    },
+    {
+      "script": {
+        "filename": "LA_NOCHE_DE_REYES_ESTRUCTURA_100.md",
+        "type": "Navideño/Familiar",
+        "path": "LA_NOCHE_DE_REYES_ESTRUCTURA_100.md",
+        "analysis": {
+          "content": "# LA NOCHE DE REYES - Estructura 100 Escenas\n\n## Datos de Referencia (análisis real)\n- Austin Powers 1: 132 escenas / 137 págs = **0.96 págs/escena**\n- Aliens (Cameron): 192 escenas / 158 págs = **0.82 págs/escena**\n- As Good As It Gets: 120 escenas / 142 págs = **1.18 págs/escena**\n\n**Target para comedia rápida de 90 páginas: ~100 escenas (~0.9 págs/escena)**\n\n---\n\n## ESTRUCTURA POR ACTOS\n\n### ACTO 1: PRESENTACIÓN (págs 1-22, ~25 escenas)\n**Objetivo:** Establecer los 3 protagonistas marginados + su miseria diaria + convergencia en el bar + primer uso de poder\n\n| # | Escena | Personaje | Beat |\n|---|--------|-----------|------|\n| 1 | INT. URGENCIAS HOSPITAL - NOCHE | Baltasar | Racismo casual de paciente borracho |\n| 2 | INT. URGENCIAS - CONTINUO | Baltasar | Jefa le niega el turno de Navidad |\n| 3 | INT. OFICINA CONSULTORA - NOCHE | Gaspar | Jefe Ricardo roba su código |\n| 4 | INT. OFICINA - CONTINUO | Gaspar | Compañeros le ignoran, exclusión |\n| 5 | INT. BAÑO HACIENDA - NOCHE | Melc...",
+          "lines": 1,
+          "techniques": [
+            {
+              "type": "Movimiento Cámara",
+              "technique": "Panorámica",
+              "description": "Movimiento horizontal"
+            },
+            {
+              "type": "Transición",
+              "technique": "Fade In",
+              "description": "Aparición gradual"
+            }
+          ],
+          "characters": [],
+          "scenes": 0
+        }
+      },
+      "potentialMovies": [
+        {
+          "title": "Películas navideñas de la biblioteca",
+          "matchReason": "Temática similar",
+          "confidence": 85
+        }
+      ],
+      "learningObjectives": [
+        "Analizar cómo el guión escrito se traduce a imagen en pantalla",
+        "Identificar decisiones de dirección de fotografía",
+        "Estudiar la interpretación visual de las indicaciones del guión",
+        "Comparar el ritmo narrativo escrito vs visual",
+        "Estudiar la implementación de técnicas cinematográficas específicas"
+      ],
+      "cinematographyLessons": [
+        {
+          "category": "Cámara",
+          "lesson": "Estudio de movimientos de cámara",
+          "details": "Analizar cómo los movimientos descritos en el guión se ejecutan visualmente"
+        },
+        {
+          "category": "Montaje",
+          "lesson": "Estudio de transiciones",
+          "details": "Analizar cómo se implementan las transiciones escritas en la edición final"
+        }
+      ]
+    },
+    {
+      "script": {
+        "filename": "guion-reyes-magos-act1-1769586312675.txt",
+        "type": "Navideño/Familiar",
+        "path": "guion-reyes-magos-act1-1769586312675.txt",
+        "analysis": {
+          "content": "═══════════════════════════════════════════════════════════════════\nESCENA 1\n═══════════════════════════════════════════════════════════════════\n\nINT. URGENCIAS HOSPITAL - NOCHE\n\nBALTASAR, con la mascarilla bajada al cuello, rellena papeles. Cansado.\n\nUn BORRACHO, con bata de hospital abierta, se le acerca tambaleándose.\n\nBORRACHO\n(Arrastrando las palabras)\nEre... ere tú... ¿Melchor? No, Gaspar...\n\nBALTASAR\n(Sin levantar la vista)\nNo, señor. Soy el doctor Nkosi.\n\nBORRACHO\n(Acercándose más, huele a alcohol)\n¡Coño, un mago negro! ¡Como en la tele! ¿Me traes el carbón?\n\nBALTASAR\n(Suspira, cierra la carpeta)\nLe traigo una cita con el psiquiatra si no vuelve a su cama.\n\nEl BORRACHO lo mira fijamente, como si viera algo que antes no veía.\n\nBORRACHO\n...Sí, señor. Lo que usted diga, señor Rey.\n\nEl BORRACHO se da la vuelta y se va, obediente. Baltasar lo mira alejarse, extrañado.\n\nBALTASAR\n(Para sí mismo)\nSerá el delirium tremens.\n\n═══════════════════════════════════════════════════════════════...",
+          "lines": 1,
+          "techniques": [
+            {
+              "type": "Movimiento Cámara",
+              "technique": "Panorámica",
+              "description": "Movimiento horizontal"
+            }
+          ],
+          "characters": [
+            "\nBORRACHO",
+            "\nBALTASAR",
+            "\nRICARDO",
+            "\nGASPAR",
+            "\nMELCHOR",
+            "\nCAMARERA",
+            "\nCONDUCTOR"
+          ],
+          "scenes": 16
+        }
+      },
+      "potentialMovies": [
+        {
+          "title": "Películas navideñas de la biblioteca",
+          "matchReason": "Temática similar",
+          "confidence": 85
+        }
+      ],
+      "learningObjectives": [
+        "Analizar cómo el guión escrito se traduce a imagen en pantalla",
+        "Identificar decisiones de dirección de fotografía",
+        "Estudiar la interpretación visual de las indicaciones del guión",
+        "Comparar el ritmo narrativo escrito vs visual",
+        "Estudiar la implementación de técnicas cinematográficas específicas"
+      ],
+      "cinematographyLessons": [
+        {
+          "category": "Cámara",
+          "lesson": "Estudio de movimientos de cámara",
+          "details": "Analizar cómo los movimientos descritos en el guión se ejecutan visualmente"
+        }
+      ]
+    },
+    {
+      "script": {
+        "filename": "guion-reyes-v15-act1-1769586848252.txt",
+        "type": "Navideño/Familiar",
+        "path": "guion-reyes-v15-act1-1769586848252.txt",
+        "analysis": {
+          "content": "```\n**ACTO 1**\n\n1.  INT. URGENCIAS HOSPITAL - NOCHE\n\n    BALTASAR (45, médico, negro, Vallecas), se quita la bata. Agotado. Un BORRACHO en camilla le mira fijo.\n\n    BORRACHO\n    ¿Tú eres el Rey Mago negro?\n    ¿Me vas a traer carbón?\n\n    Baltasar ignora. Coge su mochila.\n\n    BALTASAR\n    (Para sí mismo)\n    Otro día en la gloriosa sanidad pública.\n\n    Sale de la sala.\n\n2.  INT. OFICINA CONSULTORA - NOCHE\n\n    GASPAR (38, informático, pelirrojo), líneas de código en la pantalla. Suena la puerta. RICARDO (50s, jefe, traje) entra.\n\n    RICARDO\n    ¿Todavía aquí, Gaspar? Noche de Reyes, hombre.\n\n    Gaspar asiente sin mirarle. Ricardo conecta un USB a su ordenador.\n\n    RICARDO\n    (Copiando archivos)\n    Ya sabes, el proyecto… Precauciones. No te lo tomes a mal.\n\n    Gaspar aprieta la mandíbula.\n\n3.  INT. BAÑO HACIENDA - NOCHE\n\n    MELCHOR (52, funcionario, traje gris), sentado en un cubículo. Grindr abierto en el móvil. Un gemido. Suena su teléfono. LOURDES (50s, esposa) en la pantal...",
+          "lines": 1,
+          "techniques": [
+            {
+              "type": "Movimiento Cámara",
+              "technique": "Panorámica",
+              "description": "Movimiento horizontal"
+            }
+          ],
+          "characters": [
+            "\n    BORRACHO",
+            "\n    BALTASAR",
+            "\n    RICARDO",
+            "\n    LIMPIADORA",
+            "\n    MELCHOR",
+            "\n    CARMEN",
+            "\n    GASPAR"
+          ],
+          "scenes": 0
+        }
+      },
+      "potentialMovies": [
+        {
+          "title": "Películas navideñas de la biblioteca",
+          "matchReason": "Temática similar",
+          "confidence": 85
+        }
+      ],
+      "learningObjectives": [
+        "Analizar cómo el guión escrito se traduce a imagen en pantalla",
+        "Identificar decisiones de dirección de fotografía",
+        "Estudiar la interpretación visual de las indicaciones del guión",
+        "Comparar el ritmo narrativo escrito vs visual",
+        "Estudiar la implementación de técnicas cinematográficas específicas"
+      ],
+      "cinematographyLessons": [
+        {
+          "category": "Cámara",
+          "lesson": "Estudio de movimientos de cámara",
+          "details": "Analizar cómo los movimientos descritos en el guión se ejecutan visualmente"
+        }
+      ]
+    }
+  ]
+}

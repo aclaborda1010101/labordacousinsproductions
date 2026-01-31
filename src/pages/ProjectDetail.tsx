@@ -36,6 +36,7 @@ import CharactersView from '@/components/project/CharactersView';
 import LocationsView from '@/components/project/LocationsView';
 import Scenes from '@/components/project/Scenes';
 import ScriptWorkspaceView from '@/components/project/ScriptWorkspaceView';
+import UnifiedScriptView from '@/components/project/UnifiedScriptView';
 import { CinematicProductionEngine } from '@/components/cpe';
 import RenderQueue from '@/components/project/RenderQueue';
 import RealtimeCollaboration from '@/components/project/RealtimeCollaboration';
@@ -80,10 +81,13 @@ interface Project {
 const MENU_STRUCTURE = [
   { 
     id: 'script', 
-    path: '/script', 
     label: 'Guion', 
     icon: FileText, 
-    requiresBible: false 
+    requiresBible: false,
+    subItems: [
+      { path: '/script', label: 'Crear/Editar', icon: FileText },
+      { path: '/script-analysis', label: 'Análisis y Estructura', icon: Clapperboard },
+    ]
   },
   { 
     id: 'bible', 
@@ -399,6 +403,7 @@ function ProjectDetailContent({ project, setProject }: { project: Project; setPr
           <Route path="/locations" element={<LocationsView projectId={project.id} />} />
           <Route path="/props" element={<PropsComponent projectId={project.id} />} />
           <Route path="/script" element={<ScriptWorkspaceView projectId={project.id} />} />
+          <Route path="/script-analysis" element={<UnifiedScriptView projectId={project.id} />} />
           <Route path="/scenes" element={<Scenes projectId={project.id} bibleReady={bibleReady} />} />
           <Route path="/renders" element={<RenderQueue projectId={project.id} />} />
           <Route path="/engine" element={<CinematicProductionEngine projectId={project.id} />} />
