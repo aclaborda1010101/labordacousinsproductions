@@ -175,7 +175,7 @@ export function ScriptSummaryPanelAssisted({
   const [segmentedEpisodes, setSegmentedEpisodes] = useState<Set<number>>(new Set());
   const [extractingEntities, setExtractingEntities] = useState(false);
   const [entitiesExtracted, setEntitiesExtracted] = useState(false);
-  const [expandedSection, setExpandedSection] = useState<string | null>(null);
+  const [expandedSection, setExpandedSection] = useState<string | null>('details'); // Default expanded to show rich analysis
   const [runningInBackground, setRunningInBackground] = useState(false);
   
   // Screenplay generation state
@@ -1163,7 +1163,7 @@ export function ScriptSummaryPanelAssisted({
         onOpenChange={(open) => setExpandedSection(open ? 'details' : null)}
       >
         <CollapsibleTrigger className="flex items-center justify-between w-full p-3 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors">
-          <span className="text-sm font-medium">Ver detalles del análisis</span>
+          <span className="text-sm font-medium">📊 Análisis cinematográfico completo</span>
           {expandedSection === 'details' ? (
             <ChevronUp className="h-4 w-4" />
           ) : (
