@@ -1849,10 +1849,8 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
     if (!qualityDiagnosis) return null;
     
     // Hide negative quality alerts for cleaner UX
-    const { quality } = qualityDiagnosis;
-    if (quality === 'incomplete' || quality === 'draft') return null;
-
     const { quality, score, issues, suggestions } = qualityDiagnosis;
+    if (quality === 'incomplete' || quality === 'draft') return null;
     
     const qualityConfig = {
       solid: {
