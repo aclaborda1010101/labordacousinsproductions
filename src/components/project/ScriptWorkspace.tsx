@@ -1460,8 +1460,8 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
             }
             
             toast.success('¡Análisis completado!');
-            // Navigate to unified script analysis view
-            setTimeout(() => navigate(`/projects/${projectId}/script-analysis`), 1500);
+            // Navigate to unified script analysis view - Direct navigation for better UX
+            navigate(`/projects/${projectId}/script-analysis`);
             return;
           }
 
@@ -1652,6 +1652,8 @@ export default function ScriptWorkspace({ projectId, onEntitiesExtracted }: Scri
           }
           
           toast.success('¡Análisis recuperado exitosamente!');
+          // Navigate to unified script analysis view - Direct navigation for better UX
+          navigate(`/projects/${projectId}/script-analysis`);
           return;
         }
 

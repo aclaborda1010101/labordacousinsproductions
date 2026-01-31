@@ -242,6 +242,14 @@ export default function UnifiedScriptView({ projectId, onContinueToProduction }:
           <div className="text-center text-gray-500">
             <Film className="h-12 w-12 mx-auto mb-4 opacity-50" />
             <p>No hay análisis disponible para este proyecto</p>
+            <div className="mt-4">
+              <Button 
+                onClick={() => navigate(`/projects/${projectId}/script`)}
+                variant="outline"
+              >
+                Volver a Análisis
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
