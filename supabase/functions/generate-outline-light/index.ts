@@ -1017,7 +1017,8 @@ serve(async (req) => {
       narrativeMode, 
       densityTargets,
       disableDensity = false, // V3.0: Skip density constraints when true
-      usePolling = true // V4.0: Enable polling by default
+      usePolling = true, // V4.0: Enable polling by default
+      structure = '3act' // V5.0: Multi-structure support (3act, 4act, 5act, 8seq)
     } = body;
 
     // V3.1: Accept both qualityTier (frontend) and generationModel (legacy) for compatibility
@@ -1172,7 +1173,8 @@ serve(async (req) => {
           format: format || null,
           episode_count: cappedEpisodesCount,
           narrative_mode: narrativeMode || 'serie_adictiva',
-          density_targets: disableDensity ? null : (densityTargets || null)
+          density_targets: disableDensity ? null : (densityTargets || null),
+          structure: format === 'movie' ? (structure || '3act') : null // V5.0: Movie structure
         })
         .select('id')
         .single();
@@ -1257,9 +1259,10 @@ FORMATO LIGHT: Mantén summaries en máximo 2 frases. No incluyas diálogos comp
 IDEA: ${idea}
 GÉNERO: ${genre || 'Drama'}
 TONO: ${tone || 'Realista'}
-FORMATO: ${format === 'series' ? `Serie de ${cappedEpisodesCount} episodios` : 'Película'}
+FORMATO: ${format === 'series' ? `Serie de ${cappedEpisodesCount} episodios` : `Película (${MOVIE_STRUCTURES[structure as keyof typeof MOVIE_STRUCTURES]?.name || '3 Actos'})`}
 MODO NARRATIVO: ${narrativeMode || 'serie_adictiva'}
-
+${getGenrePromptAddition(genre || 'drama')}
+${format === 'movie' ? getStructurePromptAddition(structure || '3act') : ''}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
 REGLA DURA DE EPISODIOS (OBLIGATORIO)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━

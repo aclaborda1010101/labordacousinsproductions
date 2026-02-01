@@ -22,4 +22,13 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+scripts-scraper/pdfs/
+scripts-scraper/enriched*/
+scripts-scraper/parsed/
+scripts-scraper/knowledge-packs/
+scripts-scraper/scene-index.json
+scripts-scraper/*.json
+!scripts-scraper/package.json
 .vercel
+.env*.local

@@ -141,6 +141,7 @@ interface OutlineRecord {
   genre?: string;
   tone?: string;
   // V11.2: Density targets from user configuration
+  structure?: string; // V5.0: Movie structure (3act, 4act, 5act, 8seq)
   density_targets?: {
     protagonists_min?: number;
     supporting_min?: number;
@@ -1132,7 +1133,37 @@ const FILM_TIMEOUTS = {
   EXPAND_ACT_II_MS: 55000, // 55s para Act II (was 85s) - igual que otros actos
 };
 
-function buildFilmScaffoldSystem(genre: string, tone: string, duration: number): string {
+// V5.0: Structure descriptions for multi-structure support
+const STRUCTURE_DESCRIPTIONS: Record<string, string> = {
+  '3act': `ESTRUCTURA 3 ACTOS (Hollywood Clásico):
+- ACTO I (~25%): Mundo ordinario → Inciting Incident → Decisión protagonista
+- ACTO II (~50%): Complicaciones → MIDPOINT REVERSAL CONCRETO → All-is-lost
+- ACTO III (~25%): Clímax con coste real → Resolución`,
+  '4act': `ESTRUCTURA 4 ACTOS (TV/Streaming):
+- ACTO 1 (~25%): Hook → Establecer mundo → Inciting Incident → Primer giro
+- ACTO 2 (~25%): Protagonista reacciona → Nuevos aliados/enemigos → Midpoint
+- ACTO 3 (~25%): Protagonista toma iniciativa → Escalada → Crisis mayor
+- ACTO 4 (~25%): Clímax → Confrontación final → Nueva normalidad`,
+  '5act': `ESTRUCTURA 5 ACTOS (Shakespeare/Épicas):
+- ACTO 1 (~15%): Exposición → Introducción mundo → Conflicto latente
+- ACTO 2 (~25%): Rising Action → Complicaciones → Punto de no retorno
+- ACTO 3 (~20%): Clímax → Peripeteia (reversal) → Mayor tensión
+- ACTO 4 (~25%): Falling Action → Consecuencias → Últimas complicaciones
+- ACTO 5 (~15%): Denouement → Resolución → Catarsis → Nuevo orden`,
+  '8seq': `ESTRUCTURA 8 SECUENCIAS (Save the Cat):
+- Seq 1 (0-10%): Opening Image → Setup → Theme Stated
+- Seq 2 (10-20%): Catalyst → Debate
+- Seq 3 (20-30%): Break into 2 → B-Story
+- Seq 4 (30-45%): Promise of premise → Fun & Games
+- Seq 5 (45-55%): Midpoint → Stakes raised
+- Seq 6 (55-70%): Bad Guys Close In → Problems mount
+- Seq 7 (70-85%): All Is Lost → Dark Night → Break into 3
+- Seq 8 (85-100%): Finale → Final Image`
+};
+
+function buildFilmScaffoldSystem(genre: string, tone: string, duration: number, structure?: string): string {
+  const structureDesc = STRUCTURE_DESCRIPTIONS[structure || '3act'] || STRUCTURE_DESCRIPTIONS['3act'];
+  
   return `Eres showrunner senior de CINE (Hollywood-level).
 
 FORMATO ABSOLUTO: PELÍCULA (FILM).
@@ -1151,15 +1182,11 @@ DURACIÓN: ${duration} minutos
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 REGLAS:
-- 3 actos clásicos (I, II, III)
 - Cada beat es un HECHO OBSERVABLE con: evento + agente + consecuencia
 - Nada genérico ("todo cambia", "surge un conflicto")
 - Decisiones causales, no estados de ánimo
 
-ESTRUCTURA 3 ACTOS:
-- ACTO I (~25%): Mundo ordinario → Inciting Incident → Decisión protagonista
-- ACTO II (~50%): Complicaciones → MIDPOINT REVERSAL CONCRETO → All-is-lost
-- ACTO III (~25%): Clímax con coste real → Resolución
+${structureDesc}
 
 PERSONAJES: Cada uno con WANT/NEED/FLAW/DECISION_KEY
 - WANT: Lo que busca conscientemente
@@ -2164,7 +2191,7 @@ async function stageFilmOutline(
         const { toolArgs, content } = await callWithRetry502(
           () => callLovableAIWithToolAndHeartbeat(
             supabase, outline.id,
-            buildFilmScaffoldSystem(genre, tone, duration),
+            buildFilmScaffoldSystem(genre, tone, duration, outline.structure),
             buildFilmScaffoldUser(summaryText, duration),
             QUALITY_MODEL, 3000, 'generate_film_scaffold', 
             FILM_SCAFFOLD_SCHEMA.parameters, 'film_scaffold',
