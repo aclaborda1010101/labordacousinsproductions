@@ -32,3 +32,4 @@ scripts-scraper/*.json
 !scripts-scraper/package.json
 .vercel
 .env*.local
+scripts-scraper/.env
